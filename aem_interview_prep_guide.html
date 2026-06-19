@@ -1,0 +1,349 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .wrap { padding: 1rem 0; }
+  .search-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; align-items: center; }
+  .search-bar input { flex: 1; padding: 8px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+  .chip { padding: 4px 12px; border-radius: 99px; border: 0.5px solid var(--color-border-secondary); font-size: 13px; cursor: pointer; background: var(--color-background-secondary); color: var(--color-text-secondary); transition: all 0.15s; }
+  .chip.active { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+  .chip:hover { border-color: var(--color-border-primary); }
+  .stats { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 16px; font-size: 13px; color: var(--color-text-secondary); }
+  .stat span { font-size: 20px; font-weight: 500; color: var(--color-text-primary); display: block; }
+  .q-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); margin-bottom: 12px; background: var(--color-background-primary); overflow: hidden; }
+  .q-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .q-header:hover { background: var(--color-background-secondary); }
+  .q-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+  .badge.basic { background: #EAF3DE; color: #3B6D11; }
+  .badge.intermediate { background: #FAEEDA; color: #633806; }
+  .badge.advanced { background: #FAECE7; color: #993C1D; }
+  .badge.concept { background: #E6F1FB; color: #0C447C; }
+  .badge.practical { background: #EEEDFE; color: #3C3489; }
+  .q-text { font-size: 14px; font-weight: 500; color: var(--color-text-primary); line-height: 1.5; }
+  .topic-tag { font-size: 11px; color: var(--color-text-tertiary); }
+  .chevron { font-size: 16px; color: var(--color-text-secondary); flex-shrink: 0; transition: transform 0.2s; }
+  .q-body { padding: 0 16px 16px; border-top: 0.5px solid var(--color-border-tertiary); display: none; }
+  .q-body.open { display: block; }
+  .answer-section { margin-top: 14px; }
+  .answer-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .answer-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.7; }
+  .answer-text code { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-tertiary); padding: 1px 5px; border-radius: 4px; }
+  .example-box { background: var(--color-background-secondary); border-left: 3px solid #AFA9EC; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+  .example-box strong { color: var(--color-text-primary); font-weight: 500; }
+  .code-block { background: var(--color-background-tertiary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); line-height: 1.6; white-space: pre-wrap; overflow-x: auto; }
+  .no-results { text-align: center; padding: 3rem; color: var(--color-text-secondary); font-size: 14px; }
+</style>
+<h2 class="sr-only">AEM Interview Preparation Guide — Searchable Q&A for all curriculum topics</h2>
+<div class="wrap">
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search questions... (e.g. Sling, OSGi, HTL, Servlet)" oninput="filterCards()" />
+  </div>
+  <div class="filter-row" id="chips"></div>
+  <div class="stats">
+    <div class="stat"><span id="shown-count">0</span>questions shown</div>
+    <div class="stat"><span id="total-count">0</span>total questions</div>
+  </div>
+  <div id="cards"></div>
+</div>
+
+<script>
+const QA = [
+  {
+    q: "What is a Content Management System (CMS) and how does AEM fit into the Web Content Management space?",
+    topic: "CMS/AEM Intro", level: "basic", type: "concept",
+    a: `A CMS is a software platform that allows non-technical users to create, manage, and publish digital content without writing code. Web Content Management (WCM) is a subset focused on web-specific content delivery.\n\nAEM (Adobe Experience Manager) is Adobe's enterprise-grade WCM platform. It combines content management with digital asset management (DAM), personalization, and multi-channel delivery. Built on Apache Sling, OSGi (Felix), and JCR (Apache Jackrabbit), AEM is a Java-based platform designed for large enterprises.`,
+    example: `Real-world: A brand like Nike uses AEM to let their marketing team update homepage banners, campaign pages, and product launches across 50+ country websites — without a developer. The team logs in, edits a component, and publishes — all through AEM's browser-based authoring interface.`
+  },
+  {
+    q: "What is WYSIWYG and how does AEM implement it?",
+    topic: "CMS/AEM Intro", level: "basic", type: "concept",
+    a: `WYSIWYG stands for "What You See Is What You Get." It means the author sees content exactly as it will appear on the published website while editing it. AEM implements this through its Touch UI (also called Sites Editor), where authors drag-and-drop components directly onto the page and see live previews. The editing canvas is essentially a live rendering of the page with editable overlays.`,
+    example: `When an AEM author clicks an image component on the page, an inline toolbar appears letting them swap the image, add alt text, and crop — all while seeing the result in context, not in a separate form or admin panel.`
+  },
+  {
+    q: "Explain the AEM Author-Publish-Dispatcher architecture.",
+    topic: "AEM Architecture", level: "basic", type: "concept",
+    a: `AEM has a three-tier architecture:\n\n1. Author instance: Where content creators log in to write, edit, and manage content. Changes are saved in the JCR repository. Authors replicate content to Publisher when ready.\n\n2. Publish instance: Serves content to end users (the live website). It receives replicated content from Author. Multiple publish instances can be load-balanced.\n\n3. Dispatcher: Apache web server module that acts as a reverse proxy and cache layer in front of Publish. It caches rendered HTML pages to reduce load on Publish and provides a security layer.\n\nData flow: Author → Replication → Publish → Dispatcher Cache → End User Browser`,
+    example: `Real-world: A news site has 1 Author, 3 Publish instances behind a load balancer, and 2 Dispatchers. A journalist writes an article on Author, clicks "Activate" — AEM replicates the page to all 3 Publish nodes. The Dispatcher cache is flushed for that URL, so the next visitor gets fresh content served from cache.`
+  },
+  {
+    q: "What is CRXDE Lite and when would you use it?",
+    topic: "AEM Interfaces", level: "basic", type: "practical",
+    a: `CRXDE Lite (Content Repository Explorer for Development) is a browser-based IDE built into AEM. It provides direct access to the JCR (Java Content Repository) node tree. You can browse, create, edit, and delete nodes and properties.\n\nUse cases: Debugging component properties, manually inspecting how content is stored, creating quick test nodes, running JCR queries (XPATH, SQL2), and exploring the repository structure during development.`,
+    example: `If a component dialog stores an image path but the image isn't rendering, you'd open CRXDE at /content/mysite/en/home/jcr:content/root/image and check whether the fileReference property was saved correctly.`,
+    code: `Path: http://localhost:4502/crx/de/index.jsp\nKey paths:\n/apps         → custom code (components, templates, configs)\n/content      → authored content\n/conf         → editable template configurations\n/libs         → AEM default code (do not modify directly)`
+  },
+  {
+    q: "What is the OSGi Console and what can you do with it?",
+    topic: "AEM Interfaces", level: "basic", type: "practical",
+    a: `The OSGi Web Console (Felix Console) is the administration UI for the OSGi container running inside AEM. It lets you inspect and manage the OSGi framework at runtime.\n\nKey uses: View all installed bundles and their state (Active/Installed/Resolved), configure OSGi services, inspect component status, view log service, check service registrations, and install/uninstall bundles manually.`,
+    example: `If your custom OSGi service isn't working, you'd go to the OSGi Console → Components tab and search for your service class name. If it shows "unsatisfied reference", that tells you a dependency (another service) it needs isn't available yet.`,
+    code: `URL: http://localhost:4502/system/console\nKey tabs:\n- Bundles: manage JAR bundles\n- Components: view DS (Declarative Services) components\n- Configurations: edit OSGi configs\n- Services: view registered OSGi services`
+  },
+  {
+    q: "What is Maven and what role does it play in AEM development?",
+    topic: "Maven/Project Setup", level: "basic", type: "concept",
+    a: `Maven is a Java build automation and dependency management tool. In AEM development, Maven serves several roles:\n\n1. Dependency management: Pulls in AEM API jars, Sling, OSGi, and third-party libraries from Maven Central or Adobe's artifact repository.\n\n2. Multi-module build: AEM projects typically have modules (ui.apps, ui.content, core, ui.frontend) — Maven coordinates their build order and packaging.\n\n3. Packaging: Bundles Java code into OSGi bundles (.jar), packages content into CRX packages (.zip), and deploys them to AEM via HTTP.\n\n4. Profiles: Different Maven profiles for local dev, staging, and production deployments.`,
+    example: `Running 'mvn clean install -PautoInstallSinglePackage' builds your entire AEM project and deploys it to your local AEM instance at localhost:4502 in one command.`
+  },
+  {
+    q: "What is the AEM Maven Archetype and what modules does it generate?",
+    topic: "Maven/Project Setup", level: "basic", type: "practical",
+    a: `The AEM Maven Archetype is an Adobe-maintained project template that generates a fully structured, best-practice AEM project scaffold.\n\nGenerated modules:\n- core: Java code — Sling Models, OSGi services, servlets. Packages as an OSGi bundle.\n- ui.apps: JCR content for /apps — components, templates, clientlibs, dialog XML. Packages as a content package.\n- ui.content: JCR content for /content — initial site content, editable template configs.\n- ui.frontend: Modern front-end build (webpack/npm) for CSS/JS.\n- ui.config: OSGi configuration files (runmode-specific).\n- all: Parent package that wraps everything for single deployment.`,
+    example: `When you generate a project for 'mycompany' with group ID 'com.mycompany', the core module's bundle deploys to /apps/mycompany/install, and components live at /apps/mycompany/components — following the AEM convention that separates code (/apps) from content (/content).`
+  },
+  {
+    q: "What is a POM file and what are the key sections?",
+    topic: "Maven/Project Setup", level: "basic", type: "concept",
+    a: `POM (Project Object Model) is an XML file that defines a Maven project's configuration.\n\nKey sections:\n- groupId/artifactId/version: Unique project identifier (the project's "coordinates")\n- packaging: jar, bundle, content-package, or pom\n- dependencies: Libraries this module needs (AEM API, Sling, OSGi annotations, JUnit etc.)\n- build > plugins: Maven plugins used (e.g., bnd-maven-plugin for OSGi bundling, filevault-package-maven-plugin for content packages, content-package-maven-plugin for deployment)\n- parent: Reference to parent POM for inherited configuration\n- profiles: Environment-specific config (local, stage, prod)`,
+    example: `In the core module's POM, you declare 'provided' scope for AEM API jars — this means Maven uses them to compile but does NOT bundle them in your JAR (AEM already provides them at runtime). Getting the scope wrong is a common bug that causes ClassNotFoundException errors.`
+  },
+  {
+    q: "What is a Page Template in AEM? Explain Static vs Editable Templates.",
+    topic: "Templates", level: "basic", type: "concept",
+    a: `A template defines the initial structure and allowed components for a page when it's created.\n\nStatic Templates (Classic): Defined as nodes under /apps. The template node defines the page component to use and initial content structure. Authors can't modify template structure. Any change requires a developer deployment.\n\nEditable Templates (Modern/Recommended): Managed in /conf/[project]/settings/wcm/templates. Non-technical template authors can configure them via the Template Editor UI. They support three modes:\n- Structure: Locked content (header/footer) that page authors can't modify.\n- Initial content: Default content that page authors CAN modify.\n- Layout: Responsive breakpoint configuration.\n\nPolicies are attached to templates to control which components are allowed in which containers.`,
+    example: `A "Landing Page" editable template might lock the header (company logo, nav) in Structure mode so marketing can't accidentally delete it, but leave the content zone flexible so authors can add hero banners, text blocks, and CTAs as needed.`
+  },
+  {
+    q: "What is a Layout Container (Parsys) and how does it work?",
+    topic: "Templates", level: "basic", type: "concept",
+    a: `Layout Container (formerly called Parsys — Paragraph System) is a special AEM component that acts as a container for other components. It defines a droppable zone where authors can add, remove, and reorder components.\n\nThe Layout Container enforces policies — a policy defines which components are "allowed" in that container. For example, a container might only allow Text, Image, and Button components.\n\nIt also powers the responsive grid layout in AEM. Authors can set different widths (12-column grid) for components at different breakpoints directly in the Layout mode of the page editor.`,
+    example: `A "Content" Layout Container on your homepage template has a policy allowing: Text, Image, Carousel, Video, and Download components. When an author drags in a component, they only see those 5 options in the sidebar — not every component installed in AEM.`
+  },
+  {
+    q: "What is HTL (Sightly) and how is it different from JSP?",
+    topic: "HTL/Sightly", level: "basic", type: "concept",
+    a: `HTL (HTML Template Language), formerly called Sightly, is AEM's recommended server-side templating language. It's built into AEM and replaces JSP for component rendering.\n\nKey differences from JSP:\n- HTL is context-aware auto-escaping: it automatically escapes output based on context (HTML attribute, URL, JS, CSS) — making XSS attacks much harder.\n- No Java code in templates: Logic is separated into Sling Models or Use-classes. HTL files stay clean HTML with data attributes.\n- Easier to hand off to front-end developers who don't know Java.\n- Files use .html extension (vs .jsp)\n\nHTL expressions use ${variable} syntax and data-sly-* block statements.`,
+    example: `A JSP might write: <%= currentPage.getTitle() %> with no escaping (XSS risk). HTL writes: \${properties.jcr:title} — AEM auto-escapes it for HTML context, making it safe.`,
+    code: `<!-- HTL example -->\n<div data-sly-use.model="com.mysite.core.models.HeroModel">\n  <h1>\${model.title}</h1>\n  <p>\${model.description}</p>\n  <img src="\${model.imageUrl @ context='uri'}" alt="\${model.altText}" />\n</div>`
+  },
+  {
+    q: "Explain the key HTL block statements: data-sly-use, data-sly-test, data-sly-list, data-sly-include, data-sly-resource.",
+    topic: "HTL/Sightly", level: "intermediate", type: "practical",
+    a: `data-sly-use: Instantiates a Sling Model or Use-class and binds it to a variable.\n\ndata-sly-test: Conditional rendering — renders the element only if the expression is truthy. Use data-sly-test.identifier for reuse.\n\ndata-sly-list: Iterates over a collection. Provides loop variable with index, count, first, last, odd, even.\n\ndata-sly-include: Includes another HTL script file (in same component context).\n\ndata-sly-resource: Includes a JCR resource by path, rendered through its own component. Used for sub-components.\n\ndata-sly-text: Sets text content of an element.\n\ndata-sly-attribute: Sets or removes attributes dynamically.`,
+    example: `data-sly-list is used for a navigation component to loop over page children. data-sly-test is used to only show a CTA button if the author has entered button text. data-sly-resource is used in a page component to render the header and footer as sub-resources.`,
+    code: `<sly data-sly-use.model="com.mysite.NavModel">\n  <nav>\n    <ul>\n      <li data-sly-list.item="\${model.navItems}">\n        <a href="\${item.path @ extension='html'}">\${item.title}</a>\n      </li>\n    </ul>\n  </nav>\n  <button data-sly-test="\${model.ctaText}">\${model.ctaText}</button>\n</sly>`
+  },
+  {
+    q: "What is a Sling Model and why is it used?",
+    topic: "Sling Models", level: "intermediate", type: "concept",
+    a: `A Sling Model is a POJO (Plain Old Java Object) annotated with @Model that AEM/Sling automatically instantiates and adapts from a Sling resource or request. It's the standard way to write the business logic layer for AEM components.\n\nWhy use it:\n- Clean separation of concerns: HTL handles presentation, Sling Model handles logic/data.\n- Automatic injection of JCR properties, OSGi services, and Sling objects via annotations.\n- Can be adapted from Resource or SlingHttpServletRequest.\n- Replaces older WCMUsePojo and JSP scriptlets with clean, testable Java code.`,
+    example: `A "Hero Banner" component has a dialog with fields: title, description, imageReference, ctaText, ctaLink. The Sling Model reads all these properties from the JCR node using @ValueMapValue, applies business logic (e.g., resolving the image path, generating the full CTA URL), and exposes clean getter methods for HTL to use.`,
+    code: `@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)\npublic class HeroBannerModel {\n  \n  @ValueMapValue\n  private String title;\n  \n  @ValueMapValue\n  private String imageReference;\n  \n  @ScriptVariable\n  private Page currentPage;\n  \n  @OSGiService\n  private AssetManager assetManager;\n  \n  public String getTitle() { return title; }\n  public String getImagePath() { return imageReference; }\n}`
+  },
+  {
+    q: "What are the key Sling Model annotations? Explain @Model, @ValueMapValue, @Inject, @OSGiService, @Self, @SlingObject.",
+    topic: "Sling Models", level: "intermediate", type: "practical",
+    a: `@Model: Marks the class as a Sling Model. Key params: adaptables (Resource.class or SlingHttpServletRequest.class), defaultInjectionStrategy (OPTIONAL means missing values don't throw errors), adapters (the interface this model implements).\n\n@ValueMapValue: Injects a property from the component's JCR node ValueMap. Matches the field name to property name by default; use name attribute to override.\n\n@Inject: General-purpose injection — Sling tries multiple injectors in order (ValueMap, BindingsObject, RequestAttribute etc.).\n\n@OSGiService: Injects an OSGi service registered in the OSGi container.\n\n@Self: Injects the adaptable itself (the Resource or Request).\n\n@SlingObject: Injects Sling-specific objects: ResourceResolver, SlingHttpServletRequest, SlingHttpServletResponse.\n\n@ScriptVariable: Injects objects available in the Sling scripting context like currentPage, currentNode, properties.`,
+    example: `A ProductModel uses @ValueMapValue to read 'productSku' from the dialog, @OSGiService to inject a ProductDataService that fetches price from a PIM system, and @SlingObject to get the ResourceResolver for resolving linked assets — all without any XML configuration.`
+  },
+  {
+    q: "What is the difference between adapting from Resource vs SlingHttpServletRequest in Sling Models?",
+    topic: "Sling Models", level: "intermediate", type: "concept",
+    a: `Resource adaptable: The model is initialized with only the content node's properties. Use this when your model only needs JCR data (most common). It's more cacheable and testable since it doesn't depend on an HTTP request.\n\nSlingHttpServletRequest adaptable: The model has access to query parameters, headers, selectors, session info, and the full request context. Use this when your logic depends on the request — e.g., reading a URL parameter, checking login state, or using request attributes.\n\nBest practice: Default to Resource. Use SlingHttpServletRequest only when you genuinely need request-specific data.`,
+    example: `A SearchResultsModel must adapt from SlingHttpServletRequest because it reads the 'q' query parameter from the URL (e.g., /search.html?q=shoes). A SimpleTextModel only needs the 'text' and 'color' properties from the dialog — Resource adaptable is sufficient.`
+  },
+  {
+    q: "What is an AEM Component? Explain its basic folder structure.",
+    topic: "Components", level: "basic", type: "practical",
+    a: `An AEM Component is a modular, reusable content block that authors drag onto pages. Components consist of:\n\n1. .content.xml: Component metadata — title, componentGroup, superResourceType (inheritance).\n2. [componentName].html: HTL rendering script.\n3. _cq_dialog/.content.xml: Touch UI authoring dialog (what the author configures).\n4. _cq_editConfig.xml: Edit bar behavior (inplace editing, empty placeholder, listeners).\n5. _cq_design_dialog/.content.xml: Design dialog for template-level configuration.\n6. clientlibs/: CSS and JS for this component.\n7. Sling Model: In the core Java module.`,
+    example: `A "Card" component at /apps/mysite/components/card has: card.html (renders a card with image, title, description, CTA), a dialog with 4 fields, a CardModel.java that reads properties and resolves the image, and a clientlib with card.css.`,
+    code: `/apps/mysite/components/card\n├── .content.xml          (componentGroup, title, sling:resourceType)\n├── card.html             (HTL rendering script)\n├── _cq_dialog\n│   └── .content.xml      (Touch UI dialog definition)\n├── _cq_editConfig.xml    (edit bar config)\n└── clientlibs\n    ├── .content.xml      (categories: [mysite.card])\n    ├── card.css\n    └── card.js`
+  },
+  {
+    q: "How does component inheritance work in AEM? What is sling:resourceSuperType?",
+    topic: "Components", level: "intermediate", type: "concept",
+    a: `AEM component inheritance lets a custom component inherit rendering and dialogs from a parent component. Set via the sling:resourceSuperType property on the component node.\n\nInheritance behavior:\n- HTL scripts: If your component doesn't have a rendering script, AEM walks up the super type chain until it finds one.\n- Dialog: You can inherit and extend dialog fields from the parent using sling:resourceSuperType in dialog nodes.\n- You can override specific scripts while inheriting others.\n\nCore Components: Adobe provides a library of production-ready Core Components under /libs/core/wcm/components. Your custom components should extend these via sling:resourceSuperType rather than writing from scratch.`,
+    example: `Your site's custom "Hero" component sets sling:resourceSuperType = core/wcm/components/image/v3/image. This means it inherits Core Component's image resolution, DAM integration, and lazy loading for free. You only add a hero-specific title overlay in your hero.html.`,
+    code: `<!-- /apps/mysite/components/hero/.content.xml -->\n<jcr:root\n  jcr:primaryType="cq:Component"\n  jcr:title="Hero Banner"\n  sling:resourceSuperType="core/wcm/components/image/v3/image"\n  componentGroup="MyProject - Content" />`
+  },
+  {
+    q: "What is Overlay vs Override in AEM? When would you use each?",
+    topic: "Components", level: "intermediate", type: "concept",
+    a: `Overlay: Copying a node from /libs to /apps at the same relative path. AEM's Sling Resource Merger resolves /apps over /libs automatically, so your copy takes precedence without modifying the original.\n\nOverride: Referencing the original directly using sling:resourceSuperType and overriding only specific scripts or properties, while inheriting the rest.\n\nWhen to use:\n- Overlay: When you need to modify AEM's own default behavior (e.g., changing the Login page, modifying the Page properties dialog, tweaking a Core Component dialog to add/remove fields).\n- Override (inheritance): When building custom components that extend Core Components — you get updates automatically as Core Components version upgrades.`,
+    example: `Scenario: AEM's default Page Properties dialog doesn't have a "Campaign Code" field. You overlay /libs/foundation/components/page/cq:dialog to /apps/foundation/components/page/cq:dialog and add the extra tab — without touching /libs. After an AEM upgrade, /libs gets updated but your /apps overlay is unaffected (though you should review for compatibility).`
+  },
+  {
+    q: "What is the AEM Style System?",
+    topic: "Style System", level: "intermediate", type: "concept",
+    a: `The Style System allows template authors and content authors to apply CSS styling variations to components without developer involvement for each variation.\n\nHow it works:\n1. Developer defines CSS classes and registers them as "styles" in the component's policy (e.g., "Dark Theme" = cmp-card--dark, "Compact" = cmp-card--compact).\n2. Template author enables specific styles in the template policy for a component.\n3. Content author, when editing a component, sees a paintbrush icon and can pick a style variant.\n4. AEM adds the corresponding CSS class to the component's wrapper div.\n\nThis separates styling concerns — developers write the CSS, business decides when to apply it.`,
+    example: `A "Teaser" component has 3 registered styles: Default, Dark Background, and Horizontal Layout. For a campaign page, the content author selects "Dark Background" — AEM adds the class 'cmp-teaser--dark' to the wrapper. No developer ticket needed.`
+  },
+  {
+    q: "Explain the Touch UI Dialog structure. What is Granite UI?",
+    topic: "Touch UI Dialogs", level: "intermediate", type: "practical",
+    a: `Granite UI is the server-side rendering framework that powers AEM's Touch UI authoring interface. It provides a library of form field components (textfield, pathbrowser, checkbox, select, multifield, etc.).\n\nA Touch UI Dialog is defined as a JCR node structure under a component's _cq_dialog folder.\n\nKey structure:\n- Root jcr:primaryType = nt:unstructured, sling:resourceType = cq/gui/components/authoring/dialog\n- Content area uses a tabs or fixedcolumns container\n- Each field is a node with sling:resourceType pointing to a Granite UI field type\n- Fields use name property to map to JCR property name (must start with ./ for relative path)`,
+    example: `A "Card" dialog has two tabs: "Content" (with fields: title, description, linkPath, imageReference) and "Settings" (with fields: colorTheme select dropdown, hideOnMobile checkbox). Each field node's 'name' property maps directly to the JCR property stored on the content node.`,
+    code: `<!-- Simplified _cq_dialog/.content.xml -->\n<jcr:root sling:resourceType="cq/gui/components/authoring/dialog">\n  <content sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">\n    <items>\n      <title\n        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"\n        fieldLabel="Card Title"\n        name="./title" />\n      <link\n        sling:resourceType="granite/ui/components/coral/foundation/form/pathbrowser"\n        fieldLabel="Link URL"\n        name="./linkPath"\n        rootPath="/content" />\n    </items>\n  </content>\n</jcr:root>`
+  },
+  {
+    q: "What is a Multifield component in AEM dialogs? How do you create one?",
+    topic: "Touch UI Dialogs", level: "intermediate", type: "practical",
+    a: `A Multifield allows authors to add multiple entries of a repeated structure (e.g., a list of links, a list of team members, multiple tabs). It renders as a list with Add/Remove buttons.\n\nTypes:\n- Simple Multifield: Stores multiple values of a single field type (e.g., multiple text values).\n- Composite Multifield: Each entry is itself a set of fields (e.g., each row has a title + URL + image). Uses granite/ui/components/coral/foundation/container as the field type, with nested items.\n\nStorage: Values are stored as child nodes under the component's content node (for composite) or as a multi-value property (for simple).`,
+    example: `A "Navigation Links" component uses a composite multifield where each entry has: Label (textfield), URL (pathbrowser), and Open in new tab (checkbox). An author can add 5 navigation entries through the dialog. In the Sling Model, you adapt the child nodes as a List<Resource> and map each to a LinkModel.`,
+    code: `<links\n  sling:resourceType="granite/ui/components/coral/foundation/form/multifield"\n  composite="{Boolean}true"\n  fieldLabel="Links">\n  <field\n    sling:resourceType="granite/ui/components/coral/foundation/container">\n    <items>\n      <label sling:resourceType="...form/textfield" fieldLabel="Label" name="./label"/>\n      <url sling:resourceType="...form/pathbrowser" fieldLabel="URL" name="./url"/>\n    </items>\n  </field>\n</links>`
+  },
+  {
+    q: "What are Listeners in AEM dialogs and when would you use them?",
+    topic: "Touch UI Dialogs - Advanced", level: "intermediate", type: "practical",
+    a: `Listeners are client-side JavaScript event handlers attached to dialog fields using cq:listeners nodes. They react to events like afterrender, change, click, and loadcontent to create dynamic dialog behavior.\n\nCommon use cases:\n- Show/hide fields based on another field's value.\n- Populate a dropdown dynamically based on a path selection.\n- Validate related fields together.\n- Trigger a reload of the dialog panel on change.\n\nListeners are defined as properties on a cq:listeners child node of the field, with the event name as the property name and a JavaScript expression as the value.`,
+    example: `A "Banner" component has a "Banner Type" dropdown (image/video). If the author selects "video", the Image picker should hide and a Video URL field should show. A listener on the dropdown's 'change' event uses Coral.commons to find sibling fields and toggle their visibility.`,
+    code: `<bannerType\n  sling:resourceType="granite/ui/components/coral/foundation/form/select"\n  fieldLabel="Banner Type"\n  name="./bannerType">\n  <cq:listeners\n    jcr:primaryType="cq:EditListenersConfig"\n    change="function(field, value) {\n      var imageField = field.closest('form').find('[name=\\'./imageRef\\']');\n      imageField.closest('.coral-Form-fieldwrapper').setStyle('display', value === 'video' ? 'none' : '');\n    }" />\n</bannerType>`
+  },
+  {
+    q: "What are Validators in AEM dialogs?",
+    topic: "Touch UI Dialogs - Advanced", level: "intermediate", type: "practical",
+    a: `Validators are client-side or server-side checks that ensure dialog field values meet certain criteria before the dialog can be saved.\n\nClient-side validators:\n- Built-in: Required (required attribute), minlength, maxlength, regex pattern validation via the validation property.\n- Custom: Register a Foundation validator via JavaScript using foundation.validation.validator and check the field value on the validation event.\n\nServer-side validators:\n- Implemented as Sling servlets that respond to POST requests from the dialog save action.\n\nValidator feedback appears inline below the field and blocks dialog submission.`,
+    example: `A "Promo Code" text field needs to match the pattern [A-Z]{3}-[0-9]{4} (e.g., ABC-1234). A Foundation client-side validator is registered for the field's data-foundation-validation attribute. If the author types "abc123", an error appears: "Promo code must be in format ABC-1234" and Save is blocked.`
+  },
+  {
+    q: "What is OSGi? Explain bundles, components, and services.",
+    topic: "OSGi", level: "intermediate", type: "concept",
+    a: `OSGi (Open Service Gateway Initiative) is a dynamic module system for Java. AEM runs on Apache Felix, an OSGi framework implementation.\n\nBundle: A JAR file with special OSGi metadata in its MANIFEST.MF. Bundles declare what Java packages they export (make available to others) and import (need from others). Bundles can be started, stopped, updated, and uninstalled at runtime without restarting AEM.\n\nComponent: A Java class annotated with @Component (from OSGi DS annotations). It's managed by the OSGi Declarative Services (DS) container — the container handles instantiation, dependency injection, and lifecycle.\n\nService: An interface registered in the OSGi service registry by a Component. Other components can look it up by interface type. This decouples the consumer from the implementation.`,
+    example: `You build an EmailService interface. A SendGridEmailServiceImpl class implements it, annotated with @Component(service = EmailService.class). AEM registers it in the OSGi service registry. Your newsletter component's Sling Model injects it via @OSGiService EmailService emailService — it doesn't know it's SendGrid. You could swap to Mailchimp by deploying a different implementation, without changing the consumer.`
+  },
+  {
+    q: "What is the lifecycle of an OSGi Component? Explain @Activate, @Deactivate, @Modified.",
+    topic: "OSGi", level: "intermediate", type: "concept",
+    a: `OSGi Declarative Services manages the lifecycle of components:\n\n1. Unsatisfied: The component's required references (dependencies) are not available yet. The component is not activated.\n2. Satisfied → Activate: When all required references are met, the container calls the @Activate method (if present). Use this to initialize resources, read configuration, start threads, open connections.\n3. Active: Component is running and services are available to consumers.\n4. Modified: If the OSGi configuration changes while the component is active, @Modified is called (if annotated). Otherwise, the component is deactivated and reactivated.\n5. Deactivate: Called when the bundle stops, a required dependency disappears, or the service is unregistered. Clean up resources here (close connections, stop threads).`,
+    example: `A CacheService component reads a cache TTL value from OSGi config in @Activate, initializes a Guava Cache with that TTL, and registers it. In @Deactivate, it calls cache.invalidateAll() and releases the reference. If an admin changes the TTL in OSGi Console, @Modified is called and the cache is rebuilt with the new TTL — without an AEM restart.`,
+    code: `@Component(service = CacheService.class)\n@Designate(ocd = CacheConfig.class)\npublic class CacheServiceImpl implements CacheService {\n  private Cache<String, String> cache;\n  \n  @Activate\n  protected void activate(CacheConfig config) {\n    cache = CacheBuilder.newBuilder()\n      .expireAfterWrite(config.ttlMinutes(), TimeUnit.MINUTES)\n      .build();\n  }\n  \n  @Deactivate\n  protected void deactivate() {\n    cache.invalidateAll();\n  }\n}`
+  },
+  {
+    q: "How do you configure an OSGi Service? Explain file-based vs node-based config and Sling Resolution Order.",
+    topic: "OSGi Configuration", level: "intermediate", type: "practical",
+    a: `OSGi services can be configured in multiple ways:\n\n1. File-based config (.cfg.json or .config files): Placed in the /apps/[project]/osgiconfig/config.[runmode]/ folder. Checked into source control and deployed with the content package. These are the recommended approach for production.\n\n2. Node-based config: Created manually in CRXDE at /apps/[project]/config/ as sling:OsgiConfig nodes with properties matching the @ObjectClassDefinition fields. Less common now.\n\n3. OSGi Console (runtime): Changes made in Felix Console take effect immediately but are typically lost on bundle restart unless persisted.\n\nSling Resolution Order for configs: AEM applies configs in this priority order: runmode-specific (config.publish) > config > factory configs. The most specific matching config wins.`,
+    example: `Your site has different SMTP settings per environment. You place:\n/apps/mysite/osgiconfig/config.author/com.mysite.EmailService.cfg.json with author settings,\n/apps/mysite/osgiconfig/config.publish/com.mysite.EmailService.cfg.json with publish settings.\nWhen AEM starts in 'publish' runmode, it picks up the publish config automatically.`,
+    code: `// com.mysite.core.services.EmailServiceImpl.cfg.json\n{\n  "smtp.host": "smtp.sendgrid.net",\n  "smtp.port": 587,\n  "smtp.from": "noreply@mysite.com",\n  "smtp.auth.enabled": true\n}`
+  },
+  {
+    q: "What is a Sling Servlet? How do you register one?",
+    topic: "Sling Servlets", level: "intermediate", type: "practical",
+    a: `A Sling Servlet is a Java servlet registered with the Sling framework to handle HTTP requests for specific resources or paths. Unlike standard Java servlets, Sling Servlets are OSGi components and integrate with the Sling request resolution.\n\nTwo registration methods:\n1. By resource type: Handles requests for any resource with a specific sling:resourceType. Best practice — follows Sling's resource-centric model.\n   Annotations: @SlingServletResourceTypes(resourceTypes, methods, extensions, selectors)\n\n2. By path: Handles requests to a specific URL path. Use sparingly — bypasses Sling resource resolution, harder to secure.\n   Annotations: @SlingServletPaths\n\nLifecycle: Extends SlingSafeMethodsServlet (for GET only) or SlingAllMethodsServlet (for POST/PUT/DELETE too).`,
+    example: `A "Search" feature needs a JSON API at /content/mysite/en.search.json?q=shoes. Register a servlet by resource type 'mysite/components/searchresults' with extension 'json' and selector 'search'. When AEM receives that URL, it resolves the page resource and routes to this servlet.`,
+    code: `@Component(service = Servlet.class)\n@SlingServletResourceTypes(\n  resourceTypes = "mysite/components/searchresults",\n  methods = HttpConstants.METHOD_GET,\n  extensions = "json",\n  selectors = "search"\n)\npublic class SearchServlet extends SlingSafeMethodsServlet {\n  @Override\n  protected void doGet(SlingHttpServletRequest req, SlingHttpServletResponse resp)\n      throws IOException {\n    String query = req.getParameter("q");\n    // ... search logic ...\n    resp.setContentType("application/json");\n    resp.getWriter().write(jsonResult);\n  }\n}`
+  },
+  {
+    q: "What is the Sling Resource Resolution process?",
+    topic: "Sling", level: "intermediate", type: "concept",
+    a: `Sling resolves HTTP requests to resources and scripts using a deterministic algorithm:\n\n1. Decompose URL: Split the URL into resource path, selectors, extension, and suffix.\n   e.g. /content/mysite/en/home.hero.html/extra → path=/content/mysite/en/home, selectors=[hero], extension=html, suffix=/extra\n\n2. Locate the resource: ResourceResolver looks up the JCR node at the path.\n\n3. Find the script: Based on the resource's sling:resourceType, selectors, and extension, Sling searches for a script in this order:\n   - /apps/[resourceType]/[selector].[extension].html\n   - /apps/[resourceType]/[extension].html\n   - /apps/[resourceType]/[resourceType last segment].html\n   Falls back through sling:resourceSuperType chain.\n\n4. Execute: The script renders the response.`,
+    example: `Request: GET /content/mysite/home.print.html\nResource at /content/mysite/home has sling:resourceType = mysite/components/page\nSling looks for: /apps/mysite/components/page/print.html first (selector-specific), then falls back to /apps/mysite/components/page/page.html. The print-specific script can render a printer-friendly version.`
+  },
+  {
+    q: "What are Content Fragments in AEM? How are they different from Experience Fragments?",
+    topic: "Content Fragments", level: "intermediate", type: "concept",
+    a: `Content Fragments (CF): Pure structured content — no presentation layer. Defined by Content Fragment Models (schema). Stored under /content/dam. Primarily used for headless/omnichannel delivery via AEM's Content Services REST API or GraphQL API. The same content can be delivered to web, mobile app, digital signage, etc.\n\nExperience Fragments (XF): A reusable authored fragment that includes both content AND layout/presentation. Made up of components in an AEM page-like structure. Rendered as HTML. Can be exported to Adobe Target as offers for A/B testing. Used for repeatable branded experiences like promotional banners, promo blocks, header CTAs.\n\nKey difference: Content Fragments = content-only, delivery-agnostic. Experience Fragments = content + presentation, channel-specific.`,
+    example: `A "Product Description" Content Fragment has fields: productName, sku, shortDescription, fullDescription, specifications (multifield). The product team fills it once. The website, the iOS app, and the in-store kiosk all consume the same CF via API — each rendering it in their own way.\n\nAn "Anniversary Sale Banner" Experience Fragment has a layout with a background image, headline, countdown timer component, and CTA button. It's reused across 10 campaign pages and also exported to Adobe Target for A/B testing.`
+  },
+  {
+    q: "What are Client Libraries (ClientLibs) in AEM? How do you create and include them?",
+    topic: "Client Libraries", level: "intermediate", type: "practical",
+    a: `Client Libraries (ClientLibs) are AEM's system for managing, combining, and serving CSS and JavaScript. They solve the problem of how to organize front-end assets across many components and include them efficiently.\n\nKey concepts:\n- Category: A string identifier (e.g., mysite.base, mysite.components.card) used to reference the clientlib.\n- Dependencies: List of other clientlib categories that must load before this one.\n- Embed: Pull in another clientlib's files into this one (for bundling).\n- allowProxy: Set to true to make the clientlib accessible via /etc.clientlibs path (required for publish security).\n\nInclude in HTL using: <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html" data-sly-call="\${clientlib.css @ categories='mysite.base'}"/>`,
+    example: `Your site has: mysite.base (global reset + typography CSS), mysite.components.hero (hero-specific CSS/JS), mysite.components.nav (nav JS). The page component's clientlib embeds mysite.base. Each component clientlib declares mysite.base as a dependency so it always loads first.`,
+    code: `<!-- In page HTL to include clientlibs -->\n<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">\n  <sly data-sly-call="\${clientlib.css @ categories='mysite.base'}" />\n</sly>\n\n<!-- /apps/mysite/components/hero/clientlibs/.content.xml -->\n<jcr:root\n  jcr:primaryType="cq:ClientLibraryFolder"\n  categories="[mysite.components.hero]"\n  dependencies="[mysite.base]"\n  allowProxy="{Boolean}true" />`
+  },
+  {
+    q: "What is an RTE (Rich Text Editor) in AEM and how do you configure it?",
+    topic: "RTE", level: "intermediate", type: "practical",
+    a: `The Rich Text Editor is AEM's built-in WYSIWYG text editor that allows authors to format text (bold, italic, lists, links, tables, etc.) within a component dialog. It's used for body text, descriptions, and any formatted content.\n\nConfiguration: RTE plugins are enabled/disabled through policies (for Core Components) or design dialogs, and through OSGi configuration.\n\nKey configurable aspects:\n- Which toolbar plugins are enabled (bold, italic, underline, lists, links, table, etc.)\n- Paste mode (text-only vs formatted)\n- Allowed HTML tags (whitelist)\n- Custom styles (adds a "Styles" dropdown for CSS classes)\n- Special characters palette\n\nConfiguration is done via the editConfig/inplaceEditing node (for inline RTE) or via template policy for Core Components Text component.`,
+    example: `For a "Blog Post Body" component, the RTE policy enables: bold, italic, unordered/ordered lists, links, and the "Paragraph Formats" dropdown (heading 2, heading 3, paragraph). It disables tables and underline to maintain design consistency. The styles plugin is configured with a "Callout Box" style that applies a custom CSS class.`
+  },
+  {
+    q: "What is Sling Resource Merging and how does it relate to overlaying components?",
+    topic: "Sling", level: "advanced", type: "concept",
+    a: `Sling Resource Merger is a mechanism that merges content from multiple JCR paths into a single virtual resource tree. AEM configures it so that /apps overlays /libs — if a node exists at both /apps/foo and /libs/foo, the /apps version takes precedence, but properties/child nodes not in /apps are still inherited from /libs.\n\nThis is how AEM overlays work: You don't need to copy the entire /libs structure. Copy only the nodes you need to change to /apps. Sling merges them at request time.\n\nThe hide-and-inherit pattern: You can set sling:hideResource=true or sling:hideChildren=true on an /apps node to suppress specific nodes from /libs during the merge.`,
+    example: `You want to remove the "Cloud Configuration" tab from AEM's default Page Properties dialog. Rather than copying the entire dialog to /apps, you only overlay the specific tab node at /apps/foundation/components/page/cq:dialog/content/items/tabs/items/cloudservices and set sling:hideResource=true. Sling Merger hides just that tab while inheriting everything else from /libs.`
+  },
+  {
+    q: "What is a DataSource in AEM dialog? When would you use it?",
+    topic: "Touch UI Dialogs", level: "advanced", type: "practical",
+    a: `A DataSource dynamically populates the options of a Select, Multiselect, or CheckboxGroup field in an AEM dialog — instead of hardcoding the options in XML.\n\nImplementation: A Sling Servlet registered at a specific path implements the DataSource interface. It reads data (from JCR, an external API, or a configuration) and returns a DataSource object with a list of Resources, each with value and text properties.\n\nThe dialog field references the data source path via datasource/sling:resourceType.`,
+    example: `A "Featured Country" select field needs to show all countries from a CMS-managed list. A CountriesDataSource servlet reads all country nodes from /content/mysite/data/countries and returns them as options. When the dialog opens, it calls the servlet and populates the dropdown dynamically — no code deployment needed when the country list changes.`,
+    code: `@Component(service = Servlet.class)\n@SlingServletResourceTypes(resourceTypes = "mysite/datasource/countries")\npublic class CountriesDataSource extends SlingSafeMethodsServlet {\n  @Override\n  protected void doGet(SlingHttpServletRequest req, SlingHttpServletResponse resp) {\n    ResourceResolver rr = req.getResourceResolver();\n    List<Resource> countries = /* read from JCR */;\n    DataSource ds = new SimpleDataSource(countries.iterator());\n    req.setAttribute(DataSource.class.getName(), ds);\n  }\n}`
+  }
+];
+
+const topics = [...new Set(QA.map(q => q.topic))];
+let activeTopics = new Set();
+let searchTerm = '';
+
+function init() {
+  const chipsEl = document.getElementById('chips');
+  topics.forEach(t => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = t;
+    chip.onclick = () => toggleTopic(t, chip);
+    chipsEl.appendChild(chip);
+  });
+  document.getElementById('total-count').textContent = QA.length;
+  render();
+}
+
+function toggleTopic(t, chip) {
+  if (activeTopics.has(t)) { activeTopics.delete(t); chip.classList.remove('active'); }
+  else { activeTopics.add(t); chip.classList.add('active'); }
+  render();
+}
+
+function filterCards() {
+  searchTerm = document.getElementById('search').value.toLowerCase();
+  render();
+}
+
+function render() {
+  const filtered = QA.filter((q, i) => {
+    const topicMatch = activeTopics.size === 0 || activeTopics.has(q.topic);
+    const searchMatch = !searchTerm || q.q.toLowerCase().includes(searchTerm) || q.a.toLowerCase().includes(searchTerm) || q.topic.toLowerCase().includes(searchTerm);
+    return topicMatch && searchMatch;
+  });
+
+  document.getElementById('shown-count').textContent = filtered.length;
+
+  const container = document.getElementById('cards');
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="no-results"><i class="ti ti-search" style="font-size:32px; display:block; margin-bottom:8px;" aria-hidden="true"></i>No questions match your filters.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map((q, i) => `
+    <div class="q-card">
+      <div class="q-header" onclick="toggle(${i})">
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="badge ${q.level}">${q.level}</span>
+            <span class="badge ${q.type}">${q.type}</span>
+            <span class="topic-tag">${q.topic}</span>
+          </div>
+          <div class="q-text">Q${i+1}. ${q.q}</div>
+        </div>
+        <i class="ti ti-chevron-down chevron" id="chev-${i}" aria-hidden="true"></i>
+      </div>
+      <div class="q-body" id="body-${i}">
+        <div class="answer-section">
+          <div class="answer-label">Answer</div>
+          <div class="answer-text">${q.a.replace(/\n/g,'<br>')}</div>
+        </div>
+        ${q.example ? `<div class="example-box"><strong>Real-world example:</strong><br>${q.example}</div>` : ''}
+        ${q.code ? `<div class="code-block">${escHtml(q.code)}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggle(i) {
+  const body = document.getElementById('body-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const open = body.classList.toggle('open');
+  chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+init();
+</script>

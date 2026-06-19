@@ -1,0 +1,833 @@
+
+<h2 class="sr-only">Session 20 AEM Workflows complete beginner guide with real life examples analogies and line by line code explanations</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.w{padding:8px 0 60px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:24px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.on{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:20px;margin-bottom:16px}
+.cp{background:#EEEDFE;border-color:#C4C0F5}
+.cg{background:#E1F5EE;border-color:#A3DCC9}
+.cy{background:#FFF8E7;border-color:#F5D78C}
+.cr{background:#FEECEC;border-color:#F5AAAA}
+.cb{background:#E8F4FD;border-color:#A8D4F0}
+.big{font-size:22px;font-weight:500;margin-bottom:8px}
+.lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cp .lbl{color:#3C3489}.cg .lbl{color:#085041}.cy .lbl{color:#7A5800}.cr .lbl{color:#7A1E1E}.cb .lbl{color:#0F5E8A}
+.body{font-size:14px;line-height:1.9}
+.anl{display:flex;gap:12px;align-items:flex-start;background:var(--color-background-secondary);border-radius:12px;padding:14px;margin:12px 0}
+.ai{font-size:28px;flex-shrink:0}
+.at{font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.at b{color:var(--color-text-primary);font-weight:500}
+.steps{display:flex;flex-direction:column;gap:0;margin:10px 0}
+.step{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.step:last-child{padding-bottom:0}
+.sn{width:30px;height:30px;border-radius:50%;background:#7F77DD;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--color-border-secondary)}
+.step:last-child::before{display:none}
+.sb{flex:1;padding-top:3px}
+.st{font-size:14px;font-weight:500;margin-bottom:3px}
+.sd{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.cw{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--color-border-tertiary)}
+.clf{background:var(--color-background-secondary);padding:7px 14px;font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--color-border-tertiary)}
+.ca{background:#1a1b2e;padding:14px;overflow-x:auto}
+.cline{display:flex;gap:10px;min-height:20px;margin-bottom:1px}
+.cline:hover{background:rgba(255,255,255,.03);border-radius:4px}
+.ln{font-family:var(--font-mono);font-size:12px;color:#45475a;min-width:22px;text-align:right;flex-shrink:0;user-select:none;line-height:1.8}
+.cd{font-family:var(--font-mono);font-size:12px;color:#cdd6f4;flex:1;white-space:pre;line-height:1.8}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#585b70;font-style:italic}.an{color:#fab387}.cl2{color:#89dceb}.num{color:#f9e2af}
+.ep{border-top:1px solid var(--color-border-tertiary)}
+.er{display:flex;border-bottom:1px solid var(--color-border-tertiary)}
+.er:last-child{border-bottom:none}
+.et{background:#EEEDFE;color:#3C3489;font-family:var(--font-mono);font-size:11px;font-weight:500;padding:10px;min-width:50px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--color-border-tertiary);flex-shrink:0}
+.ed{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.ed b{color:var(--color-text-primary);font-weight:500}
+.ed code{background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.nxt{margin-top:20px;padding:10px 24px;border-radius:24px;background:#7F77DD;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer}
+.nxt:hover{background:#6660CC}
+.emo{font-size:36px;display:block;margin-bottom:8px}
+.hl{border-left:3px solid #7F77DD;background:var(--color-background-secondary);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.hl b{color:var(--color-text-primary);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.gc3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0}
+.tcard{border-radius:12px;padding:14px;border:1px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.tcard-title{font-size:13px;font-weight:500;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.tcard p{font-size:12px;color:var(--color-text-secondary);line-height:1.7}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:14px 0}
+.fbox{background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:10px;padding:10px 12px;font-size:12px;text-align:center;min-width:90px;flex-shrink:0}
+.fbox b{display:block;font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.fbox span{color:var(--color-text-secondary);font-size:11px}
+.farr{font-size:18px;color:var(--color-text-tertiary);padding:0 4px;flex-shrink:0}
+.term-row{display:flex;gap:0;padding:10px 0;border-bottom:1px solid var(--color-border-tertiary);align-items:flex-start}
+.term-row:last-child{border-bottom:none}
+.term-key{min-width:140px;font-size:13px;font-weight:500;color:#3C3489;flex-shrink:0;background:#EEEDFE;padding:4px 10px;border-radius:8px;margin-right:12px;text-align:center;align-self:flex-start;margin-top:2px}
+.term-val{font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.term-val b{color:var(--color-text-primary);font-weight:500}
+.split-box{border:1px solid var(--color-border-tertiary);border-radius:12px;overflow:hidden;margin:12px 0}
+.split-head{background:var(--color-background-secondary);padding:10px 14px;font-size:12px;font-weight:500;color:var(--color-text-secondary);border-bottom:1px solid var(--color-border-tertiary)}
+.split-body{padding:12px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.split-body b{color:var(--color-text-primary);font-weight:500}
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qb{text-align:left;padding:11px 16px;border-radius:10px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.qb:hover{border-color:#7F77DD;color:#3C3489}
+.qb.ok{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.qb.no{background:#FEECEC;border-color:#E24B4A;color:#7A1E1E}
+.qres{margin-top:10px;padding:12px;border-radius:10px;font-size:13px;display:none;line-height:1.7}
+.qres.show{display:block}
+.qres.ok{background:#E1F5EE;color:#085041}.qres.no{background:#FEECEC;color:#7A1E1E}
+.inbox-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border-bottom:1px solid var(--color-border-tertiary)}
+.inbox-item:last-child{border-bottom:none}
+.inbox-dot{width:8px;height:8px;border-radius:50%;background:#7F77DD;flex-shrink:0;margin-top:5px}
+.inbox-body{flex:1}
+.inbox-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.inbox-sub{font-size:12px;color:var(--color-text-secondary)}
+.inbox-actions{display:flex;gap:6px;margin-top:8px}
+.btn-approve{padding:5px 14px;border-radius:20px;border:none;background:#E1F5EE;color:#085041;font-size:12px;font-weight:500;cursor:pointer}
+.btn-reject{padding:5px 14px;border-radius:20px;border:none;background:#FEECEC;color:#7A1E1E;font-size:12px;font-weight:500;cursor:pointer}
+</style>
+
+<div class="w">
+<div class="tabs">
+  <div class="tab on" onclick="go(0)">🏠 Start Here</div>
+  <div class="tab" onclick="go(1)">📖 Key Terms</div>
+  <div class="tab" onclick="go(2)">🧩 Step Types</div>
+  <div class="tab" onclick="go(3)">🖥️ Workflow Console</div>
+  <div class="tab" onclick="go(4)">💻 Custom Process Step</div>
+  <div class="tab" onclick="go(5)">🚀 Triggering Workflows</div>
+  <div class="tab" onclick="go(6)">✅ Quick Quiz</div>
+</div>
+
+<!-- PAGE 0: START HERE -->
+<div id="p0" class="pg on">
+  <div class="card cp">
+    <span class="emo">🤔</span>
+    <div class="big">What problem does Session 20 solve?</div>
+    <div class="body">Every company has business processes — steps that must happen in a certain order, involving multiple people, before something is approved or published. Without automation, this is done manually by email, which is slow, error-prone, and has no audit trail.<br><br>AEM Workflows automate these business processes directly inside your CMS.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The scenario we use throughout this session</div>
+    <div class="body">You work for a large <b>bank</b> that uses AEM for its website. Every page about a financial product — loans, credit cards, savings accounts — must go through a strict approval process before it goes live. Why? Because incorrect financial information on a bank's website can cause legal and regulatory problems.<br><br>
+    The process is:<br><br>
+    1. <b>Author</b> writes the content and submits it for review<br>
+    2. <b>Legal team</b> checks it for compliance issues<br>
+    3. <b>Marketing manager</b> approves the final look<br>
+    4. <b>System</b> automatically publishes it live<br>
+    5. <b>Compliance officer</b> gets an email confirmation<br><br>
+    Without workflows, this is 5 emails and 3 days. With AEM Workflows, it is automated, tracked, and takes hours.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Four things Session 20 covers</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Key terms — Model, Instance, Payload, WorkItem</div>
+          <div class="sd">Before looking at any code, you must understand the vocabulary. These words appear everywhere in AEM workflows.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Step types — Process, Participant, OR Split, AND Split</div>
+          <div class="sd">A workflow is made of steps. Each step type behaves differently. Some run code automatically. Some wait for a human. Some branch into multiple paths.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Workflow Console — managing running workflows</div>
+          <div class="sd">Where to view all running workflows, terminate stuck ones, check which workflows failed and why.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Custom workflow process — writing your own step in Java</div>
+          <div class="sd">How to write a custom automated step that sends an email, updates metadata, calls an external API, or activates (publishes) a page — fully coded with every line explained.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(1)">Next: Key Terms →</button>
+</div>
+
+<!-- PAGE 1: KEY TERMS -->
+<div id="p1" class="pg">
+  <div class="card cp">
+    <span class="emo">📖</span>
+    <div class="big">Key terms — the vocabulary of AEM Workflows</div>
+    <div class="body">Every AEM workflow conversation uses these exact words. Learn them before anything else — they are the foundation that everything else builds on.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy first</div>
+    <div class="anl">
+      <div class="ai">🏗️</div>
+      <div class="at">
+        Think of building a house. There is a <b>blueprint</b> that describes all the steps: pour foundation → build walls → roof → plumbing → electrical → inspection → move in.<br><br>
+        The blueprint is just a plan — it doesn't build anything by itself. When a specific family wants their house built, a <b>construction instance</b> starts. The <b>house under construction</b> is the payload — the thing being worked on. Each <b>task assigned to a tradesperson</b> is a work item — the electrician gets a task, the plumber gets a task.<br><br>
+        <b>Workflow Model = blueprint. Workflow Instance = one actual construction. Payload = the house. WorkItem = one task assigned to one tradesperson.</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Every term defined clearly</div>
+    <div class="term-row">
+      <div class="term-key">Workflow Model</div>
+      <div class="term-val"><b>The blueprint. The template. The diagram.</b> It defines the steps in order, who does what, and what happens at each step. You create it once in the Workflow Model editor (a visual drag-and-drop designer). For our bank: the model defines the Legal → Marketing → Publish → Notify sequence. The model itself does nothing until it is triggered.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Workflow Instance</div>
+      <div class="term-val"><b>One running execution of a workflow model.</b> When author Priya submits the "Credit Card page" for review, a new workflow instance is created. When author Ravi submits the "Loan page", another separate instance starts. Both run the same model independently at the same time. Each instance has its own state, its own current step, its own history.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Payload</div>
+      <div class="term-val"><b>The thing the workflow is processing.</b> For a content approval workflow, the payload is the JCR path of the page being reviewed — e.g. <code>/content/bank/en/credit-card</code>. Every step in the workflow can read this path to know what content to act on. In asset processing workflows, the payload is the asset path.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">WorkItem</div>
+      <div class="term-val"><b>One task inside a running workflow instance.</b> When the workflow reaches a "Participant Step" (a step that needs human action), a WorkItem is created and placed in the assigned person's AEM Inbox. The legal officer opens their inbox, sees "Please review: Credit Card page", approves it, and the workflow moves to the next step. WorkItems only exist for human steps — automated steps have no WorkItem.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Workflow Data</div>
+      <div class="term-val"><b>A key-value bag that travels with the workflow instance.</b> Each step can read from and write to this bag. Example: the Legal step writes <code>"legalApproved=true"</code> into workflow data. The Marketing step reads it and adds <code>"marketingApproved=true"</code>. The final step reads both values to confirm all approvals before publishing.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Launcher</div>
+      <div class="term-val"><b>A rule that automatically starts a workflow when something happens.</b> Example: "When any node is created or modified under <code>/content/dam</code>, automatically start the DAM Update Asset workflow." Without launchers, someone would have to manually start every workflow. You manage launchers at Tools → Workflow → Launchers.</div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">How these terms connect in one picture</div>
+    <div class="flow">
+      <div class="fbox"><b>Model</b><span>blueprint (created once)</span></div>
+      <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="fbox"><b>Launcher</b><span>triggers it</span></div>
+      <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="fbox"><b>Instance</b><span>one running job</span></div>
+      <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="fbox"><b>Payload</b><span>page being processed</span></div>
+      <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="fbox"><b>WorkItems</b><span>tasks in inboxes</span></div>
+    </div>
+    <div class="body" style="margin-top:8px">The Model exists permanently. A Launcher fires when a page is submitted. That creates an Instance which works on the Payload (the page path). As it reaches human steps, WorkItems land in people's AEM Inboxes.</div>
+  </div>
+
+  <button class="nxt" onclick="go(2)">Next: Step Types →</button>
+</div>
+
+<!-- PAGE 2: STEP TYPES -->
+<div id="p2" class="pg">
+  <div class="card cp">
+    <span class="emo">🧩</span>
+    <div class="big">Workflow step types</div>
+    <div class="body">A workflow model is made of steps connected in a sequence. There are different types of steps — some run code automatically, some wait for a human, some split into multiple paths. Understanding these is essential for designing real workflows.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Step type 1: Process Step — fully automated</div>
+    <div class="anl">
+      <div class="ai">⚙️</div>
+      <div class="at">
+        <b>What it is:</b> A step that runs Java code automatically with zero human involvement. It starts, runs your code, and immediately moves to the next step.<br><br>
+        <b>Real life analogy:</b> A stamp machine on an assembly line. It doesn't wait for anyone — it automatically stamps every item that passes through and moves it along.<br><br>
+        <b>Real AEM examples:</b> Send an email notification, activate (publish) a page, update a metadata property, call an external REST API, generate a PDF, validate that required fields are filled in.
+      </div>
+    </div>
+    <div class="body">The bank's "Publish Page" step is a Process Step — when both approvals are done, it automatically calls AEM's Replication API to publish the page. No human clicks publish. It just happens.</div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Step type 2: Participant Step — waits for a human</div>
+    <div class="anl">
+      <div class="ai">👤</div>
+      <div class="at">
+        <b>What it is:</b> A step that pauses the workflow and assigns a task (WorkItem) to a specific user or group. The workflow waits — could be hours or days — until that person acts.<br><br>
+        <b>Real life analogy:</b> A form that needs a manager's signature. It sits on their desk until they sign it. Nothing moves forward until the signature is there.<br><br>
+        <b>Real AEM examples:</b> "Legal team, please review this page." The workflow stops. A WorkItem appears in the Legal group's AEM Inbox. Any member of the Legal group can open it, read the page, and click Approve or Reject.
+      </div>
+    </div>
+    <div class="card" style="margin:10px 0;padding:0;overflow:hidden">
+      <div style="padding:10px 14px;font-size:12px;font-weight:500;background:var(--color-background-secondary);border-bottom:1px solid var(--color-border-tertiary);color:var(--color-text-secondary)">AEM Inbox — what the legal officer sees</div>
+      <div class="inbox-item">
+        <div class="inbox-dot"></div>
+        <div class="inbox-body">
+          <div class="inbox-title">Review required: Credit Card Cashback page</div>
+          <div class="inbox-sub">Assigned by workflow: Bank Content Approval • Submitted by: priya.author@bank.com</div>
+          <div class="inbox-actions">
+            <button class="btn-approve"><i class="ti ti-check" aria-hidden="true"></i> Approve</button>
+            <button class="btn-reject"><i class="ti ti-x" aria-hidden="true"></i> Reject</button>
+          </div>
+        </div>
+      </div>
+      <div class="inbox-item">
+        <div class="inbox-dot"></div>
+        <div class="inbox-body">
+          <div class="inbox-title">Review required: Home Loan Interest Rates page</div>
+          <div class="inbox-sub">Assigned by workflow: Bank Content Approval • Submitted by: ravi.author@bank.com</div>
+          <div class="inbox-actions">
+            <button class="btn-approve"><i class="ti ti-check" aria-hidden="true"></i> Approve</button>
+            <button class="btn-reject"><i class="ti ti-x" aria-hidden="true"></i> Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Step type 3: Dynamic Participant Step — human assigned by code</div>
+    <div class="body">Same as Participant Step but the assignee is decided by Java code at runtime, not hardcoded in the model.<br><br>
+    <b>Example:</b> A page about "Home Loans" should go to the Home Loans team. A page about "Credit Cards" should go to the Cards team. A Dynamic Participant Step runs a small piece of Java code that reads the page's category and returns the right group name. The WorkItem is then sent to that group's inbox automatically.
+    </div>
+    <div class="cw">
+      <div class="clf">Dynamic Participant Step — assign to the right team based on page category</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="an">@Component</span>(service = <span class="cl2">ParticipantStepChooser</span>.<span class="kw">class</span>,</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd">    property = {<span class="str">"chooser.label=Assign By Product Category"</span>})</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">public class</span> <span class="cl2">ProductCategoryChooser</span> <span class="kw">implements</span> <span class="cl2">ParticipantStepChooser</span> {</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="an">@Override</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="kw">public</span> <span class="cl2">String</span> getParticipant(<span class="cl2">WorkItem</span> workItem,</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">        <span class="cl2">WorkflowSession</span> session, <span class="cl2">MetaDataMap</span> args) {</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">        <span class="cl2">String</span> payloadPath = workItem.getWorkflowData()</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">            .getPayload().toString();</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        <span class="cm">// payloadPath = "/content/bank/en/credit-card"</span></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">        <span class="kw">if</span> (payloadPath.contains(<span class="str">"credit-card"</span>)) {</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">            <span class="kw">return</span> <span class="str">"cards-review-team"</span>;</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">        } <span class="kw">else if</span> (payloadPath.contains(<span class="str">"home-loan"</span>)) {</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">            <span class="kw">return</span> <span class="str">"loans-review-team"</span>;</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        }</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">        <span class="kw">return</span> <span class="str">"general-review-team"</span>;</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L1-2</div><div class="ed"><b>@Component(service=ParticipantStepChooser.class)</b> — register this class as a <code>ParticipantStepChooser</code> OSGi service. AEM detects all registered ParticipantStepChoosers and lists them in the Dynamic Participant Step configuration dialog. The <code>chooser.label</code> property is the name that appears in that dropdown — so workflow designers can pick "Assign By Product Category" when configuring the step.</div></div>
+        <div class="er"><div class="et">L6-7</div><div class="ed"><b>getParticipant(WorkItem, WorkflowSession, MetaDataMap)</b> — AEM calls this method when the workflow reaches this step. Your code must return a String — either a specific username (like "john.legal@bank.com") or a group name (like "cards-review-team"). AEM then creates a WorkItem and places it in that user's or group's AEM Inbox.</div></div>
+        <div class="er"><div class="et">L9-10</div><div class="ed"><b>workItem.getWorkflowData().getPayload().toString()</b> — gets the payload path of the content being processed. The <code>getPayload()</code> returns an Object — calling <code>toString()</code> converts it to the path string. For content workflows the payload is always a JCR path.</div></div>
+        <div class="er"><div class="et">L13-18</div><div class="ed"><b>if/else based on path</b> — simple path-based routing. Real implementations might read the page's category property from JCR instead: <code>resolver.getResource(payloadPath + "/jcr:content").getValueMap().get("productCategory", "")</code>. Returning the group name "cards-review-team" means the WorkItem goes to everyone in that AEM user group — any member can claim and complete it.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Step type 4: OR Split — take one path based on a condition</div>
+    <div class="anl">
+      <div class="ai">🔀</div>
+      <div class="at">
+        <b>What it is:</b> An OR Split evaluates conditions and routes the workflow down exactly ONE branch — like an if/else in your code.<br><br>
+        <b>Real life analogy:</b> A passport control officer checks your visa. If you have a valid visa → go to arrivals. If your visa is expired → go to the immigration office. You go to one place — not both.<br><br>
+        <b>Bank example:</b> After the legal review, did they approve or reject?<br>
+        — If approved → go to Marketing review<br>
+        — If rejected → go back to Author with comments
+      </div>
+    </div>
+    <div class="hl"><b>How the condition is defined:</b> Each branch of an OR Split has an ECMA Script condition. For the "Approved" branch: <code>workflowData.getMetaDataMap().get("legalDecision","").equals("approved")</code>. The workflow evaluates each branch's script and takes the first one that returns <code>true</code>.</div>
+  </div>
+
+  <div class="card cr">
+    <div class="lbl">Step type 5: AND Split — run multiple branches at the same time</div>
+    <div class="anl">
+      <div class="ai">⚡</div>
+      <div class="at">
+        <b>What it is:</b> An AND Split runs multiple branches <b>in parallel simultaneously</b> and waits until ALL of them complete before moving forward.<br><br>
+        <b>Real life analogy:</b> A house inspection requires three specialists to check it simultaneously: a structural engineer, an electrician, and a plumber. All three work at the same time. Only after all three sign off does the sale proceed.<br><br>
+        <b>Bank example:</b> The page needs two independent reviews simultaneously — Legal AND Compliance — to save time. Both review in parallel. When both are done, the workflow merges back and moves to Marketing.
+      </div>
+    </div>
+    <div class="hl"><b>AND Split vs OR Split in one sentence:</b> AND Split = "do all of these paths and wait for all" (parallel). OR Split = "do only one of these paths based on a condition" (branching).</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The complete bank approval workflow diagram</div>
+    <div class="body" style="margin-bottom:12px">Combining all step types into one real workflow:</div>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <div class="fbox" style="background:#EEEDFE;border-color:#C4C0F5"><b style="color:#3C3489">Start</b><span>author submits</span></div>
+        <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+        <div class="fbox" style="background:#E8F4FD;border-color:#A8D4F0"><b style="color:#0F5E8A">AND Split</b><span>parallel reviews</span></div>
+        <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="fbox" style="background:#E1F5EE;border-color:#A3DCC9"><b style="color:#085041">Legal review</b><span>participant step</span></div>
+          <div class="fbox" style="background:#E1F5EE;border-color:#A3DCC9"><b style="color:#085041">Compliance check</b><span>participant step</span></div>
+        </div>
+        <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+        <div class="fbox" style="background:#FFF8E7;border-color:#F5D78C"><b style="color:#7A5800">OR Split</b><span>approved?</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:40px;flex-wrap:wrap">
+        <div class="fbox" style="background:#E1F5EE;border-color:#A3DCC9"><b style="color:#085041">Yes branch</b><span>→ Marketing review</span></div>
+        <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+        <div class="fbox" style="background:#EEEDFE;border-color:#C4C0F5"><b style="color:#3C3489">Publish page</b><span>process step</span></div>
+        <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+        <div class="fbox" style="background:#EEEDFE;border-color:#C4C0F5"><b style="color:#3C3489">Send email</b><span>process step</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:40px;flex-wrap:wrap">
+        <div class="fbox" style="background:#FEECEC;border-color:#F5AAAA"><b style="color:#7A1E1E">No branch</b><span>→ Notify author</span></div>
+        <div class="farr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+        <div class="fbox" style="background:#FEECEC;border-color:#F5AAAA"><b style="color:#7A1E1E">End</b><span>rejected</span></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(3)">Next: Workflow Console →</button>
+</div>
+
+<!-- PAGE 3: WORKFLOW CONSOLE -->
+<div id="p3" class="pg">
+  <div class="card cp">
+    <span class="emo">🖥️</span>
+    <div class="big">Workflow Console — managing your workflows</div>
+    <div class="body">The Workflow Console is your control room for all workflow activity. It is where you design workflow models, monitor running instances, debug failures, and configure launchers. Go to <b>Tools → Workflow</b> in AEM navigation.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">The four sections of the Workflow Console</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Models — design your workflow blueprints</div>
+          <div class="sd">Path: <b>Tools → Workflow → Models</b>. This is where you design workflows using a visual drag-and-drop editor. You see all existing models (DAM Update Asset, Request for Activation, etc.). Click "Create" to build a new one. Drag step types from the left panel, connect them with arrows, configure each step by double-clicking it.<br><br>
+          Important: editing a model creates a draft version. You must click "Sync" to make the changes take effect for new workflow instances. Existing running instances continue on the old version.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Instances — monitor everything running right now</div>
+          <div class="sd">Path: <b>Tools → Workflow → Instances</b>. Shows all currently running workflow instances. For each you can see: which model it uses, what the payload path is, which step it is currently on, how long it has been running, and who it is waiting for.<br><br>
+          Critical for debugging: if a workflow is stuck (running for 3 days on the same step), come here to investigate. You can Terminate a stuck instance, Suspend it to pause it, or Resume a suspended one.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Archive — history of completed workflows</div>
+          <div class="sd">Path: <b>Tools → Workflow → Archive</b>. Shows all completed (or failed) workflow instances. You can see the full execution history: which steps ran, what happened at each, timestamps. Useful for audits — "show me the approval history for this page before it went live."<br><br>
+          Warning: the archive grows indefinitely. In production you must schedule a "Purge Workflow" job to delete old archive entries, otherwise the repository fills up and AEM slows down.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Launchers — rules that auto-start workflows</div>
+          <div class="sd">Path: <b>Tools → Workflow → Launchers</b>. A launcher watches for JCR events (node created, modified, deleted) and automatically starts a workflow when the event matches. Example: "When a node of type dam:Asset is created under /content/dam, start the DAM Update Asset workflow." The DAM Update Asset workflow never needs to be manually started because a launcher handles it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Most common production problem: stuck workflow instances</div>
+    <div class="anl">
+      <div class="ai">🚨</div>
+      <div class="at">
+        <b>The problem:</b> You go to Workflow Instances and see 2,000 instances all stuck on the same step, all showing "Running" for days.<br><br>
+        <b>Common causes:</b><br>
+        — A custom process step threw an uncaught exception and the workflow has no error handling<br>
+        — A Participant Step was assigned to a user who left the company and nobody can complete it<br>
+        — An external API call in a process step is timing out indefinitely<br><br>
+        <b>How to fix:</b><br>
+        1. Go to Tools → Workflow → Instances<br>
+        2. Filter by the affected model<br>
+        3. Select all stuck instances<br>
+        4. Click Terminate (kills them cleanly)<br>
+        5. Fix the root cause in your code<br>
+        6. Redeploy and test with one instance first
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Triggering a workflow manually from Java code</div>
+    <div class="body" style="margin-bottom:10px">Sometimes you need to start a workflow from your own code — for example, a scheduled job that reviews all pages older than 1 year and starts a "review and refresh" workflow on each one.</div>
+    <div class="cw">
+      <div class="clf">Starting a workflow programmatically</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="an">@Reference</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">private</span> <span class="cl2">WorkflowService</span> workflowService;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">public void</span> startApprovalWorkflow(<span class="cl2">String</span> pagePath,</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">                                  <span class="cl2">ResourceResolver</span> resolver) {</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="cl2">WorkflowSession</span> wfSession =</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">        workflowService.getWorkflowSession(</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">            resolver.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>));</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">    <span class="cl2">WorkflowModel</span> model = wfSession.getModel(</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">        <span class="str">"/var/workflow/models/bank-content-approval"</span>);</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="cl2">WorkflowData</span> data = wfSession.newWorkflowData(</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">        <span class="str">"JCR_PATH"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">    wfSession.startWorkflow(model, data);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    log.info(<span class="str">"Approval workflow started for: {}"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L1-2</div><div class="ed"><b>@Reference WorkflowService workflowService</b> — OSGi injects the WorkflowService automatically. This is AEM's central workflow engine service. You use it to get a WorkflowSession which is your handle into the workflow system — similar to how ResourceResolver is your handle into the JCR.</div></div>
+        <div class="er"><div class="et">L7-9</div><div class="ed"><b>workflowService.getWorkflowSession(session)</b> — creates a WorkflowSession tied to the given JCR Session. The <code>resolver.adaptTo(Session.class)</code> extracts the underlying JCR session from your ResourceResolver. The WorkflowSession carries the same user permissions as that session — so your service user needs appropriate permissions to start workflows.</div></div>
+        <div class="er"><div class="et">L11-12</div><div class="ed"><b>wfSession.getModel("/var/workflow/models/bank-content-approval")</b> — loads a WorkflowModel by its path in the JCR. All workflow models are stored under <code>/var/workflow/models/</code>. The path is the model's ID — you can find it in the Workflow Models console by hovering over the model name. If the path is wrong, this returns null and the next line throws a NullPointerException.</div></div>
+        <div class="er"><div class="et">L14-15</div><div class="ed"><b>wfSession.newWorkflowData("JCR_PATH", pagePath)</b> — creates the WorkflowData object that carries the payload. <code>"JCR_PATH"</code> is the payload type — it tells the workflow engine that the payload is a JCR node path (as opposed to TEXT or other types). <code>pagePath</code> is the actual path of the page to be reviewed, e.g. <code>"/content/bank/en/credit-card"</code>. Every step in the workflow will receive this path as its payload.</div></div>
+        <div class="er"><div class="et">L17</div><div class="ed"><b>wfSession.startWorkflow(model, data)</b> — actually starts a new workflow instance using the given model and payload data. AEM creates the Instance node under <code>/var/workflow/instances/</code>, runs the first step, and the workflow begins. This call returns immediately — the workflow runs asynchronously in the background.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(4)">Next: Custom Process Step →</button>
+</div>
+
+<!-- PAGE 4: CUSTOM PROCESS STEP -->
+<div id="p4" class="pg">
+  <div class="card cp">
+    <span class="emo">💻</span>
+    <div class="big">Custom workflow process step — writing your own automated step</div>
+    <div class="body">This is the most important coding concept in Session 20. A custom process step is a Java class that AEM runs automatically as one step in a workflow. You write the logic — send email, publish page, validate content, call an API — and AEM calls it at the right moment.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The interface you must implement</div>
+    <div class="anl">
+      <div class="ai">🔌</div>
+      <div class="at">
+        To create a custom process step, your Java class must implement the <code>WorkflowProcess</code> interface. This interface has one method: <code>execute()</code>. AEM calls this method when your step runs in a workflow.<br><br>
+        You also register your class with a <code>process.label</code> property. This label appears as a selectable option in the Workflow Model editor's process step configuration — so workflow designers can choose your step by name without knowing any Java.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Full example: "Validate and Publish" process step for the bank</div>
+    <div class="body" style="margin-bottom:10px">This step checks that the page has a title, description, and author field filled in. If all checks pass, it publishes the page. If any check fails, it terminates the workflow with an error message.</div>
+    <div class="cw">
+      <div class="clf">ValidateAndPublishProcess.java — complete custom workflow process step</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">package</span> com.bank.aem.workflows;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">import</span> com.adobe.granite.workflow.WorkflowException;</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">import</span> com.adobe.granite.workflow.WorkflowSession;</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">import</span> com.adobe.granite.workflow.exec.WorkItem;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="kw">import</span> com.adobe.granite.workflow.exec.WorkflowProcess;</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="kw">import</span> com.adobe.granite.workflow.metadata.MetaDataMap;</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">import</span> com.day.cq.replication.ReplicationActionType;</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"><span class="kw">import</span> com.day.cq.replication.Replicator;</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"><span class="kw">import</span> org.apache.sling.api.resource.*;</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"><span class="kw">import</span> org.osgi.service.component.annotations.*;</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"><span class="kw">import</span> org.slf4j.*;</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd"><span class="an">@Component</span>(service = <span class="cl2">WorkflowProcess</span>.<span class="kw">class</span>,</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    property = {<span class="str">"process.label=Validate and Publish Page"</span>})</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd"><span class="kw">public class</span> <span class="cl2">ValidateAndPublishProcess</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        <span class="kw">implements</span> <span class="cl2">WorkflowProcess</span> {</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    <span class="kw">private static final</span> <span class="cl2">Logger</span> log =</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">        <span class="cl2">LoggerFactory</span>.getLogger(<span class="cl2">ValidateAndPublishProcess</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">    <span class="an">@Reference</span></span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">    <span class="kw">private</span> <span class="cl2">ResourceResolverFactory</span> resolverFactory;</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">    <span class="an">@Reference</span></span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">    <span class="kw">private</span> <span class="cl2">Replicator</span> replicator;</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">    <span class="an">@Override</span></span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">    <span class="kw">public void</span> execute(<span class="cl2">WorkItem</span> workItem,</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd">                        <span class="cl2">WorkflowSession</span> workflowSession,</span></div>
+        <div class="cline"><span class="ln">31</span><span class="cd">                        <span class="cl2">MetaDataMap</span> metaDataMap)</span></div>
+        <div class="cline"><span class="ln">32</span><span class="cd">                        <span class="kw">throws</span> <span class="cl2">WorkflowException</span> {</span></div>
+        <div class="cline"><span class="ln">33</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">34</span><span class="cd">        <span class="cl2">String</span> pagePath = workItem</span></div>
+        <div class="cline"><span class="ln">35</span><span class="cd">            .getWorkflowData().getPayload().toString();</span></div>
+        <div class="cline"><span class="ln">36</span><span class="cd">        log.info(<span class="str">"ValidateAndPublish running for: {}"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">37</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">38</span><span class="cd">        <span class="cl2">Map</span>&lt;<span class="cl2">String</span>, <span class="cl2">Object</span>&gt; auth = <span class="cl2">Collections</span>.singletonMap(</span></div>
+        <div class="cline"><span class="ln">39</span><span class="cd">            <span class="cl2">ResourceResolverFactory</span>.SUBSERVICE, <span class="str">"workflow-publish-service"</span>);</span></div>
+        <div class="cline"><span class="ln">40</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">41</span><span class="cd">        <span class="kw">try</span> (<span class="cl2">ResourceResolver</span> resolver =</span></div>
+        <div class="cline"><span class="ln">42</span><span class="cd">                resolverFactory.getServiceResourceResolver(auth)) {</span></div>
+        <div class="cline"><span class="ln">43</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">44</span><span class="cd">            <span class="cl2">Resource</span> pageContent = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">45</span><span class="cd">                pagePath + <span class="str">"/jcr:content"</span>);</span></div>
+        <div class="cline"><span class="ln">46</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">47</span><span class="cd">            <span class="kw">if</span> (pageContent == <span class="kw">null</span>) {</span></div>
+        <div class="cline"><span class="ln">48</span><span class="cd">                <span class="kw">throw new</span> <span class="cl2">WorkflowException</span>(</span></div>
+        <div class="cline"><span class="ln">49</span><span class="cd">                    <span class="str">"Page not found: "</span> + pagePath);</span></div>
+        <div class="cline"><span class="ln">50</span><span class="cd">            }</span></div>
+        <div class="cline"><span class="ln">51</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">52</span><span class="cd">            <span class="cl2">ValueMap</span> props = pageContent.getValueMap();</span></div>
+        <div class="cline"><span class="ln">53</span><span class="cd">            <span class="cl2">String</span>  title  = props.get(<span class="str">"jcr:title"</span>,       <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">54</span><span class="cd">            <span class="cl2">String</span>  desc   = props.get(<span class="str">"jcr:description"</span>, <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">55</span><span class="cd">            <span class="cl2">String</span>  author = props.get(<span class="str">"pageAuthor"</span>,      <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">56</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">57</span><span class="cd">            <span class="kw">if</span> (title.isEmpty() || desc.isEmpty() || author.isEmpty()) {</span></div>
+        <div class="cline"><span class="ln">58</span><span class="cd">                log.warn(<span class="str">"Validation failed for: {}"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">59</span><span class="cd">                <span class="kw">throw new</span> <span class="cl2">WorkflowException</span>(</span></div>
+        <div class="cline"><span class="ln">60</span><span class="cd">                    <span class="str">"Missing required fields: title, description or author"</span>);</span></div>
+        <div class="cline"><span class="ln">61</span><span class="cd">            }</span></div>
+        <div class="cline"><span class="ln">62</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">63</span><span class="cd">            <span class="cl2">Session</span> session = resolver.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">64</span><span class="cd">            replicator.replicate(session,</span></div>
+        <div class="cline"><span class="ln">65</span><span class="cd">                <span class="cl2">ReplicationActionType</span>.ACTIVATE, pagePath);</span></div>
+        <div class="cline"><span class="ln">66</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">67</span><span class="cd">            log.info(<span class="str">"Page published successfully: {}"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">68</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">69</span><span class="cd">        } <span class="kw">catch</span> (<span class="cl2">WorkflowException</span> e) {</span></div>
+        <div class="cline"><span class="ln">70</span><span class="cd">            <span class="kw">throw</span> e;</span></div>
+        <div class="cline"><span class="ln">71</span><span class="cd">        } <span class="kw">catch</span> (<span class="cl2">Exception</span> e) {</span></div>
+        <div class="cline"><span class="ln">72</span><span class="cd">            log.error(<span class="str">"Unexpected error in ValidateAndPublish"</span>, e);</span></div>
+        <div class="cline"><span class="ln">73</span><span class="cd">            <span class="kw">throw new</span> <span class="cl2">WorkflowException</span>(<span class="str">"Process failed: "</span> + e.getMessage(), e);</span></div>
+        <div class="cline"><span class="ln">74</span><span class="cd">        }</span></div>
+        <div class="cline"><span class="ln">75</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">76</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L14-15</div><div class="ed"><b>@Component(service=WorkflowProcess.class, property={"process.label=Validate and Publish Page"})</b> — two things happen here. First, <code>service=WorkflowProcess.class</code> registers this class as a WorkflowProcess service in OSGi — AEM scans for all WorkflowProcess services and knows they are available as workflow steps. Second, <code>process.label</code> is the human-readable name that appears in the Workflow Model editor's "Process" step dialog. A workflow designer opens the dialog, sees "Validate and Publish Page" in the dropdown, selects it — they don't need to know the Java class name.</div></div>
+        <div class="er"><div class="et">L25-26</div><div class="ed"><b>@Reference Replicator replicator</b> — Replicator is AEM's service for publishing content from author to publish instance. By @Referencing it, OSGi injects it automatically. The <code>replicator.replicate()</code> method sends a page from author to publisher. This is the same thing that happens when an editor clicks "Activate" in the AEM UI — your code does it programmatically.</div></div>
+        <div class="er"><div class="et">L29-32</div><div class="ed"><b>execute(WorkItem, WorkflowSession, MetaDataMap) throws WorkflowException</b> — this is the ONE method from the WorkflowProcess interface that you must implement. AEM calls it when this step runs. The <code>throws WorkflowException</code> declaration is important — if you throw a WorkflowException, AEM marks the workflow instance as "failed" and stops it. This is how you signal that something went wrong and the workflow should not continue.</div></div>
+        <div class="er"><div class="et">L34-35</div><div class="ed"><b>workItem.getWorkflowData().getPayload().toString()</b> — getting the payload path. Every workflow step receives the WorkItem which contains the WorkflowData which contains the Payload. For a content workflow the payload is a JCR path string. You call toString() because getPayload() returns a generic Object type — it could theoretically be other things, but for JCR_PATH type payloads it is always a path String.</div></div>
+        <div class="er"><div class="et">L38-39</div><div class="ed"><b>Service user for this workflow step</b> — even inside a workflow, you should use a service user to access JCR content. The workflow engine itself runs as a system user, but your ResourceResolver for reading/writing page content should be your own service user with only the permissions your step needs. "workflow-publish-service" must be defined in your repoinit config with read access to page content and crx:replicate permission to publish.</div></div>
+        <div class="er"><div class="et">L47-50</div><div class="ed"><b>throw new WorkflowException("Page not found")</b> — if the page doesn't exist (wrong path, deleted before workflow completed), throw a WorkflowException. This terminates the workflow with an error status visible in the Workflow Instances console. The error message is stored in the workflow instance history so an administrator can see exactly what went wrong. Never silently return — always fail loudly.</div></div>
+        <div class="er"><div class="et">L52-55</div><div class="ed"><b>props.get("jcr:title", "")</b> — reads properties from the page's jcr:content node. <code>jcr:title</code> is the page title, <code>jcr:description</code> is the meta description, <code>pageAuthor</code> is a custom property your templates use. The second argument <code>""</code> is the default — if the property doesn't exist, return empty string rather than null. This makes the empty check on line 57 safe.</div></div>
+        <div class="er"><div class="et">L57-61</div><div class="ed"><b>Validation check before publishing</b> — this is the core value of a custom process step. The standard AEM "Activate Page" action doesn't validate anything. Your custom step can enforce business rules before publishing. Here: if title, description, or author is empty, throw WorkflowException. The page stays on author, the workflow fails with a clear message, and the author must fill in the missing fields before resubmitting.</div></div>
+        <div class="er"><div class="et">L63-65</div><div class="ed"><b>replicator.replicate(session, ReplicationActionType.ACTIVATE, pagePath)</b> — publishes the page. Three parameters: the JCR Session (from the resolver), the action type (ACTIVATE = publish, DEACTIVATE = unpublish), and the path to publish. After this call, the page is visible on the publish server and therefore on the live website. This is the final step of the approval workflow — only reached if ALL validations and human approvals passed.</div></div>
+        <div class="er"><div class="et">L69-73</div><div class="ed"><b>Two catch blocks — why both are needed</b> — <code>catch(WorkflowException e) { throw e; }</code> — if a WorkflowException was already thrown (by your validation code on line 59), re-throw it unchanged. Don't wrap it or log it again. <code>catch(Exception e)</code> — catches any other unexpected exception (LoginException, RepositoryException, RuntimeException). Wraps it in a WorkflowException so AEM properly marks the instance as failed with the error details.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(5)">Next: Triggering Workflows →</button>
+</div>
+
+<!-- PAGE 5: TRIGGERING WORKFLOWS -->
+<div id="p5" class="pg">
+  <div class="card cp">
+    <span class="emo">🚀</span>
+    <div class="big">How workflows get triggered</div>
+    <div class="body">There are three ways a workflow can start in AEM. Understanding all three is important because in real projects you use different methods for different situations.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Method 1: Manually by an editor in the AEM UI</div>
+    <div class="anl">
+      <div class="ai">🖱️</div>
+      <div class="at">
+        <b>How:</b> An author opens a page in Sites console → selects the page → clicks the "Manage Publication" or "Request Approval" button → chooses the workflow model → clicks Start.<br><br>
+        <b>When to use:</b> For content approval workflows. The author consciously decides "I am done with this page and want it reviewed." This is the most common trigger for human-driven approval processes.<br><br>
+        <b>What happens:</b> AEM creates a workflow instance with the selected page as the payload. The first step begins immediately.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Method 2: Automatically via a Launcher</div>
+    <div class="anl">
+      <div class="ai">⚡</div>
+      <div class="at">
+        <b>How:</b> You configure a Launcher rule at Tools → Workflow → Launchers. You define: "When a node of type X is created/modified under path Y, start workflow model Z."<br><br>
+        <b>When to use:</b> For asset processing (DAM Update Asset workflow). Every upload automatically triggers it. Also used for auto-expiry workflows — "when the jcr:content/expiryDate property is modified, start the Review Before Expiry workflow."<br><br>
+        <b>What happens:</b> AEM watches for JCR events matching your launcher rule. The moment the event fires, a new workflow instance starts automatically — no human action needed.
+      </div>
+    </div>
+    <div class="hl"><b>Key launcher properties to know:</b><br>
+    <b>Event Type:</b> Node Created / Node Modified / Node Removed<br>
+    <b>Node Type:</b> e.g. dam:Asset or cq:Page<br>
+    <b>Path:</b> e.g. /content/dam — only watch this subtree<br>
+    <b>Workflow Model:</b> which model to start<br>
+    <b>Condition:</b> optional ECMA script for fine-grained filtering</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Method 3: Programmatically from Java code</div>
+    <div class="body" style="margin-bottom:10px">You already saw the full code for this on the previous tab. Here's when to use each approach:</div>
+    <div class="gc3">
+      <div class="tcard">
+        <div class="tcard-title" style="color:#3C3489"><i class="ti ti-user" style="font-size:16px" aria-hidden="true"></i> Manual (UI)</div>
+        <p>Content approval, translation requests, legal review — anything a human initiates consciously when their work is done.</p>
+      </div>
+      <div class="tcard">
+        <div class="tcard-title" style="color:#085041"><i class="ti ti-bolt" style="font-size:16px" aria-hidden="true"></i> Launcher</div>
+        <p>Asset processing, auto-expiry, sync triggers — anything that should happen automatically whenever content changes in a certain way.</p>
+      </div>
+      <div class="tcard">
+        <div class="tcard-title" style="color:#0F5E8A"><i class="ti ti-code" style="font-size:16px" aria-hidden="true"></i> Programmatic</div>
+        <p>Batch operations, scheduled jobs, external system triggers — when your code makes a business decision that a workflow should start.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Passing custom data into a workflow — MetaDataMap</div>
+    <div class="body" style="margin-bottom:10px">Sometimes your step needs more information than just the payload path. MetaDataMap is the workflow's data bag — you can store and read any key-value pair from it across all steps.</div>
+    <div class="cw">
+      <div class="clf">Reading and writing workflow metadata in a process step</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">public void</span> execute(<span class="cl2">WorkItem</span> workItem,</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd">                    <span class="cl2">WorkflowSession</span> session,</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">                    <span class="cl2">MetaDataMap</span> args) {</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="cm">// Read config argument set in the workflow model editor</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="cl2">String</span> notifyEmail = args.get(<span class="str">"PROCESS_ARGS"</span>,</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">        <span class="str">"compliance@bank.com"</span>);</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">    <span class="cm">// notifyEmail = whatever the workflow designer typed in the step dialog</span></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="cm">// Read data written by a PREVIOUS step in this workflow</span></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">    <span class="cl2">MetaDataMap</span> workflowMeta =</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">        workItem.getWorkflow().getWorkflowData().getMetaDataMap();</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="cl2">String</span> legalDecision = workflowMeta.get(</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">        <span class="str">"legalDecision"</span>, <span class="str">"pending"</span>);</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="cm">// "approved" or "rejected" — written by the Legal Review step</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    <span class="cm">// Write data for the NEXT step to read</span></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    workflowMeta.put(<span class="str">"publishedAt"</span>,</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">        <span class="kw">new</span> java.util.<span class="cl2">Date</span>().toString());</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">    workflowMeta.put(<span class="str">"publishedBy"</span>, <span class="str">"workflow-system"</span>);</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L5-8</div><div class="ed"><b>args.get("PROCESS_ARGS", defaultValue)</b> — <code>args</code> is the MetaDataMap for this specific step's configuration. <code>PROCESS_ARGS</code> is the standard property name for arguments you type directly into the Process Step dialog in the Workflow Model editor. This lets workflow designers configure your step without changing Java code. For example: a notification step where the recipient email is different per workflow — instead of hardcoding "compliance@bank.com", the workflow designer types the right email in the dialog.</div></div>
+        <div class="er"><div class="et">L11-12</div><div class="ed"><b>workItem.getWorkflow().getWorkflowData().getMetaDataMap()</b> — this is the shared data bag for the entire workflow instance. All steps in this instance share this same MetaDataMap. A previous step (Legal Review participant step) stored <code>"legalDecision" = "approved"</code> here. Your step reads it. This is how steps communicate without directly calling each other — they write to and read from the shared data bag.</div></div>
+        <div class="er"><div class="et">L19-21</div><div class="ed"><b>workflowMeta.put(key, value)</b> — writes data to the shared workflow MetaDataMap. The next step in the workflow (e.g. a "Send Confirmation Email" step) can read <code>workflowMeta.get("publishedAt", "")</code> and include the publication timestamp in its email. This creates a chain of communication between steps without any direct dependencies.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cr">
+    <div class="lbl">Common mistakes with workflows</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn" style="background:#A32D2D">!</div>
+        <div class="sb">
+          <div class="st">Not closing the ResourceResolver inside a process step</div>
+          <div class="sd">Just like scheduled jobs, workflow process steps must use try-with-resources for ResourceResolvers. Workflows can run hundreds of times — each leaked resolver slowly kills AEM.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#A32D2D">!</div>
+        <div class="sb">
+          <div class="st">Swallowing exceptions instead of throwing WorkflowException</div>
+          <div class="sd">If your process step catches an exception and doesn't re-throw it as WorkflowException, the workflow thinks the step succeeded and happily moves to the next step — including publishing broken content. Always throw WorkflowException on failure.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#A32D2D">!</div>
+        <div class="sb">
+          <div class="st">Not purging the workflow archive</div>
+          <div class="sd">Every completed workflow is stored in the JCR archive. After months in production, this can grow to millions of nodes and slow AEM significantly. Always configure a periodic Purge Workflow scheduled job to delete old archive entries.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(6)">Next: Quick Quiz →</button>
+</div>
+
+<!-- PAGE 6: QUIZ -->
+<div id="p6" class="pg">
+  <div class="card cp">
+    <span class="emo">✅</span>
+    <div class="big">Quick Quiz — check your understanding</div>
+    <div class="body">Six questions. Tap what you think is right.</div>
+  </div>
+
+  <div class="card" id="q1">
+    <div class="quiz-q">1. What is the difference between a Workflow Model and a Workflow Instance?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(1,'a')">A. They are the same thing — just different names</button>
+      <button class="qb" onclick="ans(1,'b')">B. A Model is the blueprint (designed once). An Instance is one running execution of that blueprint for a specific piece of content.</button>
+      <button class="qb" onclick="ans(1,'c')">C. A Model runs automatically. An Instance requires human action.</button>
+    </div>
+    <div class="qres" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="quiz-q">2. What is the "payload" in an AEM workflow?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(2,'a')">A. The Java code that runs in a process step</button>
+      <button class="qb" onclick="ans(2,'b')">B. The JCR path of the content being processed by the workflow (e.g. the page or asset being approved)</button>
+      <button class="qb" onclick="ans(2,'c')">C. The email notification sent when the workflow completes</button>
+    </div>
+    <div class="qres" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="quiz-q">3. A Participant Step vs a Process Step — which one waits for a human?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(3,'a')">A. Process Step waits for human approval</button>
+      <button class="qb" onclick="ans(3,'b')">B. Participant Step waits for human action — it creates a WorkItem in someone's AEM Inbox</button>
+      <button class="qb" onclick="ans(3,'c')">C. Both always wait for human approval</button>
+    </div>
+    <div class="qres" id="qr3"></div>
+  </div>
+
+  <div class="card" id="q4">
+    <div class="quiz-q">4. What is the difference between an OR Split and an AND Split?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(4,'a')">A. OR Split runs all branches in parallel and waits. AND Split takes one branch based on a condition.</button>
+      <button class="qb" onclick="ans(4,'b')">B. OR Split takes one branch based on a condition. AND Split runs all branches in parallel and waits for all to complete.</button>
+      <button class="qb" onclick="ans(4,'c')">C. They are both the same — they just have different names</button>
+    </div>
+    <div class="qres" id="qr4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="quiz-q">5. Which interface must your Java class implement to create a custom automated workflow step?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(5,'a')">A. WorkflowStep</button>
+      <button class="qb" onclick="ans(5,'b')">B. Runnable</button>
+      <button class="qb" onclick="ans(5,'c')">C. WorkflowProcess</button>
+    </div>
+    <div class="qres" id="qr5"></div>
+  </div>
+
+  <div class="card" id="q6">
+    <div class="quiz-q">6. Your custom process step catches an Exception and returns normally (does not throw). What problem does this cause?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(6,'a')">A. The workflow is correctly marked as failed and stops</button>
+      <button class="qb" onclick="ans(6,'b')">B. The workflow thinks the step succeeded and moves to the next step — possibly publishing broken or incomplete content</button>
+      <button class="qb" onclick="ans(6,'c')">C. AEM automatically detects the error and retries the step</button>
+    </div>
+    <div class="qres" id="qr6"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ad={
+  1:{c:'b',e:"✅ Correct! The Model is the reusable blueprint you design once — like a recipe. An Instance is created every time that recipe is cooked for a specific piece of content. Multiple instances of the same model can run simultaneously, each for a different payload."},
+  2:{c:'b',e:"✅ Correct! The payload is the JCR path of the content being processed — for example '/content/bank/en/credit-card'. Every step in the workflow receives this path via workItem.getWorkflowData().getPayload().toString() and uses it to know which content to act on."},
+  3:{c:'b',e:"✅ Correct! A Participant Step pauses the workflow and creates a WorkItem in the assigned user or group's AEM Inbox. The workflow waits — hours or days — until that person clicks Approve or Reject. A Process Step runs Java code automatically with no human involvement."},
+  4:{c:'b',e:"✅ Correct! OR Split = if/else branching: evaluates conditions and takes ONLY ONE matching branch. AND Split = parallel execution: runs ALL branches simultaneously and waits until every single one completes before the workflow moves forward."},
+  5:{c:'c',e:"✅ Correct! Your class must implement WorkflowProcess and its single method execute(WorkItem, WorkflowSession, MetaDataMap). You also register it with @Component(service=WorkflowProcess.class) and a process.label property so it appears in the workflow model editor UI."},
+  6:{c:'b',e:"✅ Correct! If your step catches the exception and returns normally, AEM sees the step as successful and continues to the next step. This is dangerous — it could proceed to publish a page that has an error, or skip validation. Always throw new WorkflowException(...) on failure so AEM correctly marks the instance as failed."}
+};
+
+function ans(q,choice){
+  const a=ad[q];
+  const btns=document.querySelectorAll('#q'+q+' .qb');
+  const letters=['a','b','c'];
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(letters[i]===a.c)b.classList.add('ok');
+    else if(letters[i]===choice&&choice!==a.c)b.classList.add('no');
+  });
+  const r=document.getElementById('qr'+q);
+  r.className='qres show '+(choice===a.c?'ok':'no');
+  r.innerHTML=(choice===a.c?'':' Not quite. ')+a.e;
+}
+
+function go(i){
+  document.querySelectorAll('.pg').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+}
+</script>

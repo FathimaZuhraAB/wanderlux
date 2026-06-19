@@ -1,0 +1,713 @@
+
+<h2 class="sr-only">Session 18 AEM Tagging Framework — complete beginner guide with real life examples, analogies, and line by line code explanations</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.w{padding:8px 0 60px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:24px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.on{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:20px;margin-bottom:16px}
+.cp{background:#EEEDFE;border-color:#C4C0F5}
+.cg{background:#E1F5EE;border-color:#A3DCC9}
+.cy{background:#FFF8E7;border-color:#F5D78C}
+.cr{background:#FEECEC;border-color:#F5AAAA}
+.cb{background:#E8F4FD;border-color:#A8D4F0}
+.big{font-size:22px;font-weight:500;margin-bottom:8px}
+.sub{font-size:14px;line-height:1.8;margin-bottom:14px}
+.lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.cp .lbl{color:#3C3489}.cg .lbl{color:#085041}.cy .lbl{color:#7A5800}.cr .lbl{color:#7A1E1E}.cb .lbl{color:#0F5E8A}
+.body{font-size:14px;line-height:1.9}
+.anl{display:flex;gap:12px;align-items:flex-start;background:var(--color-background-secondary);border-radius:12px;padding:14px;margin:12px 0}
+.ai{font-size:28px;flex-shrink:0}
+.at{font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.at b{color:var(--color-text-primary);font-weight:500}
+.steps{display:flex;flex-direction:column;gap:0;margin:10px 0}
+.step{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.step:last-child{padding-bottom:0}
+.sn{width:30px;height:30px;border-radius:50%;background:#7F77DD;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--color-border-secondary)}
+.step:last-child::before{display:none}
+.sb{flex:1;padding-top:3px}
+.st{font-size:14px;font-weight:500;margin-bottom:3px}
+.sd{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.cw{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--color-border-tertiary)}
+.cl{background:var(--color-background-secondary);padding:7px 14px;font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--color-border-tertiary)}
+.ca{background:#1a1b2e;padding:14px;overflow-x:auto}
+.cline{display:flex;gap:10px;min-height:20px;margin-bottom:1px}
+.cline:hover{background:rgba(255,255,255,.03);border-radius:4px}
+.ln{font-family:var(--font-mono);font-size:12px;color:#45475a;min-width:22px;text-align:right;flex-shrink:0;user-select:none;line-height:1.8}
+.cd{font-family:var(--font-mono);font-size:12px;color:#cdd6f4;flex:1;white-space:pre;line-height:1.8}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#585b70;font-style:italic}.an{color:#fab387}.cl2{color:#89dceb}.num{color:#f9e2af}
+.ep{border-top:1px solid var(--color-border-tertiary)}
+.er{display:flex;border-bottom:1px solid var(--color-border-tertiary)}
+.er:last-child{border-bottom:none}
+.et{background:#EEEDFE;color:#3C3489;font-family:var(--font-mono);font-size:11px;font-weight:500;padding:10px 10px;min-width:50px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--color-border-tertiary);flex-shrink:0}
+.ed{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.ed b{color:var(--color-text-primary);font-weight:500}
+.ed code{background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.tag-demo{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:500;cursor:default}
+.tag-purple{background:#EEEDFE;color:#3C3489}
+.tag-green{background:#E1F5EE;color:#085041}
+.tag-blue{background:#E8F4FD;color:#0F5E8A}
+.tag-amber{background:#FFF8E7;color:#7A5800}
+.tree{background:#1a1b2e;border-radius:12px;padding:14px;font-family:var(--font-mono);font-size:12px;line-height:2;margin:10px 0}
+.t-white{color:#cdd6f4}.t-purple{color:#cba6f7}.t-green{color:#a6e3a1}.t-amber{color:#f9e2af}.t-gray{color:#585b70}
+.nxt{margin-top:20px;padding:10px 24px;border-radius:24px;background:#7F77DD;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer}
+.nxt:hover{background:#6660CC}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.cmp{border-radius:12px;padding:14px;border:1px solid}
+.cbad{background:#FEECEC;border-color:#F5AAAA}.cgood{background:#E1F5EE;border-color:#A3DCC9}
+.cbad .clb{color:#7A1E1E;font-size:12px;font-weight:500;margin-bottom:6px}
+.cgood .clb{color:#085041;font-size:12px;font-weight:500;margin-bottom:6px}
+.cmp p{font-size:12px;line-height:1.7;color:var(--color-text-secondary)}
+.emo{font-size:36px;display:block;margin-bottom:8px}
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qb{text-align:left;padding:11px 16px;border-radius:10px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.qb:hover{border-color:#7F77DD;color:#3C3489}
+.qb.ok{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.qb.no{background:#FEECEC;border-color:#E24B4A;color:#7A1E1E}
+.qres{margin-top:10px;padding:12px;border-radius:10px;font-size:13px;display:none;line-height:1.7}
+.qres.show{display:block}
+.qres.ok{background:#E1F5EE;color:#085041}.qres.no{background:#FEECEC;color:#7A1E1E}
+.pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500;margin:2px}
+.highlight-box{border-left:3px solid #7F77DD;background:var(--color-background-secondary);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.highlight-box b{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<div class="w">
+<div class="tabs">
+  <div class="tab on" onclick="go(0)">🏠 Start Here</div>
+  <div class="tab" onclick="go(1)">🏷️ What Are Tags</div>
+  <div class="tab" onclick="go(2)">🗂️ Tag Structure</div>
+  <div class="tab" onclick="go(3)">💻 Tagging API</div>
+  <div class="tab" onclick="go(4)">🔍 Search & List</div>
+  <div class="tab" onclick="go(5)">✅ Quick Quiz</div>
+</div>
+
+<!-- PAGE 0: START HERE -->
+<div id="p0" class="pg on">
+  <div class="card cp">
+    <span class="emo">🤔</span>
+    <div class="big">What problem does Session 18 solve?</div>
+    <div class="body">Imagine a huge website with 50,000 pages — news articles, product pages, blog posts, event listings. Users want to find "all articles about cricket in India written in 2024". How do you make that possible? That's what tagging solves.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The scenario we use throughout this session</div>
+    <div class="body">You work for a large <b>news website</b> built in AEM. The website has thousands of articles. Editors want to label (tag) each article with topics so that:<br><br>
+    — Readers can browse "all cricket articles"<br>
+    — A "Related Articles" section shows other articles on the same topic<br>
+    — The homepage can show "trending topics" with article counts<br>
+    — Search can filter by topic, location, sport<br><br>
+    Without tags, you'd have to manually maintain category pages. With tags, it's all automatic.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Three things Session 18 covers</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">What is the AEM Tagging Framework?</div>
+          <div class="sd">AEM has a built-in system for creating and managing tags. You don't build this yourself — AEM provides it. You just need to understand how it works and how to use it.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">The Tagging API — Java code that creates, reads, and applies tags</div>
+          <div class="sd">AEM gives you Java classes you call from your code to work with tags — create a new tag, apply a tag to a page, get all tags on a page, count how many articles have a tag.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Tag Search and Listing — finding content using tags</div>
+          <div class="sd">How to search the entire repository and say "give me all pages that have the tag cricket" or "list all tags under the Sports namespace with their article counts."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(1)">Next: What Are Tags →</button>
+</div>
+
+<!-- PAGE 1: WHAT ARE TAGS -->
+<div id="p1" class="pg">
+  <div class="card cp">
+    <span class="emo">🏷️</span>
+    <div class="big">What are tags? Start with real life.</div>
+    <div class="body">A tag is simply a label you stick on a piece of content. That label helps categorize and find the content later.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogies you already understand</div>
+    <div class="anl">
+      <div class="ai">📚</div>
+      <div class="at">
+        <b>Library books have subject labels.</b> A book about "The History of Cricket in India" has labels on the spine and in the catalog: <i>Sports, Cricket, India, History, Non-fiction</i>. You can find all books about Cricket by searching that label — even books you've never heard of.
+      </div>
+    </div>
+    <div class="anl">
+      <div class="ai">📧</div>
+      <div class="at">
+        <b>Gmail labels.</b> You label emails as "Work", "Family", "Bills". When you click "Work", all work emails appear — regardless of who sent them or when. The label connects them.
+      </div>
+    </div>
+    <div class="anl">
+      <div class="ai">📸</div>
+      <div class="at">
+        <b>Instagram hashtags.</b> #cricket #india #ipl — these are tags. Anyone searching #cricket finds your photo along with millions of others tagged the same way. Tags create connections between unrelated pieces of content.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Tags in AEM — concrete example</div>
+    <div class="body" style="margin-bottom:12px">An article titled "India beats Australia in final" gets tagged by the editor:</div>
+    <div class="tag-demo">
+      <span class="tag tag-purple"><i class="ti ti-tag" aria-hidden="true"></i>Sports</span>
+      <span class="tag tag-purple"><i class="ti ti-tag" aria-hidden="true"></i>Sports / Cricket</span>
+      <span class="tag tag-green"><i class="ti ti-map-pin" aria-hidden="true"></i>Geography / India</span>
+      <span class="tag tag-green"><i class="ti ti-map-pin" aria-hidden="true"></i>Geography / Australia</span>
+      <span class="tag tag-blue"><i class="ti ti-calendar" aria-hidden="true"></i>Year / 2024</span>
+    </div>
+    <div class="body" style="margin-top:12px">Now the website can automatically:<br>
+    — Show this article on the "Cricket" topic page<br>
+    — Show it in "Related Articles" on other cricket articles<br>
+    — Count: "Sports has 4,521 articles, Cricket has 1,203 articles"<br>
+    — Let users filter: "Show me cricket articles from India in 2024"
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">How tags are stored in AEM (the technical reality)</div>
+    <div class="body" style="margin-bottom:10px">In AEM, tags are not just strings like "#cricket". They are actual nodes (entries) stored in the database at a specific location. Think of it like this:</div>
+    <div class="anl">
+      <div class="ai">🗄️</div>
+      <div class="at">
+        Think of AEM's database (the JCR) as a giant folder system. Tags live in their own special folder called <code>/content/cq:tags</code>. Each tag is a folder inside this folder. When you "apply a tag to a page", AEM stores the tag's address (its path) inside the page's properties — like writing a reference to the tag folder on the page's label.
+      </div>
+    </div>
+    <div class="tree">
+      <div><span class="t-gray">/content/cq:tags/        </span><span class="t-amber">← where all tags live</span></div>
+      <div><span class="t-gray">├── </span><span class="t-purple">sports/              </span><span class="t-gray">← a namespace (big category)</span></div>
+      <div><span class="t-gray">│   ├── </span><span class="t-green">cricket/         </span><span class="t-gray">← a tag</span></div>
+      <div><span class="t-gray">│   ├── </span><span class="t-green">football/</span></div>
+      <div><span class="t-gray">│   └── </span><span class="t-green">tennis/</span></div>
+      <div><span class="t-gray">├── </span><span class="t-purple">geography/</span></div>
+      <div><span class="t-gray">│   ├── </span><span class="t-green">india/</span></div>
+      <div><span class="t-gray">│   └── </span><span class="t-green">australia/</span></div>
+      <div><span class="t-gray">└── </span><span class="t-purple">year/</span></div>
+      <div><span class="t-gray">    └── </span><span class="t-green">2024/</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">When an article is tagged with "Sports/Cricket", AEM stores the text <code>"sports:cricket"</code> in that article's properties. That's the tag ID — the address that points to the <code>/content/cq:tags/sports/cricket</code> folder.</div>
+  </div>
+
+  <div class="card cr">
+    <div class="lbl">What is a namespace?</div>
+    <div class="body">A <b>namespace</b> is the top-level folder that groups related tags together. It is the very first part of a tag ID, before the colon.<br><br>
+    <code>sports:cricket</code> → namespace is <b>sports</b>, tag is <b>cricket</b><br>
+    <code>geography:india</code> → namespace is <b>geography</b>, tag is <b>india</b><br><br>
+    Namespaces prevent conflicts. Two different teams can both have a tag called "tennis" — one under <code>sports:tennis</code> and one under <code>indoorgames:tennis</code> — and they don't interfere.<br><br>
+    Think of a namespace like a last name. "John Smith" and "John Jones" are different people even though they share the first name "John". <code>sports:tennis</code> and <code>entertainment:tennis</code> are different tags even though they share "tennis".
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Tag ID format — the address of a tag</div>
+    <div class="body">Every tag has a unique ID written in this format:</div>
+    <div class="highlight-box">
+      <b>namespace:path/to/tag</b><br><br>
+      <code>sports:cricket</code> — namespace "sports", tag "cricket"<br>
+      <code>sports:cricket/ipl</code> — namespace "sports", parent tag "cricket", child tag "ipl"<br>
+      <code>geography:india/chennai</code> — namespace "geography", parent "india", child "chennai"<br><br>
+      Tags can be nested (parents and children), just like folders inside folders.
+    </div>
+    <div class="body" style="margin-top:10px">When stored on a page, the <code>cq:tags</code> property holds an array of these IDs:<br>
+    <code>cq:tags = ["sports:cricket", "geography:india", "year:2024"]</code>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(2)">Next: Tag Structure →</button>
+</div>
+
+<!-- PAGE 2: TAG STRUCTURE -->
+<div id="p2" class="pg">
+  <div class="card cp">
+    <span class="emo">🗂️</span>
+    <div class="big">Tag structure in the repository</div>
+    <div class="body">Let's look at what a tag actually looks like inside AEM's database, and what properties it has. This helps you understand what information you can read from a tag in your Java code.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">A tag node — what it looks like in CRXDE</div>
+    <div class="body" style="margin-bottom:10px">When you open CRXDE Lite (AEM's file explorer, at <code>/crx/de</code>) and navigate to a tag, you see something like this:</div>
+    <div class="tree">
+      <div><span class="t-purple">/content/cq:tags/sports/cricket</span></div>
+      <div><span class="t-gray">  jcr:primaryType = </span><span class="t-green">"cq:Tag"</span><span class="t-amber">  ← the node type that identifies this as a tag</span></div>
+      <div><span class="t-gray">  jcr:title       = </span><span class="t-green">"Cricket"</span><span class="t-amber">    ← the display name</span></div>
+      <div><span class="t-gray">  jcr:title.hi    = </span><span class="t-green">"क्रिकेट"</span><span class="t-amber">  ← Hindi title (localised)</span></div>
+      <div><span class="t-gray">  jcr:title.ta    = </span><span class="t-green">"கிரிக்கெட்"</span><span class="t-amber"> ← Tamil title</span></div>
+      <div><span class="t-gray">  jcr:description = </span><span class="t-green">"All articles about cricket"</span></div>
+      <div><span class="t-gray">  sling:resourceType = </span><span class="t-green">"cq/tagging/components/tag"</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">The node type <code>cq:Tag</code> is what makes AEM recognise this as a tag — not just a random folder. The <code>jcr:title</code> is what shows up in the AEM tag picker UI when editors are tagging content. The localised titles (<code>.hi</code>, <code>.ta</code>) let the tag display in different languages depending on the user's locale.</div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">What is stored ON a page when you tag it?</div>
+    <div class="body" style="margin-bottom:10px">When an editor tags an article in AEM's page editor, this is what gets saved in the page's JCR properties:</div>
+    <div class="tree">
+      <div><span class="t-purple">/content/news/india-beats-australia/jcr:content</span></div>
+      <div><span class="t-gray">  jcr:title = </span><span class="t-green">"India beats Australia in final"</span></div>
+      <div><span class="t-gray">  cq:tags   = [</span></div>
+      <div><span class="t-amber">    "sports:cricket",       </span><span class="t-gray">← tag ID</span></div>
+      <div><span class="t-amber">    "geography:india",      </span><span class="t-gray">← tag ID</span></div>
+      <div><span class="t-amber">    "geography:australia",  </span><span class="t-gray">← tag ID</span></div>
+      <div><span class="t-amber">    "year:2024"             </span><span class="t-gray">← tag ID</span></div>
+      <div><span class="t-gray">  ]</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">The <code>cq:tags</code> property is an array of tag ID strings. AEM resolves each ID to its actual tag node at <code>/content/cq:tags/...</code> when needed. The page doesn't copy the tag — it just stores the tag's address (like a shortcut/symlink to the tag folder).</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Tags can be nested — parents and children</div>
+    <div class="body" style="margin-bottom:10px">Tags can contain other tags, just like folders inside folders. This lets you build a hierarchy from broad to specific:</div>
+    <div class="tree">
+      <div><span class="t-purple">sports:                 </span><span class="t-gray">← namespace</span></div>
+      <div><span class="t-white">  cricket               </span><span class="t-gray">← parent tag (ID: sports:cricket)</span></div>
+      <div><span class="t-green">    ipl                 </span><span class="t-gray">← child tag (ID: sports:cricket/ipl)</span></div>
+      <div><span class="t-green">    test-matches        </span><span class="t-gray">← child tag (ID: sports:cricket/test-matches)</span></div>
+      <div><span class="t-green">    womens-cricket      </span><span class="t-gray">← child tag (ID: sports:cricket/womens-cricket)</span></div>
+      <div><span class="t-white">  football</span></div>
+      <div><span class="t-green">    premier-league</span></div>
+      <div><span class="t-green">    champions-league</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">If you tag an article with <code>sports:cricket/ipl</code>, it is also considered tagged with the parent <code>sports:cricket</code>. So a query for all cricket articles will include IPL articles too. This is called <b>tag inheritance</b> — very useful for broad searches.</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">How to create tags in the AEM UI (no code needed)</div>
+    <div class="body">Go to <b>Tools → Tagging</b> in the AEM navigation. This opens the Tag Manager console where you can:<br><br>
+    — Create a new namespace (like "sports")<br>
+    — Create tags inside a namespace (like "cricket" inside "sports")<br>
+    — Add titles in multiple languages<br>
+    — See how many pages/assets are tagged with each tag (the count)<br>
+    — Move, merge, or delete tags<br><br>
+    <b>Merging tags</b> is powerful — if you have "cricket" and "Cricket" as two separate tags (created by different editors), you can merge them so all content tagged with either one now uses just one canonical tag.
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(3)">Next: Tagging API →</button>
+</div>
+
+<!-- PAGE 3: TAGGING API -->
+<div id="p3" class="pg">
+  <div class="card cp">
+    <span class="emo">💻</span>
+    <div class="big">The Tagging API — Java code for tags</div>
+    <div class="body">The Tagging API is a set of Java classes AEM provides so your code can work with tags: resolve a tag from its ID, apply tags to pages, create new tags, read tags from a page. The main class is <code>TagManager</code>.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">What is TagManager?</div>
+    <div class="anl">
+      <div class="ai">🧑‍💼</div>
+      <div class="at">
+        Think of <b>TagManager</b> like the librarian at the library.<br><br>
+        You say: "I need the book with the label CRICKET." The librarian (TagManager) knows exactly where the cricket section is, fetches the tag object, and hands it to you.<br><br>
+        You say: "I want to put the CRICKET label on this book." The librarian does it for you and updates the catalog.<br><br>
+        You say: "How many books have the CRICKET label?" The librarian counts and tells you.
+      </div>
+    </div>
+    <div class="body">You get a <code>TagManager</code> by calling <code>resourceResolver.adaptTo(TagManager.class)</code>. This asks AEM to give you the TagManager service that is tied to your current session (and therefore your service user's permissions).</div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Core operation 1: Resolving a tag (getting a tag object from its ID)</div>
+    <div class="body" style="margin-bottom:10px">You have the tag ID as a string — like <code>"sports:cricket"</code>. You want the actual Tag object with all its properties.</div>
+    <div class="cw">
+      <div class="cl">Resolving a tag — every line explained</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Get the TagManager from your ResourceResolver</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="cl2">TagManager</span> tagManager = resolver.adaptTo(<span class="cl2">TagManager</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="cm">// Resolve a tag by its ID — ID format is namespace:path</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="cl2">Tag</span> cricketTag = tagManager.resolve(<span class="str">"sports:cricket"</span>);</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="cm">// Always check — if the tag doesn't exist, resolve() returns null</span></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">if</span> (cricketTag != <span class="kw">null</span>) {</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="cm">// Get the display title in English</span></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">    <span class="cl2">String</span> title = cricketTag.getTitle(<span class="cl2">Locale</span>.ENGLISH);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    <span class="cm">// title = "Cricket"</span></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="cm">// Get the tag's path in the repository</span></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    <span class="cl2">String</span> path = cricketTag.getPath();</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="cm">// path = "/content/cq:tags/sports/cricket"</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    <span class="cm">// Get how many pages/assets are tagged with this tag</span></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    <span class="kw">long</span> count = cricketTag.getCount();</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    <span class="cm">// count = 1203 (1203 articles tagged with cricket)</span></span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2</div><div class="ed"><b>resolver.adaptTo(TagManager.class)</b> — <code>adaptTo()</code> is AEM's way of getting a specific service or view from an existing object. You have a ResourceResolver (your database connection). By calling <code>adaptTo(TagManager.class)</code> you ask: "give me a TagManager that works within this session." The TagManager will use the same service user permissions as the resolver — so it can only access tags the service user is allowed to see.</div></div>
+        <div class="er"><div class="et">L5</div><div class="ed"><b>tagManager.resolve("sports:cricket")</b> — takes a tag ID string and looks up the corresponding tag node at <code>/content/cq:tags/sports/cricket</code>. Returns a <code>Tag</code> object if found, or <code>null</code> if the tag doesn't exist. The Tag object is like a Java wrapper around the tag node — it gives you convenient methods to read the tag's properties without writing raw JCR code.</div></div>
+        <div class="er"><div class="et">L8</div><div class="ed"><b>if (cricketTag != null)</b> — always check for null before using the tag. If someone deleted the "sports:cricket" tag from the tag manager UI, or if there's a typo in the ID, resolve() returns null. Calling methods on a null object throws a NullPointerException and crashes your code.</div></div>
+        <div class="er"><div class="et">L11</div><div class="ed"><b>cricketTag.getTitle(Locale.ENGLISH)</b> — returns the human-readable display title of the tag in the requested language. If you stored a Tamil title (<code>jcr:title.ta</code>) on the tag, you'd call <code>getTitle(new Locale("ta"))</code> to get the Tamil version. If no localised title exists for that language, AEM falls back to the default <code>jcr:title</code>.</div></div>
+        <div class="er"><div class="et">L19</div><div class="ed"><b>cricketTag.getCount()</b> — returns how many content nodes (pages, assets) across the entire repository are tagged with this tag. AEM maintains this count automatically whenever tags are applied or removed. You use this to display "Cricket (1,203)" in a tag cloud or navigation menu, showing readers which topics have the most content.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Core operation 2: Reading tags FROM a page</div>
+    <div class="body" style="margin-bottom:10px">You have a page resource. You want to know what tags have been applied to it.</div>
+    <div class="cw">
+      <div class="cl">Getting tags from a page resource</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Get the page's jcr:content node — that's where cq:tags is stored</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="cl2">Resource</span> pageContent = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    <span class="str">"/content/news/india-beats-australia/jcr:content"</span>);</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="cm">// Read the raw cq:tags property — an array of tag ID strings</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="cl2">String</span>[] tagIds = pageContent.getValueMap()</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    .get(<span class="str">"cq:tags"</span>, <span class="cl2">String</span>[].<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="cm">// tagIds = ["sports:cricket", "geography:india", "year:2024"]</span></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"><span class="cm">// OR — use TagManager to get full Tag objects directly</span></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"><span class="cl2">Tag</span>[] tags = tagManager.getTagsForSubtree(pageContent, <span class="kw">false</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"><span class="cm">// Loop through each tag and print its title</span></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd"><span class="kw">for</span> (<span class="cl2">Tag</span> tag : tags) {</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    log.info(<span class="str">"Tag: {}"</span>, tag.getTitle());</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="cm">// prints: "Tag: Cricket", "Tag: India", "Tag: 2024"</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2-3</div><div class="ed"><b>resolver.getResource(".../jcr:content")</b> — a page in AEM has two nodes: the page node itself (<code>/content/news/india-beats-australia</code>) and a child node called <code>jcr:content</code> where all the page's actual properties live — title, tags, content, metadata. The <code>cq:tags</code> property is on the <code>jcr:content</code> node, so that's what you need to read.</div></div>
+        <div class="er"><div class="et">L6-7</div><div class="ed"><b>pageContent.getValueMap().get("cq:tags", String[].class)</b> — <code>getValueMap()</code> returns all the properties of this node as a Map (key-value pairs). <code>.get("cq:tags", String[].class)</code> reads the <code>cq:tags</code> property as an array of Strings. The second argument <code>String[].class</code> tells AEM what type to return — AEM handles the conversion automatically. Returns null if the property doesn't exist (no tags applied).</div></div>
+        <div class="er"><div class="et">L11</div><div class="ed"><b>tagManager.getTagsForSubtree(pageContent, false)</b> — a convenience method that reads the <code>cq:tags</code> property, resolves each tag ID to its full Tag object, and returns them as an array. The second argument <code>false</code> means: only return tags directly on this node (not from child nodes). Pass <code>true</code> to also collect tags from all child nodes (useful for getting all tags used within a whole section of the website).</div></div>
+        <div class="er"><div class="et">L14-17</div><div class="ed"><b>for (Tag tag : tags)</b> — a standard Java for-each loop. For each Tag object in the array, you can call any Tag method: <code>tag.getTitle()</code> for the display name, <code>tag.getTagID()</code> for the ID string like "sports:cricket", <code>tag.getPath()</code> for the repository path, <code>tag.getCount()</code> for how many items are tagged with it.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Core operation 3: Applying tags to a page in code</div>
+    <div class="body" style="margin-bottom:10px">Your code needs to programmatically apply tags to a page — for example, an import job that auto-tags 10,000 product pages based on their category.</div>
+    <div class="cw">
+      <div class="cl">Applying tags programmatically</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// First, resolve the tags you want to apply</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="cl2">Tag</span> cricketTag = tagManager.resolve(<span class="str">"sports:cricket"</span>);</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="cl2">Tag</span> indiaTag   = tagManager.resolve(<span class="str">"geography:india"</span>);</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="cm">// Get the page's jcr:content resource</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="cl2">Resource</span> pageContent = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="str">"/content/news/my-article/jcr:content"</span>);</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"><span class="cm">// Apply the tags — this sets the cq:tags property on that resource</span></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">tagManager.setTags(</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">    pageContent,</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    <span class="kw">new</span> <span class="cl2">Tag</span>[]{cricketTag, indiaTag},</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    <span class="kw">true</span></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">);</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd"><span class="cm">// Save the changes</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">resolver.commit();</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2-3</div><div class="ed"><b>Resolve before applying.</b> You always need the actual Tag objects — not just strings. If a tag doesn't exist (resolve returns null), you cannot apply it. In a real import job you'd check for null and either skip that tag or create it first (using <code>tagManager.createTag()</code>).</div></div>
+        <div class="er"><div class="et">L10-14</div><div class="ed"><b>tagManager.setTags(resource, tagsArray, mergeWithExisting)</b> — sets the <code>cq:tags</code> property on the given resource.<br><br><b>resource</b> — the jcr:content node of the page you want to tag.<br><b>tagsArray</b> — the array of Tag objects to apply. You create this with <code>new Tag[]{tag1, tag2, ...}</code>.<br><b>true (third argument)</b> — merge with existing tags. If the page already has tags, keep them and add these new ones. If you pass <code>false</code>, it replaces all existing tags with just these new ones. For an import that auto-adds category tags without removing manually-applied tags, always use <code>true</code>.</div></div>
+        <div class="er"><div class="et">L17</div><div class="ed"><b>resolver.commit()</b> — <code>setTags()</code> modifies the JCR node in memory but doesn't save to disk yet. <code>commit()</code> persists the changes. Without this, tags are lost when the session closes. Same concept as Ctrl+S — always call after writes.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Core operation 4: Creating a new tag in code</div>
+    <div class="cw">
+      <div class="cl">Creating a tag programmatically</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cl2">Tag</span> newTag = tagManager.createTag(</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd">    <span class="str">"sports:cricket/womens-t20"</span>,</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    <span class="str">"Women's T20"</span>,</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">    <span class="str">"All articles about Women's T20 cricket"</span>,</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="kw">false</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">);</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">resolver.commit();</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2</div><div class="ed"><b>"sports:cricket/womens-t20"</b> — the full tag ID path for the new tag. This creates the tag as a child of <code>sports:cricket</code>. AEM creates any missing parent nodes automatically — so if <code>sports:cricket</code> doesn't exist yet, it creates that too.</div></div>
+        <div class="er"><div class="et">L3</div><div class="ed"><b>"Women's T20"</b> — the human-readable title stored as <code>jcr:title</code>. This is what shows in the AEM UI when editors pick tags.</div></div>
+        <div class="er"><div class="et">L4</div><div class="ed"><b>"All articles about Women's T20 cricket"</b> — the description stored as <code>jcr:description</code>. Helps editors understand what to tag with this tag. Shown as a tooltip in the tag picker UI.</div></div>
+        <div class="er"><div class="et">L5</div><div class="ed"><b>false</b> — whether to auto-create if it doesn't exist (true) or fail if the tag already exists (false). Passing <code>false</code> means: if this tag already exists, throw an exception instead of silently doing nothing. Useful in import jobs where you want to know if something already exists vs was freshly created.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(4)">Next: Search and List →</button>
+</div>
+
+<!-- PAGE 4: SEARCH AND LIST -->
+<div id="p4" class="pg">
+  <div class="card cp">
+    <span class="emo">🔍</span>
+    <div class="big">Tag Search and Listing</div>
+    <div class="body">Now the most powerful part: using tags to FIND content. "Give me all articles tagged cricket" or "List all tags under Sports with their article counts."</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Real world use case — "Related Articles" component</div>
+    <div class="anl">
+      <div class="ai">📰</div>
+      <div class="at">
+        You are building a "Related Articles" section that appears at the bottom of every article. It should show 5 other articles that share at least one tag with the current article.<br><br>
+        <b>How it works:</b><br>
+        1. Read the current article's tags → ["sports:cricket", "geography:india"]<br>
+        2. Search all pages that have ANY of those tags<br>
+        3. Exclude the current page itself<br>
+        4. Show the top 5 results<br><br>
+        This entire feature runs on the tagging system. No manual curation needed.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Searching for pages by tag — using QueryBuilder</div>
+    <div class="body" style="margin-bottom:10px">AEM's QueryBuilder lets you search the repository. You build a query as a Map of parameters and execute it. Think of it like building a SQL WHERE clause but in a key-value format.</div>
+    <div class="cw">
+      <div class="cl">Find all articles tagged "sports:cricket"</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Import needed classes</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import</span> com.day.cq.search.QueryBuilder;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">import</span> com.day.cq.search.result.SearchResult;</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">import</span> java.util.HashMap;</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">import</span> java.util.Map;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="an">@Reference</span></div></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">private</span> <span class="cl2">QueryBuilder</span> queryBuilder;</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"><span class="cm">// Build the search query as key-value pairs</span></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"><span class="cl2">Map</span>&lt;<span class="cl2">String</span>, <span class="cl2">String</span>&gt; params = <span class="kw">new</span> <span class="cl2">HashMap</span>&lt;&gt;();</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">params.put(<span class="str">"type"</span>,     <span class="str">"cq:Page"</span>);</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">params.put(<span class="str">"path"</span>,     <span class="str">"/content/news"</span>);</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">params.put(<span class="str">"tagid"</span>,    <span class="str">"sports:cricket"</span>);</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">params.put(<span class="str">"tagid.property"</span>, <span class="str">"jcr:content/cq:tags"</span>);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">params.put(<span class="str">"p.limit"</span>,  <span class="str">"5"</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd"><span class="cm">// Execute the query — need a JCR Session</span></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd"><span class="cl2">Session</span> session = resolver.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd"><span class="cl2">Query</span> query = queryBuilder.createQuery(</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">    <span class="cl2">PredicateGroup</span>.create(params), session);</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd"><span class="cl2">SearchResult</span> result = query.getResult();</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd"><span class="cm">// Loop through matched pages</span></span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd"><span class="kw">for</span> (<span class="cl2">Hit</span> hit : result.getHits()) {</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">    <span class="cl2">String</span> pagePath = hit.getPath();</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">    log.info(<span class="str">"Found cricket article: {}"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L7-8</div><div class="ed"><b>@Reference QueryBuilder queryBuilder</b> — just like how you @Reference ResourceResolverFactory, you @Reference QueryBuilder. OSGi injects it automatically. QueryBuilder is AEM's search engine API — it translates your Map of parameters into an actual JCR-SQL2 query and runs it against the repository.</div></div>
+        <div class="er"><div class="et">L11</div><div class="ed"><b>new HashMap&lt;&gt;()</b> — a HashMap is a simple key-value store in Java. Like a dictionary: each key maps to one value. You use it here to build the query parameters. QueryBuilder reads this map and understands: "the user wants type=cq:Page, under path=/content/news, with tagid=sports:cricket". It's like filling in a search form programmatically.</div></div>
+        <div class="er"><div class="et">L13</div><div class="ed"><b>params.put("type", "cq:Page")</b> — only return pages (not assets or other node types). <code>cq:Page</code> is the node type for all AEM pages. If you wanted to search assets in the DAM, you'd use <code>"dam:Asset"</code>.</div></div>
+        <div class="er"><div class="et">L14</div><div class="ed"><b>params.put("path", "/content/news")</b> — only search within this path. Without this, QueryBuilder searches the ENTIRE repository — all 500,000+ nodes. This is critical for performance. Always narrow the search scope to only the section you care about.</div></div>
+        <div class="er"><div class="et">L15-16</div><div class="ed"><b>params.put("tagid", "sports:cricket")</b> — find items tagged with this specific tag ID. AEM also searches child tags — so if there's a child tag <code>sports:cricket/ipl</code>, articles tagged with IPL will also be returned (because IPL is a cricket sub-tag).<br><br><b>params.put("tagid.property", "jcr:content/cq:tags")</b> — tells QueryBuilder exactly which property on the page node to check. The tags are stored in <code>jcr:content/cq:tags</code>, not directly on the page node. The <code>tagid.property</code> param is the path to that property relative to the page node.</div></div>
+        <div class="er"><div class="et">L17</div><div class="ed"><b>params.put("p.limit", "5")</b> — return at most 5 results. Always set a limit in production — without it, the query could return thousands of results at once, consuming huge amounts of memory. Use <code>"-1"</code> to get unlimited results only when you truly need all of them (e.g. in a batch job).</div></div>
+        <div class="er"><div class="et">L20</div><div class="ed"><b>resolver.adaptTo(Session.class)</b> — QueryBuilder needs a raw JCR Session (the lower-level connection object that the ResourceResolver wraps). <code>adaptTo(Session.class)</code> extracts this from your existing resolver — no new login needed. The session carries the same service user permissions as the resolver.</div></div>
+        <div class="er"><div class="et">L26-29</div><div class="ed"><b>result.getHits()</b> — returns the list of matching nodes. Each <code>Hit</code> object represents one matched page. <code>hit.getPath()</code> gives you the JCR path of that page. You can also call <code>hit.getResource()</code> to get the full Resource object and read its properties.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Listing child tags — building a tag cloud or navigation menu</div>
+    <div class="body" style="margin-bottom:10px">You want to display all sub-tags under "Sports" in a navigation menu, each showing how many articles it has.</div>
+    <div class="cw">
+      <div class="cl">List all sports tags with their article counts</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Resolve the parent tag</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="cl2">Tag</span> sportsTag = tagManager.resolve(<span class="str">"sports:"</span>);</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="cm">// Note: "sports:" with a colon and nothing after = the namespace itself</span></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">if</span> (sportsTag != <span class="kw">null</span>) {</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="cm">// listChildren() returns an Iterator over all direct child tags</span></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="cl2">Iterator</span>&lt;<span class="cl2">Tag</span>&gt; children = sportsTag.listChildren();</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="kw">while</span> (children.hasNext()) {</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">        <span class="cl2">Tag</span> child = children.next();</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">        <span class="cl2">String</span> title = child.getTitle();</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">        <span class="kw">long</span>   count = child.getCount();</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">        <span class="cl2">String</span> id    = child.getTagID();</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">        log.info(<span class="str">"{} ({}) — id: {}"</span>, title, count, id);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        <span class="cm">// prints: "Cricket (1203) — id: sports:cricket"</span></span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">        <span class="cm">// prints: "Football (876) — id: sports:football"</span></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2</div><div class="ed"><b>tagManager.resolve("sports:")</b> — to resolve the namespace itself (not a specific tag inside it), you use the namespace name followed by just a colon. This gives you the sports namespace tag node, whose children are cricket, football, tennis etc. Without the colon, it would look for a tag literally named "sports" inside the default namespace.</div></div>
+        <div class="er"><div class="et">L7</div><div class="ed"><b>sportsTag.listChildren()</b> — returns a Java <code>Iterator</code> over the immediate child tags. An Iterator is like a cursor that walks through a list one item at a time. It only gives you direct children — not grandchildren. If you want ALL descendants (cricket, cricket/ipl, cricket/test-matches etc.), you'd need to recurse into each child and call listChildren() on them too.</div></div>
+        <div class="er"><div class="et">L9-10</div><div class="ed"><b>while (children.hasNext()) { Tag child = children.next(); }</b> — this is the standard Java Iterator pattern. <code>hasNext()</code> returns true if there are more items. <code>next()</code> gets the next item and advances the cursor. You loop until <code>hasNext()</code> returns false (no more children).</div></div>
+        <div class="er"><div class="et">L12-14</div><div class="ed"><b>child.getTitle()</b> — the display name like "Cricket".<br><b>child.getCount()</b> — how many pages/assets across the whole repository are tagged with this specific tag.<br><b>child.getTagID()</b> — the full tag ID string like "sports:cricket". You use this ID to link to a tag listing page or as a query parameter in a URL like <code>/content/news.tag.sports:cricket.html</code>.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Putting it all together — the "Related Articles" component in HTL</div>
+    <div class="body" style="margin-bottom:10px">This is how all the above comes together in a real AEM component. The Sling Model reads current page tags, finds related articles, and the HTL template renders them.</div>
+    <div class="cw">
+      <div class="cl">RelatedArticlesModel.java — Sling Model using tagging</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="an">@Model</span>(adaptables = <span class="cl2">SlingHttpServletRequest</span>.<span class="kw">class</span>)</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">public class</span> <span class="cl2">RelatedArticlesModel</span> {</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">    <span class="an">@SlingObject</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="kw">private</span> <span class="cl2">ResourceResolver</span> resolver;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="an">@ScriptVariable</span></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">    <span class="kw">private</span> <span class="cl2">Page</span> currentPage;</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="kw">public</span> <span class="cl2">List</span>&lt;<span class="cl2">String</span>&gt; getRelatedArticlePaths() {</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        <span class="cl2">TagManager</span> tm = resolver.adaptTo(<span class="cl2">TagManager</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">        <span class="cl2">Tag</span>[] tags = tm.getTagsForSubtree(currentPage.getContentResource(), <span class="kw">false</span>);</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">        <span class="kw">if</span> (tags == <span class="kw">null</span> || tags.length == <span class="num">0</span>) <span class="kw">return</span> <span class="cl2">Collections</span>.emptyList();</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">        <span class="cm">// Use the first tag to find related articles</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        <span class="cl2">Map</span>&lt;<span class="cl2">String</span>, <span class="cl2">String</span>&gt; params = <span class="kw">new</span> <span class="cl2">HashMap</span>&lt;&gt;();</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">        params.put(<span class="str">"type"</span>, <span class="str">"cq:Page"</span>);</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">        params.put(<span class="str">"path"</span>, <span class="str">"/content/news"</span>);</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">        params.put(<span class="str">"tagid"</span>, tags[<span class="num">0</span>].getTagID());</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">        params.put(<span class="str">"tagid.property"</span>, <span class="str">"jcr:content/cq:tags"</span>);</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">        params.put(<span class="str">"p.limit"</span>, <span class="str">"5"</span>);</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">        <span class="cl2">List</span>&lt;<span class="cl2">String</span>&gt; paths = <span class="kw">new</span> <span class="cl2">ArrayList</span>&lt;&gt;();</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">        <span class="kw">for</span> (<span class="cl2">Hit</span> hit : queryBuilder.createQuery(</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">                <span class="cl2">PredicateGroup</span>.create(params),</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">                resolver.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>))</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">                .getResult().getHits()) {</span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">            <span class="kw">if</span> (!hit.getPath().equals(currentPage.getPath()))</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd">                paths.add(hit.getPath());</span></div>
+        <div class="cline"><span class="ln">31</span><span class="cd">        }</span></div>
+        <div class="cline"><span class="ln">32</span><span class="cd">        <span class="kw">return</span> paths;</span></div>
+        <div class="cline"><span class="ln">33</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">34</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L1</div><div class="ed"><b>@Model(adaptables = SlingHttpServletRequest.class)</b> — this is a Sling Model annotation. It registers this class as a Sling Model — a Java class that can be used by HTL templates. <code>adaptables</code> says "this model is created from a SlingHttpServletRequest" — meaning it runs in the context of a web request (when someone opens a page in their browser). The model has access to the current request, page, and resource.</div></div>
+        <div class="er"><div class="et">L4-5</div><div class="ed"><b>@SlingObject ResourceResolver resolver</b> — in a Sling Model, @SlingObject injects objects from the current Sling context. Here it gives you the ResourceResolver of the current web request — no service user needed because this runs as the page visitor's anonymous session (or logged-in user session).</div></div>
+        <div class="er"><div class="et">L7-8</div><div class="ed"><b>@ScriptVariable Page currentPage</b> — @ScriptVariable injects variables that the Sling engine makes available in every HTL template — like <code>currentPage</code> (the AEM Page object for the page being rendered). <code>currentPage.getContentResource()</code> returns the <code>jcr:content</code> node of the current page — where its tags are stored.</div></div>
+        <div class="er"><div class="et">L29-30</div><div class="ed"><b>if (!hit.getPath().equals(currentPage.getPath()))</b> — exclude the current page from results. Without this check, the "Related Articles" section would include the article you're currently reading as its own related article. The <code>!</code> means "not equal to" — only add the hit path to results if it's NOT the current page's path.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(5)">Next: Quick Quiz →</button>
+</div>
+
+<!-- PAGE 5: QUIZ -->
+<div id="p5" class="pg">
+  <div class="card cp">
+    <span class="emo">✅</span>
+    <div class="big">Quick Quiz — check your understanding</div>
+    <div class="body">Five questions. Tap what you think is right.</div>
+  </div>
+
+  <div class="card" id="q1">
+    <div class="quiz-q">1. Where does AEM store all tags in the repository?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(1,'a')">A. /content/dam</button>
+      <button class="qb" onclick="ans(1,'b')">B. /content/cq:tags</button>
+      <button class="qb" onclick="ans(1,'c')">C. /apps/tags</button>
+    </div>
+    <div class="qres" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="quiz-q">2. What is the tag ID format for a tag called "cricket" inside a namespace called "sports"?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(2,'a')">A. cricket/sports</button>
+      <button class="qb" onclick="ans(2,'b')">B. sports.cricket</button>
+      <button class="qb" onclick="ans(2,'c')">C. sports:cricket</button>
+    </div>
+    <div class="qres" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="quiz-q">3. Which Java class do you use to resolve a tag by its ID and apply tags to a page?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(3,'a')">A. TagManager</button>
+      <button class="qb" onclick="ans(3,'b')">B. ResourceResolver</button>
+      <button class="qb" onclick="ans(3,'c')">C. QueryBuilder</button>
+    </div>
+    <div class="qres" id="qr3"></div>
+  </div>
+
+  <div class="card" id="q4">
+    <div class="quiz-q">4. After calling tagManager.setTags(...) to apply tags to a page, what must you do to actually save the changes?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(4,'a')">A. Call tagManager.save()</button>
+      <button class="qb" onclick="ans(4,'b')">B. Call resolver.commit()</button>
+      <button class="qb" onclick="ans(4,'c')">C. Nothing — setTags saves automatically</button>
+    </div>
+    <div class="qres" id="qr4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="quiz-q">5. You want to find all pages tagged with "sports:cricket" under /content/news. Which AEM API do you use?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(5,'a')">A. TagManager.getTagsForSubtree()</button>
+      <button class="qb" onclick="ans(5,'b')">B. QueryBuilder with tagid and path parameters</button>
+      <button class="qb" onclick="ans(5,'c')">C. ResourceResolver.getResource()</button>
+    </div>
+    <div class="qres" id="qr5"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ans_data = {
+  1:{c:'b',e:"✅ Correct! All tags in AEM live under /content/cq:tags. Each namespace and tag is a node inside this folder. The jcr:primaryType of each tag node is cq:Tag which tells AEM it's a tag."},
+  2:{c:'c',e:"✅ Correct! The format is namespace:tagpath. So sports:cricket means the 'cricket' tag inside the 'sports' namespace. A child tag would be sports:cricket/ipl."},
+  3:{c:'a',e:"✅ Correct! TagManager is the central API for all tag operations — resolving tags by ID, applying tags to pages, creating tags, counting tagged content. You get it by calling resolver.adaptTo(TagManager.class)."},
+  4:{c:'b',e:"✅ Correct! setTags() modifies the JCR node in memory but doesn't save to disk. You must call resolver.commit() to persist the changes — same as with any JCR write operation in AEM."},
+  5:{c:'b',e:"✅ Correct! QueryBuilder is AEM's search engine. You build a params Map with type=cq:Page, path=/content/news, tagid=sports:cricket, and tagid.property=jcr:content/cq:tags, then execute the query to get all matching pages."}
+};
+
+function ans(q, choice) {
+  const a = ans_data[q];
+  const btns = document.querySelectorAll('#q'+q+' .qb');
+  const letters = ['a','b','c'];
+  btns.forEach((b,i) => {
+    b.disabled = true;
+    if(letters[i]===a.c) b.classList.add('ok');
+    else if(letters[i]===choice && choice!==a.c) b.classList.add('no');
+  });
+  const r = document.getElementById('qr'+q);
+  if(choice===a.c){
+    r.className='qres show ok'; r.innerHTML=a.e;
+  } else {
+    r.className='qres show no'; r.innerHTML='❌ Not quite. '+a.e;
+  }
+}
+
+function go(i){
+  document.querySelectorAll('.pg').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+}
+</script>

@@ -1,0 +1,991 @@
+
+<h2 class="sr-only">Complete AEM guide for sessions 1 to 4 — click any topic on the left to read a plain-English explanation with real examples and code</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;line-height:1.6;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:680px}
+.sidebar{width:230px;min-width:230px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.sh{padding:14px 16px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sh-top{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px}
+.sh-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 5px 16px;font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.09em}
+.ni{padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);display:flex;align-items:flex-start;gap:8px;line-height:1.35}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:24px 28px}
+.body::-webkit-scrollbar{width:4px}
+.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}
+.pg.on{display:block}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+.badge.g{background:var(--color-background-success);color:var(--color-text-success)}
+.badge.w{background:var(--color-background-warning);color:var(--color-text-warning)}
+h1{font-size:20px;font-weight:500;margin-bottom:6px;line-height:1.3}
+.intro{font-size:13.5px;color:var(--color-text-secondary);margin-bottom:20px;line-height:1.7;padding-bottom:16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+h3{font-size:13px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 8px}
+h3:first-of-type{margin-top:0}
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:10px}
+p:last-child{margin-bottom:0}
+p code,li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:5px}
+.card-body{font-size:12.5px;color:var(--color-text-secondary);line-height:1.65}
+.card-body code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.rl{background:var(--color-background-success);border-left:3px solid var(--color-border-success);padding:11px 14px;border-radius:0;margin:12px 0;font-size:13px;color:var(--color-text-success);line-height:1.7}
+.rl strong{font-weight:500}
+.warn{background:var(--color-background-warning);border-left:3px solid var(--color-border-warning);padding:11px 14px;border-radius:0;margin:12px 0;font-size:13px;color:var(--color-text-warning);line-height:1.7}
+.tip{background:var(--color-background-info);border-left:3px solid var(--color-border-info);padding:11px 14px;border-radius:0;margin:12px 0;font-size:13px;color:var(--color-text-info);line-height:1.7}
+pre{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:13px 15px;font-family:var(--font-mono);font-size:12px;line-height:1.75;overflow-x:auto;margin:10px 0;color:var(--color-text-primary);white-space:pre}
+.kw{color:#7c5cbf}.str{color:#1d9e75}.cm{color:var(--color-text-tertiary)}.attr{color:#b45309}.tag{color:#185fa5}.num{color:#d97706}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 13px;font-size:12.5px;color:var(--color-text-primary)}
+.fb.bl{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.fb.gr{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.fa{color:var(--color-text-tertiary);font-size:16px}
+.steps{display:flex;flex-direction:column;gap:8px;margin:10px 0 14px}
+.step{display:flex;gap:10px;align-items:flex-start}
+.sn{width:22px;height:22px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step p{font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin:0}
+.step p code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+ul{padding-left:18px;margin:8px 0 12px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:3px}
+</style>
+
+<div class="app">
+<div class="sidebar">
+  <div class="sh"><div class="sh-top">Sessions 1–4</div><div class="sh-title">AEM Complete Guide</div></div>
+
+  <div class="grp">Session 1 — intro</div>
+  <div class="ni on" onclick="g('cms')" id="n-cms"><i class="ti ti-world" aria-hidden="true"></i>What is CMS &amp; WCM</div>
+  <div class="ni" onclick="g('aem-intro')" id="n-aem-intro"><i class="ti ti-app-window" aria-hidden="true"></i>What is AEM</div>
+  <div class="ni" onclick="g('wysiwyg')" id="n-wysiwyg"><i class="ti ti-pencil" aria-hidden="true"></i>WYSIWYG concept</div>
+  <div class="ni" onclick="g('arch')" id="n-arch"><i class="ti ti-server" aria-hidden="true"></i>Author, Publish, Dispatcher</div>
+  <div class="ni" onclick="g('jcr')" id="n-jcr"><i class="ti ti-database" aria-hidden="true"></i>JCR — where content lives</div>
+  <div class="ni" onclick="g('interfaces')" id="n-interfaces"><i class="ti ti-layout-sidebar" aria-hidden="true"></i>AEM interfaces</div>
+  <div class="ni" onclick="g('wknd')" id="n-wknd"><i class="ti ti-mountain" aria-hidden="true"></i>WKND demo project</div>
+
+  <div class="grp">Session 2 — maven</div>
+  <div class="ni" onclick="g('maven')" id="n-maven"><i class="ti ti-package" aria-hidden="true"></i>What is Maven</div>
+  <div class="ni" onclick="g('pom')" id="n-pom"><i class="ti ti-file-code" aria-hidden="true"></i>POM.xml explained</div>
+  <div class="ni" onclick="g('archetype')" id="n-archetype"><i class="ti ti-template" aria-hidden="true"></i>Generate AEM project</div>
+  <div class="ni" onclick="g('project-structure')" id="n-project-structure"><i class="ti ti-folder" aria-hidden="true"></i>Project folder structure</div>
+  <div class="ni" onclick="g('deploy')" id="n-deploy"><i class="ti ti-upload" aria-hidden="true"></i>Build &amp; deploy commands</div>
+
+  <div class="grp">Session 3 — authoring</div>
+  <div class="ni" onclick="g('page-authoring')" id="n-page-authoring"><i class="ti ti-file-plus" aria-hidden="true"></i>Creating &amp; editing pages</div>
+  <div class="ni" onclick="g('templates')" id="n-templates"><i class="ti ti-layout" aria-hidden="true"></i>Templates — static vs editable</div>
+  <div class="ni" onclick="g('layout-container')" id="n-layout-container"><i class="ti ti-layout-grid" aria-hidden="true"></i>Layout container &amp; parsys</div>
+  <div class="ni" onclick="g('policies')" id="n-policies"><i class="ti ti-shield" aria-hidden="true"></i>Policies &amp; design mode</div>
+  <div class="ni" onclick="g('sling-resolution')" id="n-sling-resolution"><i class="ti ti-route" aria-hidden="true"></i>Sling URL resolution</div>
+  <div class="ni" onclick="g('core-components')" id="n-core-components"><i class="ti ti-components" aria-hidden="true"></i>Core components overview</div>
+
+  <div class="grp">Session 4 — custom components</div>
+  <div class="ni" onclick="g('comp-what')" id="n-comp-what"><i class="ti ti-puzzle" aria-hidden="true"></i>What is a component</div>
+  <div class="ni" onclick="g('comp-structure')" id="n-comp-structure"><i class="ti ti-folder-open" aria-hidden="true"></i>Component folder structure</div>
+  <div class="ni" onclick="g('content-xml')" id="n-content-xml"><i class="ti ti-file-description" aria-hidden="true"></i>.content.xml in detail</div>
+  <div class="ni" onclick="g('htl-detail')" id="n-htl-detail"><i class="ti ti-code" aria-hidden="true"></i>HTL file in detail</div>
+  <div class="ni" onclick="g('dialog-detail')" id="n-dialog-detail"><i class="ti ti-forms" aria-hidden="true"></i>Dialog in detail</div>
+  <div class="ni" onclick="g('editconfig-detail')" id="n-editconfig-detail"><i class="ti ti-edit" aria-hidden="true"></i>Edit config in detail</div>
+  <div class="ni" onclick="g('design-dialog')" id="n-design-dialog"><i class="ti ti-adjustments" aria-hidden="true"></i>Design dialog</div>
+  <div class="ni" onclick="g('inheritance')" id="n-inheritance"><i class="ti ti-git-branch" aria-hidden="true"></i>Inheritance in AEM</div>
+  <div class="ni" onclick="g('overlay')" id="n-overlay"><i class="ti ti-layers-intersect" aria-hidden="true"></i>Overlay &amp; override</div>
+  <div class="ni" onclick="g('style-system')" id="n-style-system"><i class="ti ti-palette" aria-hidden="true"></i>Style system</div>
+</div>
+
+<div class="body">
+
+<div class="pg on" id="p-cms">
+<span class="badge"><i class="ti ti-world" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>What is a CMS and WCM?</h1>
+<p class="intro">Before AEM, understand what problem it solves. Every website needs content — text, images, pages. Without a CMS, a developer has to manually edit HTML files every single time something changes.</p>
+<h3>The problem CMS solves</h3>
+<p>Imagine a bank's website. They have 500 pages — loan rates, branch hours, FAQs. Every week something changes. Without a CMS, a developer has to edit HTML files, redeploy, and push to production for every single change. This takes days and costs money.</p>
+<p>A CMS (Content Management System) lets non-technical people — marketing managers, content editors — log into a website, click on text, change it, and publish it themselves. No developer needed.</p>
+<div class="rl"><strong>Real example:</strong> HDFC Bank's website has thousands of pages. Their marketing team updates interest rates every week, adds new offers every day, and publishes new articles every hour — all without a single developer writing code. They use a CMS to do this.</div>
+<h3>CMS vs WCM — what's the difference?</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">CMS — Content Management System</div><div class="card-body">General term for any system that manages content. WordPress, Drupal, Joomla are all CMS platforms. Suitable for blogs, small websites, simple use cases.</div></div>
+<div class="card"><div class="card-title">WCM — Web Content Management</div><div class="card-body">An advanced CMS built for enterprise. Handles multiple sites, multiple languages, workflows, approvals, personalization, digital assets — all at scale. AEM is a WCM.</div></div>
+</div>
+<h3>Three things every CMS has</h3>
+<div class="grid3">
+<div class="card"><div class="card-title">Content repository</div><div class="card-body">Where everything is stored — pages, images, videos, configs. In AEM this is the JCR (Java Content Repository).</div></div>
+<div class="card"><div class="card-title">Authoring interface</div><div class="card-body">The UI editors use to create and edit content. Can be a form, a rich text editor, or a drag-and-drop canvas.</div></div>
+<div class="card"><div class="card-title">Delivery layer</div><div class="card-body">Converts stored content into HTML pages that end users see in their browser.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-aem-intro">
+<span class="badge"><i class="ti ti-app-window" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>What is AEM — Adobe Experience Manager</h1>
+<p class="intro">AEM is Adobe's enterprise CMS. It is used by large companies — banks, airlines, retailers — to manage massive websites across multiple countries, languages, and brands from one platform.</p>
+<h3>What AEM is built on</h3>
+<p>AEM is not built from scratch. It is assembled from several open-source Apache projects layered on top of each other:</p>
+<div class="card"><div class="card-title">The technology stack inside AEM</div><div class="card-body">
+<strong>Apache Felix (OSGi)</strong> — the Java runtime. Manages Java bundles (plugins) that can be installed and updated without restarting the server.<br><br>
+<strong>Apache Sling</strong> — the web framework. Maps URLs to JCR content nodes and finds the right script to render them.<br><br>
+<strong>Apache Jackrabbit Oak</strong> — the content repository. Stores everything as a tree of nodes and properties (like a file system but with typed data).<br><br>
+<strong>Adobe Granite</strong> — Adobe's layer on top. Adds the authoring UI, workflows, DAM, and all the enterprise features.
+</div></div>
+<h3>What AEM can do</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">AEM Sites</div><div class="card-body">Create and manage web pages. Drag-and-drop components, edit content inline, manage templates, run A/B tests.</div></div>
+<div class="card"><div class="card-title">AEM Assets (DAM)</div><div class="card-body">Manage all digital files — images, videos, PDFs. Auto-generate image renditions, add metadata, search assets.</div></div>
+<div class="card"><div class="card-title">AEM Forms</div><div class="card-body">Build dynamic digital forms with workflows and e-signatures. Used by banks and governments.</div></div>
+<div class="card"><div class="card-title">Headless CMS</div><div class="card-body">Deliver content as JSON to React apps, mobile apps, or any channel via GraphQL and REST APIs.</div></div>
+</div>
+<div class="rl"><strong>Real example:</strong> Marriott hotels uses AEM to manage their website in 50 languages across 200 countries. One team in corporate HQ manages the brand standards and global templates. Local teams in each country manage their own pages and offers — all from the same AEM instance.</div>
+</div>
+
+<div class="pg" id="p-wysiwyg">
+<span class="badge"><i class="ti ti-pencil" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>WYSIWYG — What You See Is What You Get</h1>
+<p class="intro">WYSIWYG means the editing interface looks exactly like the final published page. You click on a title directly on the page, type the new text, and the page immediately shows what it will look like when live.</p>
+<h3>How it works in AEM</h3>
+<p>When an editor opens a page in AEM's editor, they see the actual rendered page — with all the CSS, images, and layout applied. They can then click on any component (text block, image, banner) and a blue toolbar appears. Clicking "Edit" activates the editor directly on the component.</p>
+<div class="flow">
+<div class="fb">Open page in editor</div><span class="fa">→</span>
+<div class="fb">Click on a component</div><span class="fa">→</span>
+<div class="fb bl">Blue toolbar appears</div><span class="fa">→</span>
+<div class="fb">Click Edit / Configure</div><span class="fa">→</span>
+<div class="fb gr">Edit content directly on page</div>
+</div>
+<h3>Two types of editing in AEM</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Inline editing (in-place)</div><div class="card-body">Double-click on a text component and a rich text editor activates directly on the page. You type changes and they appear immediately where the text is. Used for simple text components.</div></div>
+<div class="card"><div class="card-title">Dialog editing (configure)</div><div class="card-body">Click the wrench icon and a popup dialog opens with form fields. Used for complex components with many settings — image paths, link URLs, dropdown selections, checkboxes.</div></div>
+</div>
+<div class="rl"><strong>Real example:</strong> A content editor at Zomato needs to update the hero banner text for Diwali. She opens the homepage in AEM editor, double-clicks the headline text, types the new text, clicks save. She sees exactly what customers will see — the Diwali text in the correct font, size, and color. No preview button needed — it's already showing the real result.</div>
+<h3>Author mode vs Preview mode vs Publish</h3>
+<div class="grid3">
+<div class="card"><div class="card-title">Edit mode</div><div class="card-body">Shows the page with blue authoring overlays on components. Editors can drag, drop, configure. This is the working mode.</div></div>
+<div class="card"><div class="card-title">Preview mode</div><div class="card-body">Shows the page exactly as visitors will see it — no overlays, no edit toolbars. Used to check how the page looks before publishing.</div></div>
+<div class="card"><div class="card-title">Published page</div><div class="card-body">The real public page on the Publish server. Only activated content appears here. Visitors never see the author environment.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-arch">
+<span class="badge"><i class="ti ti-server" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>Author, Publish, Dispatcher — the 3-layer setup</h1>
+<p class="intro">AEM always runs as three separate layers. This is not optional — it is the core architecture. Understanding this is essential before doing anything else in AEM.</p>
+<h3>The three layers</h3>
+<div class="card"><div class="card-title" style="margin-bottom:12px">Author → Publish → Dispatcher</div>
+<div class="flow">
+<div class="fb bl">Author (port 4502)<br><span style="font-size:11px;opacity:.8">Editors work here</span></div>
+<span class="fa">→ activate →</span>
+<div class="fb">Publish (port 4503)<br><span style="font-size:11px;opacity:.8">Content delivered here</span></div>
+<span class="fa">→ cache →</span>
+<div class="fb gr">Dispatcher (port 80)<br><span style="font-size:11px;opacity:.8">Users see this</span></div>
+</div></div>
+<h3>Author layer — where you work as a developer</h3>
+<p>The Author server runs at <code>http://localhost:4502</code>. Default login is <code>admin / admin</code> on local. This is where:</p>
+<ul>
+<li>Editors create and edit pages</li>
+<li>Developers deploy code using Maven</li>
+<li>Templates are created and configured</li>
+<li>Assets are uploaded to DAM</li>
+<li>Workflows run for approvals</li>
+</ul>
+<p>Author is NEVER accessible to the public. It is behind a VPN or firewall. If the public could reach Author, anyone could delete all your content.</p>
+<h3>Publish layer — what users see</h3>
+<p>The Publish server runs at <code>http://localhost:4503</code>. This is what your website visitors hit. Content only appears here after an editor clicks "Publish" on the Author server. This triggers replication — Author copies the content to Publish.</p>
+<p>In production, you typically have 2 or more Publish servers behind a load balancer, so if one goes down the site stays up.</p>
+<h3>Dispatcher — cache and shield</h3>
+<p>The Dispatcher is an Apache web server module. It sits in front of Publish and does two things. First, it caches rendered HTML pages so the same page doesn't have to be re-generated by AEM for every visitor. Second, it acts as a security filter — blocking URLs that should never be public (like <code>/crx/de</code> or <code>/system/console</code>).</p>
+<div class="rl"><strong>Real example:</strong> When Flipkart runs a sale and 2 million people visit the homepage simultaneously, the Dispatcher serves the cached HTML to 99% of them without touching AEM at all. Only when the content changes (price update, new banner) does AEM regenerate the cache. Without the Dispatcher, AEM would crash under that load.</div>
+<h3>How content moves from Author to users</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p>Editor finishes editing a page on Author and clicks "Publish"</p></div>
+<div class="step"><div class="sn">2</div><p>AEM's Replication Agent copies the page's JCR nodes from Author's repository to Publish's repository</p></div>
+<div class="step"><div class="sn">3</div><p>AEM also sends a "flush" request to the Dispatcher, telling it to delete the old cached HTML for that page</p></div>
+<div class="step"><div class="sn">4</div><p>The next user who visits the page gets a fresh HTML from Publish, which is then cached by Dispatcher for all subsequent visitors</p></div>
+</div>
+</div>
+
+<div class="pg" id="p-jcr">
+<span class="badge"><i class="ti ti-database" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>JCR — the content repository</h1>
+<p class="intro">The JCR (Java Content Repository) is where AEM stores absolutely everything — pages, components, configurations, users, templates, assets — as a tree of nodes. Think of it like a file system, but instead of files you have nodes with typed properties.</p>
+<h3>What the JCR tree looks like</h3>
+<p>Every piece of data in AEM is a node. Nodes have properties (key-value pairs). Nodes can have child nodes. The tree structure mirrors a file system path.</p>
+<pre><span class="cm"># A page in the JCR tree:</span>
+/content/mysite/en/home          <span class="cm">← this is a "cq:Page" node</span>
+  └── jcr:content                <span class="cm">← this is a "cq:PageContent" node</span>
+       jcr:title = "Home Page"   <span class="cm">← property</span>
+       sling:resourceType = "mysite/components/page/base"  <span class="cm">← property</span>
+       └── root                  <span class="cm">← layout container node</span>
+            └── banner           <span class="cm">← banner component node</span>
+                 title = "Welcome to our site"
+                 imageRef = "/content/dam/images/hero.jpg"</pre>
+<h3>Key JCR paths you need to know</h3>
+<div class="card"><div class="card-body">
+<code>/apps/mysite/</code> — your code (components, templates, clientlibs)<br>
+<code>/content/mysite/</code> — your page content (what editors create)<br>
+<code>/content/dam/mysite/</code> — your assets (images, videos, PDFs)<br>
+<code>/conf/mysite/</code> — your configuration (editable templates, CF models)<br>
+<code>/libs/</code> — AEM's own built-in code. <strong>Never edit this.</strong><br>
+<code>/var/</code> — runtime data (workflow instances, audit logs)
+</div></div>
+<h3>How to see the JCR</h3>
+<p>Open CRXDE Lite at <code>http://localhost:4502/crx/de</code>. The left panel is the JCR tree. Click any node and the right panel shows all its properties. You can see exactly what an editor saved in a dialog by navigating to the component's content node.</p>
+<div class="rl"><strong>Real example:</strong> An editor sets the title of a card component to "Summer Sale 2024". This gets saved as a JCR property <code>title = "Summer Sale 2024"</code> on the node at <code>/content/mysite/en/home/jcr:content/root/maincontent/card</code>. The developer's Sling Model reads this property, and the HTL template outputs it as HTML. This is the entire data flow.</div>
+</div>
+
+<div class="pg" id="p-interfaces">
+<span class="badge"><i class="ti ti-layout-sidebar" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>AEM interfaces — what each one is for</h1>
+<p class="intro">AEM has several different interfaces. Each is for a different job. As a developer you will use all of them regularly.</p>
+<h3>Sites console</h3>
+<p>URL: <code>http://localhost:4502/sites.html/content</code></p>
+<p>This is the main screen. It shows a tree/card view of all your pages. From here you create pages, delete pages, publish pages, open the page editor, see version history, and manage workflows.</p>
+<h3>Page editor (WYSIWYG editor)</h3>
+<p>URL: <code>http://localhost:4502/editor.html/content/mysite/en/home.html</code></p>
+<p>The drag-and-drop page editing interface. This is what content editors use all day. Drag components from the left panel onto the page, click to configure, switch between Edit/Layout/Preview modes.</p>
+<h3>CRXDE Lite</h3>
+<p>URL: <code>http://localhost:4502/crx/de</code></p>
+<p>The JCR browser. Use it to inspect nodes and their properties, edit HTL files directly, verify what an editor saved, check component structure. This is the developer's most-used debugging tool.</p>
+<div class="tip">Any time something is not working, open CRXDE, navigate to the component's content node, and look at the Properties tab. You can see exactly what values are saved there and what <code>sling:resourceType</code> is set.</div>
+<h3>OSGi console</h3>
+<p>URL: <code>http://localhost:4502/system/console</code></p>
+<p>The Felix web console. Shows all Java bundles (your deployed code). Go here to check if your bundle is "Active" after deploying. Also used to manage OSGi configurations for services. The two sub-pages you use most:</p>
+<ul>
+<li><code>/system/console/bundles</code> — check your bundle status</li>
+<li><code>/system/console/configMgr</code> — manage service configurations</li>
+</ul>
+<h3>Package manager</h3>
+<p>URL: <code>http://localhost:4502/crx/packmgr</code></p>
+<p>Packages are zip files containing JCR content. Use Package Manager to install packages (WKND, service packs, 3rd party tools) and to export content from one AEM instance to move to another.</p>
+<h3>Tools menu</h3>
+<p>URL: <code>http://localhost:4502/aem/start.html</code> → click the hammer icon</p>
+<p>A large set of admin screens for: creating editable templates, managing tag taxonomies, configuring replication agents, managing users and permissions, setting up cloud services, and much more.</p>
+</div>
+
+<div class="pg" id="p-wknd">
+<span class="badge"><i class="ti ti-mountain" aria-hidden="true" style="font-size:12px"></i>Session 1</span>
+<h1>WKND — the reference demo site</h1>
+<p class="intro">Adobe provides a fully-built reference site called "WKND" for a fictional adventure travel brand. It is the best way to learn AEM because it demonstrates every feature correctly implemented.</p>
+<h3>What WKND demonstrates</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Editable templates</div><div class="card-body">Complete templates for article pages, adventure pages, and the home page — all with proper policies and allowed components.</div></div>
+<div class="card"><div class="card-title">Core components</div><div class="card-body">Every Adobe Core Component (Text, Image, Teaser, Navigation, Breadcrumb, etc.) used correctly with proper styling.</div></div>
+<div class="card"><div class="card-title">Content fragments</div><div class="card-body">Adventure content stored as structured CFs, rendered on pages and also available via GraphQL API.</div></div>
+<div class="card"><div class="card-title">Full project structure</div><div class="card-body">A complete Maven project you can study — every module, every file, every config — as a reference for your own projects.</div></div>
+</div>
+<h3>How to install WKND</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p>Go to <code>https://github.com/adobe/aem-guides-wknd</code> → Releases → download <code>aem-guides-wknd.all-x.x.x.zip</code></p></div>
+<div class="step"><div class="sn">2</div><p>Open Package Manager at <code>http://localhost:4502/crx/packmgr</code></p></div>
+<div class="step"><div class="sn">3</div><p>Click "Upload Package" → select the zip → click Install</p></div>
+<div class="step"><div class="sn">4</div><p>Wait for installation to complete. Then open <code>http://localhost:4502/content/wknd/us/en.html</code></p></div>
+</div>
+<h3>What to study in WKND</h3>
+<p>In CRXDE, go to <code>/apps/wknd/components/</code> — you will see every component. Open any component folder and study the files. Go to <code>/conf/wknd/settings/wcm/templates/</code> to see the templates. This is the best learning resource available for AEM.</p>
+</div>
+
+<div class="pg" id="p-maven">
+<span class="badge"><i class="ti ti-package" aria-hidden="true" style="font-size:12px"></i>Session 2</span>
+<h1>What is Maven and why AEM uses it</h1>
+<p class="intro">Maven is a build tool for Java projects. AEM is a Java application, so all AEM development uses Maven to compile code, manage libraries, and deploy to AEM. Think of it like npm for Java.</p>
+<h3>What Maven does for you</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Manages dependencies</div><div class="card-body">You declare which libraries you need in pom.xml. Maven automatically downloads them from Maven Central. No manual JAR downloading.</div></div>
+<div class="card"><div class="card-title">Compiles and packages</div><div class="card-body">Runs <code>javac</code> to compile your .java files, then packages everything into a .jar bundle or .zip content package.</div></div>
+<div class="card"><div class="card-title">Deploys to AEM</div><div class="card-body">With the right Maven profile (<code>-PautoInstallPackage</code>), Maven installs your built package directly into your running AEM instance.</div></div>
+<div class="card"><div class="card-title">Manages multi-module builds</div><div class="card-body">AEM projects have multiple sub-projects (core, ui.apps, ui.content). Maven coordinates building all of them in the right order.</div></div>
+</div>
+<h3>Maven build lifecycle — the phases in order</h3>
+<p>When you run <code>mvn clean install</code>, Maven runs these phases in sequence:</p>
+<div class="flow">
+<div class="fb">clean</div><span class="fa">→</span>
+<div class="fb">validate</div><span class="fa">→</span>
+<div class="fb">compile</div><span class="fa">→</span>
+<div class="fb">test</div><span class="fa">→</span>
+<div class="fb bl">package</div><span class="fa">→</span>
+<div class="fb">verify</div><span class="fa">→</span>
+<div class="fb gr">install</div>
+</div>
+<p>You almost always run <code>mvn clean install</code> which cleans any previous build output, then runs all phases up to install. The <code>-PautoInstallPackage</code> profile adds the AEM deploy step after install.</p>
+<h3>Maven dependency scopes — important for AEM</h3>
+<div class="card"><div class="card-body">
+<code>provided</code> — AEM already has this library. Don't bundle it. Use for all AEM and Sling APIs.<br><br>
+<code>compile</code> — Bundle this library into your JAR. Use for 3rd party libraries AEM doesn't have.<br><br>
+<code>test</code> — Only needed for running unit tests. JUnit, Mockito, AEM Mocks.<br><br>
+<code>runtime</code> — Not needed at compile time but needed when running. Rare in AEM.
+</div></div>
+<div class="warn">If you mark an AEM API dependency as <code>compile</code> instead of <code>provided</code>, your bundle will contain duplicate classes and cause ClassLoader conflicts at runtime. Always use <code>provided</code> for anything that AEM already ships with.</div>
+</div>
+
+<div class="pg" id="p-pom">
+<span class="badge"><i class="ti ti-file-code" aria-hidden="true" style="font-size:12px"></i>Session 2</span>
+<h1>POM.xml — every element explained</h1>
+<p class="intro">pom.xml (Project Object Model) is the configuration file for a Maven project. Every Maven module has one. The root pom.xml is the parent — it manages all sub-modules.</p>
+<h3>Root pom.xml structure</h3>
+<pre><span class="tag">&lt;project&gt;</span>
+  <span class="cm">&lt;!-- Who this project is --&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>com.mycompany.mysite<span class="tag">&lt;/groupId&gt;</span>   <span class="cm">← like a Java package</span>
+  <span class="tag">&lt;artifactId&gt;</span>mysite<span class="tag">&lt;/artifactId&gt;</span>             <span class="cm">← project name</span>
+  <span class="tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>            <span class="cm">← SNAPSHOT = in development</span>
+  <span class="tag">&lt;packaging&gt;</span>pom<span class="tag">&lt;/packaging&gt;</span>                <span class="cm">← "pom" = this is the parent</span>
+
+  <span class="cm">&lt;!-- Sub-projects to build --&gt;</span>
+  <span class="tag">&lt;modules&gt;</span>
+    <span class="tag">&lt;module&gt;</span>core<span class="tag">&lt;/module&gt;</span>         <span class="cm">← Java code</span>
+    <span class="tag">&lt;module&gt;</span>ui.apps<span class="tag">&lt;/module&gt;</span>      <span class="cm">← components, templates</span>
+    <span class="tag">&lt;module&gt;</span>ui.content<span class="tag">&lt;/module&gt;</span>   <span class="cm">← page content, conf</span>
+    <span class="tag">&lt;module&gt;</span>ui.config<span class="tag">&lt;/module&gt;</span>   <span class="cm">← OSGi configs</span>
+    <span class="tag">&lt;module&gt;</span>all<span class="tag">&lt;/module&gt;</span>         <span class="cm">← master installer</span>
+  <span class="tag">&lt;/modules&gt;</span>
+
+  <span class="cm">&lt;!-- Reusable variables --&gt;</span>
+  <span class="tag">&lt;properties&gt;</span>
+    <span class="tag">&lt;aem.host&gt;</span>localhost<span class="tag">&lt;/aem.host&gt;</span>
+    <span class="tag">&lt;aem.port&gt;</span>4502<span class="tag">&lt;/aem.port&gt;</span>
+    <span class="tag">&lt;java.version&gt;</span>11<span class="tag">&lt;/java.version&gt;</span>
+  <span class="tag">&lt;/properties&gt;</span>
+<span class="tag">&lt;/project&gt;</span></pre>
+<h3>core/pom.xml — the Java module</h3>
+<pre><span class="tag">&lt;packaging&gt;</span>bundle<span class="tag">&lt;/packaging&gt;</span>   <span class="cm">← builds as OSGi bundle (.jar)</span>
+
+<span class="tag">&lt;dependencies&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>com.adobe.aem<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>aem-sdk-api<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>    <span class="cm">← AEM has it, don't bundle</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.sling<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>org.apache.sling.models.api<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;/dependencies&gt;</span>
+
+<span class="cm">&lt;!-- Tells AEM where to scan for Sling Models --&gt;</span>
+<span class="tag">&lt;plugin&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>bnd-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;configuration&gt;</span>
+    <span class="tag">&lt;bnd&gt;</span>Sling-Model-Packages: com.mysite.core.models<span class="tag">&lt;/bnd&gt;</span>
+  <span class="tag">&lt;/configuration&gt;</span>
+<span class="tag">&lt;/plugin&gt;</span></pre>
+</div>
+
+<div class="pg" id="p-archetype">
+<span class="badge"><i class="ti ti-template" aria-hidden="true" style="font-size:12px"></i>Session 2</span>
+<h1>Generate your AEM project with Maven archetype</h1>
+<p class="intro">The AEM Maven Archetype is an official Adobe template that generates a complete, production-ready project structure with one terminal command. You never create this structure manually.</p>
+<h3>Prerequisites before running</h3>
+<ul>
+<li>Java 11 installed — verify with <code>java -version</code></li>
+<li>Maven 3.6+ installed — verify with <code>mvn -version</code></li>
+<li>AEM running on <code>http://localhost:4502</code></li>
+</ul>
+<h3>The command — run this in your terminal</h3>
+<pre>mvn -B archetype:generate \
+  -D archetypeGroupId=com.adobe.aem \
+  -D archetypeArtifactId=aem-project-archetype \
+  -D archetypeVersion=48 \
+  -D appTitle=<span class="str">"My Site"</span> \
+  -D appId=<span class="str">"mysite"</span> \
+  -D groupId=<span class="str">"com.mysite"</span> \
+  -D aemVersion=<span class="str">"6.5.0"</span></pre>
+<h3>What each parameter means</h3>
+<div class="card"><div class="card-body">
+<code>appTitle</code> — Human name: <code>"Nike India"</code>. Shown in AEM UI.<br>
+<code>appId</code> — Short ID: <code>"nike"</code>. Used in folder names. Lowercase, no spaces.<br>
+<code>groupId</code> — Java package base: <code>"com.nike"</code>. All your Java classes start with this.<br>
+<code>aemVersion</code> — Your AEM version: <code>"6.5.0"</code> for local, <code>"cloud"</code> for AEM as Cloud Service.
+</div></div>
+<h3>After it runs</h3>
+<p>A folder called <code>mysite/</code> is created with all modules, pom.xml files, and starter code. Open it in VS Code: <code>code ./mysite</code></p>
+<div class="tip">VS Code extensions to install: "AEM Sync" (by Adobe) for fast file sync, "HTL" for syntax highlighting in .html files, "XML" for dialog XML editing.</div>
+</div>
+
+<div class="pg" id="p-project-structure">
+<span class="badge"><i class="ti ti-folder" aria-hidden="true" style="font-size:12px"></i>Session 2</span>
+<h1>Project folder structure — one job per module</h1>
+<p class="intro">The archetype creates 5 modules. Each module has exactly one job. Never mix file types between modules — Java in core, HTML in ui.apps, content in ui.content.</p>
+<h3>The complete structure</h3>
+<pre>mysite/
+├── core/                      <span class="cm">← Java code only</span>
+│   └── src/main/java/com/mysite/core/
+│       ├── models/            <span class="cm">← Sling Models (.java)</span>
+│       ├── services/          <span class="cm">← OSGi Services (.java)</span>
+│       └── servlets/          <span class="cm">← Sling Servlets (.java)</span>
+│
+├── ui.apps/                   <span class="cm">← JCR code (deploys to /apps)</span>
+│   └── src/main/content/jcr_root/apps/mysite/
+│       ├── components/        <span class="cm">← component folders (HTL + dialogs)</span>
+│       ├── clientlibs/        <span class="cm">← CSS and JS library nodes</span>
+│       └── i18n/              <span class="cm">← translation strings</span>
+│
+├── ui.content/                <span class="cm">← JCR content (deploys to /content, /conf)</span>
+│   └── src/main/content/jcr_root/
+│       ├── content/mysite/    <span class="cm">← sample page content</span>
+│       └── conf/mysite/       <span class="cm">← editable templates, CF models</span>
+│
+├── ui.config/                 <span class="cm">← OSGi config files (deploys to /apps/mysite/osgiconfig)</span>
+│   └── src/main/content/jcr_root/apps/mysite/osgiconfig/
+│       ├── config/            <span class="cm">← all environments</span>
+│       ├── config.author/     <span class="cm">← author only</span>
+│       └── config.publish/    <span class="cm">← publish only</span>
+│
+└── all/                       <span class="cm">← master installer (bundles all other modules)</span>
+    └── pom.xml</pre>
+<h3>The golden rule</h3>
+<div class="card"><div class="card-body">
+<strong>core/</strong> → only .java files<br>
+<strong>ui.apps/</strong> → only .html, .xml, .css, .js files that are component code<br>
+<strong>ui.content/</strong> → only .xml files that are page content or configuration<br>
+<strong>ui.config/</strong> → only .cfg.json OSGi config files
+</div></div>
+</div>
+
+<div class="pg" id="p-deploy">
+<span class="badge"><i class="ti ti-upload" aria-hidden="true" style="font-size:12px"></i>Session 2</span>
+<h1>Build and deploy commands</h1>
+<p class="intro">Run all commands from the project root folder in your terminal. AEM must be running on port 4502 first.</p>
+<h3>The commands</h3>
+<pre><span class="cm"># Deploy everything — use this when in doubt</span>
+mvn clean install -PautoInstallPackage
+
+<span class="cm"># Only Java changed — faster, only rebuilds core bundle</span>
+mvn clean install -PautoInstallBundle -pl core
+
+<span class="cm"># Only HTL/dialog changed — only rebuilds ui.apps</span>
+mvn clean install -PautoInstallPackage -pl ui.apps
+
+<span class="cm"># Deploy to Publish server (port 4503) as well</span>
+mvn clean install -PautoInstallPackagePublish
+
+<span class="cm"># Skip unit tests to build faster</span>
+mvn clean install -PautoInstallPackage -DskipTests</pre>
+<h3>Verify deployment worked — 3 checks</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p>Go to <code>http://localhost:4502/system/console/bundles</code> → search for your bundle name (e.g. "mysite.core") → must say "Active". If "Installed", your Java imports are broken.</p></div>
+<div class="step"><div class="sn">2</div><p>Go to CRXDE at <code>http://localhost:4502/crx/de</code> → navigate to <code>/apps/mysite/components/</code> → your component folders should be there.</p></div>
+<div class="step"><div class="sn">3</div><p>Open the page editor → your component should appear in the component browser under your group name.</p></div>
+</div>
+<h3>Common errors and what they mean</h3>
+<div class="card"><div class="card-body">
+<code>BUILD FAILURE</code> — Java compile error. Read the error message for which file and line.<br><br>
+<code>Connection refused</code> — AEM is not running. Start AEM first.<br><br>
+Bundle shows "Installed" not "Active" — Missing Java import. Go to <code>/system/console/bundles</code> → click your bundle → look for "Missing Dependencies".<br><br>
+Component not in browser — componentGroup in .content.xml doesn't match what's allowed in the template policy.
+</div></div>
+</div>
+
+<div class="pg" id="p-page-authoring">
+<span class="badge"><i class="ti ti-file-plus" aria-hidden="true" style="font-size:12px"></i>Session 3</span>
+<h1>Creating and editing pages</h1>
+<p class="intro">Page authoring is the core activity of content editors. They create pages from templates, build them by adding components, configure each component, and publish when ready.</p>
+<h3>How to create a page</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p>Open Sites console at <code>http://localhost:4502/sites.html/content</code></p></div>
+<div class="step"><div class="sn">2</div><p>Navigate to your site folder (e.g. <code>/content/mysite/en/</code>)</p></div>
+<div class="step"><div class="sn">3</div><p>Click the "Create" button (top right) → select "Page"</p></div>
+<div class="step"><div class="sn">4</div><p>A template picker appears — select the template for this type of page (e.g. "Article Page")</p></div>
+<div class="step"><div class="sn">5</div><p>Fill in the title (e.g. "Our Products") and name (the URL slug, e.g. "our-products") → click Create</p></div>
+<div class="step"><div class="sn">6</div><p>AEM creates the page. Click "Open" to open it in the page editor.</p></div>
+</div>
+<h3>Inside the page editor</h3>
+<p>The toolbar at the top has mode toggles:</p>
+<div class="grid3">
+<div class="card"><div class="card-title">Edit mode</div><div class="card-body">Default. Click components to select them. Blue toolbar appears. Drag new components from left panel onto the page.</div></div>
+<div class="card"><div class="card-title">Layout mode</div><div class="card-body">Resize components using the 12-column grid. Drag handles to make a component span more or fewer columns. Set different sizes for desktop/tablet/mobile.</div></div>
+<div class="card"><div class="card-title">Preview mode</div><div class="card-body">See the page exactly as visitors will see it. No edit overlays. Use this to check your content before publishing.</div></div>
+</div>
+<h3>Publishing a page</h3>
+<p>When done editing, click the page properties icon (top bar) → select "Publish Page". Or from the Sites console, select the page → "Manage Publication" → "Publish". This activates the page — copies it from Author to Publish.</p>
+<div class="rl"><strong>Real example:</strong> An editor at Swiggy creates a "Diwali Offers" page. She picks the "Campaign Page" template, adds a hero banner component, configures it with the Diwali image and headline, adds a list of restaurant components below, and clicks Publish. The page is now live on the Swiggy website. The whole process takes 10 minutes with no developer.</div>
+</div>
+
+<div class="pg" id="p-templates">
+<span class="badge"><i class="ti ti-layout" aria-hidden="true" style="font-size:12px"></i>Session 3</span>
+<h1>Templates — static vs editable</h1>
+<p class="intro">A template defines the starting structure and rules for a page. Every page is created from a template. There are two kinds — static (old) and editable (modern).</p>
+<h3>Static templates (legacy, before AEM 6.2)</h3>
+<p>Static templates are stored as code under <code>/apps/mysite/templates/</code>. They define a fixed structure — the developer hardcodes which layout containers are on the page. Template authors and editors cannot change the structure. To add a new template, a developer has to write code and deploy.</p>
+<div class="card"><div class="card-body">
+Stored at: <code>/apps/mysite/templates/article-page/</code><br>
+Files: <code>.content.xml</code> (jcr:primaryType = cq:Template)<br>
+Changed by: developers only<br>
+Layout: fixed in code
+</div></div>
+<h3>Editable templates (modern, AEM 6.2+)</h3>
+<p>Editable templates are stored as content under <code>/conf/mysite/settings/wcm/templates/</code>. A template author (a power user, not a developer) creates and edits them through a visual template editor in the AEM UI. No code deployment needed to create a new template.</p>
+<div class="card"><div class="card-body">
+Stored at: <code>/conf/mysite/settings/wcm/templates/article-page/</code><br>
+Created via: Tools → Sites → Templates<br>
+Changed by: template authors (no code needed)<br>
+Layout: editable in a visual editor
+</div></div>
+<h3>Inside an editable template — 3 layers</h3>
+<div class="grid3">
+<div class="card"><div class="card-title">Structure</div><div class="card-body">The locked parts — editors cannot change these. Use for the global header, footer, and navigation that must be the same on every page.</div></div>
+<div class="card"><div class="card-title">Initial content</div><div class="card-body">Pre-populated content that appears on new pages. Editors can change it per page. A starting point, not a lock.</div></div>
+<div class="card"><div class="card-title">Policies</div><div class="card-body">Rules — which components are allowed in which containers, which styles are available. Template authors set these. Editors cannot override them.</div></div>
+</div>
+<div class="rl"><strong>Real example:</strong> A news site creates a "Breaking News" template. The template author locks the header and side ad panel (structure — editors cannot remove them). Sets the main column as an editable Layout Container where journalists can add Text, Image, Video components (initial content + policies). Journalists create breaking news pages from this template — the structure is consistent but the content is fully flexible.</div>
+</div>
+
+<div class="pg" id="p-layout-container">
+<span class="badge"><i class="ti ti-layout-grid" aria-hidden="true" style="font-size:12px"></i>Session 3</span>
+<h1>Layout Container and Parsys</h1>
+<p class="intro">A Layout Container is the droppable area on a page where editors drag components. Without a Layout Container, editors cannot add any components. It is the foundation of page building.</p>
+<h3>What is Parsys?</h3>
+<p>Parsys (paragraph system) is the old name from AEM's predecessor (CQ5/CQ). It served the same purpose — a droppable zone. In modern AEM (6.2+) we use the Layout Container from Core Components, which is more powerful because it also supports the responsive grid.</p>
+<h3>The 12-column responsive grid</h3>
+<p>The Layout Container divides its width into 12 equal columns. Editors can set how many columns each component spans — from 1 (very narrow) to 12 (full width). This is the same grid system as Bootstrap.</p>
+<pre><span class="cm"># A page with a 2-column layout using the grid:</span>
+Layout Container (12 columns total)
+  ├── Text component   → set to 8 columns (left, wider)
+  └── Image component  → set to 4 columns (right, narrower)
+
+<span class="cm"># The rendered HTML:</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"aem-Grid aem-Grid--12"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"text aem-GridColumn--default--8"</span><span class="tag">&gt;</span>...text...<span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"image aem-GridColumn--default--4"</span><span class="tag">&gt;</span>...image...<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+<h3>How to use the Layout Container as an editor</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p>In Edit mode: open the left panel (component browser icon) → drag a component onto the Layout Container area on the page</p></div>
+<div class="step"><div class="sn">2</div><p>Click the component → click Configure (wrench icon) → fill in the dialog → save</p></div>
+<div class="step"><div class="sn">3</div><p>Switch to Layout mode (toolbar) → click the component → drag the resize handle to change column span</p></div>
+<div class="step"><div class="sn">4</div><p>Use the breakpoint selector to set different column spans for desktop, tablet, and mobile separately</p></div>
+</div>
+</div>
+
+<div class="pg" id="p-policies">
+<span class="badge"><i class="ti ti-shield" aria-hidden="true" style="font-size:12px"></i>Session 3</span>
+<h1>Policies and Design mode</h1>
+<p class="intro">Policies control what editors can and cannot do on pages. They are the governance layer — a template author sets them, and editors cannot override them.</p>
+<h3>What a policy controls</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Allowed components</div><div class="card-body">Which components editors can drag into a Layout Container. If a component is not in the allowed list, it is invisible in the component browser for that container.</div></div>
+<div class="card"><div class="card-title">Style options</div><div class="card-body">Which visual styles editors can apply to a component (the Style System). Template authors define named styles with CSS classes. Editors pick from them.</div></div>
+<div class="card"><div class="card-title">Component configuration</div><div class="card-body">Some components have template-level settings accessible through the policy — e.g. which heading levels are allowed in a Text component's rich text editor.</div></div>
+<div class="card"><div class="card-title">Responsive grid settings</div><div class="card-body">Min/max column spans, number of columns in the container. Controls how much layout flexibility editors have.</div></div>
+</div>
+<h3>Where policies are stored</h3>
+<p>Policies are stored in JCR at <code>/conf/mysite/settings/wcm/policies/</code>. When a template author edits a policy in the template editor, AEM writes the configuration to this path.</p>
+<h3>Design mode (legacy)</h3>
+<p>Design mode is the old equivalent of policies for static templates. In Design mode, a developer or admin visits a page with <code>?wcmmode=design</code> in the URL and can configure which components are allowed in parsys. Design mode is replaced by policies in modern AEM but you may still see it in older projects.</p>
+<div class="rl"><strong>Real example:</strong> An e-commerce company wants all product pages to always have the "Add to Cart" component visible and locked. They put it in the template structure (editors cannot remove it). The main content area allows Text, Image, and Specifications components (policy). Marketing cannot add a Video or Social Feed component — they are not in the allowed list. This keeps product pages consistent across the catalog.</div>
+</div>
+
+<div class="pg" id="p-sling-resolution">
+<span class="badge"><i class="ti ti-route" aria-hidden="true" style="font-size:12px"></i>Session 3</span>
+<h1>Sling URL resolution — how AEM renders pages</h1>
+<p class="intro">When someone visits a URL on your AEM site, Sling (the web framework inside AEM) figures out which component to use to render the response. Understanding this is critical — it explains how everything connects.</p>
+<h3>The URL anatomy</h3>
+<pre><span class="cm">http://localhost:4502/content/mysite/en/home.article.wide.html</span>
+                      |_________________________|  |_____| |__| |___|
+                               JCR path           selector ext  (suffix)</pre>
+<h3>How Sling resolves a URL step by step</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p>Sling takes the JCR path part (<code>/content/mysite/en/home</code>) and finds that JCR node</p></div>
+<div class="step"><div class="sn">2</div><p>It reads the <code>sling:resourceType</code> property on that node — e.g. <code>mysite/components/page/article</code></p></div>
+<div class="step"><div class="sn">3</div><p>It looks for a rendering script at <code>/apps/mysite/components/page/article/</code></p></div>
+<div class="step"><div class="sn">4</div><p>It checks for the most specific script first: <code>article.wide.html</code> (selector.ext), then <code>article.html</code> (ext only), then <code>GET.html</code></p></div>
+<div class="step"><div class="sn">5</div><p>It runs the found .html file and returns the output to the browser</p></div>
+</div>
+<div class="tip">This is why the HTL filename must match the component folder name. If your component is at <code>/apps/mysite/components/card/</code>, the file must be <code>card.html</code> — that's what Sling looks for when it finds a node with <code>sling:resourceType = mysite/components/card</code>.</div>
+<h3>Selectors in practice</h3>
+<p>Selectors are the parts between the last slash and the extension in a URL. <code>/content/mysite/page.print.html</code> has a selector <code>print</code>. AEM looks for <code>page.print.html</code> first. This lets you have multiple renderings of the same page — normal, print, PDF, JSON — by adding different selector files to the component folder.</p>
+<div class="rl"><strong>Real example:</strong> A news site has articles at <code>/content/news/article/story.html</code> (normal). Adding <code>.amp.html</code> selector gives Google AMP version at <code>/content/news/article/story.amp.html</code>. Adding <code>.print.html</code> gives a printer-friendly version. Same content, same JCR node, different renderings based on selector.</div>
+</div>
+
+<div class="pg" id="p-core-components">
+<span class="badge"><i class="ti ti-components" aria-hidden="true" style="font-size:12px"></i>Session 3</span>
+<h1>AEM Core Components — the built-in component library</h1>
+<p class="intro">Adobe provides a library of pre-built, accessible, production-ready components called "Core Components". You should always extend these rather than building from scratch — they handle image rendering, accessibility, SEO, and more.</p>
+<h3>Key Core Components</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Page</div><div class="card-body">The page wrapper component. Generates the HTML document structure — doctype, head, body. Every page goes through this. Extend it for your site's global header/footer.</div></div>
+<div class="card"><div class="card-title">Text</div><div class="card-body">Rich text editing with configurable toolbar. Output is semantic HTML (h1-h6, p, ul, ol, a, strong, em). Auto-sanitizes HTML on save.</div></div>
+<div class="card"><div class="card-title">Image</div><div class="card-body">Smart image component. Auto-generates responsive srcset with multiple sizes. Lazy loading, WebP conversion, alt text, and caption built in.</div></div>
+<div class="card"><div class="card-title">Teaser</div><div class="card-body">An image + title + description + CTA button. The most used component in enterprise sites. Used for article teasers, product cards, promo blocks.</div></div>
+<div class="card"><div class="card-title">Navigation</div><div class="card-body">Reads the AEM page tree to generate site navigation. Auto-updates when pages are created or deleted. Multiple levels, mobile-friendly.</div></div>
+<div class="card"><div class="card-title">List</div><div class="card-body">Generates a list of pages, assets, or tagged content. Query-driven — can auto-populate based on page path or tags. Used for article lists, product listings.</div></div>
+<div class="card"><div class="card-title">Experience Fragment</div><div class="card-body">Embeds a reusable Experience Fragment into a page. The XF is a standalone AEM page used as a component — update once, updates everywhere it's used.</div></div>
+<div class="card"><div class="card-title">Content Fragment</div><div class="card-body">Renders a structured Content Fragment (headless content) on a page. The bridge between headless content and traditional page rendering.</div></div>
+</div>
+<p>All Core Components are at <code>/libs/core/wcm/components/</code>. The WKND project shows every one of them in use with proper configuration and styling.</p>
+</div>
+
+<div class="pg" id="p-comp-what">
+<span class="badge"><i class="ti ti-puzzle" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>What is an AEM component</h1>
+<p class="intro">A component is a reusable piece of UI — a card, a banner, a navigation bar, a product listing. Editors drag them onto pages. Developers build them. Each component is a folder with several files.</p>
+<h3>The simplest way to think about it</h3>
+<p>Think of a Lego brick. AEM components are Lego bricks. Each brick has a specific shape and function. Editors pick bricks from a panel and snap them together to build a page. The developer designs the bricks — what they look like and what settings they have.</p>
+<h3>What makes up a component — the 4 essentials</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">1. Definition (.content.xml)</div><div class="card-body">Registers the component with AEM — its name, which group it belongs to, which parent it extends. AEM reads this to show the component in the browser.</div></div>
+<div class="card"><div class="card-title">2. Dialog (_cq_dialog)</div><div class="card-body">The popup form editors fill in to configure the component — title, image, link. Each field saves a property in JCR when saved.</div></div>
+<div class="card"><div class="card-title">3. Sling Model (Java)</div><div class="card-body">Java class that reads the JCR properties and exposes them as getter methods. The bridge between data storage and the template.</div></div>
+<div class="card"><div class="card-title">4. HTL template (card.html)</div><div class="card-body">The HTML template that calls the model and renders the final HTML output. Uses AEM's templating language with special data-sly-* attributes.</div></div>
+</div>
+<h3>The complete data flow</h3>
+<div class="flow">
+<div class="fb bl">Editor fills dialog</div>
+<span class="fa">→</span>
+<div class="fb">Saves to JCR node<br><span style="font-size:11px;opacity:.7">title="Summer Sale"</span></div>
+<span class="fa">→</span>
+<div class="fb">Sling Model reads JCR<br><span style="font-size:11px;opacity:.7">@ValueMapValue title</span></div>
+<span class="fa">→</span>
+<div class="fb">HTL calls model<br><span style="font-size:11px;opacity:.7">${model.title}</span></div>
+<span class="fa">→</span>
+<div class="fb gr">HTML output<br><span style="font-size:11px;opacity:.7">&lt;h2&gt;Summer Sale&lt;/h2&gt;</span></div>
+</div>
+<div class="rl"><strong>Real example:</strong> A retail site has a "Product Card" component. The developer builds it once. Editors use it 500 times across the site — one per product. Each instance is configured with different data (product name, price, image) through the dialog. The same component code renders 500 different cards. That's the power of components.</div>
+</div>
+
+<div class="pg" id="p-comp-structure">
+<span class="badge"><i class="ti ti-folder-open" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>Component folder structure — every file</h1>
+<p class="intro">Here is the exact folder structure for a component called "card". Every file has a specific job. None of them are optional except the design dialog.</p>
+<h3>Where to create it</h3>
+<pre>ui.apps/src/main/content/jcr_root/apps/mysite/components/
+└── card/                        <span class="cm">← create this folder</span>
+    ├── .content.xml             <span class="cm">← component definition</span>
+    ├── card.html                <span class="cm">← HTL rendering template</span>
+    ├── _cq_dialog/              <span class="cm">← subfolder for dialog</span>
+    │    └── .content.xml        <span class="cm">← author dialog definition</span>
+    ├── _cq_editConfig/          <span class="cm">← optional: author toolbar config</span>
+    │    └── .content.xml
+    ├── _cq_design_dialog/       <span class="cm">← optional: template-level settings</span>
+    │    └── .content.xml
+    └── thumbnail.png            <span class="cm">← optional: 80x80px icon in browser</span></pre>
+<h3>What each file does</h3>
+<div class="card"><div class="card-body">
+<code>.content.xml</code> — The component node metadata. Sets jcr:title (browser name), componentGroup (browser tab), sling:resourceSuperType (parent component).<br><br>
+<code>card.html</code> — The rendering template. Filename MUST match the folder name. This is what AEM runs to produce HTML when the component is on a page.<br><br>
+<code>_cq_dialog/.content.xml</code> — Defines the Configure dialog. Contains all the form fields editors use. Each field writes to a JCR property via <code>name="./propertyname"</code>.<br><br>
+<code>_cq_editConfig/.content.xml</code> — Controls the blue edit bar in author mode. Which buttons show, what refreshes after editing, empty placeholder text.<br><br>
+<code>_cq_design_dialog/.content.xml</code> — Template-level policy form. Used by template authors, not editors. Settings here apply to all instances on all pages using the template.
+</div></div>
+<div class="tip">Start with just .content.xml, card.html, and _cq_dialog/.content.xml. Add editConfig and design dialog later when you need them. Don't create empty files.</div>
+</div>
+
+<div class="pg" id="p-content-xml">
+<span class="badge"><i class="ti ti-file-description" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>.content.xml — the component definition</h1>
+<p class="intro">This file is placed directly inside the component folder. It defines the JCR node for the component itself — not the component's content, but its identity and metadata.</p>
+<h3>The complete file</h3>
+<pre><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span>
+  <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+  <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+  <span class="attr">xmlns:sling</span>=<span class="str">"http://sling.apache.org/jcr/sling/1.0"</span>
+
+  <span class="attr">jcr:primaryType</span>=<span class="str">"cq:Component"</span>
+
+  <span class="attr">jcr:title</span>=<span class="str">"Card"</span>
+
+  <span class="attr">jcr:description</span>=<span class="str">"A card with title, description and CTA button"</span>
+
+  <span class="attr">componentGroup</span>=<span class="str">"My Site - Content"</span>
+
+  <span class="attr">sling:resourceSuperType</span>=<span class="str">"core/wcm/components/teaser/v2/teaser"</span>
+/<span class="tag">&gt;</span></pre>
+<h3>Every property explained</h3>
+<div class="card"><div class="card-body">
+<code>jcr:primaryType="cq:Component"</code> — Required. Tells JCR this node is a component definition. Without this, AEM does not recognize the folder as a component.<br><br>
+<code>jcr:title="Card"</code> — The name shown in the component browser when editors drag components. Make it descriptive: "Product Card", "Hero Banner", "Testimonial Slider".<br><br>
+<code>jcr:description="..."</code> — Tooltip shown on hover in the component browser. Helps editors understand what the component is for.<br><br>
+<code>componentGroup="My Site - Content"</code> — Which tab in the component browser this appears under. All your custom components should share the same group so editors know which are custom. This MUST match what's configured in the template policy.<br><br>
+<code>sling:resourceSuperType="core/wcm/components/teaser/v2/teaser"</code> — The parent component to inherit from. By inheriting from Core Components' Teaser, you get all its image handling, accessibility, and dialog fields for free. You only override what you need to change.
+</div></div>
+<div class="warn">The componentGroup value is case-sensitive and must exactly match what you allow in the template policy. If it doesn't match, your component will be invisible in the component browser even after deployment.</div>
+</div>
+
+<div class="pg" id="p-htl-detail">
+<span class="badge"><i class="ti ti-code" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>HTL file — the HTML template</h1>
+<p class="intro">HTL (HTML Template Language) is AEM's templating language. It is HTML with special data-sly-* attributes that add logic. It replaced JSP in AEM 6.1. It is secure by default — all output is automatically escaped against XSS attacks.</p>
+<h3>Why HTL instead of JSP?</h3>
+<p>In JSP you could write arbitrary Java code inside the HTML. This led to messy code mixing logic and markup, and created XSS vulnerabilities when developers forgot to escape output. HTL separates logic (Sling Models) from markup (HTL) completely, and escapes everything automatically.</p>
+<h3>A complete card.html</h3>
+<pre><span class="cm">&lt;!-- Step 1: Load the Sling Model and bind it to "model" variable --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.CardModel"</span>
+     <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- data-sly-test: only renders this element if model.title is not null --&gt;</span>
+  <span class="tag">&lt;h3</span> <span class="attr">class</span>=<span class="str">"card__title"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.title}"</span><span class="tag">&gt;</span>
+    ${model.title}
+  <span class="tag">&lt;/h3&gt;</span>
+
+  <span class="cm">&lt;!-- data-sly-test with "not": renders when description IS null --&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"card__empty"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${!model.description}"</span><span class="tag">&gt;</span>
+    No description provided.
+  <span class="tag">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- @ context='uri': use URI encoding for links, not HTML encoding --&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">class</span>=<span class="str">"card__cta"</span>
+     <span class="attr">href</span>=<span class="str">"${model.ctaLink @ context='uri'}"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${model.hasLink}"</span><span class="tag">&gt;</span>
+    ${model.ctaText}
+  <span class="tag">&lt;/a&gt;</span>
+
+  <span class="cm">&lt;!-- data-sly-list: loop over a collection --&gt;</span>
+  <span class="tag">&lt;ul</span> <span class="attr">data-sly-test</span>=<span class="str">"${model.tags}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;li</span> <span class="attr">data-sly-list.tag</span>=<span class="str">"${model.tags}"</span><span class="tag">&gt;</span>${tag}<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span></pre>
+<h3>All HTL expressions and attributes</h3>
+<div class="card"><div class="card-body">
+<code>${model.title}</code> — outputs the value from a getter, auto HTML-escaped<br>
+<code>${model.link @ context='uri'}</code> — URL-encode instead of HTML-encode<br>
+<code>${model.html @ context='html'}</code> — output raw HTML (only for trusted content)<br>
+<code>data-sly-use.model="..."</code> — load and bind a Sling Model or Java class<br>
+<code>data-sly-test="${condition}"</code> — hide element if condition is falsy<br>
+<code>data-sly-list.item="${collection}"</code> — repeat element for each item in a list<br>
+<code>data-sly-include="partial.html"</code> — include another HTL file<br>
+<code>data-sly-resource="${'path'}"</code> — render another JCR resource<br>
+<code>data-sly-text="${value}"</code> — replace element content with value<br>
+<code>data-sly-attribute.href="${value}"</code> — set an attribute dynamically
+</div></div>
+<div class="tip">Always use <code>@ context='uri'</code> on href and src attributes. Without it, AEM HTML-encodes the URL and links break with special characters.</div>
+</div>
+
+<div class="pg" id="p-dialog-detail">
+<span class="badge"><i class="ti ti-forms" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>Dialog (_cq_dialog) — in complete detail</h1>
+<p class="intro">The dialog is the popup form that appears when an editor clicks the Configure (wrench) icon on your component. It is defined as a single XML file inside the _cq_dialog subfolder.</p>
+<h3>The complete dialog.xml with all field types</h3>
+<pre><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span> <span class="attr">xmlns:sling</span>=<span class="str">"..."</span> <span class="attr">xmlns:jcr</span>=<span class="str">"..."</span> <span class="attr">xmlns:nt</span>=<span class="str">"..."</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"cq/gui/components/authoring/dialog"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"Card Settings"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;content</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="cm">&lt;!-- TEXT FIELD: single line input --&gt;</span>
+      <span class="tag">&lt;title</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Title"</span>
+        <span class="attr">fieldDescription</span>=<span class="str">"The heading of the card"</span>
+        <span class="attr">name</span>=<span class="str">"./title"</span>
+        <span class="attr">required</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- TEXTAREA: multi-line input --&gt;</span>
+      <span class="tag">&lt;description</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textarea"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Description"</span>
+        <span class="attr">name</span>=<span class="str">"./description"</span>
+        <span class="attr">rows</span>=<span class="str">"3"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- PATHFIELD: browse and select a page or asset --&gt;</span>
+      <span class="tag">&lt;ctaLink</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/pathfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Button Link"</span>
+        <span class="attr">name</span>=<span class="str">"./ctaLink"</span>
+        <span class="attr">rootPath</span>=<span class="str">"/content"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- SELECT: dropdown with fixed options --&gt;</span>
+      <span class="tag">&lt;theme</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/select"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Card Theme"</span>
+        <span class="attr">name</span>=<span class="str">"./theme"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;default</span> <span class="attr">jcr:title</span>=<span class="str">"Default"</span> <span class="attr">value</span>=<span class="str">""</span> <span class="attr">selected</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;dark</span>    <span class="attr">jcr:title</span>=<span class="str">"Dark"</span>    <span class="attr">value</span>=<span class="str">"theme-dark"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;light</span>   <span class="attr">jcr:title</span>=<span class="str">"Light"</span>   <span class="attr">value</span>=<span class="str">"theme-light"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/items&gt;</span>
+      <span class="tag">&lt;/theme&gt;</span>
+
+      <span class="cm">&lt;!-- CHECKBOX: true/false toggle --&gt;</span>
+      <span class="tag">&lt;openInNewTab</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/checkbox"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Open link in new tab"</span>
+        <span class="attr">name</span>=<span class="str">"./openInNewTab"</span>
+        <span class="attr">value</span>=<span class="str">"true"</span>
+        <span class="attr">uncheckedValue</span>=<span class="str">"false"</span><span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/content&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></pre>
+<h3>The most important rule — the name property</h3>
+<p>Every field has a <code>name</code> property. This tells AEM where to save the value in JCR when the editor saves the dialog. The <code>./</code> prefix means "relative to the component's content node".</p>
+<p>So <code>name="./title"</code> saves the value as a property called <code>title</code> on the JCR node at <code>/content/mysite/en/home/jcr:content/root/card</code>. Your Sling Model then reads it with <code>@ValueMapValue private String title;</code>. The field name in XML and the Java field name must match.</p>
+</div>
+
+<div class="pg" id="p-editconfig-detail">
+<span class="badge"><i class="ti ti-edit" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>_cq_editConfig — the author toolbar</h1>
+<p class="intro">When an editor clicks on your component in author mode, a blue bar appears at the top of the component. The editConfig defines what buttons appear in that bar and what happens after certain actions.</p>
+<h3>The complete editConfig</h3>
+<pre><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span> <span class="attr">xmlns:cq</span>=<span class="str">"..."</span> <span class="attr">xmlns:jcr</span>=<span class="str">"..."</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"cq:EditConfig"</span>
+
+  <span class="cm">&lt;!-- Which buttons to show in the blue toolbar --&gt;</span>
+  <span class="attr">cq:actions</span>=<span class="str">"[edit,delete,insert,copymove]"</span>
+
+  <span class="cm">&lt;!-- Style of the toolbar: "editbar" (above) or "rollover" (overlay) --&gt;</span>
+  <span class="attr">cq:layout</span>=<span class="str">"editbar"</span>
+
+  <span class="cm">&lt;!-- Shown when component has no content yet --&gt;</span>
+  <span class="attr">cq:emptyText</span>=<span class="str">"Configure the Card component"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- Event handlers --&gt;</span>
+  <span class="tag">&lt;cq:listeners</span>
+    <span class="attr">jcr:primaryType</span>=<span class="str">"cq:EditListenersConfig"</span>
+    <span class="attr">afteredit</span>=<span class="str">"REFRESH_PAGE"</span>
+    <span class="attr">aftercopy</span>=<span class="str">"REFRESH_SELF"</span>
+    <span class="attr">afterdelete</span>=<span class="str">"REFRESH_PARENT"</span><span class="tag">/&gt;</span>
+
+  <span class="cm">&lt;!-- Enable click-to-edit directly on the component --&gt;</span>
+  <span class="tag">&lt;cq:inplaceEditing</span>
+    <span class="attr">cq:childEditors</span>=<span class="str">"[title]"</span>
+    <span class="attr">active</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></pre>
+<h3>cq:actions — all available options</h3>
+<div class="card"><div class="card-body">
+<code>edit</code> — Opens the configure dialog (wrench icon)<br>
+<code>delete</code> — Deletes the component<br>
+<code>insert</code> — Insert a new component after this one<br>
+<code>copymove</code> — Copy and move handles<br>
+<code>EDIT</code> — Uppercase means it's a primary action (larger button)
+</div></div>
+<h3>afteredit listeners — what happens after</h3>
+<div class="card"><div class="card-body">
+<code>REFRESH_PAGE</code> — Reload the entire page. Use when your component affects page structure or other components.<br>
+<code>REFRESH_SELF</code> — Reload only this component. Faster. Use for most cases where only this component's output changes.<br>
+<code>REFRESH_PARENT</code> — Reload the parent container. Use when your component affects siblings.
+</div></div>
+</div>
+
+<div class="pg" id="p-design-dialog">
+<span class="badge"><i class="ti ti-adjustments" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>Design dialog — template-level settings</h1>
+<p class="intro">The design dialog (also called the policy dialog) is opened by template authors — not page editors. Settings here apply to ALL instances of the component on ALL pages using that template.</p>
+<h3>Design dialog vs regular dialog</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Regular dialog (_cq_dialog)</div><div class="card-body">Per-instance settings. Every card on every page can have different values. The editor sets it when they configure that specific component on that specific page.</div></div>
+<div class="card"><div class="card-title">Design dialog (_cq_design_dialog)</div><div class="card-body">Template-wide settings. Applied to all instances of this component on all pages using this template. Set by template authors in the template editor.</div></div>
+</div>
+<h3>Example use cases for design dialog</h3>
+<ul>
+<li>Which heading levels (H1-H6) are allowed in the rich text editor</li>
+<li>Maximum number of items in a list component</li>
+<li>Whether the "dark theme" option should be available to editors</li>
+<li>Which image ratios are allowed (1:1, 16:9, free)</li>
+</ul>
+<h3>Where design dialog settings are saved</h3>
+<p>Settings from the design dialog are saved to <code>/conf/mysite/settings/wcm/policies/</code> — not to <code>/content/</code>. This is an important difference. Regular dialog values go to <code>/content/</code>. Design/policy values go to <code>/conf/</code>.</p>
+<h3>How to read design dialog values in Sling Model</h3>
+<pre><span class="kw">@ScriptVariable</span>
+<span class="kw">private</span> Style currentStyle;  <span class="cm">// inject the policy/design object</span>
+
+<span class="kw">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// Read a policy value — e.g. max heading level</span>
+  <span class="kw">int</span> maxLevel = currentStyle.get(<span class="str">"headingLevels"</span>, <span class="num">3</span>);
+}</pre>
+</div>
+
+<div class="pg" id="p-inheritance">
+<span class="badge"><i class="ti ti-git-branch" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>Inheritance in AEM — sling:resourceSuperType</h1>
+<p class="intro">Inheritance lets your component extend another component. You get all its files (dialog, HTL, logic) for free and only override what you need to change. This is the standard pattern for building on top of Core Components.</p>
+<h3>How inheritance works</h3>
+<p>Set <code>sling:resourceSuperType</code> in your .content.xml. When AEM resolves your component, it checks your folder first. If a file is not found there, it walks up to the parent and uses that file instead.</p>
+<pre><span class="cm"># Your component .content.xml:</span>
+sling:resourceSuperType = <span class="str">"core/wcm/components/teaser/v2/teaser"</span>
+
+<span class="cm"># AEM resolution order for card.html:</span>
+1. Check /apps/mysite/components/card/card.html        <span class="cm">← YOUR file</span>
+2. If not found: /apps/core/wcm/components/teaser/v2/teaser/teaser.html
+3. If not found: walk up superType chain further
+
+<span class="cm"># AEM resolution order for _cq_dialog:</span>
+1. Check /apps/mysite/components/card/_cq_dialog/      <span class="cm">← YOUR dialog</span>
+2. If not found: use parent's _cq_dialog (teaser's dialog)</pre>
+<h3>Practical example — overriding only what you need</h3>
+<div class="card"><div class="card-body">
+Your "BankTeaser" extends Core Teaser. You only need to add one extra field to the dialog (a "disclaimer text" field for regulatory compliance). You only create:<br><br>
+<code>bankteaser/.content.xml</code> — set sling:resourceSuperType to Core Teaser<br>
+<code>bankteaser/_cq_dialog/.content.xml</code> — your dialog with the extra field<br><br>
+You do NOT copy card.html, clientlibs, or models. AEM inherits them all automatically from Core Teaser. You only override the dialog. This keeps your code small and ensures you pick up Core Component updates.
+</div></div>
+<div class="rl"><strong>Real example:</strong> A pharmaceutical company needs a standard Teaser component plus a "Safety information" field with a specific disclaimer. Instead of copying 1000 lines of Core Teaser code, they create a component that inherits from Core Teaser and adds only 20 lines of XML for the new field. Their developers focus on the business requirement, not rebuilding what Adobe already built.</div>
+</div>
+
+<div class="pg" id="p-overlay">
+<span class="badge"><i class="ti ti-layers-intersect" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>Overlay and Override</h1>
+<p class="intro">Overlay and override are two techniques for customizing AEM's built-in behavior without touching the /libs directory — which is sacred and must never be edited.</p>
+<h3>The rule: never edit /libs</h3>
+<p><code>/libs</code> contains AEM's own code — Core Components, admin UIs, default scripts. When Adobe releases a Service Pack or upgrade, they overwrite <code>/libs</code>. If you edited files there, your changes are gone. All customization must be done under <code>/apps</code>.</p>
+<h3>Overlay — copy to the same path under /apps</h3>
+<p>AEM always resolves <code>/apps</code> before <code>/libs</code>. So if you copy a file from <code>/libs/some/path/file.html</code> to <code>/apps/some/path/file.html</code>, AEM will use YOUR version, ignoring the one in /libs.</p>
+<pre><span class="cm"># Original in /libs — DO NOT TOUCH:</span>
+/libs/cq/gui/components/authoring/clientlibs/rte/js/plugins/myPlugin.js
+
+<span class="cm"># Overlay in /apps — your customized version:</span>
+/apps/cq/gui/components/authoring/clientlibs/rte/js/plugins/myPlugin.js
+<span class="cm"># AEM uses this one. libs version is ignored.</span></pre>
+<h3>Override — different path, different sling:resourceType</h3>
+<p>Override means pointing to a completely different component rather than the inherited parent. You change <code>sling:resourceType</code> on a content node to point to your custom component instead of the default one.</p>
+<pre><span class="cm"># Default page uses core page component:</span>
+/content/mysite/en/home/jcr:content
+  sling:resourceType = <span class="str">"core/wcm/components/page/v3/page"</span>
+
+<span class="cm"># Change it to YOUR page component (override):</span>
+sling:resourceType = <span class="str">"mysite/components/page/base"</span>
+<span class="cm"># Now your page component renders this page</span></pre>
+<h3>When to use which</h3>
+<div class="grid2">
+<div class="card"><div class="card-title">Use Overlay when</div><div class="card-body">Customizing AEM's own UI — admin screens, RTE plugins, author clientlibs. You are modifying something in /libs that has no inheritance mechanism.</div></div>
+<div class="card"><div class="card-title">Use Override/Inheritance when</div><div class="card-body">Building your own components that extend Core Components. You extend via sling:resourceSuperType and only override specific files in your component folder.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-style-system">
+<span class="badge"><i class="ti ti-palette" aria-hidden="true" style="font-size:12px"></i>Session 4</span>
+<h1>Style System</h1>
+<p class="intro">The Style System lets template authors define named CSS class groups as "styles". Editors pick a style from a paint palette on each component instance. Zero code needed to switch a component's visual appearance.</p>
+<h3>The concept</h3>
+<p>Imagine a "Teaser" component. As a developer you build one Teaser with its HTML and CSS. But the marketing team wants three visual variants — Standard, Featured (bigger with a highlight), and Minimal (text only, no image). Without the Style System, you'd need three separate components. With the Style System, you build one component and add CSS classes for variants.</p>
+<h3>How it works — 3 steps</h3>
+<div class="steps">
+<div class="step"><div class="sn">1</div><p><strong>Developer:</strong> Add CSS classes for each variant to the component's clientlib. <code>.card--featured { border: 2px solid gold; font-size: 1.2em; }</code></p></div>
+<div class="step"><div class="sn">2</div><p><strong>Template Author:</strong> In the template editor → click the component → Policy → Add Style Group → name it "Theme" → add options: "Standard" (class: empty), "Featured" (class: <code>card--featured</code>), "Minimal" (class: <code>card--minimal</code>)</p></div>
+<div class="step"><div class="sn">3</div><p><strong>Editor:</strong> On the page, click the component → click the paint palette icon in the toolbar → pick "Featured" → the CSS class is added automatically</p></div>
+</div>
+<h3>Where the CSS class is added</h3>
+<p>AEM adds the style CSS class to the outermost wrapper div of the component. If the editor picks "Featured", the rendered HTML becomes:</p>
+<pre><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card card--featured"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- component content --&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+<h3>Where styles are stored in JCR</h3>
+<p>Style groups and options are stored in the component's policy at <code>/conf/mysite/settings/wcm/policies/</code>. When an editor picks a style for a specific component instance on a page, the chosen class is stored as a <code>cq:styleIds</code> property on that component's content node.</p>
+<div class="rl"><strong>Real example:</strong> A telecom company has a "Plan Card" component showing mobile plans. The Standard style shows the card normally. The "Best Value" style adds a golden border and a "Recommended" badge via CSS. The "Budget" style shows a minimal grey card. The marketing team can switch plans between these styles any time through the editor — no developer, no deployment, no waiting. One component, three looks.</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function g(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+</script>

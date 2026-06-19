@@ -1,0 +1,886 @@
+
+<h2 class="sr-only">Session 19 AEM Assets DAM — complete beginner guide with real life examples analogies and line by line code explanations</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.w{padding:8px 0 60px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:24px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.on{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:20px;margin-bottom:16px}
+.cp{background:#EEEDFE;border-color:#C4C0F5}
+.cg{background:#E1F5EE;border-color:#A3DCC9}
+.cy{background:#FFF8E7;border-color:#F5D78C}
+.cr{background:#FEECEC;border-color:#F5AAAA}
+.cb{background:#E8F4FD;border-color:#A8D4F0}
+.big{font-size:22px;font-weight:500;margin-bottom:8px}
+.lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cp .lbl{color:#3C3489}.cg .lbl{color:#085041}.cy .lbl{color:#7A5800}.cr .lbl{color:#7A1E1E}.cb .lbl{color:#0F5E8A}
+.body{font-size:14px;line-height:1.9}
+.anl{display:flex;gap:12px;align-items:flex-start;background:var(--color-background-secondary);border-radius:12px;padding:14px;margin:12px 0}
+.ai{font-size:28px;flex-shrink:0}
+.at{font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.at b{color:var(--color-text-primary);font-weight:500}
+.steps{display:flex;flex-direction:column;gap:0;margin:10px 0}
+.step{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.step:last-child{padding-bottom:0}
+.sn{width:30px;height:30px;border-radius:50%;background:#7F77DD;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--color-border-secondary)}
+.step:last-child::before{display:none}
+.sb{flex:1;padding-top:3px}
+.st{font-size:14px;font-weight:500;margin-bottom:3px}
+.sd{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.cw{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--color-border-tertiary)}
+.clf{background:var(--color-background-secondary);padding:7px 14px;font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--color-border-tertiary)}
+.ca{background:#1a1b2e;padding:14px;overflow-x:auto}
+.cline{display:flex;gap:10px;min-height:20px;margin-bottom:1px}
+.cline:hover{background:rgba(255,255,255,.03);border-radius:4px}
+.ln{font-family:var(--font-mono);font-size:12px;color:#45475a;min-width:22px;text-align:right;flex-shrink:0;user-select:none;line-height:1.8}
+.cd{font-family:var(--font-mono);font-size:12px;color:#cdd6f4;flex:1;white-space:pre;line-height:1.8}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#585b70;font-style:italic}.an{color:#fab387}.cl2{color:#89dceb}.num{color:#f9e2af}
+.ep{border-top:1px solid var(--color-border-tertiary)}
+.er{display:flex;border-bottom:1px solid var(--color-border-tertiary)}
+.er:last-child{border-bottom:none}
+.et{background:#EEEDFE;color:#3C3489;font-family:var(--font-mono);font-size:11px;font-weight:500;padding:10px;min-width:50px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--color-border-tertiary);flex-shrink:0}
+.ed{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.ed b{color:var(--color-text-primary);font-weight:500}
+.ed code{background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.tree{background:#1a1b2e;border-radius:12px;padding:14px;font-family:var(--font-mono);font-size:12px;line-height:2.1;margin:10px 0;overflow-x:auto}
+.tw{color:#cdd6f4}.tp{color:#cba6f7}.tg{color:#a6e3a1}.ta{color:#f9e2af}.tgr{color:#585b70}
+.nxt{margin-top:20px;padding:10px 24px;border-radius:24px;background:#7F77DD;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer}
+.nxt:hover{background:#6660CC}
+.emo{font-size:36px;display:block;margin-bottom:8px}
+.hl{border-left:3px solid #7F77DD;background:var(--color-background-secondary);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.hl b{color:var(--color-text-primary);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.cmp{border-radius:12px;padding:14px;border:1px solid}
+.cbad{background:#FEECEC;border-color:#F5AAAA}.cgood{background:#E1F5EE;border-color:#A3DCC9}
+.cbad .clb{color:#7A1E1E;font-size:12px;font-weight:500;margin-bottom:6px}
+.cgood .clb{color:#085041;font-size:12px;font-weight:500;margin-bottom:6px}
+.cmp p{font-size:12px;line-height:1.7;color:var(--color-text-secondary)}
+.prow{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--color-border-tertiary)}
+.prow:last-child{border-bottom:none}
+.pico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.ptxt{flex:1}
+.ptitle{font-size:13px;font-weight:500;margin-bottom:2px}
+.pdesc{font-size:12px;color:var(--color-text-secondary);line-height:1.7}
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qb{text-align:left;padding:11px 16px;border-radius:10px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.qb:hover{border-color:#7F77DD;color:#3C3489}
+.qb.ok{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.qb.no{background:#FEECEC;border-color:#E24B4A;color:#7A1E1E}
+.qres{margin-top:10px;padding:12px;border-radius:10px;font-size:13px;display:none;line-height:1.7}
+.qres.show{display:block}
+.qres.ok{background:#E1F5EE;color:#085041}.qres.no{background:#FEECEC;color:#7A1E1E}
+.wf-step{display:flex;align-items:center;gap:0;margin:12px 0;flex-wrap:wrap}
+.wf-box{background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:10px;padding:10px 14px;font-size:12px;text-align:center;min-width:100px}
+.wf-box b{display:block;font-weight:500;font-size:13px;margin-bottom:2px;color:var(--color-text-primary)}
+.wf-box span{color:var(--color-text-secondary)}
+.wf-arr{font-size:18px;color:var(--color-text-tertiary);padding:0 6px;flex-shrink:0}
+.meta-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--color-border-tertiary);font-size:13px}
+.meta-row:last-child{border-bottom:none}
+.meta-key{color:var(--color-text-secondary);min-width:130px;flex-shrink:0}
+.meta-val{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<div class="w">
+<div class="tabs">
+  <div class="tab on" onclick="go(0)">🏠 Start Here</div>
+  <div class="tab" onclick="go(1)">📦 What is DAM</div>
+  <div class="tab" onclick="go(2)">🗂️ Asset Structure</div>
+  <div class="tab" onclick="go(3)">⚙️ Processing Workflow</div>
+  <div class="tab" onclick="go(4)">💻 Assets API</div>
+  <div class="tab" onclick="go(5)">📋 Metadata Schema</div>
+  <div class="tab" onclick="go(6)">✅ Quick Quiz</div>
+</div>
+
+<!-- PAGE 0: START HERE -->
+<div id="p0" class="pg on">
+  <div class="card cp">
+    <span class="emo">🤔</span>
+    <div class="big">What problem does Session 19 solve?</div>
+    <div class="body">Every company website has hundreds or thousands of images, videos, PDFs, and documents. Without a system to manage them, it becomes chaos — duplicate files, wrong image sizes on pages, no way to find assets, no control over who can use what.<br><br>Session 19 is about AEM's built-in system for managing all of this: the <b>Digital Asset Management (DAM)</b> module.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The scenario we use throughout this session</div>
+    <div class="body">You work for a large <b>clothing brand</b> that sells online. Every season they launch new collections. Each product has:<br><br>
+    — Multiple product photos (front, back, detail shots, lifestyle shots)<br>
+    — A size guide PDF<br>
+    — A short product video<br>
+    — Metadata: season, collection name, photographer, product SKU<br><br>
+    For one season: 500 products × 8 photos = <b>4,000 images</b> to upload, organise, resize, label, and publish. That's what AEM Assets manages — automatically.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Four things Session 19 covers</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">What is the DAM and how are assets stored?</div>
+          <div class="sd">Where assets live in AEM's database, what structure they have, what types AEM supports.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Asset processing workflow</div>
+          <div class="sd">What automatically happens when you upload an image — thumbnail generation, metadata extraction, format conversion — all without any manual work.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Assets API — Java code for working with assets</div>
+          <div class="sd">How to upload, read, update, and delete assets programmatically using Java. Every line of code explained.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Custom metadata schema</div>
+          <div class="sd">How to add your own custom fields to assets — like "Season", "SKU", "Photographer" — so editors can fill them in and your website components can read them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(1)">Next: What is DAM →</button>
+</div>
+
+<!-- PAGE 1: WHAT IS DAM -->
+<div id="p1" class="pg">
+  <div class="card cp">
+    <span class="emo">📦</span>
+    <div class="big">What is the DAM?</div>
+    <div class="body">DAM stands for Digital Asset Management. It is the part of AEM where all files — images, videos, PDFs, documents — are stored, organised, and managed. Think of it as a very powerful, searchable, version-controlled shared drive built into AEM.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">📸</div>
+      <div class="at">
+        <b>Think of a professional photo agency.</b><br><br>
+        They receive thousands of photos every week from photographers all over the world. Each photo needs to be:<br><br>
+        — Filed in the right folder (by date, topic, photographer)<br>
+        — Given metadata: title, description, copyright, photographer name<br>
+        — Resized into multiple formats: web size, print size, thumbnail<br>
+        — Made searchable so editors can find "cricket match, India, 2024"<br>
+        — Distributed to the right publications on request<br><br>
+        <b>AEM's DAM is that photo agency system, built into your website.</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Where assets live in AEM</div>
+    <div class="body" style="margin-bottom:10px">All assets are stored in the JCR (AEM's database) under a special path called <code>/content/dam</code>. Think of this as the root folder of the shared drive.</div>
+    <div class="tree">
+      <div><span class="tp">/content/dam/</span><span class="tgr">          ← root of the DAM</span></div>
+      <div><span class="tw">├── </span><span class="tw">clothing-brand/</span><span class="tgr">    ← your project folder</span></div>
+      <div><span class="tw">│   ├── </span><span class="tw">summer-2024/</span></div>
+      <div><span class="tw">│   │   ├── </span><span class="tg">shoe-001-front.jpg</span><span class="tgr">  ← asset node</span></div>
+      <div><span class="tw">│   │   ├── </span><span class="tg">shoe-001-back.jpg</span></div>
+      <div><span class="tw">│   │   └── </span><span class="tg">size-guide.pdf</span></div>
+      <div><span class="tw">│   └── </span><span class="tw">winter-2024/</span></div>
+      <div><span class="tw">│       └── </span><span class="tg">jacket-hero.jpg</span></div>
+      <div><span class="tw">└── </span><span class="tw">shared/</span></div>
+      <div><span class="tw">    └── </span><span class="tg">brand-logo.svg</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">Just like a shared network drive, you can create folders and subfolders. Editors navigate this structure in AEM's Assets console (at <code>/assets.html/content/dam</code>) — it looks just like Windows Explorer or Mac Finder but inside the browser.</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Types of assets AEM supports</div>
+    <div class="body" style="margin-bottom:12px">AEM can handle many file types. Each is processed differently when uploaded:</div>
+    <div class="prow">
+      <div class="pico" style="background:#EEEDFE"><i class="ti ti-photo" style="font-size:16px;color:#3C3489" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Images — JPEG, PNG, GIF, WebP, TIFF, SVG</div><div class="pdesc">Most common. AEM auto-generates thumbnails and multiple sizes. EXIF metadata (camera, location, date) is auto-extracted.</div></div>
+    </div>
+    <div class="prow">
+      <div class="pico" style="background:#E1F5EE"><i class="ti ti-video" style="font-size:16px;color:#085041" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Videos — MP4, MOV, AVI</div><div class="pdesc">AEM generates video thumbnails and can transcode to different formats. Duration, resolution auto-extracted.</div></div>
+    </div>
+    <div class="prow">
+      <div class="pico" style="background:#FFF8E7"><i class="ti ti-file-type-pdf" style="font-size:16px;color:#7A5800" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Documents — PDF, DOCX, XLSX, PPTX</div><div class="pdesc">AEM generates page previews so you can see page thumbnails without downloading. Full text is indexed for search.</div></div>
+    </div>
+    <div class="prow">
+      <div class="pico" style="background:#FEECEC"><i class="ti ti-vector" style="font-size:16px;color:#7A1E1E" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Design Files — Adobe InDesign (.indd), Illustrator (.ai), Photoshop (.psd)</div><div class="pdesc">AEM integrates with Adobe tools. Designers can check assets in/out and publish directly from Creative Cloud.</div></div>
+    </div>
+    <div class="prow" style="border-bottom:none">
+      <div class="pico" style="background:#E8F4FD"><i class="ti ti-box" style="font-size:16px;color:#0F5E8A" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">3D Models — GLB, OBJ, FBX</div><div class="pdesc">Used in e-commerce for 360° product views. AEM generates preview renders.</div></div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(2)">Next: Asset Structure →</button>
+</div>
+
+<!-- PAGE 2: ASSET STRUCTURE -->
+<div id="p2" class="pg">
+  <div class="card cp">
+    <span class="emo">🗂️</span>
+    <div class="big">Asset structure — what's inside a single asset?</div>
+    <div class="body">When you upload a single photo to AEM, it doesn't just save the file. It creates an entire node structure in the JCR database around that file. Understanding this structure is essential because your Java code reads from it.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">🗃️</div>
+      <div class="at">
+        Think of a physical filing cabinet in a professional studio.<br><br>
+        For each photo, there is a <b>folder</b> (the asset node). Inside that folder:<br>
+        — The <b>original photo</b> (the original binary file)<br>
+        — A <b>contact sheet</b> of smaller versions (thumbnails and web renditions)<br>
+        — A <b>label</b> on the front of the folder with: photographer, date, copyright, subject (metadata)<br><br>
+        AEM creates all of this automatically every time you upload one image.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The exact JCR node structure of one asset</div>
+    <div class="body" style="margin-bottom:10px">When you upload <code>shoe-001.jpg</code>, this is what AEM creates in the database:</div>
+    <div class="tree">
+      <div><span class="tp">/content/dam/clothing-brand/shoe-001.jpg</span><span class="tgr">   [dam:Asset]</span></div>
+      <div><span class="tgr">  ↑ The asset node itself. Type dam:Asset tells AEM this is a file.</span></div>
+      <div></div>
+      <div><span class="tw">  └── jcr:content</span><span class="tgr">                         [dam:AssetContent]</span></div>
+      <div><span class="tgr">        ↑ All data about the asset lives inside here</span></div>
+      <div></div>
+      <div><span class="tw">       ├── metadata</span><span class="tgr">                      [nt:unstructured]</span></div>
+      <div><span class="ta">       │   ├── dc:title     = "Shoe 001 Front View"</span></div>
+      <div><span class="ta">       │   ├── dc:format    = "image/jpeg"</span></div>
+      <div><span class="ta">       │   ├── dam:fileSize = 245760</span></div>
+      <div><span class="ta">       │   ├── dam:Physicalwidth  = 1920</span></div>
+      <div><span class="ta">       │   ├── dam:Physicalheight = 1080</span></div>
+      <div><span class="ta">       │   ├── dam:season   = "Summer 2024"</span><span class="tgr">   ← custom</span></div>
+      <div><span class="ta">       │   └── dam:sku      = "SHOE-001"</span><span class="tgr">      ← custom</span></div>
+      <div></div>
+      <div><span class="tw">       └── renditions</span><span class="tgr">                    [nt:folder]</span></div>
+      <div><span class="tg">            ├── original</span><span class="tgr">                  ← the actual uploaded file</span></div>
+      <div><span class="tg">            ├── cq5dam.thumbnail.48.48.png</span><span class="tgr">  ← tiny thumbnail</span></div>
+      <div><span class="tg">            ├── cq5dam.thumbnail.140.100.png</span><span class="tgr"> ← DAM UI thumbnail</span></div>
+      <div><span class="tg">            └── cq5dam.web.1280.1280.jpeg</span><span class="tgr">   ← web-optimised version</span></div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Breaking down each part</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn" style="background:#3C3489">A</div>
+        <div class="sb">
+          <div class="st">The asset node — dam:Asset</div>
+          <div class="sd">The top-level node representing the file. Its path is the "address" of the asset in AEM: <code>/content/dam/clothing-brand/shoe-001.jpg</code>. The node type <code>dam:Asset</code> is what tells AEM "this is a file, not just a regular content node." Every asset in the DAM has this type.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#085041">B</div>
+        <div class="sb">
+          <div class="st">jcr:content — the container</div>
+          <div class="sd">A child node of the asset that holds ALL data about the asset. Just like pages have a <code>jcr:content</code> node for their properties, assets do too. Type <code>dam:AssetContent</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#7A5800">C</div>
+        <div class="sb">
+          <div class="st">metadata — the label on the folder</div>
+          <div class="sd">A child of jcr:content that stores all metadata as properties. Standard properties use Dublin Core prefixes (<code>dc:title</code>, <code>dc:description</code>) and DAM-specific prefixes (<code>dam:fileSize</code>, <code>dam:Physicalwidth</code>). You add custom properties here too — like <code>dam:season</code> or <code>dam:sku</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#0F5E8A">D</div>
+        <div class="sb">
+          <div class="st">renditions — the different sizes</div>
+          <div class="sd">A child of jcr:content that stores all versions of the file. <b>original</b> is always the file exactly as uploaded — never modified. Other renditions are generated versions: thumbnails for the AEM UI, web-optimised versions for website pages. Each rendition is a binary node containing the actual file bytes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cr">
+    <div class="lbl">What are renditions and why do they exist?</div>
+    <div class="anl">
+      <div class="ai">🖼️</div>
+      <div class="at">
+        A photographer uploads a 24-megapixel RAW photo — 45MB file, 6000×4000 pixels.<br><br>
+        <b>Problem:</b> You can't use this 45MB file on a product page — it would load extremely slowly for website visitors. But you also don't want to throw away the original high-quality file.<br><br>
+        <b>Solution — renditions:</b> AEM keeps the original intact and auto-generates:<br>
+        — A 140×100px thumbnail (3KB) for the DAM grid view<br>
+        — A 1280×853px web version (180KB) for product pages<br>
+        — A 400×400px square crop (40KB) for category listings<br><br>
+        Your website components use the right-sized rendition. The original is preserved for print or future use.
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(3)">Next: Processing Workflow →</button>
+</div>
+
+<!-- PAGE 3: PROCESSING WORKFLOW -->
+<div id="p3" class="pg">
+  <div class="card cp">
+    <span class="emo">⚙️</span>
+    <div class="big">Asset processing workflow</div>
+    <div class="body">When you drag a photo into AEM's DAM, something powerful happens automatically: a workflow runs behind the scenes and does a series of processing steps on the file — all without you doing anything.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">🏭</div>
+      <div class="at">
+        Think of a factory assembly line.<br><br>
+        Raw material (your uploaded photo) enters one end. It passes through automated stations: quality check, cutting, shaping, coating, packaging, labelling. Out the other end comes a finished, ready-to-use product — multiple sizes, metadata filled in, indexed for search.<br><br>
+        <b>The "DAM Update Asset" workflow is that assembly line.</b> It runs automatically every time a file is uploaded or updated.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The DAM Update Asset workflow — step by step</div>
+    <div class="body" style="margin-bottom:14px">This is the default workflow AEM runs on every uploaded asset. You can see it at <b>Tools → Workflow → Models → DAM Update Asset</b>.</div>
+    <div class="wf-step">
+      <div class="wf-box"><b>Upload</b><span>photo added</span></div>
+      <div class="wf-arr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="wf-box"><b>Extract metadata</b><span>EXIF, IPTC, XMP</span></div>
+      <div class="wf-arr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="wf-box"><b>Generate thumbnails</b><span>48px, 140px, 319px</span></div>
+      <div class="wf-arr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="wf-box"><b>Web rendition</b><span>1280px JPEG</span></div>
+      <div class="wf-arr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="wf-box"><b>Index for search</b><span>full text, tags</span></div>
+      <div class="wf-arr"><i class="ti ti-arrow-right" aria-hidden="true"></i></div>
+      <div class="wf-box"><b>Done</b><span>asset ready</span></div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Each step explained in plain English</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Metadata extraction</div>
+          <div class="sd">AEM reads all embedded metadata from the file itself. For a JPEG, this means reading EXIF data — camera make/model, focal length, aperture, GPS coordinates, timestamp. This information is automatically stored in the asset's <code>metadata</code> node. No manual entry needed — the data was already in the file from the camera.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Thumbnail generation</div>
+          <div class="sd">AEM generates multiple small versions of the image and stores them as renditions. The 48×48 thumbnail is used for search results in the DAM UI. The 140×100 thumbnail is used in the card view. The 319×319 is used for larger previews. These are created by resizing and cropping the original image automatically.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Web rendition creation</div>
+          <div class="sd">AEM creates an optimised version suitable for use on web pages — typically a JPEG at 1280px wide, compressed for web delivery. This is what your website's product component references. When a visitor loads the page, their browser downloads this rendition, not the original 45MB file.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Full-text indexing</div>
+          <div class="sd">AEM extracts all text from the asset (title, description, metadata, and for PDFs the actual text content) and adds it to the search index. This is why when you search "summer collection" in AEM's asset search, you find images that have "summer collection" in their title or metadata — even though the image itself contains no searchable text.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">5</div>
+        <div class="sb">
+          <div class="st">Smart tagging (if configured)</div>
+          <div class="sd">If Adobe Sensei (AEM's AI) is enabled, it automatically analyses the image content and applies descriptive tags. Upload a photo of a red shoe and it auto-applies tags like "footwear", "red", "shoe", "leather", "fashion". No human needed to label the image.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">How to add a custom step to the workflow</div>
+    <div class="body" style="margin-bottom:10px">You can add your own processing step to this workflow. For example, the clothing brand needs to auto-apply a "season" tag based on the folder the image was uploaded to.</div>
+    <div class="cw">
+      <div class="clf">Custom workflow process step — auto-tag by folder</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Register as a WorkflowProcess — AEM shows this in workflow model editor</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="an">@Component</span>(service = <span class="cl2">WorkflowProcess</span>.<span class="kw">class</span>,</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    property = {<span class="str">"process.label=Auto Tag By Folder"</span>})</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">public class</span> <span class="cl2">AutoTagByFolderProcess</span> <span class="kw">implements</span> <span class="cl2">WorkflowProcess</span> {</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="an">@Override</span></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="kw">public void</span> execute(<span class="cl2">WorkItem</span> workItem,</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">                        <span class="cl2">WorkflowSession</span> wfSession,</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">                        <span class="cl2">MetaDataMap</span> args) {</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        <span class="cm">// Get the path of the asset being processed</span></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">        <span class="cl2">String</span> assetPath = workItem.getWorkflowData()</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">            .getPayload().toString();</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">        <span class="cm">// e.g. "/content/dam/clothing-brand/summer-2024/shoe-001.jpg"</span></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">        <span class="cm">// Extract folder name — "summer-2024" from the path</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        <span class="cl2">String</span>[] parts = assetPath.split(<span class="str">"/"</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">        <span class="cl2">String</span> folderName = parts[parts.length - <span class="num">2</span>];</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">        <span class="cm">// folderName = "summer-2024"</span></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">        <span class="cm">// Write to the asset's metadata node</span></span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">        <span class="cl2">Session</span> session = wfSession.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">        <span class="cl2">Node</span> metaNode = session.getNode(</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">            assetPath + <span class="str">"/jcr:content/metadata"</span>);</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">        metaNode.setProperty(<span class="str">"dam:season"</span>, folderName);</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">        session.save();</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2-3</div><div class="ed"><b>@Component(service=WorkflowProcess.class, property={"process.label=..."})</b> — by registering as a <code>WorkflowProcess</code> OSGi service with a <code>process.label</code> property, this class appears as a selectable step in the Workflow Model editor UI. A developer can drag it into the DAM Update Asset workflow diagram without writing any XML config.</div></div>
+        <div class="er"><div class="et">L7-9</div><div class="ed"><b>execute(WorkItem, WorkflowSession, MetaDataMap)</b> — AEM calls this method when this step runs in a workflow. Three parameters: <b>WorkItem</b> = the current task being processed, contains the payload (what asset is being processed). <b>WorkflowSession</b> = the session for this workflow execution, lets you access the JCR. <b>MetaDataMap args</b> = any configuration arguments you set in the workflow step dialog (like a custom folder-to-season mapping).</div></div>
+        <div class="er"><div class="et">L12-13</div><div class="ed"><b>workItem.getWorkflowData().getPayload().toString()</b> — a chain of calls to dig into the work item and get what it's processing. The "payload" in a DAM workflow is always the path of the asset being processed. This gives you a String like <code>"/content/dam/clothing-brand/summer-2024/shoe-001.jpg"</code>.</div></div>
+        <div class="er"><div class="et">L17-18</div><div class="ed"><b>assetPath.split("/")</b> — splits the path string by the "/" character into an array of parts. For <code>"/content/dam/clothing-brand/summer-2024/shoe-001.jpg"</code>, the array is: ["", "content", "dam", "clothing-brand", "summer-2024", "shoe-001.jpg"]. <code>parts.length - 2</code> gets the second-to-last part — the folder name "summer-2024".</div></div>
+        <div class="er"><div class="et">L22-26</div><div class="ed"><b>session.getNode(...) and setProperty()</b> — gets the metadata node of the asset directly via the JCR API (lower-level than ResourceResolver). <code>metaNode.setProperty("dam:season", folderName)</code> writes the folder name as a custom metadata property. <code>session.save()</code> commits this to the database — equivalent to <code>resolver.commit()</code> but at the lower JCR session level.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(4)">Next: Assets API →</button>
+</div>
+
+<!-- PAGE 4: ASSETS API -->
+<div id="p4" class="pg">
+  <div class="card cp">
+    <span class="emo">💻</span>
+    <div class="big">Assets API — Java code for working with assets</div>
+    <div class="body">The Assets API lets your Java code work with the DAM programmatically: upload new assets, read asset metadata, get specific renditions, update metadata, and delete assets. The main class is <code>AssetManager</code>.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">What is AssetManager?</div>
+    <div class="anl">
+      <div class="ai">🧑‍💼</div>
+      <div class="at">
+        Think of <b>AssetManager</b> as the DAM librarian.<br><br>
+        You say: "Store this photo file at this path." The librarian files it, triggers processing, and confirms it's done.<br><br>
+        You say: "Give me the asset at this path." The librarian retrieves it with all its metadata and renditions.<br><br>
+        You say: "Delete this asset." The librarian removes it and all its generated versions.
+      </div>
+    </div>
+    <div class="body" style="margin-top:10px">You get an <code>AssetManager</code> by calling <code>resourceResolver.adaptTo(AssetManager.class)</code> — same pattern as TagManager from Session 18.</div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Operation 1: Uploading an asset from a file or stream</div>
+    <div class="body" style="margin-bottom:10px">Real use case: an integration job pulls product photos from a PIM (Product Information Management) system every night and stores them in AEM's DAM.</div>
+    <div class="cw">
+      <div class="clf">Uploading an asset programmatically</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">import</span> com.day.cq.dam.api.Asset;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import</span> com.day.cq.dam.api.AssetManager;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">import</span> java.io.InputStream;</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">import</span> java.io.FileInputStream;</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="cm">// Get the AssetManager from your ResourceResolver</span></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="cl2">AssetManager</span> assetManager =</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">    resolver.adaptTo(<span class="cl2">AssetManager</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"><span class="cm">// Open the file as a stream — InputStream reads bytes one at a time</span></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"><span class="kw">try</span> (<span class="cl2">InputStream</span> is = <span class="kw">new</span> <span class="cl2">FileInputStream</span>(<span class="str">"/tmp/shoe-001.jpg"</span>)) {</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    <span class="cm">// Upload the file to DAM — createAsset does everything</span></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="cl2">Asset</span> asset = assetManager.createAsset(</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">        <span class="str">"/content/dam/clothing-brand/summer-2024/shoe-001.jpg"</span>,</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">        is,</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        <span class="str">"image/jpeg"</span>,</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">        <span class="kw">true</span></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    );</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">    log.info(<span class="str">"Asset created: {}"</span>, asset.getPath());</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">    <span class="cm">// Output: "Asset created: /content/dam/clothing-brand/summer-2024/shoe-001.jpg"</span></span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">} <span class="kw">catch</span> (<span class="cl2">Exception</span> e) {</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">    log.error(<span class="str">"Failed to upload asset"</span>, e);</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L7-8</div><div class="ed"><b>resolver.adaptTo(AssetManager.class)</b> — same pattern as TagManager. The resolver gives you an AssetManager that operates within your service user's permissions. If your service user doesn't have <code>jcr:write</code> on <code>/content/dam</code>, this will fail when you try to upload — so make sure the service user's repoinit grants write access to the DAM folder your code needs.</div></div>
+        <div class="er"><div class="et">L11</div><div class="ed"><b>try (InputStream is = new FileInputStream("/tmp/shoe-001.jpg"))</b> — an InputStream is a Java way to read a file as a stream of bytes, without loading the entire file into memory at once. For a 45MB photo, loading it fully into memory could cause OutOfMemoryError if you're processing hundreds of photos in a loop. The try-with-resources ensures the file is closed after use.</div></div>
+        <div class="er"><div class="et">L14</div><div class="ed"><b>assetManager.createAsset(...)</b> — this single method call does everything: creates the <code>dam:Asset</code> node at the given path, stores the file as the "original" rendition, and triggers the DAM Update Asset workflow (which generates thumbnails, extracts metadata etc.). It returns the created Asset object so you can immediately read its properties or add metadata.</div></div>
+        <div class="er"><div class="et">L15</div><div class="ed"><b>The destination path</b> — where to store the asset in the DAM. If the parent folder doesn't exist, AEM creates it. The filename at the end (shoe-001.jpg) becomes the asset's node name. If an asset already exists at this path, it is replaced (versioned if versioning is enabled).</div></div>
+        <div class="er"><div class="et">L17</div><div class="ed"><b>"image/jpeg"</b> — the MIME type. This tells AEM what kind of file this is so it knows how to process it. Common types: <code>"image/jpeg"</code>, <code>"image/png"</code>, <code>"image/svg+xml"</code>, <code>"video/mp4"</code>, <code>"application/pdf"</code>. AEM uses this to choose which workflow steps to run (PDF processing is different from image processing).</div></div>
+        <div class="er"><div class="et">L18</div><div class="ed"><b>true</b> — the fourth parameter is <code>doSave</code>. When <code>true</code>, AEM immediately commits the asset to the JCR database after creating it. When <code>false</code>, it waits — you'd need to call <code>resolver.commit()</code> manually afterwards. In most cases pass <code>true</code> for immediate persistence. Use <code>false</code> only when you need to create many assets and want to batch-commit them all at once for better performance.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Operation 2: Reading an asset and its metadata</div>
+    <div class="body" style="margin-bottom:10px">Real use case: a product page component reads the product photo's metadata (SKU, season, alt text) to render the page correctly.</div>
+    <div class="cw">
+      <div class="clf">Reading asset metadata</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Get the asset from its path</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="cl2">Resource</span> assetResource = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    <span class="str">"/content/dam/clothing-brand/shoe-001.jpg"</span>);</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="cm">// Adapt the resource to an Asset object to use the Asset API</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="cl2">Asset</span> asset = assetResource.adaptTo(<span class="cl2">Asset</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">if</span> (asset != <span class="kw">null</span>) {</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="cm">// Read metadata via the metadata child node's ValueMap</span></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="cl2">ValueMap</span> meta = assetResource</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        .getChild(<span class="str">"jcr:content/metadata"</span>)</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">        .getValueMap();</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="cl2">String</span> title    = meta.get(<span class="str">"dc:title"</span>,    <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    <span class="cl2">String</span> mimeType = meta.get(<span class="str">"dc:format"</span>,   <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="kw">long</span>   fileSize = meta.get(<span class="str">"dam:fileSize"</span>, <span class="num">0L</span>);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">    <span class="cl2">String</span> season   = meta.get(<span class="str">"dam:season"</span>,   <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    <span class="cl2">String</span> sku      = meta.get(<span class="str">"dam:sku"</span>,      <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    log.info(<span class="str">"Title={} SKU={} Season={}"</span>, title, sku, season);</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2-3</div><div class="ed"><b>resolver.getResource(assetPath)</b> — gets the asset's root node as a Resource. This is the <code>dam:Asset</code> node. From here you can navigate to child nodes using <code>getChild("jcr:content")</code> or <code>getChild("jcr:content/metadata")</code>.</div></div>
+        <div class="er"><div class="et">L6</div><div class="ed"><b>assetResource.adaptTo(Asset.class)</b> — converts the generic Resource into a typed Asset object that has convenient methods like <code>getRendition()</code>, <code>getPath()</code>, and <code>getMimeType()</code>. Returns null if the resource is not actually a dam:Asset node.</div></div>
+        <div class="er"><div class="et">L10-12</div><div class="ed"><b>assetResource.getChild("jcr:content/metadata").getValueMap()</b> — navigates from the asset node down into the metadata child node. <code>getChild()</code> accepts a path relative to the current resource — "jcr:content/metadata" means "go to my child jcr:content, then to its child metadata." <code>getValueMap()</code> returns all properties of that node as a key-value Map.</div></div>
+        <div class="er"><div class="et">L14-18</div><div class="ed"><b>meta.get("property:name", defaultValue)</b> — reads a property from the metadata map. The second argument is the default value returned if the property doesn't exist. <b>dc:title</b>, <b>dc:format</b> are Dublin Core standard properties auto-populated by AEM. <b>dam:fileSize</b> is AEM's own property. <b>dam:season</b>, <b>dam:sku</b> are your custom properties (defined in the metadata schema, covered in the next tab).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Operation 3: Getting a specific rendition</div>
+    <div class="body" style="margin-bottom:10px">Real use case: your product component wants to use the 1280px web rendition for the main image, not the original 45MB file.</div>
+    <div class="cw">
+      <div class="clf">Getting a rendition from an asset</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cl2">Asset</span> asset = assetResource.adaptTo(<span class="cl2">Asset</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="cm">// Get the web rendition by its exact name</span></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="cl2">Rendition</span> webRendition =</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    asset.getRendition(<span class="str">"cq5dam.web.1280.1280.jpeg"</span>);</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="cm">// If web rendition doesn't exist, fall back to original</span></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">if</span> (webRendition == <span class="kw">null</span>) {</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    webRendition = asset.getOriginal();</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">}</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"><span class="cm">// Get the URL path for use in an HTML img tag</span></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"><span class="cl2">String</span> renditionPath = webRendition.getPath();</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd"><span class="cm">// = "/content/dam/clothing-brand/shoe-001.jpg/jcr:content/renditions/cq5dam.web.1280.1280.jpeg"</span></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd"><span class="cm">// Read the actual bytes as a stream (for processing or sending)</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd"><span class="cl2">InputStream</span> stream = webRendition.getStream();</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L4-5</div><div class="ed"><b>asset.getRendition("cq5dam.web.1280.1280.jpeg")</b> — gets a specific rendition by its exact name. The naming convention for AEM-generated renditions is: <code>cq5dam.[type].[width].[height].[format]</code>. "cq5dam" is historical AEM naming. "web" = the rendition type. "1280.1280" = max width and height. "jpeg" = format. Returns null if that rendition hasn't been generated yet (e.g. the workflow hasn't finished yet).</div></div>
+        <div class="er"><div class="et">L8-10</div><div class="ed"><b>Null check and fallback to original</b> — always handle the case where a rendition doesn't exist. This happens when: the workflow hasn't finished yet (race condition), the workflow failed, or the file type doesn't support that rendition (you can't make a 1280px rendition of a 200px image). Falling back to <code>asset.getOriginal()</code> ensures your component always has something to render.</div></div>
+        <div class="er"><div class="et">L13</div><div class="ed"><b>webRendition.getPath()</b> — returns the JCR path of the rendition node. In an HTL template, you'd use this path as the src of an img tag: <code>&lt;img src="${renditionPath}"&gt;</code>. AEM's servlet automatically streams the binary file when a browser requests this path.</div></div>
+        <div class="er"><div class="et">L17</div><div class="ed"><b>webRendition.getStream()</b> — returns the actual file bytes as an InputStream. Use this when you need to actually process the image bytes in Java — for example, sending it to an external CDN, running image analysis, or converting the format. Always close this stream after use to avoid resource leaks.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Operation 4: Updating metadata on an existing asset</div>
+    <div class="body" style="margin-bottom:10px">Real use case: your nightly PIM sync updates product SKUs and season labels on 500 existing assets.</div>
+    <div class="cw">
+      <div class="clf">Updating asset metadata</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// Get the metadata node as a ModifiableValueMap</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="cl2">Resource</span> metaResource = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    <span class="str">"/content/dam/clothing-brand/shoe-001.jpg/jcr:content/metadata"</span>);</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="cl2">ModifiableValueMap</span> mvm =</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    metaResource.adaptTo(<span class="cl2">ModifiableValueMap</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="cm">// Update properties — just like writing to a Map</span></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">mvm.put(<span class="str">"dc:title"</span>,   <span class="str">"Shoe 001 — Redesigned for Summer 2024"</span>);</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">mvm.put(<span class="str">"dam:season"</span>, <span class="str">"Summer 2024"</span>);</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">mvm.put(<span class="str">"dam:sku"</span>,    <span class="str">"SHOE-001-V2"</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"><span class="cm">// Save — without this, changes are lost when session ends</span></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">resolver.commit();</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">log.info(<span class="str">"Metadata updated for shoe-001"</span>);</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L5-6</div><div class="ed"><b>metaResource.adaptTo(ModifiableValueMap.class)</b> — a ValueMap is read-only. A <b>ModifiableValueMap</b> is the writable version — it lets you use <code>.put()</code> to set or update properties. It directly modifies the underlying JCR node's properties. Think of ValueMap as reading a form, and ModifiableValueMap as filling in and editing the form.</div></div>
+        <div class="er"><div class="et">L9-11</div><div class="ed"><b>mvm.put(propertyName, value)</b> — sets a property. If the property already exists, it is overwritten. If it doesn't exist yet, it is created. You can update standard AEM properties (<code>dc:title</code>) and custom ones (<code>dam:season</code>, <code>dam:sku</code>) the same way. The property name must match exactly what is defined in the metadata schema (covered in the next tab).</div></div>
+        <div class="er"><div class="et">L14</div><div class="ed"><b>resolver.commit()</b> — same as always: writes in-memory changes to the actual JCR database. Without this, all your <code>mvm.put()</code> calls are lost when the resolver closes. In a batch update of 500 assets, you might call commit() every 50 assets to avoid keeping too many uncommitted changes in memory at once.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(5)">Next: Metadata Schema →</button>
+</div>
+
+<!-- PAGE 5: METADATA SCHEMA -->
+<div id="p5" class="pg">
+  <div class="card cp">
+    <span class="emo">📋</span>
+    <div class="big">Custom metadata schema</div>
+    <div class="body">By default, every asset has standard metadata fields: title, description, tags, copyright. But your clothing brand needs extra fields: Season, SKU, Collection Name, Photographer. A custom metadata schema lets you define and display your own fields in AEM's asset properties panel.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">📝</div>
+      <div class="at">
+        Think of a form you fill in when you admit a patient to a hospital. The default fields are: name, age, blood type, allergies.<br><br>
+        But a specialist cancer hospital also needs: cancer type, stage, previous treatment, clinical trial number. They add these custom fields to their admission form.<br><br>
+        <b>A custom metadata schema is exactly that — adding your own fields to the AEM asset properties form.</b> Editors fill them in. Your code reads them.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">What the metadata form looks like (before and after)</div>
+    <div class="grid2">
+      <div class="cmp cbad">
+        <div class="clb">Default — only standard fields</div>
+        <p>Title<br>Description<br>Tags<br>Copyright<br>... that's it. No way to record which season, which product SKU, who photographed it.</p>
+      </div>
+      <div class="cmp cgood">
+        <div class="clb">With custom schema — your fields added</div>
+        <p>Title<br>Description<br>Tags<br>Copyright<br><b>Season</b> (dropdown)<br><b>Collection Name</b> (text)<br><b>Product SKU</b> (text)<br><b>Photographer</b> (text)</p>
+      </div>
+    </div>
+    <div class="body" style="margin-top:10px">The custom fields appear in the asset properties panel in AEM's UI. When an editor opens any image and clicks "Properties", they see your custom fields ready to fill in.</div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">How to create a custom metadata schema — step by step</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Open the Metadata Schema Editor</div>
+          <div class="sd">Go to <b>Tools → Assets → Metadata Schemas</b>. You'll see a list of existing schemas. The "default" schema is the one applied to all assets unless overridden. Click "Create" to make a new schema for your specific asset type (e.g. "Product Photos"), or edit the default to add fields to everything.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Add your custom fields by dragging components</div>
+          <div class="sd">The schema editor shows a form builder. Left panel has field types: Single Line Text, Multi Line Text, Number, Date, Dropdown, Tags, Checkbox. Drag them onto the form. Each field has two key settings: the Label (what the editor sees) and the Map to Property (the JCR property name where the value is stored).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Set the "Map to property" for each field</div>
+          <div class="sd">This is the most important setting. For the "Season" field, you'd set Map to property = <code>./jcr:content/metadata/dam:season</code>. The <code>./</code> means "relative to the asset node". This is the exact JCR property path where the value gets stored — and where your Java code reads it from using <code>meta.get("dam:season", "")</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Apply the schema to a folder</div>
+          <div class="sd">Right-click any DAM folder → Properties → Metadata Schema → choose your schema. All assets in that folder and its subfolders now use your custom schema. Editors opening any of those assets' properties will see your custom fields.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Field types you can add</div>
+    <div class="prow">
+      <div class="pico" style="background:#EEEDFE"><i class="ti ti-forms" style="font-size:16px;color:#3C3489" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Single Line Text</div><div class="pdesc">For short values like Product SKU ("SHOE-001"), Photographer name, Collection name. Stores as a String property.</div></div>
+    </div>
+    <div class="prow">
+      <div class="pico" style="background:#E1F5EE"><i class="ti ti-list" style="font-size:16px;color:#085041" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Dropdown (single select)</div><div class="pdesc">For fixed options like Season (Spring, Summer, Autumn, Winter) or Asset Type (Hero, Detail, Lifestyle). Stores the selected option as a String.</div></div>
+    </div>
+    <div class="prow">
+      <div class="pico" style="background:#FFF8E7"><i class="ti ti-calendar" style="font-size:16px;color:#7A5800" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Date</div><div class="pdesc">For shoot date, expiry date, publication date. Stores as a JCR Date value. Java reads it as a Calendar object.</div></div>
+    </div>
+    <div class="prow">
+      <div class="pico" style="background:#FEECEC"><i class="ti ti-tags" style="font-size:16px;color:#7A1E1E" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Tags field</div><div class="pdesc">Links to AEM's tagging system. Stores selected tags as tag IDs in cq:tags. Connects the metadata schema to the tagging framework from Session 18.</div></div>
+    </div>
+    <div class="prow" style="border-bottom:none">
+      <div class="pico" style="background:#E8F4FD"><i class="ti ti-toggle-right" style="font-size:16px;color:#0F5E8A" aria-hidden="true"></i></div>
+      <div class="ptxt"><div class="ptitle">Checkbox (boolean)</div><div class="pdesc">For yes/no fields like "Approved for web use", "Contains model release". Stores as a Boolean property.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Reading custom metadata in a Java component — full example</div>
+    <div class="body" style="margin-bottom:10px">Your product page Sling Model reads the custom metadata from the product photo and uses it to render alt text, SKU, and season badge.</div>
+    <div class="cw">
+      <div class="clf">ProductImageModel.java — reads custom metadata fields</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="an">@Model</span>(adaptables = <span class="cl2">SlingHttpServletRequest</span>.<span class="kw">class</span>)</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">public class</span> <span class="cl2">ProductImageModel</span> {</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">    <span class="an">@ValueMapValue</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="kw">private</span> <span class="cl2">String</span> fileReference;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="cm">// fileReference = "/content/dam/clothing-brand/shoe-001.jpg"</span></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="cm">// This is the asset path chosen by the author in the dialog</span></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="an">@SlingObject</span></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="kw">private</span> <span class="cl2">ResourceResolver</span> resolver;</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    <span class="kw">public</span> <span class="cl2">String</span> getSeason() {</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">        <span class="kw">return</span> getMetaValue(<span class="str">"dam:season"</span>);</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="kw">public</span> <span class="cl2">String</span> getSku() {</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        <span class="kw">return</span> getMetaValue(<span class="str">"dam:sku"</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    <span class="kw">public</span> <span class="cl2">String</span> getAltText() {</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">        <span class="kw">return</span> getMetaValue(<span class="str">"dc:title"</span>);</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">    <span class="kw">private</span> <span class="cl2">String</span> getMetaValue(<span class="cl2">String</span> propertyName) {</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">        <span class="kw">if</span> (fileReference == <span class="kw">null</span>) <span class="kw">return</span> <span class="str">""</span>;</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">        <span class="cl2">Resource</span> meta = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">            fileReference + <span class="str">"/jcr:content/metadata"</span>);</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">        <span class="kw">if</span> (meta == <span class="kw">null</span>) <span class="kw">return</span> <span class="str">""</span>;</span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">        <span class="kw">return</span> meta.getValueMap().get(propertyName, <span class="str">""</span>);</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">31</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L4-7</div><div class="ed"><b>@ValueMapValue String fileReference</b> — @ValueMapValue injects a property from the current resource's (the component's) ValueMap. <code>fileReference</code> is the standard AEM property name for an asset path chosen via an image/asset picker in a component dialog. The author picks a product photo in the page editor, and that photo's DAM path is stored as <code>fileReference</code> on the component node.</div></div>
+        <div class="er"><div class="et">L12-22</div><div class="ed"><b>getSeason(), getSku(), getAltText()</b> — each public getter method in a Sling Model becomes accessible in the HTL template. The HTL template calls <code>${model.season}</code>, <code>${model.sku}</code>, <code>${model.altText}</code> — Sling automatically calls the corresponding getter method and returns the value.</div></div>
+        <div class="er"><div class="et">L24-30</div><div class="ed"><b>private helper method getMetaValue(propertyName)</b> — instead of repeating the same resolver.getResource + getValueMap logic three times, it's extracted into a private helper method. The method takes the property name as a parameter and returns its value. Line 25: guard against null fileReference (no asset selected by author). Line 28: guard against null metadata node. Line 29: read and return the property with "" as default (never return null to HTL — it renders as "null" string).</div></div>
+      </div>
+    </div>
+
+    <div class="body" style="margin-top:14px">The matching HTL template that uses this model:</div>
+    <div class="cw">
+      <div class="clf">productimage.html — HTL template</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">&lt;sly</span> data-sly-use.model=<span class="str">"com.clothing.ProductImageModel"</span><span class="kw">/&gt;</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">&lt;div</span> class=<span class="str">"product-image"</span><span class="kw">&gt;</span></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">  <span class="kw">&lt;img</span> src=<span class="str">"${model.fileReference}"</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">       alt=<span class="str">"${model.altText}"</span><span class="kw">/&gt;</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">  <span class="kw">&lt;span</span> class=<span class="str">"season-badge"</span><span class="kw">&gt;</span>${model.season}<span class="kw">&lt;/span&gt;</span></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">  <span class="kw">&lt;span</span> class=<span class="str">"sku"</span><span class="kw">&gt;</span>SKU: ${model.sku}<span class="kw">&lt;/span&gt;</span></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">&lt;/div&gt;</span></span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L1</div><div class="ed"><b>data-sly-use.model="..."</b> — this HTL attribute instantiates the Sling Model and binds it to the variable named <code>model</code>. After this line, <code>${model.season}</code>, <code>${model.altText}</code> etc. call the corresponding getter methods on the Java class.</div></div>
+        <div class="er"><div class="et">L4-5</div><div class="ed"><b>${model.altText @ context='attribute'}</b> — the alt text from the asset's <code>dc:title</code> metadata property is used as the HTML alt attribute for accessibility. Search engines also read this. Without proper alt text on product images, the page fails WCAG accessibility standards.</div></div>
+        <div class="er"><div class="et">L6-7</div><div class="ed"><b>${model.season} and ${model.sku}</b> — your custom metadata values rendered directly into the HTML. The season badge could be styled with CSS to show "Summer 2024" in a coloured label. The SKU is shown for users who know their product number. All this data came automatically from the asset's custom metadata — no hardcoding in page content.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(6)">Next: Quick Quiz →</button>
+</div>
+
+<!-- PAGE 6: QUIZ -->
+<div id="p6" class="pg">
+  <div class="card cp">
+    <span class="emo">✅</span>
+    <div class="big">Quick Quiz — check your understanding</div>
+    <div class="body">Six questions. Tap what you think is right.</div>
+  </div>
+
+  <div class="card" id="q1">
+    <div class="quiz-q">1. Where does AEM store all assets (images, videos, PDFs) in its database?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(1,'a')">A. /apps/dam</button>
+      <button class="qb" onclick="ans(1,'b')">B. /content/dam</button>
+      <button class="qb" onclick="ans(1,'c')">C. /var/assets</button>
+    </div>
+    <div class="qres" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="quiz-q">2. What is a "rendition" in AEM Assets?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(2,'a')">A. A copy of the asset stored in a different folder</button>
+      <button class="qb" onclick="ans(2,'b')">B. A generated version of the asset in a different size or format (thumbnail, web version etc.)</button>
+      <button class="qb" onclick="ans(2,'c')">C. The metadata attached to an asset</button>
+    </div>
+    <div class="qres" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="quiz-q">3. What happens automatically when you upload an image to AEM's DAM?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(3,'a')">A. Nothing — you have to manually generate thumbnails and extract metadata</button>
+      <button class="qb" onclick="ans(3,'b')">B. The DAM Update Asset workflow runs — extracting metadata, generating thumbnails and web renditions</button>
+      <button class="qb" onclick="ans(3,'c')">C. AEM emails the asset to all editors</button>
+    </div>
+    <div class="qres" id="qr3"></div>
+  </div>
+
+  <div class="card" id="q4">
+    <div class="quiz-q">4. Which Java class do you use to upload an asset to the DAM programmatically?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(4,'a')">A. TagManager</button>
+      <button class="qb" onclick="ans(4,'b')">B. ResourceResolver</button>
+      <button class="qb" onclick="ans(4,'c')">C. AssetManager</button>
+    </div>
+    <div class="qres" id="qr4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="quiz-q">5. An asset's metadata (title, SKU, season) is stored in which child node?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(5,'a')">A. jcr:content/metadata</button>
+      <button class="qb" onclick="ans(5,'b')">B. jcr:content/renditions</button>
+      <button class="qb" onclick="ans(5,'c')">C. jcr:content/data</button>
+    </div>
+    <div class="qres" id="qr5"></div>
+  </div>
+
+  <div class="card" id="q6">
+    <div class="quiz-q">6. In a custom metadata schema field, what does the "Map to property" setting do?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(6,'a')">A. It sets the label shown to the editor in the UI</button>
+      <button class="qb" onclick="ans(6,'b')">B. It defines which JCR property the field's value is stored in and read from</button>
+      <button class="qb" onclick="ans(6,'c')">C. It maps the asset to a specific page</button>
+    </div>
+    <div class="qres" id="qr6"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ad={
+  1:{c:'b',e:"✅ Correct! All assets live under /content/dam in AEM's JCR repository. This is the root of the Digital Asset Management (DAM). Your project assets go in subfolders like /content/dam/your-project/."},
+  2:{c:'b',e:"✅ Correct! A rendition is a generated version of the original file in a different size or format. The original is always preserved. AEM auto-generates thumbnails (48px, 140px) and web versions (1280px) as renditions inside the asset's jcr:content/renditions folder."},
+  3:{c:'b',e:"✅ Correct! The DAM Update Asset workflow runs automatically on every upload. It extracts EXIF metadata, generates thumbnails, creates web renditions, and indexes the asset for search — all without any manual action."},
+  4:{c:'c',e:"✅ Correct! AssetManager is the Java API for working with DAM assets. You get it by calling resolver.adaptTo(AssetManager.class). Its createAsset() method uploads a file, creates the dam:Asset node, and triggers the processing workflow."},
+  5:{c:'a',e:"✅ Correct! Asset metadata lives at jcr:content/metadata — a child of the jcr:content node. Your Java code reads it with resolver.getResource(assetPath + '/jcr:content/metadata').getValueMap().get('propertyName', defaultValue)."},
+  6:{c:'b',e:"✅ Correct! 'Map to property' is the JCR property path where the field's value is stored. For example, './jcr:content/metadata/dam:season' means the value is saved as dam:season in the metadata node. Your Java code reads it with meta.get('dam:season', '')."}
+};
+
+function ans(q, choice){
+  const a=ad[q];
+  const btns=document.querySelectorAll('#q'+q+' .qb');
+  const letters=['a','b','c'];
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(letters[i]===a.c)b.classList.add('ok');
+    else if(letters[i]===choice&&choice!==a.c)b.classList.add('no');
+  });
+  const r=document.getElementById('qr'+q);
+  r.className='qres show '+(choice===a.c?'ok':'no');
+  r.innerHTML=(choice===a.c?'':' Not quite. ')+a.e;
+}
+
+function go(i){
+  document.querySelectorAll('.pg').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+}
+</script>

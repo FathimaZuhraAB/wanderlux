@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEM Interview Prep Quiz</title>
+<style>
+  :root {
+    --primary: #eb1000;
+    --primary-dark: #b50d00;
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+    --warn: #d97706;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 24px 32px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .header-logo { width: 44px; height: 44px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; }
+  .header h1 { font-size: 22px; font-weight: 700; }
+  .header p { font-size: 13px; color: #94a3b8; margin-top: 2px; }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* HOME */
+  .home-container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+  .home-hero { text-align: center; margin-bottom: 40px; }
+  .home-hero h2 { font-size: 32px; font-weight: 800; color: #1a1a2e; }
+  .home-hero p { color: var(--muted); margin-top: 8px; font-size: 16px; }
+  .badge { display: inline-block; background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .topic-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+  .topic-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(235,16,0,0.15); }
+  .topic-card.selected { border-color: var(--primary); background: #fff5f5; }
+  .topic-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .topic-card p { font-size: 12px; color: var(--muted); }
+  .topic-card .q-count { position: absolute; top: 12px; right: 12px; background: var(--bg); border-radius: 20px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .topic-card.selected .q-count { background: var(--primary); color: white; }
+  .topic-num { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), #ff4444); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 15px rgba(235,16,0,0.3); }
+  .btn-secondary { background: var(--card); color: var(--text); border: 2px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+  .btn-outline:hover { background: var(--primary); color: white; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+  .select-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+  .start-row { text-align: center; }
+
+  /* QUIZ */
+  .quiz-container { max-width: 760px; margin: 0 auto; padding: 32px 24px; }
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .quiz-meta { font-size: 13px; color: var(--muted); }
+  .quiz-meta strong { color: var(--text); }
+  .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 28px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #ff6b6b); border-radius: 3px; transition: width 0.4s ease; }
+
+  .question-card { background: var(--card); border-radius: var(--radius); padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 24px; border: 1px solid var(--border); }
+  .q-type-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+  .type-mcq { background: #dbeafe; color: #1d4ed8; }
+  .type-tf { background: #f3e8ff; color: #7c3aed; }
+  .type-short { background: #d1fae5; color: #065f46; }
+  .type-scenario { background: #fef3c7; color: #92400e; }
+
+  .q-topic { font-size: 12px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .q-number { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .q-text { font-size: 17px; font-weight: 600; line-height: 1.6; color: var(--text); margin-bottom: 24px; }
+  .q-scenario-box { background: #f8fafc; border-left: 4px solid var(--warn); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 20px; font-size: 14px; color: #374151; font-style: italic; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; }
+  .option:hover { border-color: #93c5fd; background: #f0f9ff; }
+  .option.selected { border-color: #3b82f6; background: #eff6ff; }
+  .option.correct { border-color: var(--correct); background: #f0fdf4 !important; }
+  .option.wrong { border-color: var(--wrong); background: #fef2f2 !important; }
+  .option.reveal-correct { border-color: var(--correct); background: #f0fdf4; }
+  .option-letter { width: 28px; height: 28px; min-width: 28px; border-radius: 6px; background: var(--bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; transition: all 0.15s; }
+  .option.selected .option-letter { background: #3b82f6; border-color: #3b82f6; color: white; }
+  .option.correct .option-letter { background: var(--correct); border-color: var(--correct); color: white; }
+  .option.wrong .option-letter { background: var(--wrong); border-color: var(--wrong); color: white; }
+  .option.reveal-correct .option-letter { background: var(--correct); border-color: var(--correct); color: white; }
+  .option-text { font-size: 15px; line-height: 1.5; padding-top: 2px; }
+
+  .tf-options { display: flex; gap: 16px; }
+  .tf-btn { flex: 1; padding: 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 700; text-align: center; transition: all 0.15s; background: var(--card); }
+  .tf-btn:hover { border-color: #93c5fd; background: #f0f9ff; }
+  .tf-btn.selected { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; }
+  .tf-btn.correct { border-color: var(--correct); background: #f0fdf4; color: var(--correct); }
+  .tf-btn.wrong { border-color: var(--wrong); background: #fef2f2; color: var(--wrong); }
+  .tf-btn.reveal-correct { border-color: var(--correct); background: #f0fdf4; color: var(--correct); }
+
+  .short-answer-area { width: 100%; min-height: 100px; padding: 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 15px; font-family: inherit; resize: vertical; transition: border-color 0.15s; }
+  .short-answer-area:focus { outline: none; border-color: #3b82f6; }
+
+  .feedback-box { margin-top: 20px; padding: 16px; border-radius: 8px; font-size: 14px; line-height: 1.6; display: none; }
+  .feedback-box.show { display: block; }
+  .feedback-correct { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+  .feedback-wrong { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+  .feedback-info { background: #eff6ff; border: 1px solid #93c5fd; color: #1d4ed8; }
+  .feedback-box strong { display: block; margin-bottom: 4px; font-size: 15px; }
+
+  .quiz-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .nav-right { display: flex; gap: 10px; }
+
+  /* RESULTS */
+  .results-container { max-width: 800px; margin: 0 auto; padding: 32px 24px; }
+  .score-card { background: var(--card); border-radius: var(--radius); padding: 40px; text-align: center; margin-bottom: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid var(--border); }
+  .score-circle { width: 140px; height: 140px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: 800; border: 8px solid; }
+  .score-circle .pct { font-size: 38px; }
+  .score-circle .label { font-size: 12px; opacity: 0.8; }
+  .score-great { border-color: var(--correct); color: var(--correct); background: #f0fdf4; }
+  .score-good { border-color: #f59e0b; color: #d97706; background: #fffbeb; }
+  .score-low { border-color: var(--wrong); color: var(--wrong); background: #fef2f2; }
+  .score-card h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+  .score-card p { color: var(--muted); font-size: 15px; }
+  .score-stats { display: flex; gap: 16px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+  .stat-pill { padding: 8px 20px; border-radius: 30px; font-size: 14px; font-weight: 600; }
+  .stat-correct { background: #d1fae5; color: #065f46; }
+  .stat-wrong { background: #fee2e2; color: #991b1b; }
+  .stat-skip { background: #f3f4f6; color: var(--muted); }
+
+  .topic-breakdown { background: var(--card); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+  .topic-breakdown h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .topic-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-size: 14px; }
+  .topic-row-name { width: 220px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topic-bar-wrap { flex: 1; height: 10px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+  .topic-bar { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+  .topic-row-score { width: 50px; text-align: right; font-weight: 700; }
+  .results-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+  /* ANSWER KEY */
+  .key-container { max-width: 800px; margin: 0 auto; padding: 32px 24px; }
+  .key-section { background: var(--card); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+  .key-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); color: var(--primary); }
+  .key-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--bg); }
+  .key-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .key-q { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .key-a { font-size: 14px; color: #166534; background: #f0fdf4; padding: 10px 14px; border-radius: 6px; border-left: 3px solid var(--correct); }
+
+  @media (max-width: 600px) {
+    .quiz-container, .home-container, .results-container, .key-container { padding: 20px 16px; }
+    .q-text { font-size: 15px; }
+    .tf-options { flex-direction: column; }
+    .topic-row-name { width: 140px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">AEM</div>
+  <div>
+    <h1>AEM Interview Prep Quiz</h1>
+    <p>Adobe Experience Manager · 11 Topics · 165 Questions</p>
+  </div>
+</div>
+
+<!-- HOME SCREEN -->
+<div id="screen-home" class="screen active">
+  <div class="home-container">
+    <div class="home-hero">
+      <div class="badge">🎯 Interview Preparation</div>
+      <h2>AEM Developer Quiz</h2>
+      <p>Test your knowledge across 11 core AEM topics. Choose topics below and start your quiz.</p>
+    </div>
+    <div class="select-actions">
+      <button class="btn btn-secondary" onclick="selectAll()">✓ Select All Topics</button>
+      <button class="btn btn-secondary" onclick="selectNone()">✕ Deselect All</button>
+    </div>
+    <div class="topic-grid" id="topicGrid"></div>
+    <div class="start-row">
+      <button class="btn btn-primary" id="startBtn" onclick="startQuiz()">
+        ▶ Start Quiz &nbsp;<span id="startCount">(0 topics selected)</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <div class="quiz-meta">Topic: <strong id="quizTopicLabel"></strong></div>
+      <div class="quiz-meta">Question <strong id="qCurrent">1</strong> of <strong id="qTotal">0</strong></div>
+      <button class="btn btn-secondary" onclick="goHome()" style="padding:8px 16px;font-size:13px;">⬅ Exit</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="question-card" id="questionCard"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-secondary" id="btnPrev" onclick="prevQ()">← Previous</button>
+      <div class="nav-right">
+        <button class="btn btn-secondary" id="btnSkip" onclick="skipQ()">Skip →</button>
+        <button class="btn btn-primary" id="btnNext" onclick="nextQ()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="screen-results" class="screen">
+  <div class="results-container">
+    <div class="score-card" id="scoreCard"></div>
+    <div class="topic-breakdown" id="topicBreakdown"></div>
+    <div class="results-actions">
+      <button class="btn btn-primary" onclick="restartQuiz()">🔁 Retake Quiz</button>
+      <button class="btn btn-outline" onclick="showAnswerKey()">📋 View Answer Key</button>
+      <button class="btn btn-secondary" onclick="goHome()">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANSWER KEY SCREEN -->
+<div id="screen-key" class="screen">
+  <div class="key-container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div><h2 style="font-size:24px;font-weight:800;">Answer Key</h2><p style="color:var(--muted);font-size:14px;">Full explanations for all selected topics</p></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" onclick="showScreen('screen-results')">← Results</button>
+        <button class="btn btn-secondary" onclick="goHome()">🏠 Home</button>
+      </div>
+    </div>
+    <div id="answerKeyContent"></div>
+  </div>
+</div>
+
+<script>
+// ─── QUESTION DATA ────────────────────────────────────────────────────────────
+const TOPICS = [
+  {
+    id: "sling-models",
+    name: "Sling Models",
+    icon: "1",
+    desc: "Annotations, injection, adaptables",
+    questions: [
+      { type:"mcq", q:"Which annotation is used to declare a Java class as a Sling Model?", opts:["@Component","@Model","@SlingServlet","@Service"], ans:1, exp:"@Model (from org.apache.sling.models.annotations) marks a class as a Sling Model and specifies its adaptables." },
+      { type:"mcq", q:"Which annotation injects the value of a JCR property directly into a Sling Model field?", opts:["@Inject","@ValueMapValue","@ChildResource","@OSGiService"], ans:1, exp:"@ValueMapValue injects a property from the resource's ValueMap, optionally with a custom name via the 'name' attribute." },
+      { type:"mcq", q:"What does the 'adaptables' attribute in @Model define?", opts:["The OSGi services the model uses","What types the model can be adapted from","The JCR node types the model supports","The Sling resource types supported"], ans:1, exp:"adaptables specifies which types (e.g., Resource.class, SlingHttpServletRequest.class) can be adapted to this model." },
+      { type:"mcq", q:"Which annotation injects a child resource node into a Sling Model field?", opts:["@ValueMapValue","@Self","@ChildResource","@RequestAttribute"], ans:2, exp:"@ChildResource injects a child Resource or adapts it to another Sling Model automatically." },
+      { type:"mcq", q:"What happens during injection if a required field cannot be injected and defaultInjectionStrategy is REQUIRED?", opts:["The field is set to null","The model adaptation returns null","An exception is logged but model is returned","The page fails to render with 500"], ans:1, exp:"If a required injection fails, the entire adaptation returns null, preventing partially initialized models." },
+      { type:"mcq", q:"Which annotation marks a method to be called after all injections are complete?", opts:["@Activate","@Modified","@PostConstruct","@Init"], ans:2, exp:"@PostConstruct (javax.annotation) marks a method to execute after all dependency injections are done — ideal for derived field computation." },
+      { type:"mcq", q:"Which annotation is used to inject an OSGi service into a Sling Model?", opts:["@Reference","@OSGiService","@Inject","@Service"], ans:1, exp:"@OSGiService injects an OSGi service reference directly into a Sling Model field." },
+      { type:"mcq", q:"What interface must a Sling Model implement to be exported as JSON via the Sling Model Exporter?", opts:["Exportable","Serializable","AdaptTo","JsonNode"], ans:0, exp:"The class must be annotated with @Exporter (e.g., name='jackson') and can implement a marker — the exporter serializes fields automatically." },
+      { type:"mcq", q:"Which annotation injects the current SlingHttpServletRequest into a Sling Model?", opts:["@Inject","@Self","@RequestAttribute","@SlingObject"], ans:1, exp:"@Self injects the adaptable itself — if the adaptable is SlingHttpServletRequest, you get the request object." },
+      { type:"mcq", q:"What is the purpose of the 'via' attribute in Sling Model injection annotations?", opts:["Specifies the injector to use","Defines the child resource path","Sets a default value","Specifies an alternate resource to inject from"], ans:0, exp:"The 'via' attribute selects a specific injector strategy, e.g., @Via(type = ResourceSuperType.class) to delegate to a parent resource type." },
+      { type:"tf", q:"A Sling Model class must implement a specific interface to be used as a model.", ans:false, exp:"Sling Models do not need to implement any interface. They can be plain POJOs annotated with @Model, though implementing an interface is a best practice." },
+      { type:"tf", q:"The @Inject annotation can resolve child resources, OSGi services, request attributes, and property values depending on context.", ans:true, exp:"@Inject is a generic injector that tries all registered injectors in priority order until one succeeds." },
+      { type:"tf", q:"Sling Models support adaptation from both Resource and SlingHttpServletRequest objects.", ans:true, exp:"You can specify multiple adaptables: @Model(adaptables={Resource.class, SlingHttpServletRequest.class})" },
+      { type:"short", q:"Explain the difference between @Inject and @ValueMapValue in a Sling Model. When would you prefer one over the other?", ans:"@Inject is a generic annotation that tries all available injectors (ValueMap, OSGi, child resources, etc.) in priority order. @ValueMapValue is specific — it only injects from the resource's ValueMap (JCR properties). Use @ValueMapValue for explicit, unambiguous property injection (better performance, clearer intent). Use @Inject when you want the framework to figure out the source automatically." },
+      { type:"scenario", q:"You need to create a Sling Model for a 'Card' component that reads a 'title' property and a 'link/url' child node property. The model must also call a TagManager service. Describe the key annotations you would use.", scenario:"Component structure: /content/mysite/en/home/jcr:content/card with properties title (String) and a child node 'link' containing property 'url'.", ans:"Use @Model(adaptables=Resource.class). Annotate the class with @Model. Inject 'title' with @ValueMapValue. Inject the child link node with @ChildResource (creates a sub-model or Resource). Inject TagManager with @OSGiService. Use a @PostConstruct method to derive any computed values from the link child resource (e.g., read its 'url' property via childResource.getValueMap())." }
+    ]
+  },
+  {
+    id: "sightly",
+    name: "Sightly / HTL",
+    icon: "2",
+    desc: "HTML Template Language, expressions, use-API",
+    questions: [
+      { type:"mcq", q:"What does HTL stand for in AEM?", opts:["Highly Typed Language","HTML Template Language","Hybrid Template Loader","HyperText Logic"], ans:1, exp:"HTL (HTML Template Language) is AEM's preferred server-side templating language, formerly known as Sightly." },
+      { type:"mcq", q:"Which HTL attribute is used to iterate over a collection?", opts:["data-sly-repeat","data-sly-list","data-sly-loop","data-sly-forEach"], ans:1, exp:"data-sly-list iterates over a collection. The loop variable is accessed as 'item' and loop status as 'itemList' by default." },
+      { type:"mcq", q:"Which HTL block statement conditionally renders an element?", opts:["data-sly-if","data-sly-when","data-sly-condition","data-sly-show"], ans:0, exp:"data-sly-test evaluates a condition and removes the element (and its children) if false. 'data-sly-if' is not standard — the correct one is data-sly-test." },
+      { type:"mcq", q:"How do you include another HTL script in HTL?", opts:["data-sly-include","data-sly-resource","data-sly-call","data-sly-import"], ans:0, exp:"data-sly-include includes another HTL/JSP script in the same rendering context. data-sly-resource includes a Sling resource (dispatches a sub-request)." },
+      { type:"mcq", q:"What is the correct syntax to access a Sling Model named 'model' in HTL via the Use API?", opts:["<sly data-sly-use.model='${model}'/>","<sly data-sly-use.model='com.example.Model'/>","<sly data-sly-bind='com.example.Model'/>","<sly data-sly-ref='com.example.Model'/>"], ans:1, exp:"data-sly-use.identifier='fully.qualified.ClassName' instantiates the class and binds it to 'identifier' for use in the template." },
+      { type:"mcq", q:"In HTL, how do you output a property value with XSS protection for HTML context?", opts:["${properties.title}","${properties.title @ context='html'}","${xss:filter(properties.title)}","${Text.filter(properties.title)}"], ans:0, exp:"${properties.title} automatically applies XSS escaping appropriate for the context (HTML by default). The context attribute can override this." },
+      { type:"mcq", q:"Which HTL statement is used to define and call a reusable template block?", opts:["data-sly-include","data-sly-template / data-sly-call","data-sly-resource","data-sly-use"], ans:1, exp:"data-sly-template defines a reusable template block and data-sly-call invokes it, optionally passing parameters." },
+      { type:"mcq", q:"What does data-sly-unwrap do?", opts:["Removes the element's children","Renders the element's children without the wrapping HTML element","Removes the element from DOM conditionally","Escapes the element's output"], ans:1, exp:"data-sly-unwrap renders only the children of the element, stripping the wrapping tag itself from output." },
+      { type:"mcq", q:"How do you pass a parameter to a data-sly-call template?", opts:["As HTML attributes on the caller","As a map using @ syntax: data-sly-call='${myTemplate @ param=value}'","Via data attributes on the template element","Through the Sling request parameters"], ans:1, exp:"Parameters are passed using the @ operator: <sly data-sly-call='${myTemplate @ title=properties.title}'/>" },
+      { type:"mcq", q:"What is the purpose of the 'wcmmode' object available in HTL?", opts:["Checks the current locale","Determines the current WCM mode (edit, preview, disabled)","Provides access to page properties","Manages component dialog data"], ans:1, exp:"The wcmmode global object exposes methods like wcmmode.edit, wcmmode.preview, wcmmode.disabled to conditionally render author-only markup." },
+      { type:"tf", q:"HTL supports Java scriptlets (inline Java code) similar to JSP.", ans:false, exp:"HTL explicitly prohibits inline Java code. Business logic must be placed in Use-API classes (POJOs, Sling Models) and referenced via data-sly-use." },
+      { type:"tf", q:"The 'currentPage' object is available globally in HTL without any additional declaration.", ans:true, exp:"AEM exposes several global objects in HTL including currentPage, currentNode, properties, pageProperties, resource, request, response, etc." },
+      { type:"tf", q:"data-sly-resource dispatches a separate Sling request to render an included resource.", ans:true, exp:"data-sly-resource performs a Sling include (sub-request dispatch) for the specified resource path or sub-resource, unlike data-sly-include which just includes a script." },
+      { type:"short", q:"What is XSS context in HTL and why is it important? Name at least three context types.", ans:"HTL automatically escapes output based on the context where it appears. Context types include: 'html' (default, HTML-encodes special chars), 'attribute' (for HTML attribute values), 'uri' (for URLs, prevents javascript: injection), 'scriptString' (inside JavaScript strings), 'styleToken' (inside CSS), 'unsafe' (no escaping — use only when absolutely necessary). This prevents Cross-Site Scripting attacks by ensuring values are always escaped appropriately for their rendering context." },
+      { type:"scenario", q:"You are building a component that renders a navigation list. Each nav item has a label, URL, and should be marked 'active' if it matches the current page. How would you structure the HTL template?", scenario:"Data is provided by a Sling Model 'NavModel' with a List<NavItem> getItems() method. Each NavItem has getLabel(), getUrl(), and isActive() methods.", ans:"<sly data-sly-use.nav='com.example.NavModel'/>\\n<nav>\\n  <ul data-sly-list.item='${nav.items}'>\\n    <li class='${'active' @ context='attribute', condition=item.active}'>\\n      <a href='${item.url @ context='uri'}'>${item.label}</a>\\n    </li>\\n  </ul>\\n</nav>\\nKey points: use data-sly-use to reference the model, data-sly-list to iterate, correct context hints for URL and attribute values, and a ternary expression for the active class." }
+    ]
+  },
+  {
+    id: "editable-templates",
+    name: "Editable Templates",
+    icon: "3",
+    desc: "Structure, policies, initial content, layout",
+    questions: [
+      { type:"mcq", q:"Where are Editable Templates stored in the JCR?", opts:["/apps/settings/wcm/templates","/conf/<config>/settings/wcm/templates","/content/templates","/libs/wcm/core/templates"], ans:1, exp:"Editable Templates are stored under /conf/<config-name>/settings/wcm/templates/ (in the configuration-aware location)." },
+      { type:"mcq", q:"Which node type defines the allowed components and layout policy for an Editable Template?", opts:["jcr:content","structure","policies","initial"], ans:2, exp:"The 'policies' node under the template maps container/component nodes to policy definitions that control which components are allowed." },
+      { type:"mcq", q:"What is the purpose of the 'initial' node in an Editable Template?", opts:["Defines the locked structure of the page","Provides default content copied into new pages created from the template","Stores the component policies","Contains the thumbnail of the template"], ans:1, exp:"The 'initial' node contains default content that is copied into the editable area of a new page when it is first created." },
+      { type:"mcq", q:"What is the purpose of the 'structure' node in an Editable Template?", opts:["Stores page policies","Defines layout containers and locked components that cannot be changed by page authors","Contains initial content for pages","Holds template metadata"], ans:1, exp:"The 'structure' node defines the fixed, locked layout. Authors cannot remove or move structure-level components; only template authors can edit them." },
+      { type:"mcq", q:"Which user group can edit the structure of an Editable Template?", opts:["Content Authors","Template Editors / Template Authors","Administrators only","Developers"], ans:1, exp:"Template Editors (or Template Authors) have permission to modify template structure, policies, and initial content via the Template Editor UI." },
+      { type:"mcq", q:"How do you associate an Editable Template configuration with a content path?", opts:["Via the template's sling:resourceType","Via the Cloud Configuration (cq:conf property on the content node)","In the page component's dialog","Via OSGi configuration"], ans:1, exp:"The cq:conf property on a content node (e.g., /content/mysite) or its ancestor points to the /conf path, making templates in that conf available." },
+      { type:"mcq", q:"What differentiates a locked component from an unlocked component in an Editable Template?", opts:["Locked components use a different resource type","Locked components have editable=false and cannot be modified by page authors","Locked components are hidden in edit mode","Locked components require admin access to view"], ans:1, exp:"Locked components (cq:isLocked=true or editable=false) in the structure are inherited by all pages but cannot be edited by content authors." },
+      { type:"mcq", q:"What is a Template Policy in Editable Templates?", opts:["A security policy for template access","A set of design configuration properties (allowed components, styles) associated with a component/container","A JCR ACL rule for template usage","A workflow to approve template creation"], ans:1, exp:"Template Policies define allowed components, style configurations, and design data for a component or container, stored under /conf/…/settings/wcm/policies." },
+      { type:"mcq", q:"How can you allow specific components in a Layout Container within an Editable Template?", opts:["Add them to the template's allowed component list in design mode","Configure the policy for that container to include the desired component groups","Edit the parsys node directly in CRXDE","Modify the component's sling:resourceType"], ans:1, exp:"In the Template Editor, select the container, open its policy, and under 'Allowed Components' add the desired component groups or specific components." },
+      { type:"mcq", q:"Which AEM feature replaced Static Templates as the preferred approach for template creation?", opts:["Page Templates","Editable Templates","Experience Templates","Blueprint Templates"], ans:1, exp:"Editable Templates (introduced in AEM 6.2) replaced Static Templates, offering a UI-driven, flexible approach without requiring developer intervention for every template." },
+      { type:"tf", q:"Editable Templates allow content authors to directly modify the template structure.", ans:false, exp:"Content authors can only edit page content. Only Template Editors/Authors can modify the template structure, initial content, and policies." },
+      { type:"tf", q:"A single Editable Template can be used across multiple sites in AEM.", ans:true, exp:"If the /conf configuration is accessible from multiple content paths (via cq:conf inheritance), the same template can be reused across sites." },
+      { type:"tf", q:"Editable Templates store design data separately from page content, unlike Static Templates.", ans:true, exp:"Editable Templates store policies (design data) in /conf, cleanly separated from /content — unlike Static Templates which stored design in /etc/designs." },
+      { type:"short", q:"Explain the three main sections of an Editable Template (Structure, Initial Content, Layout) and what each one controls.", ans:"1. Structure: Defines the fixed layout visible on all pages. Locked components cannot be modified by authors. Template editors define headers, footers, and fixed containers here. 2. Initial Content: Provides editable default content pre-populated when a new page is created from the template. Authors can change or remove this content. 3. Layout: Controls the responsive grid breakpoints and column configurations for layout containers, allowing responsive layout rules to be set at the template level." },
+      { type:"scenario", q:"You need to create a new template for a 'Landing Page' in AEM. The header and footer must be locked (not editable by content authors), but the main content area must be fully editable. How would you configure this?", scenario:"Using the AEM Template Editor, you have access to Structure, Initial Content, and Layout modes.", ans:"In Structure mode: Add the header component and footer component to the template, then lock them (toggle the lock icon). Add a Layout Container in the main content area and leave it unlocked. Set the container's policy to allow the desired component groups. In Initial Content mode: Add placeholder content if needed in the unlocked container. In Layout mode: Configure responsive grid breakpoints for the container. The result: header/footer are inherited and immutable on pages, while the main container is fully author-editable." }
+    ]
+  },
+  {
+    id: "core-components",
+    name: "Core Components",
+    icon: "4",
+    desc: "Extension, override, proxy, delegation",
+    questions: [
+      { type:"mcq", q:"What is the recommended way to customize a Core Component in AEM?", opts:["Edit the component directly in /libs","Create a proxy component in /apps that overlays the core component","Fork the Core Component source code","Use design mode to change settings"], ans:1, exp:"Create a proxy component in /apps with sling:resourceSuperType pointing to the core component. This follows the proxy pattern and leverages Sling inheritance." },
+      { type:"mcq", q:"What JCR property enables Sling Resource Merger / inheritance from a parent resource type?", opts:["sling:resourceType","sling:resourceSuperType","cq:inherit","jcr:primaryType"], ans:1, exp:"sling:resourceSuperType on a component node defines the parent component, enabling overlay/inheritance of scripts and dialogs via Sling Resource Merger." },
+      { type:"mcq", q:"Where should proxy components for Core Components be created?", opts:["/libs/core/wcm/components","/apps/<project>/components","/conf/<project>/components","/content/components"], ans:1, exp:"All custom and proxy components should live under /apps/<project-name>/components/ — never modify /libs directly." },
+      { type:"mcq", q:"What is the purpose of the Delegation Pattern when extending Core Component Sling Models?", opts:["To forward HTTP requests to another servlet","To delegate Sling Model method calls to the core component's model implementation","To copy core component JCR nodes","To override OSGi service implementations"], ans:1, exp:"The Delegation Pattern uses @Self @Via(type=ResourceSuperType.class) to inject and delegate to the parent (core) Sling Model, allowing you to add/override only specific methods." },
+      { type:"mcq", q:"Which Maven artifact provides AEM Core Components as a project dependency?", opts:["com.adobe.cq:core.wcm.components.core","org.apache.sling:org.apache.sling.models.api","com.day.cq:cq-wcm-core","com.adobe.aem:uber-jar"], ans:0, exp:"The core.wcm.components.core artifact provides the Core Components interfaces and Sling Models that you can use for delegation." },
+      { type:"mcq", q:"How do you override only the HTL rendering script of a Core Component without touching its Sling Model?", opts:["Create a script with the same name in the proxy component folder","Edit the script in /libs/core/wcm/components","Override the sling:resourceType in the component dialog","Modify the component's featureflags"], ans:0, exp:"Because of Sling Resource Merger and sling:resourceSuperType, AEM first looks in your proxy component's folder. Placing a script with the same filename there overrides it." },
+      { type:"mcq", q:"What annotation pair is used for the Delegation Pattern in a Sling Model extending a Core Component model?", opts:["@Self and @SlingObject","@Self @Via(type=ResourceSuperType.class) and @Delegate","@Inject and @Source","@ChildResource and @OSGiService"], ans:1, exp:"@Self @Via(type=ResourceSuperType.class) injects the core component model adapted from the parent resource type. WCMUsePojo delegation uses @Delegate on that field." },
+      { type:"mcq", q:"Which Core Component allows authors to create multi-column responsive layouts on a page?", opts:["Teaser","Carousel","Layout Container","Content Fragment"], ans:2, exp:"The Layout Container (wcm/foundation/components/responsivegrid) provides the responsive grid for authoring multi-column layouts with breakpoint control." },
+      { type:"mcq", q:"What is the 'wcm/core/components/commons/v1/templates/page' component used for?", opts:["It is the base page component","It is a template component","It provides the basic HTL page rendering structure","It is the parsys component"], ans:2, exp:"Core Components provides a base page component (core/wcm/components/page/v2/page) that can be extended for project-specific page implementations." },
+      { type:"mcq", q:"How can you add a new tab to the dialog of a Core Component without duplicating the entire dialog?", opts:["Use sling:resourceMergeChildren to merge dialog nodes","Copy the dialog from /libs and add a new tab","Modify the cq:dialog in /libs directly","Use an OSGi overlay factory"], ans:0, exp:"Sling Resource Merger allows you to add sling:resourceMergeChildren=true on your proxy's cq:dialog to merge with the parent dialog, adding only the new nodes." },
+      { type:"tf", q:"You should directly edit Core Component files under /libs to customize their behavior.", ans:false, exp:"Editing /libs is strongly discouraged as upgrades will overwrite changes. Always overlay/proxy components in /apps." },
+      { type:"tf", q:"A proxy component inherits the dialog of its parent core component automatically.", ans:true, exp:"Via sling:resourceSuperType, Sling Resource Merger automatically inherits the dialog, edit config, and scripts from the parent component unless overridden." },
+      { type:"tf", q:"The Core Components library can be embedded in a project using the AEM archetype.", ans:true, exp:"The AEM project archetype includes Core Components as a dependency and embeds them in the all package, making them available on the AEM instance." },
+      { type:"short", q:"What is the difference between overlaying and extending (proxy) a Core Component? Which approach is recommended and why?", ans:"Overlay: Copies the component to /apps mirroring the /libs structure path. Completely replaces the original — no inheritance. Risky as you own the full implementation and lose core component updates. Extension/Proxy: Creates a new component in /apps/project/components with sling:resourceSuperType pointing to the core component. Inherits all scripts, dialogs, and Sling Models unless explicitly overridden. Recommended because: you only override what you need, Core Component updates are inherited, and maintenance is significantly easier." },
+      { type:"scenario", q:"You need to extend the Core Text component to add a custom 'disclaimer' field. Describe step-by-step how you would implement this without duplicating the entire component.", scenario:"Core Text component: core/wcm/components/text/v2/text. You need an extra 'disclaimer' text field in the dialog and it should be rendered below the main text.", ans:"1. Create proxy component at /apps/myproject/components/text with sling:resourceSuperType=core/wcm/components/text/v2/text. 2. Add a cq:dialog node with sling:resourceMergeChildren=true, add only the new 'disclaimer' tab/field node. 3. Create a Sling Model MyTextModel extending the core TextModel using delegation (@Self @Via(ResourceSuperType.class)). Add getDisclaimer() method that reads the 'disclaimer' property. 4. Create text.html in the proxy folder — include the delegated core rendering via data-sly-resource pointing to the supertype, then add <p>${model.disclaimer}</p> below. 5. Update the component policy to allow it in templates." }
+    ]
+  },
+  {
+    id: "client-libs",
+    name: "Client Libraries",
+    icon: "5",
+    desc: "Creation, categories, debugging, minification",
+    questions: [
+      { type:"mcq", q:"What node type is used to create a Client Library in AEM?", opts:["cq:Page","cq:ClientLibraryFolder","nt:folder","sling:Folder"], ans:1, exp:"cq:ClientLibraryFolder is the node type for Client Libraries. It contains js.txt and css.txt files that list the included scripts." },
+      { type:"mcq", q:"Which property on a Client Library node defines its category?", opts:["sling:resourceType","categories","clientlib.name","jcr:title"], ans:1, exp:"The 'categories' property (String or String[]) on the cq:ClientLibraryFolder node defines the category name(s) used to include the library in pages." },
+      { type:"mcq", q:"Which HTL global object is used to include a client library category on a page?", opts:["wcmmode","clientlibs","headlibs","pageProperties"], ans:1, exp:"The 'clientlibs' global object provides methods like clientlibs.css, clientlibs.js to include libraries: <sly data-sly-use.clientlibs='${...}' data-sly-call='${clientlibs.all @ categories=[\"mycat\"]}'/>" },
+      { type:"mcq", q:"What is the purpose of the 'dependencies' property on a Client Library?", opts:["Lists Maven dependencies","Specifies client library categories that must load before this library","Defines required OSGi bundles","Sets the library load order within the same page"], ans:1, exp:"The 'dependencies' property ensures specified client library categories are loaded first, handling load order without manual sequencing." },
+      { type:"mcq", q:"Which URL parameter can you append to any AEM page URL to disable client library minification for debugging?", opts:["?debug=layout","?debugClientLibs=true","?clientlibs=debug","?minify=false"], ans:1, exp:"Appending ?debugClientLibs=true disables minification and serves libraries as individual unminified files, making debugging much easier." },
+      { type:"mcq", q:"What is the 'embed' property used for in Client Libraries?", opts:["To embed images as base64","To include other client library categories' content inline within this library","To embed the library in a component JAR","To bundle multiple pages' scripts together"], ans:1, exp:"The 'embed' property merges the content of specified library categories directly into this library's output, reducing HTTP requests." },
+      { type:"mcq", q:"Where is the AEM Client Library Manager available for debugging library issues?", opts:["/system/console/components","/libs/granite/ui/content/dumplibs","/crx/de/index.jsp","/system/console/bundles"], ans:1, exp:"The Dump Libraries page at /libs/granite/ui/content/dumplibs.html shows all registered client libraries, their categories, paths, and dependencies." },
+      { type:"mcq", q:"What file within a Client Library folder lists the CSS files to be included?", opts:["styles.txt","files.css","css.txt","clientlib.json"], ans:2, exp:"css.txt lists the CSS files (paths relative to the clientlib folder) to be included, in order. Similarly js.txt lists JavaScript files." },
+      { type:"mcq", q:"What does the 'allowProxy' property do on a Client Library?", opts:["Allows the library to be served through the Dispatcher","Makes the library accessible via /etc.clientlibs/ proxy path for publish-side security","Enables the library on proxy author environments","Allows cross-site library references"], ans:1, exp:"allowProxy=true makes the library accessible via /etc.clientlibs/ (proxied path) instead of /apps/, which Dispatcher typically blocks. Required for publish." },
+      { type:"mcq", q:"Which AEM Felix console tool lets you rebuild and invalidate client library caches?", opts:["OSGi Configuration Console","Sling Resource Resolver Console","CQ HTML Library Manager (/libs/granite/ui/content/dumplibs)","Adobe Granite HTML Library Manager config"], ans:3, exp:"The Adobe Granite HTML Library Manager OSGi configuration controls minification, debug mode, and gzipping. You can also use the dumplibs page to rebuild libraries." },
+      { type:"tf", q:"Client Libraries with allowProxy=false can be served on AEM Publish via /apps/ paths.", ans:false, exp:"Dispatcher typically blocks /apps/ paths on Publish. allowProxy=true is required so the library is accessible via /etc.clientlibs/ which Dispatcher allows." },
+      { type:"tf", q:"A client library can belong to multiple categories simultaneously.", ans:true, exp:"The 'categories' property accepts a multi-value String array, so a single clientlib can be included under multiple category names." },
+      { type:"tf", q:"CSS and JS files within a clientlib are automatically minified in production by default in AEM.", ans:true, exp:"AEM's HTML Library Manager minifies and combines clientlib files in production mode. Debug mode or the OSGi configuration can disable this." },
+      { type:"short", q:"A developer notices that JavaScript changes are not appearing on the publish server even after replication. What are the typical troubleshooting steps for client library issues?", ans:"1. Check if the clientlib is rebuilt: visit /libs/granite/ui/content/dumplibs.rebuild.html and rebuild. 2. Check browser cache — hard refresh (Ctrl+Shift+R). 3. Verify the category name matches exactly what's referenced in HTL. 4. Check allowProxy=true is set for publish access. 5. Verify the file is listed in js.txt. 6. Check Dispatcher cache — may need to flush /etc.clientlibs/ cached files. 7. Use ?debugClientLibs=true to see individual files. 8. Check browser console for 404 errors on script URLs." },
+      { type:"scenario", q:"You have two client libraries — one for global site styles (category: 'mysite.base') and one for a specific component (category: 'mysite.carousel'). The carousel JS depends on the base CSS. How do you configure this and include them on a page?", scenario:"The base clientlib is at /apps/mysite/clientlibs/base and carousel clientlib at /apps/mysite/clientlibs/carousel.", ans:"On the carousel clientlib node (/apps/mysite/clientlibs/carousel): set dependencies=['mysite.base'] to ensure base loads first. In the page component HTL (or base page template), include both: <sly data-sly-use.clientlibs='${...}' data-sly-call='${clientlibs.css @ categories=[\"mysite.base\",\"mysite.carousel\"]}'/> and <sly data-sly-call='${clientlibs.js @ categories=[\"mysite.base\",\"mysite.carousel\"]}'/> in the appropriate head/body sections. Set allowProxy=true on both for publish access." }
+    ]
+  },
+  {
+    id: "run-modes",
+    name: "Run Modes",
+    icon: "6",
+    desc: "Author/publish, custom run modes, OSGi configs",
+    questions: [
+      { type:"mcq", q:"Which of the following is NOT a default AEM run mode?", opts:["author","publish","nosamplecontent","development"], ans:3, exp:"'development' is not a default AEM run mode. The default run modes include author, publish, nosamplecontent, and samplecontent. Custom run modes like dev/staging/prod are defined by operators." },
+      { type:"mcq", q:"How do you specify a custom run mode when starting AEM?", opts:["Add it to the crx-quickstart/install folder","Pass -r <runmode> as a JVM argument or use the sling.run.modes property","Edit the AEM license file","Configure it in the Felix OSGi console"], ans:1, exp:"Custom run modes are specified via the -r flag (e.g., java -jar aem.jar -r author,dev) or the sling.run.modes system property." },
+      { type:"mcq", q:"Where should run-mode-specific OSGi configuration files be placed?", opts:["/apps/system/config.<runmode>","/crx-quickstart/install.<runmode>","/conf/global/config.<runmode>","Both A and B"], ans:3, exp:"Run-mode-specific configs can be placed in: /apps/.../config.<runmode>/ (in the repository) OR /crx-quickstart/install.<runmode>/ (file system). Both are valid." },
+      { type:"mcq", q:"What is the naming convention for an OSGi config file specific to the 'author' run mode?", opts:["com.example.MyService.cfg","com.example.MyService.author.cfg","com.example.MyService.config in config.author folder","Both B and C"], ans:3, exp:"You can either name the file com.example.MyService~author.cfg (tilde notation) OR place com.example.MyService.cfg inside a config.author/ folder." },
+      { type:"mcq", q:"Which API can you use to programmatically check the current run modes in Java?", opts:["SlingSettingsService","RunModeService","SlingRunModeManager","ResourceResolver"], ans:0, exp:"SlingSettingsService (org.apache.sling.settings.SlingSettingsService) exposes getRunModes() which returns the Set of active run modes." },
+      { type:"mcq", q:"Can multiple custom run modes be active simultaneously on an AEM instance?", opts:["No, only one run mode is active at a time","Yes, multiple run modes can be active simultaneously","Only if they don't conflict with each other","Only in author mode"], ans:1, exp:"Multiple run modes are active simultaneously (e.g., author + dev + us-region). OSGi configs matching any active mode combination are applied." },
+      { type:"mcq", q:"What happens when an AEM instance has run modes 'author' and 'dev' active, and there is a config file in both config.author/ and config.dev/?", opts:["Only the author config applies","Only the dev config applies","Both configs are applied; the more specific one wins on conflicts","They are merged with dev taking precedence"], ans:2, exp:"AEM applies all configs for active run modes. If the same property is configured in both, more specific (or later-loaded) configurations win. Order and specificity matter." },
+      { type:"mcq", q:"What is the main purpose of run modes in AEM?", opts:["To control page publication workflows","To define environment-specific configurations without code changes","To set up replication agents","To control dispatcher caching rules"], ans:1, exp:"Run modes allow different OSGi configurations, content, and behavior for different environments (dev/staging/prod, author/publish) without changing code." },
+      { type:"mcq", q:"Which folder in the repository is the standard location for run-mode-specific OSGi configurations?", opts:["/etc/config","apps/<project>/osgiconfig/config.<runmode>","apps/<project>/config.<runmode>","Both B and C"], ans:3, exp:"Both /apps/<project>/osgiconfig/config.<runmode>/ and /apps/<project>/config.<runmode>/ are common conventions. The AEM archetype uses config.<runmode>/ under the ui.config module." },
+      { type:"mcq", q:"Which run mode determines the AEM instance's role as content editor vs. content delivery?", opts:["primary/secondary","master/slave","author/publish","creator/consumer"], ans:2, exp:"'author' run mode indicates an authoring instance (content editing) and 'publish' indicates a delivery instance (serving content to end users)." },
+      { type:"tf", q:"The run mode of an AEM instance can be changed at runtime through the Felix console.", ans:false, exp:"Run modes are set at startup and cannot be changed at runtime. They are determined by JVM arguments, system properties, or the instance name at startup." },
+      { type:"tf", q:"Run-mode-specific content can be pre-installed by placing it in install.<runmode> folders.", ans:true, exp:"Content packages placed in /crx-quickstart/install.<runmode>/ are automatically installed only when that run mode is active." },
+      { type:"tf", q:"An AEM instance can have both 'author' and 'publish' run modes active at the same time.", ans:false, exp:"Author and publish are mutually exclusive run modes — an instance is either an author or a publish server, not both." },
+      { type:"short", q:"Explain how you would configure a Replication Agent that only exists on author instances using run-mode-specific OSGi configuration.", ans:"Create the OSGi configuration file for the replication agent under apps/<project>/config.author/ folder. This ensures the configuration is only deployed and active when the 'author' run mode is active. On publish instances, the configuration won't be applied because 'author' is not in their active run modes. Additionally, replication agents themselves are typically stored in /etc/replication/agents.author/ in the JCR, which is a path pattern that AEM only makes active on author." },
+      { type:"scenario", q:"Your project has three environments: local dev, staging, and production. Each needs a different log level for a custom OSGi service. How would you structure the configuration files?", scenario:"Custom run modes: dev, staging, prod. OSGi service: com.example.MyService. Property: loglevel (DEBUG/WARN/ERROR)", ans:"Define custom run modes: dev, staging, prod (activated at startup via -r author,dev etc.). Create config files: 1. /apps/myproject/config/com.example.MyService.cfg (default, no run mode). 2. /apps/myproject/config.dev/com.example.MyService.cfg with loglevel=DEBUG. 3. /apps/myproject/config.staging/com.example.MyService.cfg with loglevel=WARN. 4. /apps/myproject/config.prod/com.example.MyService.cfg with loglevel=ERROR. The run-mode-specific file overrides the default. Combine with environment run mode: -r publish,prod activates the prod config on the publish instance." }
+    ]
+  },
+  {
+    id: "osgi",
+    name: "OSGi Services",
+    icon: "7",
+    desc: "Services, components, configuration, lifecycle",
+    questions: [
+      { type:"mcq", q:"What annotation marks a Java class as an OSGi Declarative Services component?", opts:["@Service","@Component","@OsgiComponent","@Felix"], ans:1, exp:"@Component (org.osgi.service.component.annotations.Component) registers the class as an OSGi DS component, managing its lifecycle and dependencies." },
+      { type:"mcq", q:"Which annotation is used to inject an OSGi service reference into another OSGi component?", opts:["@Inject","@Reference","@Autowired","@OSGiService"], ans:1, exp:"@Reference (org.osgi.service.component.annotations.Reference) injects an OSGi service dependency, managed by the SCR (Service Component Runtime)." },
+      { type:"mcq", q:"What is the purpose of the @Activate annotation in an OSGi component?", opts:["To register the component in the OSGi registry","To mark the method called when the component is activated","To specify the service interface","To configure component properties"], ans:1, exp:"@Activate marks the method invoked when the OSGi component is activated (started). Typically used for initialization, reading configuration, or starting resources." },
+      { type:"mcq", q:"What annotation is used to define the configuration interface for an OSGi component?", opts:["@ObjectClassDefinition","@Configuration","@OsgiConfig","@ConfigurationAdmin"], ans:0, exp:"@ObjectClassDefinition (org.osgi.service.metatype.annotations) defines the configuration schema. The annotated interface defines properties displayed in the Felix console." },
+      { type:"mcq", q:"How does an OSGi component read its configuration values?", opts:["Via JCR node properties","Through the @Activate method parameter annotated with @ObjectClassDefinition type","Via ResourceResolver","By reading system properties"], ans:1, exp:"The @Activate method accepts a parameter of the @ObjectClassDefinition-annotated interface type. The OSGi framework injects the current configuration values." },
+      { type:"mcq", q:"What happens when an OSGi component's configuration is updated via the Felix console?", opts:["The component restarts only after server restart","The @Modified method is called (or @Activate if no @Modified exists)","The change is ignored until the next deployment","The whole bundle is restarted"], ans:1, exp:"If @Modified is defined, it is called with the new configuration. If not, @Deactivate then @Activate are called, effectively restarting the component with new config." },
+      { type:"mcq", q:"Which OSGi console URL shows all registered services and their consumers?", opts:["/system/console/components","/system/console/services","/system/console/bundles","/system/console/configMgr"], ans:1, exp:"/system/console/services lists all registered OSGi services, their interfaces, properties, and which bundles are consuming them." },
+      { type:"mcq", q:"What is the 'service.ranking' property used for in OSGi?", opts:["Defines the execution priority of the component","When multiple services implement the same interface, higher ranking is preferred","Sets the thread priority for service execution","Orders the component activation sequence"], ans:1, exp:"When multiple components implement the same service interface, OSGi uses service.ranking (higher value = higher priority) to determine which one is injected by default." },
+      { type:"mcq", q:"Which annotation makes an OSGi component listen for configuration changes without restarting?", opts:["@Activate","@Modified","@Updated","@ConfigurationListener"], ans:1, exp:"@Modified marks a method called when the component's configuration changes, without requiring full deactivation/activation. Allows hot-reload of configuration." },
+      { type:"mcq", q:"What is a 'Whiteboard Pattern' in OSGi?", opts:["A pattern for registering services that are automatically discovered by a listener/tracker","A debugging pattern for OSGi services","A pattern for sharing data between bundles","A way to configure multiple OSGi components at once"], ans:0, exp:"The Whiteboard Pattern registers services with specific properties, and a consumer (tracker) automatically discovers and uses them without direct coupling — e.g., Sling Servlet registration." },
+      { type:"tf", q:"An OSGi bundle can import packages from another bundle even if they are not explicitly exported.", ans:false, exp:"OSGi enforces package-level visibility. A bundle must explicitly Export-Package to share it, and consuming bundles must Import-Package. Unexported packages are bundle-private." },
+      { type:"tf", q:"OSGi configuration files with .cfg.json format support typed values (Integer, Boolean, etc.).", ans:true, exp:".cfg.json (OSGi R7 configuration format) supports typed values natively in JSON. The older .cfg format only supports String values and requires coercion." },
+      { type:"tf", q:"The @Deactivate method is called when an OSGi component is stopped or its configuration is updated.", ans:true, exp:"@Deactivate is called during component deactivation — either when the bundle stops, configuration changes trigger restart, or the component is explicitly disabled." },
+      { type:"short", q:"Explain the lifecycle of an OSGi Declarative Services component from bundle installation to deactivation.", ans:"1. Bundle Install: Bundle JAR is installed in OSGi. 2. Bundle Start: OSGi resolves dependencies; bundle classes become available. 3. Component Detection: SCR discovers @Component annotated classes. 4. Dependency Satisfaction: SCR checks all @Reference dependencies. When all required references are available, the component can be activated. 5. @Activate: Activation method is called with configuration values. Component is registered as a service if it implements an interface. 6. @Modified: Called if configuration changes (optional). 7. @Deactivate: Called when component is stopped, bundle uninstalled, or dependencies become unavailable. Component is unregistered." },
+      { type:"scenario", q:"You need to create an OSGi service that sends email notifications. The SMTP server URL and credentials must be configurable per environment without redeployment. Describe how you would implement this.", scenario:"Service interface: EmailService with sendEmail(String to, String subject, String body). Configuration: smtpHost, smtpPort, smtpUser, smtpPassword.", ans:"1. Define config interface: @ObjectClassDefinition(name='Email Service Config') interface EmailServiceConfig with @AttributeDefinition methods for smtpHost, smtpPort, smtpUser, smtpPassword (password with type=AttributeType.PASSWORD). 2. Implement the service: @Component(service=EmailService.class) class EmailServiceImpl implements EmailService. Add @Activate method accepting EmailServiceConfig parameter to read and store config values. 3. Implement sendEmail() using stored config to create a JavaMail session. 4. Create run-mode-specific .cfg.json files (config.dev/, config.prod/) with environment-specific SMTP settings. 5. Values are updated at runtime via Felix console or by redeploying config packages without restarting the server." }
+    ]
+  },
+  {
+    id: "sling",
+    name: "Sling Framework",
+    icon: "8",
+    desc: "URL resolution, resource types, resource super type",
+    questions: [
+      { type:"mcq", q:"What is the primary mechanism Sling uses to resolve a URL to a resource?", opts:["URL pattern matching like a Servlet container","Resource resolution via the ResourceResolver using the URL path","Page hierarchy traversal","JCR SQL2 query"], ans:1, exp:"Sling maps URLs directly to JCR resources using the ResourceResolver. The URL path maps to a JCR node path (with some transformations via ResourceResolver rules)." },
+      { type:"mcq", q:"Given URL /content/mysite/en.model.json, which parts are the resource path, selector, and extension?", opts:["path=/content/mysite/en, selector=model, ext=json","path=/content/mysite, selector=en.model, ext=json","path=/content/mysite/en.model, selector=none, ext=json","path=/content/mysite/en, selector=none, ext=model.json"], ans:0, exp:"Sling URL structure: resource-path/selector.extension/suffix. So: path=/content/mysite/en, selectors=[model], extension=json." },
+      { type:"mcq", q:"What JCR property defines the rendering script/component for a Sling resource?", opts:["jcr:resourceType","sling:resourceType","jcr:template","cq:componentType"], ans:1, exp:"sling:resourceType on a JCR node points to the component path (e.g., myproject/components/text) used to render that resource." },
+      { type:"mcq", q:"How does Sling determine which script to use when rendering a resource?", opts:["Based on jcr:primaryType only","Based on sling:resourceType and the request method/extension/selectors to find the best-matching script","Based on the URL servlet mapping","Based on the component dialog"], ans:1, exp:"Sling uses Script Resolution: looks under the sling:resourceType path in the search path (/apps, /libs) for a script matching <resourcetype>/<selectors>.<ext>.<method>.jsp/html." },
+      { type:"mcq", q:"What is sling:resourceSuperType used for?", opts:["To define the JCR node type","To specify a parent resource type for script/dialog inheritance","To set the Sling URL mapping","To define the component category"], ans:1, exp:"sling:resourceSuperType defines a component hierarchy for script inheritance — if a script isn't found in the current resource type, Sling looks in the super type." },
+      { type:"mcq", q:"What is a Sling Servlet and how is it registered?", opts:["A Java Servlet mapped via web.xml","An OSGi service implementing SlingSafeMethodsServlet, registered with specific resourceTypes or paths/extensions via component properties","A JSP file with a .sling extension","A servlet registered via Sling configuration files"], ans:1, exp:"Sling Servlets are OSGi components (extending SlingAllMethodsServlet) registered with sling.servlet.resourceTypes, sling.servlet.extensions, and sling.servlet.methods properties." },
+      { type:"mcq", q:"What does the Sling ResourceResolver's 'resolve' method do vs the 'getResource' method?", opts:["They are identical","resolve() applies URL-to-resource mapping (namespace mangling, aliases), getResource() does a direct JCR path lookup","resolve() only works for JCR resources, getResource() works for virtual resources","resolve() requires authentication, getResource() is anonymous"], ans:1, exp:"resolve() applies full URL mapping (including alias resolution and namespace handling) — used for incoming request URLs. getResource() is a direct path lookup without URL mapping." },
+      { type:"mcq", q:"What is a Sling Alias?", opts:["A shortcut URL mapped to a resource path","A JCR node name alias","An alternative sling:resourceType","A Sling Servlet path shortcut"], ans:0, exp:"A Sling Alias (sling:alias property or resource mapping) provides an alternative URL path for a resource, allowing vanity URLs without changing JCR structure." },
+      { type:"mcq", q:"In Sling, what is the 'search path' used for?", opts:["JCR search scope for queries","The ordered list of repository paths Sling searches to locate scripts and resources by resource type","The URL paths Sling accepts requests from","The paths Sling caches in memory"], ans:1, exp:"The Sling search path (default: [/apps, /libs]) defines where Sling looks for rendering scripts. /apps takes precedence over /libs, enabling overlays." },
+      { type:"mcq", q:"What HTTP methods are handled by SlingAllMethodsServlet vs SlingSafeMethodsServlet?", opts:["SlingAllMethodsServlet handles all HTTP methods including POST/PUT/DELETE; SlingSafeMethodsServlet handles only GET and HEAD","SlingSafeMethodsServlet handles all methods; SlingAllMethodsServlet handles only safe ones","They handle the same methods","SlingAllMethodsServlet only handles POST"], ans:0, exp:"SlingSafeMethodsServlet handles safe, idempotent methods (GET, HEAD). SlingAllMethodsServlet extends it to also handle POST, PUT, DELETE, PATCH, etc." },
+      { type:"tf", q:"Sling uses the full URL path including the hostname for resource resolution.", ans:false, exp:"By default, Sling uses only the path portion of the URL for resource resolution. Hostname-based mapping requires explicit ResourceResolver mapping configuration." },
+      { type:"tf", q:"Sling resource types can be virtual — they don't have to correspond to actual JCR nodes.", ans:true, exp:"Sling resource types are just strings used for script lookup. While they typically correspond to component nodes in /apps or /libs, virtual resource types are possible." },
+      { type:"tf", q:"Sling POST Servlet handles form submissions and JCR node creation/modification by default.", ans:true, exp:"The Sling POST Servlet (org.apache.sling.servlets.post.SlingPostServlet) handles POST requests to Sling resources, supporting operations like create, modify, delete, copy, move." },
+      { type:"short", q:"Explain the full Sling URL decomposition for: /content/we-retail/us/en/products.infinite.5.html/jcr:content and how Sling resolves it.", ans:"Decomposition: Resource Path: /content/we-retail/us/en/products. Selectors: [infinite, 5]. Extension: html. Suffix: /jcr:content. Sling resolution: 1. ResourceResolver maps path to JCR node at /content/we-retail/us/en/products. 2. Reads sling:resourceType from that node (e.g., weretail/components/structure/page). 3. Looks in /apps/weretail/components/structure/page/ for script: products.infinite.5.html or products.infinite.html or products.html (trying selectors in order). 4. The matching script is executed with the resource, selectors, and suffix available via the request object." },
+      { type:"scenario", q:"You need to create a Sling Servlet that handles GET requests to any resource of type 'myproject/components/product' with the selector 'details' and extension 'json', returning product details as JSON. Describe the implementation.", scenario:"Component resource type: myproject/components/product. Expected URL: /content/mysite/products/product-1.details.json", ans:"@Component(service=Servlet.class, property={Constants.SERVICE_DESCRIPTION+'=Product Details Servlet', ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES+'=myproject/components/product', ServletResolverConstants.SLING_SERVLET_SELECTORS+'=details', ServletResolverConstants.SLING_SERVLET_EXTENSIONS+'=json', ServletResolverConstants.SLING_SERVLET_METHODS+'=GET'}) public class ProductDetailsServlet extends SlingSafeMethodsServlet { @Override protected void doGet(SlingHttpServletRequest req, SlingHttpServletResponse resp) throws IOException { Resource resource = req.getResource(); ValueMap props = resource.getValueMap(); // Build JSON response JSONObject json = new JSONObject(); json.put('title', props.get('title', String.class)); resp.setContentType('application/json'); resp.getWriter().write(json.toString()); } }" }
+    ]
+  },
+  {
+    id: "dispatcher",
+    name: "Dispatcher",
+    icon: "9",
+    desc: "Caching, flushing, security, configuration",
+    questions: [
+      { type:"mcq", q:"What is the primary role of the AEM Dispatcher?", opts:["Content authoring tool","Load balancer and caching layer that serves static content from cache","Replication agent for content publishing","OSGi component manager"], ans:1, exp:"The Dispatcher is a caching and load-balancing tool. It serves cached content to reduce load on AEM publish instances and acts as a security layer." },
+      { type:"mcq", q:"What type of HTTP requests does Dispatcher typically NOT cache?", opts:["GET requests with no query string","HEAD requests","POST requests and GET requests with query parameters","Requests for HTML pages"], ans:2, exp:"Dispatcher doesn't cache POST requests (by default) or GET/HEAD requests with query strings. These require dynamic content generation." },
+      { type:"mcq", q:"What is Dispatcher cache invalidation and how is it triggered?", opts:["Dispatcher flushes cache on a schedule","AEM sends an HTTP request (via flush replication agent) to Dispatcher when content changes, causing it to delete cached files","The OS file system monitors JCR changes and clears cache","The browser clears the cache on new content"], ans:1, exp:"When content is activated/replicated, AEM's flush replication agent sends an HTTP DELETE or INVALIDATE request to Dispatcher, which deletes cached files for that path." },
+      { type:"mcq", q:"Which file in the Dispatcher configuration controls which URLs are cached?", opts:["dispatcher.any","cache.conf","httpd.conf","vhost.conf"], ans:0, exp:"The dispatcher.any file (or its farm-specific includes) contains /cache /rules sections that define which URL patterns are cached or excluded from caching." },
+      { type:"mcq", q:"What does the /filter section in dispatcher.any control?", opts:["Which requests are cached","Which HTTP requests are forwarded to AEM vs blocked","Which content is replicated","Which Sling resources are accessible"], ans:1, exp:"The /filter section in dispatcher.any defines allow/deny rules for incoming HTTP requests, acting as a security filter to block unauthorized access to internal paths." },
+      { type:"mcq", q:"What is a Dispatcher 'farm'?", opts:["A group of AEM instances","A set of configuration rules (cache, filter, renders) for a specific virtual host or domain","A collection of replication agents","A content sync group"], ans:1, exp:"A farm in dispatcher.any groups related configuration (renders/backend AEM instances, cache rules, filter rules) for a specific virtual host or set of domains." },
+      { type:"mcq", q:"Which HTTP response header prevents the Dispatcher from caching a specific response?", opts:["Cache-Control: no-store","Dispatcher: no-cache","X-AEM-nocache: true","Pragma: no-cache"], ans:0, exp:"Cache-Control: no-cache or no-store headers (standard HTTP cache control) instruct Dispatcher not to cache that response." },
+      { type:"mcq", q:"What is the purpose of 'stat files' in Dispatcher caching?", opts:["They track request statistics","They are used as cache invalidation markers — when a .stat file is updated, any cached files older than the .stat file are considered stale","They log Dispatcher errors","They store session state"], ans:1, exp:".stat files are created in the cache root. When content changes, the .stat file is 'touched' (timestamp updated). Dispatcher compares cached file timestamps against .stat — older files are re-fetched." },
+      { type:"mcq", q:"How does Dispatcher handle content for logged-in users (personalized content)?", opts:["It caches per-user copies","Dispatcher cannot cache personalized content — requests with session cookies are typically not cached","It uses ESI (Edge Side Includes) automatically","It caches a shared version for all users"], ans:1, exp:"Dispatcher doesn't cache requests with cookies by default (configurable). For logged-in users with session cookies, requests bypass cache and go to AEM directly." },
+      { type:"mcq", q:"What is the 'graceful' invalidation mode in Dispatcher?", opts:["A mode that delays cache clearing by 5 seconds","A mode where cached files are marked stale but not deleted immediately — served until re-requested, then refreshed from AEM","A mode that doesn't invalidate cache on publish","A mode for partial cache updates"], ans:1, exp:"In graceful (or 'lazy') invalidation, files are marked stale but remain in cache. They continue to be served until the next request for them, at which point they are refreshed from AEM, reducing cache storms." },
+      { type:"tf", q:"The Dispatcher can cache HTTPS (SSL) requests by default without additional configuration.", ans:false, exp:"Dispatcher sits in front of SSL termination (usually handled by a web server/load balancer). SSL is typically terminated before reaching Dispatcher, which then handles plain HTTP internally." },
+      { type:"tf", q:"Dispatcher can be configured to allow certain URL paths to always bypass the cache.", ans:true, exp:"The /cache /rules section supports deny rules for specific URL patterns, ensuring requests matching those patterns always go to the AEM publish instance." },
+      { type:"tf", q:"A Dispatcher flush agent must be configured on the AEM Author instance to clear publish-side caches.", ans:false, exp:"The flush agent is configured on the AEM Publish instance (or Author for author-side invalidation). The Publish instance sends invalidation requests to Dispatcher when content is activated to it." },
+      { type:"short", q:"Explain the security benefits of using Dispatcher in front of AEM Publish. Name at least 4 protections it provides.", ans:"1. URL Filtering: The /filter section blocks access to internal AEM paths (/system/console, /crx/de, /content/dam internal paths, /etc, /libs) from public internet. 2. Protection from direct AEM access: Only Dispatcher's allowed paths are exposed publicly. 3. DoS mitigation: Caching reduces load on AEM, providing some protection against traffic spikes. 4. Blocking dangerous HTTP methods: Can restrict PUT, DELETE, TRACE methods. 5. Referrer filtering: Works with AEM's Referrer Filter to prevent CSRF attacks. 6. SSL termination: Centralizes HTTPS at Dispatcher level. 7. IP allowlisting: Can restrict admin paths to specific IP ranges." },
+      { type:"scenario", q:"You activate a content page in AEM but the Dispatcher is still serving the old cached version. Walk through the diagnostic and resolution steps.", scenario:"AEM Author → Replication → AEM Publish → Dispatcher → Users. Content was activated successfully (green tick in AEM).", ans:"1. Verify the flush replication agent: In AEM Publish (or Author for publish flush), check /etc/replication/agents.publish/ — look for the flush agent and test its connection. 2. Check flush agent logs for errors (connection refused, wrong Dispatcher host/port). 3. Verify the Dispatcher host/port in the flush agent matches the actual Dispatcher server. 4. Check Dispatcher logs (/var/log/dispatcher.log) for incoming invalidation requests. 5. Manually check if the cached file exists: ls /path/to/dispatcher/cache/content/mysite/mypage.html. 6. Manually send a flush request: curl -H 'CQ-Action: Delete' -H 'CQ-Handle: /content/mysite/mypage' http://dispatcher-host/dispatcher/invalidate.cache. 7. Check /statfilelevel configuration in dispatcher.any — may be limiting invalidation scope. 8. Verify /filter rules aren't blocking the flush request." }
+    ]
+  },
+  {
+    id: "style-systems",
+    name: "Style Systems",
+    icon: "10",
+    desc: "CSS class-based styling, policies, authoring",
+    questions: [
+      { type:"mcq", q:"What does the AEM Style System allow authors to do?", opts:["Edit CSS files directly in AEM","Apply predefined CSS classes to components without code changes","Create new components via drag and drop","Modify HTML structure of components"], ans:1, exp:"The Style System lets template editors define named CSS class groups (styles), which content authors can then apply to components from the component toolbar." },
+      { type:"mcq", q:"Where are Style System styles configured for a component?", opts:["In the component's cq:dialog","In the component's design dialog (cq:design_dialog)","In the Template Policy for that component","In the clientlib configuration"], ans:2, exp:"Styles are defined in the Template Policy for a specific component. Template editors open the policy editor and define style groups and individual style names/CSS classes." },
+      { type:"mcq", q:"Which JCR node stores the style classes applied by an author on a specific component instance?", opts:["jcr:content/styles","jcr:content/cq:styleIds","cq:stylegroups on the component","The component node's cq:styleIds property"], ans:3, exp:"When an author applies a style, the selected style ID is stored in the cq:styleIds property on the component's jcr:content or the component node itself." },
+      { type:"mcq", q:"How are Style System CSS classes applied to the component HTML output?", opts:["The author edits the component HTL directly","AEM automatically wraps the component in a div with the selected class names","The component HTL must use the 'styles' use object to apply selected classes","Styles are applied via JavaScript on page load"], ans:2, exp:"The component's HTL must use: <sly data-sly-use.styles='${currentStyle}'/> and apply ${styles.classes} to the wrapper element. Core Components handle this automatically." },
+      { type:"mcq", q:"What is a 'Style Group' in the Style System?", opts:["A CSS class group in a stylesheet","A named collection of mutually exclusive or combinable styles presented to authors in the styles tab","A set of components sharing the same styles","A group of template policies"], ans:1, exp:"A Style Group is a named category in the Policy editor that groups related styles (e.g., 'Color Theme', 'Layout'). Authors see groups in the Styles tab with available options." },
+      { type:"mcq", q:"Which Core Component feature enables the Style System to work automatically on all Core Components?", opts:["The Component Adapter","The Style object (com.adobe.cq.wcm.core.components.models.datalayer.ComponentData)","The Styles HTL Use object built into Core Component base HTL","The Core Component Policy"], ans:2, exp:"Core Components' base HTL already includes data-sly-use.styles='${currentStyle}' and ${styles.classes} on the wrapper, so styles work out-of-the-box without custom HTL changes." },
+      { type:"mcq", q:"Can a component have multiple Style Groups applied simultaneously?", opts:["No, only one style can be active at a time","Yes, one style from each Style Group can be applied simultaneously","Yes, but only in preview mode","Only if allowMultiple is set on the component"], ans:1, exp:"Yes — authors can select one style from each Style Group simultaneously. Styles from different groups are combined (their CSS classes are all applied). Within a group, selection depends on group configuration." },
+      { type:"mcq", q:"What is the 'Allow Multiple Selections' option in a Style Group?", opts:["Allows multiple components to share the same style","Allows authors to select more than one style within the same group","Allows the style to be used on multiple resource types","Allows styles from multiple policies"], ans:1, exp:"'Allow Multiple Selections' lets authors pick more than one style from that specific Style Group simultaneously, combining their CSS classes on the component." },
+      { type:"mcq", q:"How does the Style System affect component accessibility?", opts:["It has no impact on accessibility","Styles only add visual classes, so accessibility depends on what those CSS classes do — styles must be designed with accessibility in mind","It automatically adds ARIA attributes","It breaks accessibility if used incorrectly"], ans:1, exp:"Style System only adds/removes CSS classes. The impact on accessibility depends entirely on what those CSS classes do (hide elements, change focus order, alter contrast, etc.)." },
+      { type:"mcq", q:"Where does a developer need to add logic to ensure the style system classes are rendered in a custom component?", opts:["In the OSGi service","In the component's HTL using the Styles use object","In the component's Java model","In the dispatcher configuration"], ans:1, exp:"In the component's HTL: <sly data-sly-use.styles='${currentStyle}'/> then apply ${styles.classes} to the component's wrapper element: <div class='mycomponent ${styles.classes}'>." },
+      { type:"tf", q:"Style System changes require a new deployment (code deployment) to take effect.", ans:false, exp:"Style System is entirely configuration-driven. Styles are configured in policies (stored in /conf), and CSS classes are in clientlibs. No code deployment is needed — just clientlib changes and policy configuration." },
+      { type:"tf", q:"Custom components must explicitly implement the Style System by using the styles use object in their HTL.", ans:true, exp:"Unlike Core Components, custom components must explicitly add data-sly-use.styles and apply ${styles.classes} in their HTL. It's not automatic for custom components." },
+      { type:"tf", q:"Styles defined in one template's policy can be reused across multiple templates automatically.", ans:false, exp:"Policies can be shared across templates (by pointing to the same policy path in /conf), but styles are configured per-policy. If policies are shared, styles are shared; otherwise each template has its own policy." },
+      { type:"short", q:"Explain the end-to-end workflow for implementing a Style System feature — from developer to content author — for a custom 'Hero' component.", ans:"Developer: 1. Create the CSS classes in the component's clientlib (e.g., .hero--dark-theme, .hero--light-theme). 2. Add the Styles use object to hero.html: <sly data-sly-use.styles='${currentStyle}'/> and apply <div class='hero ${styles.classes}'>. Template Editor: 3. Open the Template Editor for the relevant template. 4. Select the Hero component and open its policy. 5. Under Styles, add a group 'Color Theme' and add styles: 'Dark Theme' (CSS class: hero--dark-theme) and 'Light Theme' (CSS class: hero--light-theme). Content Author: 6. Place the Hero component on a page. 7. Click the component, open the Styles tab (paintbrush icon). 8. Select 'Dark Theme' — the hero--dark-theme class is added to the wrapper, applying the dark styling." },
+      { type:"scenario", q:"A content author reports that the Style System 'Styles' tab is not appearing on a custom component in the page editor. What would you check to troubleshoot this?", scenario:"The component is placed on a page using an Editable Template. Core Components work fine with the Style System on the same page.", ans:"1. Verify the component's HTL includes data-sly-use.styles='${currentStyle}' and applies ${styles.classes} to the wrapper element — if missing, the styles tab won't show even if configured. 2. Check the Template Policy: open Template Editor, find the component's policy, and verify styles are actually defined there (not just that a policy exists). 3. Ensure the WCM Core Components bundle is present (it provides the Style System infrastructure) — /system/console/bundles. 4. Verify the template used by the page has a valid policy associated with the container/component. 5. Check if the component's cq:editConfig has a cq:inplaceEditing or configuration that might interfere. 6. Confirm the user has Template Editor role or that styles are enabled in the Policy (some setups require explicit policy linking). 7. Check browser console for JavaScript errors in the AEM editor." }
+    ]
+  },
+  {
+    id: "fragments",
+    name: "Content & Experience Fragments",
+    icon: "11",
+    desc: "CF, XF, Sling Model Exporter, headless",
+    questions: [
+      { type:"mcq", q:"What is the primary difference between a Content Fragment and an Experience Fragment?", opts:["Content Fragments are for images, Experience Fragments are for text","Content Fragments are pure content (channel-agnostic, structured), Experience Fragments are reusable page layouts with design/formatting","Content Fragments are only for APIs, Experience Fragments are for pages","There is no practical difference"], ans:1, exp:"Content Fragments are structured, channel-agnostic content (like a headless CMS). Experience Fragments are complete, styled page snippets reusable across pages, channels, and even external systems like Adobe Target." },
+      { type:"mcq", q:"Where are Content Fragments stored in AEM?", opts:["/content/fragments","/content/dam (as DAM assets)","/conf/fragments","/apps/fragments"], ans:1, exp:"Content Fragments are stored in the DAM (/content/dam) as assets of type dam:Asset with subnodes, similar to other assets but with structured content subnodes." },
+      { type:"mcq", q:"What defines the structure of a Content Fragment?", opts:["A Sling Model","A Content Fragment Model (defined in /conf)","A JCR node type","An XSD schema"], ans:1, exp:"A Content Fragment Model (defined in /conf/<config>/settings/dam/cfm/models/) defines the fields (text, number, date, references, etc.) for Content Fragments of that type." },
+      { type:"mcq", q:"How can you expose a Content Fragment as a JSON API in AEM?", opts:["Via a custom Sling Servlet only","Using the built-in Content Services/Content Fragment Export feature (/content/path.model.json) powered by Sling Model Exporter","By activating the content to publish as JSON","Via the AEM Assets HTTP API (/api/assets)"], ans:1, exp:"AEM Content Services uses Sling Model Exporter to expose content as JSON via the .model.json selector. The Page/CF model is annotated with @Exporter and serialized automatically." },
+      { type:"mcq", q:"What is the Sling Model Exporter?", opts:["A tool to export Sling Models to Java classes","A framework that serializes Sling Models to formats like JSON via registered exporters (e.g., Jackson)","A way to export models to CRXDE","A replication tool for Sling Models"], ans:1, exp:"Sling Model Exporter allows a Sling Model to be serialized (e.g., to JSON using Jackson) and served via a URL selector (e.g., .model.json), enabling headless content delivery." },
+      { type:"mcq", q:"Which annotation enables a Sling Model to be exported as JSON?", opts:["@JsonExport","@Exporter(name='jackson', extensions='json')","@ModelExport(json=true)","@Serializable"], ans:1, exp:"@Exporter(name='jackson', extensions='json') on a Sling Model class registers it with the Jackson-based exporter, making it available at .model.json URLs." },
+      { type:"mcq", q:"How can you export an Experience Fragment to Adobe Target?", opts:["Via a Sling Servlet","Using the 'Export to Target' option in the XF editor, which uses the Adobe Target integration","Via the AEM Exporter OSGi service","Through a manual copy-paste"], ans:1, exp:"Experience Fragments can be exported to Adobe Target as HTML or JSON offers using the 'Export to Target' workflow, powered by the AEM-Target integration." },
+      { type:"mcq", q:"What is a Content Fragment Variation?", opts:["A different language version of the fragment","An alternate version of the fragment's content for different channels or contexts","A sub-fragment nested inside another","A version history entry"], ans:1, exp:"Variations are alternate versions of a Content Fragment's content (e.g., 'Short', 'Social Media', 'Print') that share the same model/structure but have different content values." },
+      { type:"mcq", q:"Which AEM API provides a GraphQL interface for querying Content Fragments?", opts:["AEM Content Services REST API","AEM Assets HTTP API","AEM Content Fragments GraphQL API (/content/graphql/global/endpoint.json)","Sling Model Exporter API"], ans:2, exp:"AEM provides a built-in GraphQL API for headless content delivery of Content Fragments, accessible via /content/graphql/global/endpoint.json or custom endpoints." },
+      { type:"mcq", q:"What is the purpose of the 'master' variation in a Content Fragment?", opts:["It is the published version","It is the primary/default variation that cannot be deleted and serves as the base","It is automatically synced to Experience Fragments","It is the oldest version in version history"], ans:1, exp:"The 'master' variation is the default, undeletable variation of every Content Fragment. It contains the primary content and is the baseline for creating other variations." },
+      { type:"tf", q:"Content Fragments can contain images and other binary assets directly within their fields.", ans:true, exp:"Content Fragment Models support Content Reference fields that can reference DAM assets (images, documents, etc.) — the fragment stores a reference path to the asset." },
+      { type:"tf", q:"Experience Fragments can be exported to third-party systems like Adobe Target and Offer Management.", ans:true, exp:"XFs are designed for omnichannel delivery. They can be exported to Adobe Target (as HTML/JSON offers), Offer Management, and other integrated platforms." },
+      { type:"tf", q:"The Sling Model Exporter requires the @Exporter annotation to work — @Model alone is insufficient.", ans:true, exp:"@Model alone only enables Java adaptation. The @Exporter annotation (with name and extensions) additionally registers the model for URL-based JSON serialization." },
+      { type:"short", q:"Explain the difference between using Content Fragments with AEM Content Services (REST) vs the new GraphQL API for headless delivery. When would you choose one over the other?", ans:"Content Services (REST/.model.json): Page-based, exposes page structure with embedded CF data. Good for page-level content delivery, CMS-driven SPAs. Less flexible querying. GraphQL: Query-based, allows precise fetching of specific CF fields across models. Supports fragments of fragments, filtering, sorting, pagination. Ideal for headless implementations, mobile apps, and SPAs needing fine-grained data control. Choose REST when: delivering full page content to a rendering app. Choose GraphQL when: building headless apps needing flexible, efficient data fetching with minimal over/under-fetching." },
+      { type:"scenario", q:"You need to make a custom 'Product' Sling Model available as a JSON API at the URL /content/products/product-1.model.json. Describe the complete implementation including annotations.", scenario:"Model should expose: productName (String), price (Double), imageUrl (String), and a nested 'specs' object with weight and dimensions.", ans:"1. @Model(adaptables=Resource.class, defaultInjectionStrategy=OPTIONAL) @Exporter(name='jackson', extensions='json') public class ProductModel { @ValueMapValue private String productName; @ValueMapValue private Double price; @ValueMapValue private String imageUrl; @ChildResource private Resource specs; @JsonProperty('specs') public SpecsModel getSpecs() { return specs != null ? specs.adaptTo(SpecsModel.class) : null; } /* getters for all fields */ } 2. Create SpecsModel as a separate @Model with weight and dimensions fields. 3. Use @JsonIgnore on any fields/methods you don't want exposed. 4. Register the model in the Sling Models factory in your bundle. 5. Access at: /content/products/product-1.model.json. 6. Optionally use @ExporterOption(name='SerializationFeature.INDENT_OUTPUT', value='true') for formatted output." }
+    ]
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let selectedTopics = new Set();
+let quizQuestions = [];
+let currentQ = 0;
+let answers = {}; // index -> {selected, correct}
+let answeredQ = {};
+
+// ─── HOME ─────────────────────────────────────────────────────────────────────
+function buildTopicGrid() {
+  const grid = document.getElementById('topicGrid');
+  TOPICS.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'topic-card';
+    div.id = 'tc-' + t.id;
+    div.onclick = () => toggleTopic(t.id);
+    div.innerHTML = `
+      <div class="q-count">${t.questions.length} Qs</div>
+      <div class="topic-num">${t.icon}</div>
+      <h3>${t.name}</h3>
+      <p>${t.desc}</p>
+    `;
+    grid.appendChild(div);
+  });
+  updateStartBtn();
+}
+
+function toggleTopic(id) {
+  if (selectedTopics.has(id)) { selectedTopics.delete(id); document.getElementById('tc-'+id).classList.remove('selected'); }
+  else { selectedTopics.add(id); document.getElementById('tc-'+id).classList.add('selected'); }
+  updateStartBtn();
+}
+
+function selectAll() { TOPICS.forEach(t => { selectedTopics.add(t.id); document.getElementById('tc-'+t.id).classList.add('selected'); }); updateStartBtn(); }
+function selectNone() { TOPICS.forEach(t => { selectedTopics.delete(t.id); document.getElementById('tc-'+t.id).classList.remove('selected'); }); updateStartBtn(); }
+
+function updateStartBtn() {
+  const n = selectedTopics.size;
+  const total = TOPICS.filter(t => selectedTopics.has(t.id)).reduce((s,t)=>s+t.questions.length,0);
+  document.getElementById('startCount').textContent = n > 0 ? `(${n} topics · ${total} questions)` : '(0 topics selected)';
+  document.getElementById('startBtn').disabled = n === 0;
+}
+
+function startQuiz() {
+  quizQuestions = [];
+  TOPICS.filter(t => selectedTopics.has(t.id)).forEach(t => {
+    t.questions.forEach((q,i) => quizQuestions.push({...q, topicName: t.name, topicId: t.id, localIdx: i}));
+  });
+  currentQ = 0; answers = {}; answeredQ = {};
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function goHome() { showScreen('screen-home'); }
+function restartQuiz() { startQuiz(); }
+
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+function renderQuestion() {
+  const q = quizQuestions[currentQ];
+  const total = quizQuestions.length;
+  document.getElementById('quizTopicLabel').textContent = q.topicName;
+  document.getElementById('qCurrent').textContent = currentQ + 1;
+  document.getElementById('qTotal').textContent = total;
+  document.getElementById('progressFill').style.width = ((currentQ+1)/total*100)+'%';
+
+  const typeMap = {mcq:'MCQ', tf:'True / False', short:'Short Answer', scenario:'Scenario'};
+  const typeClass = {mcq:'type-mcq', tf:'type-tf', short:'type-short', scenario:'type-scenario'};
+
+  let html = `
+    <div class="q-type-badge ${typeClass[q.type]}">${typeMap[q.type]}</div>
+    <div class="q-topic">${q.topicName}</div>
+    <div class="q-number">Q${currentQ+1} of ${total}</div>
+    ${q.scenario ? `<div class="q-scenario-box">📋 Scenario: ${q.scenario}</div>` : ''}
+    <div class="q-text">${q.q}</div>
+  `;
+
+  const saved = answeredQ[currentQ];
+
+  if (q.type === 'mcq') {
+    html += '<div class="options">';
+    q.opts.forEach((opt, i) => {
+      let cls = 'option';
+      if (saved) {
+        if (i === q.ans) cls += ' correct';
+        else if (i === saved.selected) cls += ' wrong';
+      } else if (answers[currentQ] !== undefined && answers[currentQ] === i) cls += ' selected';
+      html += `<div class="${cls}" onclick="selectMCQ(${i})">
+        <div class="option-letter">${String.fromCharCode(65+i)}</div>
+        <div class="option-text">${opt}</div>
+      </div>`;
+    });
+    html += '</div>';
+  } else if (q.type === 'tf') {
+    const tCls = getTFClass(true, saved, q);
+    const fCls = getTFClass(false, saved, q);
+    html += `<div class="tf-options">
+      <button class="tf-btn ${tCls}" onclick="selectTF(true)">✅ True</button>
+      <button class="tf-btn ${fCls}" onclick="selectTF(false)">❌ False</button>
+    </div>`;
+  } else {
+    const savedText = answers[currentQ] || '';
+    html += `<textarea class="short-answer-area" id="shortAns" placeholder="Type your answer here..." onchange="saveShort(this.value)">${savedText}</textarea>`;
+  }
+
+  // Feedback
+  if (saved) {
+    const isCorrect = saved.correct;
+    const fb = isCorrect ? 'feedback-correct' : (q.type === 'short' || q.type === 'scenario' ? 'feedback-info' : 'feedback-wrong');
+    const icon = isCorrect ? '✅' : (q.type === 'short' || q.type === 'scenario' ? '📖' : '❌');
+    const title = isCorrect ? 'Correct!' : (q.type === 'short' || q.type === 'scenario' ? 'Model Answer' : 'Incorrect');
+    html += `<div class="feedback-box ${fb} show"><strong>${icon} ${title}</strong>${q.exp || q.ans}</div>`;
+  }
+
+  document.getElementById('questionCard').innerHTML = html;
+  document.getElementById('btnPrev').disabled = currentQ === 0;
+  document.getElementById('btnNext').style.display = answeredQ[currentQ] ? 'inline-flex' : 'none';
+  document.getElementById('btnSkip').style.display = currentQ < quizQuestions.length-1 ? 'inline-flex' : 'none';
+
+  // If this is the last answered question, show finish button
+  if (answeredQ[currentQ] && currentQ === quizQuestions.length - 1) {
+    document.getElementById('btnNext').textContent = '🏁 Finish';
+  } else {
+    document.getElementById('btnNext').textContent = 'Next →';
+  }
+}
+
+function getTFClass(val, saved, q) {
+  if (!saved) {
+    const pending = answers[currentQ];
+    if (pending === val) return 'selected';
+    return '';
+  }
+  if (val === q.ans) return 'reveal-correct';
+  if (val === saved.selected && val !== q.ans) return 'wrong';
+  return '';
+}
+
+function selectMCQ(i) {
+  if (answeredQ[currentQ]) return;
+  answers[currentQ] = i;
+  renderQuestion();
+  // Show check button
+  showCheckBtn();
+}
+
+function selectTF(val) {
+  if (answeredQ[currentQ]) return;
+  answers[currentQ] = val;
+  renderQuestion();
+  showCheckBtn();
+}
+
+function saveShort(val) { answers[currentQ] = val; }
+
+function showCheckBtn() {
+  const btn = document.getElementById('btnNext');
+  btn.textContent = 'Check Answer ✓';
+  btn.style.display = 'inline-flex';
+  btn.onclick = checkAnswer;
+}
+
+function checkAnswer() {
+  const q = quizQuestions[currentQ];
+  let correct = false;
+  if (q.type === 'mcq') { correct = answers[currentQ] === q.ans; }
+  else if (q.type === 'tf') { correct = answers[currentQ] === q.ans; }
+  else { correct = false; } // short/scenario are self-assessed
+  answeredQ[currentQ] = { selected: answers[currentQ], correct };
+
+  // Restore next button
+  document.getElementById('btnNext').onclick = nextQ;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (currentQ < quizQuestions.length - 1) { currentQ++; renderQuestion(); }
+  else { showResults(); }
+}
+
+function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
+
+function skipQ() {
+  answeredQ[currentQ] = { selected: null, correct: false, skipped: true };
+  if (currentQ < quizQuestions.length - 1) { currentQ++; renderQuestion(); }
+  else { showResults(); }
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────────────────────
+function showResults() {
+  showScreen('screen-results');
+  const total = quizQuestions.length;
+  let correct = 0, wrong = 0, skip = 0;
+  quizQuestions.forEach((q, i) => {
+    const a = answeredQ[i];
+    if (!a || a.skipped) skip++;
+    else if (a.correct) correct++;
+    else wrong++;
+  });
+
+  // For short/scenario — they're self-assessed, count as correct if answered
+  quizQuestions.forEach((q, i) => {
+    if ((q.type === 'short' || q.type === 'scenario') && answeredQ[i] && !answeredQ[i].skipped) {
+      // They were marked incorrect by default; adjust
+    }
+  });
+
+  const pct = Math.round((correct / total) * 100);
+  const grade = pct >= 80 ? 'Great' : pct >= 60 ? 'Good' : 'Needs Work';
+  const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '📚';
+  const circleClass = pct >= 80 ? 'score-great' : pct >= 60 ? 'score-good' : 'score-low';
+
+  document.getElementById('scoreCard').innerHTML = `
+    <div class="score-circle ${circleClass}">
+      <span class="pct">${pct}%</span>
+      <span class="label">${grade}</span>
+    </div>
+    <h2>${emoji} Quiz Complete!</h2>
+    <p>You answered ${correct + wrong} of ${total} questions (${skip} skipped)</p>
+    <div class="score-stats">
+      <div class="stat-pill stat-correct">✅ ${correct} Correct</div>
+      <div class="stat-pill stat-wrong">❌ ${wrong} Incorrect</div>
+      <div class="stat-pill stat-skip">⏭ ${skip} Skipped</div>
+    </div>
+  `;
+
+  // Topic breakdown
+  const topicMap = {};
+  TOPICS.filter(t => selectedTopics.has(t.id)).forEach(t => { topicMap[t.id] = {name: t.name, correct: 0, total: 0}; });
+  quizQuestions.forEach((q, i) => {
+    if (!topicMap[q.topicId]) return;
+    topicMap[q.topicId].total++;
+    if (answeredQ[i] && answeredQ[i].correct) topicMap[q.topicId].correct++;
+  });
+
+  let bHtml = '<h3>📊 Topic Breakdown</h3>';
+  Object.values(topicMap).forEach(t => {
+    const tp = t.total > 0 ? Math.round((t.correct/t.total)*100) : 0;
+    const barColor = tp >= 80 ? 'var(--correct)' : tp >= 60 ? 'var(--warn)' : 'var(--wrong)';
+    bHtml += `<div class="topic-row">
+      <div class="topic-row-name">${t.name}</div>
+      <div class="topic-bar-wrap"><div class="topic-bar" style="width:${tp}%;background:${barColor}"></div></div>
+      <div class="topic-row-score" style="color:${barColor}">${t.correct}/${t.total}</div>
+    </div>`;
+  });
+  document.getElementById('topicBreakdown').innerHTML = bHtml;
+}
+
+// ─── ANSWER KEY ───────────────────────────────────────────────────────────────
+function showAnswerKey() {
+  showScreen('screen-key');
+  const typeMap = {mcq:'MCQ', tf:'True / False', short:'Short Answer', scenario:'Scenario'};
+  let html = '';
+  TOPICS.filter(t => selectedTopics.has(t.id)).forEach(t => {
+    html += `<div class="key-section"><h3>${t.icon}. ${t.name}</h3>`;
+    t.questions.forEach((q, i) => {
+      let ansText = '';
+      if (q.type === 'mcq') ansText = `<strong>${String.fromCharCode(65+q.ans)}.</strong> ${q.opts[q.ans]}`;
+      else if (q.type === 'tf') ansText = q.ans ? 'True' : 'False';
+      else ansText = q.ans;
+
+      html += `<div class="key-item">
+        <div class="q-type-badge type-${q.type}" style="display:inline-block;margin-bottom:6px;">${typeMap[q.type]}</div>
+        <div class="key-q">Q${i+1}. ${q.q}</div>
+        ${q.scenario ? `<div class="q-scenario-box" style="margin-bottom:8px;">${q.scenario}</div>` : ''}
+        <div class="key-a"><strong>Answer:</strong> ${ansText}${q.exp ? '<br><br><strong>Explanation:</strong> '+q.exp : ''}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('answerKeyContent').innerHTML = html;
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// Init
+buildTopicGrid();
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.shell{display:flex;gap:0;min-height:600px}
+.sidebar{width:220px;flex-shrink:0;border-right:0.5px solid var(--color-border-tertiary);padding:12px 0;overflow-y:auto;max-height:700px}
+.sb-group{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.06em;padding:14px 16px 6px}
+.sb-item{display:block;width:100%;text-align:left;background:none;border:none;padding:7px 16px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-left:2px solid transparent;line-height:1.4}
+.sb-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.sb-item.active{color:var(--color-text-primary);border-left-color:var(--color-border-info);background:var(--color-background-info);font-weight:500}
+.content{flex:1;padding:24px 28px;overflow-y:auto;max-height:700px}
+.topic-header{margin-bottom:20px}
+.session-badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:8px}
+.topic-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.topic-subtitle{font-size:13px;color:var(--color-text-secondary)}
+.section{margin-bottom:24px}
+.section-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.concept-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+.concept-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:5px}
+.concept-body{font-size:13px;color:var(--color-text-secondary);line-height:1.65}
+.code-block{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-primary);margin-top:8px;overflow-x:auto;white-space:pre}
+.reallife{background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-left:3px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:10px 14px;margin-top:8px;font-size:12px;color:var(--color-text-success);line-height:1.6}
+.reallife strong{font-weight:500}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:4px;margin-bottom:4px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.tag.imp{background:var(--color-background-warning);color:var(--color-text-warning)}
+.example-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;margin-top:8px;background:var(--color-background-secondary)}
+.example-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.flow-box{background:var(--color-background-info);color:var(--color-text-info);border-radius:var(--border-radius-md);padding:5px 12px;font-size:12px;font-weight:500}
+.flow-arrow{color:var(--color-text-tertiary);font-size:14px}
+</style>
+
+<h2 class="sr-only">Interactive AEM Complete Learning Guide — all 15 sessions with explanations and real-life examples</h2>
+
+<div class="shell">
+<div class="sidebar">
+  <div class="sb-group">Foundation</div>
+  <button class="sb-item active" onclick="show('cms')">1 · CMS & AEM Intro</button>
+  <button class="sb-item" onclick="show('maven')">2 · Maven & Project Setup</button>
+  <div class="sb-group">Basic</div>
+  <button class="sb-item" onclick="show('authoring')">3 · Authoring & Templates</button>
+  <button class="sb-item" onclick="show('components')">4 · Custom Components</button>
+  <button class="sb-item" onclick="show('touchui')">5 · Touch UI Dialogs</button>
+  <button class="sb-item" onclick="show('htl')">6 · HTL / Sightly</button>
+  <button class="sb-item" onclick="show('slingmodel')">7 · Sling Models</button>
+  <button class="sb-item" onclick="show('templates')">8 · Templates & ClientLibs</button>
+  <div class="sb-group">Intermediate</div>
+  <button class="sb-item" onclick="show('xf')">9 · Experience Fragments</button>
+  <button class="sb-item" onclick="show('cf')">10 · Content Fragments</button>
+  <button class="sb-item" onclick="show('touchadv')">11 · Touch UI Advanced</button>
+  <button class="sb-item" onclick="show('rte')">12 · RTE</button>
+  <button class="sb-item" onclick="show('osgi')">13 · OSGi Components</button>
+  <button class="sb-item" onclick="show('osgiconfig')">14 · OSGi Config</button>
+  <button class="sb-item" onclick="show('servlets')">15 · Sling Servlets</button>
+</div>
+
+<div class="content" id="content-area"></div>
+</div>
+
+<script>
+const data = {
+cms: {
+  session:'Session 1', title:'CMS, WCM & AEM Introduction', subtitle:'Understanding the platform that powers enterprise websites',
+  sections:[
+    {title:'What is a CMS / WCM?', items:[
+      {t:'Content Management System (CMS)',b:'Software that lets non-technical users create, manage and publish digital content without writing code. A WCM (Web Content Management) is a CMS focused specifically on websites.',
+       rl:'A marketing team at a bank manages loan product pages, FAQs and branch locators — all without touching any code. They log in, edit text, upload images, preview, and publish.'},
+      {t:'Why CMS over static HTML?',b:'Static sites require a developer for every text change. A CMS separates content from presentation — editors own the content, developers own the templates.',
+       rl:'Nike\'s campaign page for a shoe launch gets updated daily with athlete quotes and new images. Marketing does this themselves in minutes, not by raising a dev ticket.'},
+    ]},
+    {title:'Adobe Experience Manager (AEM)', items:[
+      {t:'What is AEM?',b:'AEM is an enterprise-grade Java/OSGi-based CMS built on Apache Sling, Apache Felix (OSGi), and JCR (Java Content Repository - backed by Apache Jackrabbit Oak). It handles Sites, Assets, Forms, and more.',
+       rl:'Large enterprises like Marriott, Bank of America, and Unilever use AEM to manage thousands of pages across multiple countries, languages, and brands from one platform.'},
+      {t:'WYSIWYG (What You See Is What You Get)',b:'AEM\'s author interface lets editors drag-drop components, edit text inline, and see the final page layout as they edit — no switching between editor and preview modes.',
+       rl:'A content editor types a headline directly on the page, resizes an image, and reorders sections by dragging — just like editing a Word document, but it\'s a live website.'},
+    ]},
+    {title:'AEM Architecture: 3-Layer Setup', items:[
+      {t:'Author Layer',b:'Where content is created and edited. Only accessible internally. Editors log in here to build pages, manage assets, and configure workflows.',
+       code:'URL: http://localhost:4502\nCredentials: admin/admin (local dev only)\nPurpose: Content creation, workflows, approvals'},
+      {t:'Publisher Layer',b:'Serves content to the end user (public website). Content is "activated" (replicated) from Author to Publish. Can have multiple publishers for load balancing.',
+       code:'URL: http://localhost:4503\nPublic-facing — only activated content visible\nCan be load-balanced across multiple nodes'},
+      {t:'Dispatcher Layer',b:'Apache-based caching + CDN layer in front of Publisher. Caches HTML pages, reduces load on Publisher, and acts as a security firewall.',
+       rl:'A news site gets 2 million hits on a breaking story. The Dispatcher serves cached HTML to 99% of users without touching the JCR repository at all.'},
+    ]},
+    {title:'Key AEM Interfaces', items:[
+      {t:'AEM Sites UI',b:'Touch-based interface to create/edit pages, manage site hierarchy, and preview content. Accessible from /sites.html',code:'/sites.html  — Page tree browser\n/editor.html/content/wknd/en.html — Page editor'},
+      {t:'CRXDE Lite',b:'IDE-like browser tool to view/edit the JCR repository directly. View nodes, properties, and write code on-the-fly during development.',code:'/crx/de — Browse JCR nodes\nUsed to inspect component structure, sling:resourceType, etc.'},
+      {t:'OSGi Console',b:'Felix-based web console showing all active OSGi bundles, services, configurations. Used for debugging and configuration.',code:'/system/console/bundles — View bundle status\n/system/console/configMgr — Manage configurations'},
+      {t:'Package Manager',b:'Zip-based deployment tool. Packages contain JCR content (code, config, content). Teams share packages to move code across environments.',code:'/crx/packmgr — Upload, install, build packages\nContent packages = ZIP files with vault metadata'},
+    ]},
+  ]
+},
+maven: {
+  session:'Session 2', title:'Maven & Project Setup', subtitle:'Building and deploying AEM projects professionally',
+  sections:[
+    {title:'Maven Fundamentals', items:[
+      {t:'What is Maven?',b:'A Java build automation and dependency management tool. Defines project structure, manages 3rd-party libraries (JARs), and runs build lifecycles (compile → test → package → deploy).',
+       rl:'Think of Maven like npm for Java. Just as package.json defines your Node.js dependencies, pom.xml defines your Java project\'s dependencies and build steps.'},
+      {t:'POM (Project Object Model)',b:'The pom.xml file is the heart of a Maven project. It declares the project\'s group/artifact/version (GAV coordinates), its dependencies, plugins, and how to build it.',
+       code:'<groupId>com.mycompany</groupId>\n<artifactId>myproject</artifactId>\n<version>1.0-SNAPSHOT</version>\n<packaging>content-package</packaging>'},
+      {t:'Maven Packaging in AEM',b:'AEM projects produce special artifact types: bundle (OSGi JAR with Java code), content-package (ZIP of JCR content), and the all/container package which bundles everything together.',
+       code:'bundle      → .jar  — Java code (Sling Models, Servlets)\ncontent-package → .zip  — HTML, JS, CSS, config nodes\nall         → installs everything in correct order'},
+    ]},
+    {title:'AEM Maven Archetype', items:[
+      {t:'What is the AEM Archetype?',b:'An official Adobe Maven template that generates a complete, production-ready AEM project structure with all best-practice modules pre-configured.',
+       code:'mvn -B archetype:generate \\\n  -D archetypeGroupId=com.adobe.aem \\\n  -D archetypeArtifactId=aem-project-archetype \\\n  -D archetypeVersion=48 \\\n  -D appTitle="My Site" \\\n  -D appId="mysite" \\\n  -D groupId="com.mysite"'},
+      {t:'Generated Project Structure',b:'The archetype creates a multi-module Maven project. Each module has a specific role — this separation keeps Java code, frontend assets, and JCR content cleanly isolated.',
+       code:'mysite/\n├── core/          # Java code (Sling Models, Servlets)\n├── ui.apps/       # Components, templates (JCR)\n├── ui.content/    # Sample content, configs\n├── ui.frontend/   # React/Vue/webpack frontend\n├── ui.config/     # OSGi configs per environment\n└── all/           # Master package (deploys everything)'},
+    ]},
+    {title:'Building & Deploying', items:[
+      {t:'Build & Deploy Commands',b:'Maven commands to compile and push code to your local AEM instance. The -PautoInstallPackage profile tells Maven to also install the package after building.',
+       code:'# Full build + deploy to Author\nmvn clean install -PautoInstallPackage\n\n# Deploy only the core bundle (faster)\nmvn clean install -PautoInstallBundle -pl core\n\n# Deploy only ui.apps (components/templates)\nmvn clean install -PautoInstallPackage -pl ui.apps'},
+      {t:'VS Code Setup for AEM',b:'VS Code with the AEM Sync extension allows real-time sync of HTL/JS/CSS files to AEM without a full Maven build. Essential for front-end development speed.',
+       rl:'A developer edits a .html HTL template in VS Code, saves it, and the change appears in AEM within 2 seconds — without running a Maven build. Huge productivity boost.'},
+    ]},
+  ]
+},
+authoring: {
+  session:'Session 3', title:'Authoring, Layout Containers & Components', subtitle:'How editors build pages and how the system renders them',
+  sections:[
+    {title:'Page Authoring', items:[
+      {t:'Page Creation Flow',b:'Editors create pages under a site tree by choosing a template, naming the page, then editing it in the page editor. The page editor is a WYSIWYG canvas overlaid with an authoring toolbar.',
+       rl:'A content editor for a retail site creates a "Summer Sale" landing page. They pick a "Landing Page" template, set the title, then drag a Banner component, add a Text component, and publish.'},
+      {t:'Sling Resource Resolution',b:'When a URL is requested (e.g. /content/mysite/en/home.html), Sling resolves which component renders it by reading the sling:resourceType property on that content node. No servlet mapping tables needed.',
+       code:'# URL\n/content/mysite/en/home.html\n\n# JCR node at /content/mysite/en/home\n  jcr:primaryType = cq:Page\n  └── jcr:content\n        sling:resourceType = mysite/components/page/homepage\n\n# AEM renders: /apps/mysite/components/page/homepage/homepage.html'},
+    ]},
+    {title:'Templates', items:[
+      {t:'Static Templates (Classic)',b:'Pre-AEM 6.2 approach. Template defined structure in /apps as a fixed cq:Template node. Less flexible — all pages from one template share the exact same layout.',
+       code:'/apps/mysite/templates/article\n  jcr:primaryType = cq:Template\n  ranking = 100\n  allowedPaths = [/content/mysite(/.*)]\n  thumbnail = /apps/mysite/templates/article/thumbnail.png'},
+      {t:'Editable Templates (Modern)',b:'Introduced in AEM 6.2. Template structure, policy, and initial content are all editable by a template author in a visual editor. Much more powerful and flexible.',
+       rl:'A template author creates a "Product Detail Page" template with a locked header/footer, an editable hero zone, and a main content area. All product pages using this template automatically get the branding constraints.'},
+    ]},
+    {title:'Layout Container & Parsys', items:[
+      {t:'Layout Container',b:'A special component that acts as a droppable zone for other components. It uses the Adobe responsive grid system (12 columns) to allow editors to resize and position components.',
+       rl:'An editor drops a "Text" component and an "Image" component into a Layout Container, then resizes Text to 8 columns and Image to 4 columns — creating a classic article layout.'},
+      {t:'Policies & Design Mode',b:'Policies control which components editors can add into a container and what styles they can apply. Set by template authors, not editors. Design Mode is the older equivalent for static templates.',
+       code:'Policy on Layout Container:\n  Allowed components:\n    - mysite/components/text\n    - mysite/components/image\n    - mysite/components/button\n  Restricts: editors CANNOT add a full-page video embed here'},
+    ]},
+  ]
+},
+components: {
+  session:'Session 4', title:'Developing Custom Components', subtitle:'Building reusable, configurable UI blocks in AEM',
+  sections:[
+    {title:'AEM Component Structure', items:[
+      {t:'Basic Component Node Structure',b:'An AEM component is a JCR node under /apps with specific child nodes: an HTL template, a cq:dialog for authoring, and optional edit config, design dialog, and thumbnail.',
+       code:'/apps/mysite/components/card\n  ├── .content.xml        # Component definition (jcr:title, group)\n  ├── card.html           # HTL rendering template\n  ├── _cq_dialog/         # Touch UI dialog (author config)\n  │    └── .content.xml\n  ├── _cq_editConfig/     # Edit bar actions\n  └── _cq_design_dialog/  # Design-level config for template policy'},
+      {t:'HTL (HTML Template Language)',b:'AEM\'s server-side templating language. Replaces JSP. It\'s HTML with special data-sly-* attributes that add logic. Secure by default (auto-XSS escaping).',
+       code:'<!-- card.html -->\n<div class="card" data-sly-use.model="com.mysite.core.models.CardModel">\n  <img src="${model.imageUrl}" alt="${model.altText}">\n  <h3>${model.title}</h3>\n  <p>${model.description}</p>\n  <a href="${model.linkUrl}">${model.linkText}</a>\n</div>'},
+    ]},
+    {title:'Component Dialogs', items:[
+      {t:'cq:dialog (Touch UI)',b:'A Granite UI-based form that appears when an editor clicks "Configure" on a component. Fields in the dialog save to JCR as properties on the component\'s content node.',
+       code:'<!-- _cq_dialog/.content.xml -->\n<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"\n  jcr:primaryType="nt:unstructured"\n  sling:resourceType="cq/gui/components/authoring/dialog">\n  <content jcr:primaryType="nt:unstructured"\n    sling:resourceType="granite/ui/components/coral/foundation/tabs">\n    <items jcr:primaryType="nt:unstructured">\n      <tab1 jcr:primaryType="nt:unstructured"\n        jcr:title="Content">\n        <items jcr:primaryType="nt:unstructured">\n          <title sling:resourceType="granite/ui/components/coral/foundation/form/textfield"\n            fieldLabel="Card Title"\n            name="./title"/>'},
+      {t:'editConfig (Edit Bar)',b:'Defines actions available in the component\'s blue edit bar in author mode: Delete, Edit, Copy, Move, Insert. Also configures empty placeholder text.',
+       code:'<!-- _cq_editConfig/.content.xml -->\n<cq:editConfig>\n  <cq:listeners\n    afteredit="REFRESH_PAGE"/>\n  <cq:inplaceEditing\n    configPath="/apps/mysite/components/card/cq:inplaceEditing"\n    active="true"/>  \n</cq:editConfig>'},
+    ]},
+    {title:'Inheritance, Overlay & Override', items:[
+      {t:'Component Inheritance (sling:resourceSuperType)',b:'A component can extend another, inheriting its dialog and rendering. Just set sling:resourceSuperType to the parent component path. Override only what you need.',
+       code:'# Your custom button extends WCM Core Button\n/apps/mysite/components/mybutton\n  .content.xml:\n    sling:resourceSuperType = core/wcm/components/button/v2/button\n\n# Only override the HTL — inherit the dialog\nmybutton.html: your custom markup'},
+      {t:'Overlay',b:'Copy a component from /libs to the same path under /apps. AEM always resolves /apps first — so your copy takes precedence. Safe way to customize AEM default components.',
+       code:'# Overlay AEM\'s default 404 page\nSource: /libs/sling/servlet/errorhandler/404.jsp\nOverlay: /apps/sling/servlet/errorhandler/404.jsp  ← AEM uses this'},
+      {t:'Style System',b:'Allows template authors to define CSS classes as named "styles" for a component (e.g. "Dark theme", "Compact"). Editors pick styles from the toolbar without any code change.',
+       rl:'A "Teaser" component has 3 styles: "Standard", "Featured" (larger with gradient bg), "Minimal". Editors pick the right style per context. One component, multiple visual presentations.'},
+    ]},
+  ]
+},
+touchui: {
+  session:'Session 5', title:'Touch UI Dialogs — Basic', subtitle:'Building rich author configuration forms with Granite UI',
+  sections:[
+    {title:'Granite UI Foundation', items:[
+      {t:'What is Granite UI?',b:'Adobe\'s UI framework for building AEM\'s author interface. Built on top of CoralUI (Adobe\'s design system). All component dialogs, wizard pages, and admin screens are built with Granite UI.',
+       rl:'Every time an editor clicks "Configure" on a component, they see a Granite UI dialog. The tabs, text fields, dropdowns, and image pickers are all Granite UI components.'},
+      {t:'Dialog Structure',b:'A dialog has a root node with sling:resourceType=cq/gui/components/authoring/dialog. Inside: content → items → tabs → items → fields. Each field node maps to a Granite UI form component.',
+       code:'dialog\n└── content (tabs or fixedcolumns layout)\n    └── items\n        └── tab1 (jcr:title="Basic")\n            └── items\n                ├── title  (textfield)\n                ├── description (textarea)\n                └── image  (fileupload / pathfield)'},
+    ]},
+    {title:'Common Field Types', items:[
+      {t:'TextField & TextArea',b:'Single-line and multi-line text inputs. The "name" property defines where the value is saved in JCR (./fieldname = relative to component node).',
+       code:'<title\n  sling:resourceType="granite/ui/components/coral/foundation/form/textfield"\n  fieldLabel="Headline"\n  name="./title"\n  required="{Boolean}true"/>'},
+      {t:'PathField',b:'Browse-and-select a JCR path (page, asset, etc). Opens a path browser when clicked. Used for link targets, image sources, content references.',
+       code:'<link\n  sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"\n  fieldLabel="Link URL"\n  name="./linkPath"\n  rootPath="/content/mysite"/>'},
+      {t:'Select & Checkbox',b:'Select renders a dropdown. Checkbox renders a toggle. Multifield allows repeating a group of fields for list-like data.',
+       code:'<theme\n  sling:resourceType="granite/ui/components/coral/foundation/form/select"\n  fieldLabel="Theme"\n  name="./theme">\n  <items jcr:primaryType="nt:unstructured">\n    <light jcr:title="Light" value="light"/>\n    <dark jcr:title="Dark" value="dark"/>\n  </items>\n</theme>'},
+    ]},
+    {title:'Multifield Component', items:[
+      {t:'What is Multifield?',b:'Lets editors add/remove/reorder a repeating group of fields. Perfect for lists: testimonials, FAQ items, navigation links, card lists.',
+       rl:'A "Testimonials" component uses a Multifield so editors can add any number of testimonial items, each with a quote, author name, and photo — no developer needed when the list grows.',
+       code:'<testimonials\n  sling:resourceType="granite/ui/components/coral/foundation/form/multifield"\n  fieldLabel="Testimonials"\n  composite="{Boolean}true">\n  <field jcr:primaryType="nt:unstructured"\n    sling:resourceType="granite/ui/components/coral/foundation/container">\n    <items jcr:primaryType="nt:unstructured">\n      <quote sling:resourceType="...textfield" name="./quote"/>\n      <author sling:resourceType="...textfield" name="./author"/>\n    </items>\n  </field>\n</testimonials>'},
+    ]},
+  ]
+},
+htl: {
+  session:'Session 6', title:'HTL / Sightly — Basic to Advanced', subtitle:'AEM\'s secure, logic-light templating language',
+  sections:[
+    {title:'HTL Fundamentals', items:[
+      {t:'Why HTL over JSP?',b:'HTL (HTML Template Language, formerly Sightly) is AEM\'s modern templating engine. It enforces separation of concerns — no Java scriptlets in templates. Auto-escapes output (XSS safe). HTML-valid syntax.',
+       rl:'In a bank\'s AEM implementation, JSP templates had XSS vulnerabilities from unescaped user data. Migrating to HTL eliminated an entire category of security issues automatically.'},
+      {t:'Expression Language',b:'HTL expressions use ${...} syntax. Access JCR properties, Use-API objects, or request attributes. Context-aware escaping applied automatically.',
+       code:'${properties.title}           ← jcr property\n${currentPage.name}           ← Sling/AEM API\n${model.items}                ← Sling Model\n${properties.link @ context=\'uri\'}  ← explicit context'},
+    ]},
+    {title:'Block Statements — Basic', items:[
+      {t:'data-sly-use',b:'Instantiates a Use-API object (Sling Model or JS Use-API). The result is bound to a local variable for use in the template.',
+       code:'<div data-sly-use.card="com.mysite.models.CardModel">\n  <h2>${card.title}</h2>\n</div>'},
+      {t:'data-sly-text & data-sly-attribute',b:'data-sly-text sets the text content of an element (replaces child nodes). data-sly-attribute sets HTML attributes.',
+       code:'<h1 data-sly-text="${model.title}">Placeholder</h1>\n\n<a data-sly-attribute.href="${model.linkUrl}">Click here</a>\n<!-- or shorthand -->\n<a href="${model.linkUrl @ context=\'uri\'}">Click here</a>'},
+      {t:'data-sly-list',b:'Loops over a collection, rendering the element for each item. Provides itemList helper with index, count, first, last, etc.',
+       code:'<ul data-sly-list.item="${model.items}">\n  <li>\n    <span>${itemList.index + 1}. ${item.title}</span>\n  </li>\n</ul>'},
+      {t:'data-sly-test (Conditional)',b:'Renders the element only if the condition is truthy. Falsy values: null, false, 0, empty string, empty array.',
+       code:'<div data-sly-test="${model.showPromo}">\n  <p>Special offer!</p>\n</div>\n\n<p data-sly-test="${not model.items.isEmpty}">\n  Found ${model.items.size} results\n</p>'},
+    ]},
+    {title:'Block Statements — Advanced', items:[
+      {t:'data-sly-include & data-sly-resource',b:'Include another HTL file or render another AEM resource. Include is for template partials; resource renders a JCR node via its sling:resourceType.',
+       code:'<!--Include a partial template-->\n<div data-sly-include="partials/card.html"></div>\n\n<!--Render a subresource (child component)-->\n<div data-sly-resource="${\'image\' @ resourceType=\'mysite/components/image\'}"></div>'},
+      {t:'data-sly-call (Templates)',b:'Define reusable template blocks within the same file using data-sly-template, then invoke them with data-sly-call. Like a function call in templates.',
+       code:'<!--Define-->\n<template data-sly-template.renderCard="${@ item}">\n  <div class="card"><h3>${item.title}</h3></div>\n</template>\n\n<!--Call-->\n<div data-sly-list.item="${model.items}">\n  <div data-sly-call="${renderCard @ item=item}"></div>\n</div>'},
+    ]},
+  ]
+},
+slingmodel: {
+  session:'Session 7', title:'Sling Models', subtitle:'The Java bridge between JCR content and HTL templates',
+  sections:[
+    {title:'What Are Sling Models?', items:[
+      {t:'Purpose',b:'Sling Models are annotated Java POJOs (Plain Old Java Objects) that map JCR node properties to Java fields. They act as the "Model" in MVC — preparing data for the HTL view layer.',
+       rl:'A "Product Card" component reads productTitle, productPrice, badgeText from JCR. The Sling Model injects these properties, formats the price as currency, and computes whether to show a "Sale" badge. HTL just renders the model\'s output.'},
+    ]},
+    {title:'Core Sling Model Annotations', items:[
+      {t:'@Model',b:'Marks the class as a Sling Model. adaptables defines the source (Resource or SlingHttpServletRequest). defaultInjectionStrategy=OPTIONAL means missing properties won\'t throw errors.',
+       code:'@Model(\n  adaptables = {Resource.class, SlingHttpServletRequest.class},\n  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL\n)\npublic class CardModel {\n  // fields and methods\n}'},
+      {t:'@Inject & @ValueMapValue',b:'@Inject is the general injector. @ValueMapValue is specifically for JCR properties (reads from the component\'s value map). @Named overrides the property name mapping.',
+       code:'@ValueMapValue\nprivate String title;  // reads ./title from JCR\n\n@ValueMapValue(name = "jcr:title")\nprivate String pageTitle;\n\n@Inject\nprivate Page currentPage;  // injects AEM Page object'},
+      {t:'@PostConstruct',b:'Method annotated with @PostConstruct runs after all injections are complete. Use it for computed fields, formatting, or any initialization logic.',
+       code:'@PostConstruct\nprivate void init() {\n  if (price != null) {\n    this.formattedPrice = String.format("$%.2f", price);\n  }\n  this.showBadge = "sale".equals(badgeType);\n}'},
+      {t:'Adaptable: Resource vs Request',b:'Use Resource adaptable for pure content models (no need for request context). Use SlingHttpServletRequest when you need query params, session, or request-level context.',
+       code:'// Resource adaptable — preferred for most components\n@Model(adaptables = Resource.class)\n\n// Request adaptable — when you need URL params etc.\n@Model(adaptables = SlingHttpServletRequest.class)'},
+    ]},
+    {title:'Maven POM Changes', items:[
+      {t:'Required Dependencies',b:'Sling Model annotations come from the Sling Models API bundle. Add the dependency to core/pom.xml. The annotation processor runs at compile time.',
+       code:'<!-- core/pom.xml -->\n<dependency>\n  <groupId>org.apache.sling</groupId>\n  <artifactId>org.apache.sling.models.api</artifactId>\n  <scope>provided</scope>\n</dependency>\n<dependency>\n  <groupId>org.apache.sling</groupId>\n  <artifactId>org.apache.sling.models.impl</artifactId>\n  <scope>provided</scope>\n</dependency>'},
+    ]},
+  ]
+},
+templates: {
+  session:'Session 8', title:'Editable Templates & Client Libraries', subtitle:'Page structure governance and front-end asset management',
+  sections:[
+    {title:'Editable Templates Deep Dive', items:[
+      {t:'Template Structure',b:'Editable templates are stored under /conf (not /apps). They have three layers: Structure (locked by template author), Initial Content (editable defaults), and Policies (which components are allowed where).',
+       code:'/conf/mysite/settings/wcm/templates/article-page\n  ├── structure/          ← locked layout (header, footer)\n  ├── initial/            ← default content on new pages\n  ├── policies/           ← component allow-lists per container\n  └── jcr:content\n       cq:templateType = .../editable-templates'},
+      {t:'Page Component & Page Properties',b:'Every editable template references a Page Component (e.g. mysite/components/page/base). This component wraps all pages from that template and handles <head>, body structure, global scripts, etc.',
+       code:'page/base/base.html:\n<!DOCTYPE html>\n<html>\n<head data-sly-include="head.html"></head>\n<body>\n  <header data-sly-include="header.html"></header>\n  <main data-sly-resource="${\'jcr:content/root\'}"/>\n  <footer data-sly-include="footer.html"></footer>\n</body>\n</html>'},
+    ]},
+    {title:'Client Libraries (ClientLibs)', items:[
+      {t:'What are ClientLibs?',b:'AEM\'s mechanism to organize, combine, and serve front-end assets (CSS and JS). Groups related files, handles dependencies between libraries, and can minify/gzip the output.',
+       rl:'A site has 20 separate CSS files. In dev mode they load individually for easy debugging. In production, ClientLibs concatenates them into one minified CSS file — reducing HTTP requests by 19.'},
+      {t:'ClientLib Structure',b:'A ClientLib is a JCR node with cq:ClientLibraryFolder type. Properties: categories (the library\'s ID), dependencies (other libraries to load first), embed (inline other libraries).',
+       code:'/apps/mysite/clientlibs/site\n  jcr:primaryType = cq:ClientLibraryFolder\n  categories = [mysite.site]       ← library ID\n  dependencies = [jquery]           ← load jQuery first\n  embed = [mysite.grid]             ← inline this lib\n  ├── css.txt                        ← list of CSS files\n  ├── js.txt                         ← list of JS files\n  ├── styles/main.css\n  └── scripts/app.js'},
+      {t:'Including ClientLibs in HTL',b:'Use the AEM clientlib tag library to include CSS/JS. Include CSS in <head>, JS before </body>.',
+       code:'<!-- In head.html -->\n<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"\n     data-sly-call="${clientlib.css @ categories=\'mysite.site\'}">\n</sly>\n\n<!-- Before </body> -->\n<sly data-sly-call="${clientlib.js @ categories=\'mysite.site\'}"></sly>'},
+      {t:'Debug & Optimization',b:'In dev: add ?debugClientLibs=true to URL to see individual files. Minification controlled by Adobe Granite HTML Library Manager OSGi config.',
+       code:'# Debug mode (see individual files)\nhttps://localhost:4502/content/mysite.html?debugClientLibs=true\n\n# Check combined output\n/libs/granite/ui/content/dumplibs.html'},
+    ]},
+  ]
+},
+xf: {
+  session:'Session 9', title:'Experience Fragments', subtitle:'Reusable experiences across channels and pages',
+  sections:[
+    {title:'What Are Experience Fragments?', items:[
+      {t:'Concept',b:'An Experience Fragment (XF) is a group of components forming an experience that can be referenced across multiple pages. When you update the XF, all pages referencing it update automatically.',
+       rl:'A site-wide "newsletter signup" block appears on 50 pages. It\'s built as an XF. When marketing changes the CTA text, they edit the XF once — all 50 pages update instantly without re-publishing each one.'},
+      {t:'XF vs Component vs Content Fragment',b:'A Component is a single UI block. A Content Fragment is pure structured data (no layout). An Experience Fragment is a full layout block with multiple components — it has visual presentation.',
+       code:'Component         → single piece of UI (button, image)\nContent Fragment   → headless content (title, body, tags)\nExperience Fragment → composed layout (hero + text + CTA)\n                     reusable across pages and channels'},
+    ]},
+    {title:'XF Structure', items:[
+      {t:'XF Templates',b:'Like page templates, XF templates define the allowed structure and components within an XF. Stored at /conf/mysite/settings/wcm/templates under XF types.',
+       code:'/content/experience-fragments/mysite/\n  └── newsletter-signup/\n       └── master/          ← master (web) variation\n            └── jcr:content  ← components live here'},
+      {t:'XF Variations',b:'One XF can have multiple variations — "Web", "AMP", "Email". Each variation shares the same content but can have different markup/styling for the channel.',
+       rl:'A promotional banner XF has a "Web" variation (full-width with animation) and an "Email" variation (static, inline CSS only) — same content, different rendering for email clients.'},
+      {t:'Using an XF in a Page',b:'Drag the "Experience Fragment" component onto a page and select the XF path. AEM embeds the XF\'s rendered HTML. For cross-domain usage, XFs can be exported to Adobe Target as offers.',
+       code:'XF Component on page:\n  sling:resourceType = core/wcm/components/experiencefragment/v2/experiencefragment\n  fragmentVariationPath = /content/experience-fragments/mysite/newsletter/master'},
+    ]},
+  ]
+},
+cf: {
+  session:'Session 10', title:'Content Fragments', subtitle:'Headless, structured content for multi-channel delivery',
+  sections:[
+    {title:'Content Fragments Concept', items:[
+      {t:'What is a Content Fragment?',b:'A Content Fragment (CF) is structured, channel-agnostic content. It has no visual presentation — just data fields defined by a model. Same content can be delivered to a website, mobile app, kiosk, or API.',
+       rl:'An airline\'s "Flight Route" content fragment stores: origin, destination, duration, aircraft type, highlights. The website, the mobile app, and a partner API all fetch the same CF via GraphQL — each renders it in their own way.'},
+      {t:'Headless CMS Use Case',b:'Content Fragments power AEM\'s headless CMS capabilities. Apps query them via AEM\'s GraphQL API or Content Services REST API to get JSON without any HTML rendering.',
+       code:'# GraphQL query to fetch articles\n{\n  articleList {\n    items {\n      title\n      author\n      body { html }\n      publishDate\n    }\n  }\n}'},
+    ]},
+    {title:'Content Fragment Models', items:[
+      {t:'Creating CF Models',b:'A CF Model defines the schema (fields) for a type of content. Created in the CF Model editor at /conf/mysite/settings/dam/cfm/models. Like defining a database schema.',
+       code:'CF Model: "Blog Post"\nFields:\n  title        → Single line text, required\n  author       → Single line text\n  body         → Multi line text (Rich text)\n  category     → Enumeration (Tech/Design/Business)\n  thumbnail    → Content Reference (asset)\n  publishDate  → Date and Time'},
+      {t:'CF Component',b:'To display a CF on an AEM page (traditional rendering), use the "Content Fragment" component. Configure it to point to a CF path and select which fields to show.',
+       code:'CF Component:\n  fragmentPath = /content/dam/mysite/articles/my-article\n  displayMode = singleTemplate\n  elementNames = [title, author, body]'},
+    ]},
+  ]
+},
+touchadv: {
+  session:'Session 11', title:'Touch UI — Advanced', subtitle:'Dynamic dialogs with listeners, validators, and conditions',
+  sections:[
+    {title:'Listeners', items:[
+      {t:'What Are Listeners?',b:'JavaScript event handlers attached to dialog fields. Triggered by field events (change, loadcontent, dialogready). Used to dynamically update other fields or trigger server-side calls.',
+       rl:'When an editor selects "Product" from a type dropdown, a listener fires and auto-populates the "Category" field with product categories fetched from a servlet.',
+       code:'<fieldname\n  sling:resourceType="granite/ui/components/coral/foundation/form/select"\n  fieldLabel="Type"\n  name="./type">\n  <granite:data\n    sly-foundation-field-change="myDialogListeners.onTypeChange"/>\n</fieldname>'},
+      {t:'Listener via clientlib',b:'Define listeners in a dialog-specific clientlib (category: cq.authoring.dialog). Access Coral UI, the dialog instance, and call AEM APIs.',
+       code:'// In dialog clientlib JS\n(function(document, $, ns) {\n  "use strict";\n  $(document).on("dialog-ready", function() {\n    var typeField = $("[name=\'./type\']");\n    typeField.on("change", function() {\n      var val = typeField.val();\n      // Show/hide other fields based on val\n    });\n  });\n})(document, Granite.$, Granite.author);'},
+    ]},
+    {title:'Validators', items:[
+      {t:'Field Validation',b:'Granite UI supports client-side validation via the validation property or custom validator functions. Validates on dialog submit — prevents saving invalid data.',
+       code:'<price\n  sling:resourceType="...textfield"\n  fieldLabel="Price"\n  name="./price"\n  validation="foundation.jcr.name"  ← built-in validator\n/>\n\n// Custom validator\nGranite.UI.Foundation.Validation.register("mysite.positiveNumber",\n  function(el) {\n    return parseFloat(el.value) > 0 ? null : "Must be positive";\n  }\n);'},
+    ]},
+    {title:'Conditional Section Display', items:[
+      {t:'Show/Hide Fields Dynamically',b:'Use granite:rendercondition to hide entire tabs or fields based on content or user permissions. Use JS listeners for client-side show/hide without a page reload.',
+       rl:'An "Advanced Settings" tab in a dialog only appears when the user has the "content-administrator" role. Junior editors see a simplified dialog with only the essential fields.',
+       code:'<advancedTab jcr:primaryType="nt:unstructured"\n  jcr:title="Advanced">\n  <granite:rendercondition\n    jcr:primaryType="nt:unstructured"\n    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/accesscontrol"\n    path="/content"\n    privilege="jcr:versionManagement"/>\n</advancedTab>'},
+    ]},
+  ]
+},
+rte: {
+  session:'Session 12', title:'Rich Text Editor (RTE)', subtitle:'Configuring AEM\'s in-page text editing experience',
+  sections:[
+    {title:'RTE Overview', items:[
+      {t:'What is the RTE?',b:'AEM\'s built-in rich text editor (based on CKEditor). Appears when an editor clicks on a text component. Provides formatting toolbar: bold, italic, lists, links, tables, source code, etc.',
+       rl:'A content editor writing a product description needs to bold a key feature, add a link to specs PDF, and create a bullet list of ingredients — all without leaving the page.'},
+      {t:'RTE in Inline vs Dialog mode',b:'Inline RTE: activates directly on the page component (in-place editing). Dialog RTE: appears inside a component dialog as a multiline rich text field.',
+       code:'# Inline RTE config path (component\'s editConfig)\n/apps/mysite/components/text/_cq_editConfig\n\n# Dialog RTE (in dialog XML)\n<text\n  sling:resourceType="cq/gui/components/authoring/dialog/richtext"\n  fieldLabel="Body Text"\n  name="./text"\n  useFixedInlineToolbar="true"/>'},
+    ]},
+    {title:'RTE Plugins', items:[
+      {t:'Enabling Plugins',b:'Plugins add feature groups to the RTE toolbar. Enable/configure them in the RTE config node under features property. Common plugins: format, links, lists, table, undo, paraformat.',
+       code:'rteConfig/\n  uiSettings/\n    cui/\n      toolbar:\n        "format#bold",\n        "format#italic",\n        "links#modifylink",\n        "lists#unordered",\n        "lists#ordered",\n        "table#createoredit"\n  plugins/\n    format/\n      features: [bold, italic, underline]\n    links/\n      features: \'*\''},
+      {t:'Restricting Styles',b:'Control which HTML elements/styles are allowed in output. The htmlRules config strips disallowed tags on paste from Word — critical for clean markup.',
+       rl:'Content pasted from Word brings hundreds of inline styles and font tags. The RTE\'s htmlRules config strips all of that, keeping only semantic HTML (h2, p, ul, strong, em, a).'},
+      {t:'Custom Plugins',b:'Build a custom RTE plugin to add proprietary functionality — e.g. a "Insert Token" button that adds a personalization placeholder like {{first_name}} into copy.',
+       code:'// Register custom RTE plugin\nCUI.rte.plugins.SamplePlugin = new Class({\n  extend: CUI.rte.plugins.Plugin,\n  notifyPluginConfig: function(config) {...},\n  execute: function(pluginCommand) {\n    if (pluginCommand === "inserttoken") {\n      this.editorKernel.relayCmd("inserthtml",\n        "<span class=\'token\'>{{first_name}}</span>");\n    }\n  }\n});'},
+    ]},
+  ]
+},
+osgi: {
+  session:'Session 13', title:'OSGi Components & Services', subtitle:'The runtime backbone of AEM\'s Java layer',
+  sections:[
+    {title:'OSGi Fundamentals', items:[
+      {t:'What is OSGi?',b:'OSGi (Open Services Gateway initiative) is a Java module system. AEM runs on Apache Felix (an OSGi container). It allows Java bundles to be installed, started, stopped, and updated at runtime without restarting the JVM.',
+       rl:'Think of OSGi like a plugin system for Java. You can install a new feature (bundle) into a running AEM instance — like installing a browser extension — without restarting the whole browser (JVM).'},
+      {t:'JAR vs Bundle',b:'A regular JAR is just a zip of .class files with no metadata. An OSGi bundle is a JAR with a special MANIFEST.MF that declares: which packages it exports (shares), which packages it imports (needs), and bundle metadata.',
+       code:'MANIFEST.MF in an OSGi bundle:\nBundle-Name: My AEM Core Bundle\nBundle-SymbolicName: com.mysite.core\nBundle-Version: 1.0.0\nExport-Package: com.mysite.core.models\nImport-Package: org.apache.sling.api,\n  com.day.cq.wcm.api'},
+    ]},
+    {title:'OSGi Components & Services', items:[
+      {t:'@Component',b:'Marks a Java class as an OSGi component — a managed object in the OSGi runtime. The container controls its lifecycle: activate, deactivate.',
+       code:'@Component(\n  service = MyService.class,\n  immediate = true\n)\npublic class MyServiceImpl implements MyService {\n  @Activate\n  protected void activate(ComponentContext context) {\n    // runs when bundle starts\n  }\n  @Deactivate\n  protected void deactivate() {\n    // runs when bundle stops\n  }\n}'},
+      {t:'@Service & @Reference',b:'@Component with service = SomeInterface.class registers the component as an OSGi service. Other components inject it using @Reference.',
+       code:'// Provider\n@Component(service = EmailService.class)\npublic class EmailServiceImpl implements EmailService {\n  public void send(String to, String subject) {...}\n}\n\n// Consumer\n@Component(service = NewsletterComponent.class)\npublic class NewsletterComponent {\n  @Reference\n  private EmailService emailService;  ← injected by OSGi\n}'},
+      {t:'ServiceFactory',b:'A ServiceFactory creates a separate instance of the service for each bundle that requests it. Useful when service state needs to be per-bundle or per-caller.',
+       rl:'A logging service that stamps each log entry with the requesting bundle\'s name. Each bundle gets its own instance with its name pre-set — this is a ServiceFactory.'},
+    ]},
+  ]
+},
+osgiconfig: {
+  session:'Session 14', title:'Configuring OSGi Services', subtitle:'Environment-specific configuration management',
+  sections:[
+    {title:'OSGi Configuration Methods', items:[
+      {t:'Config via .cfg.json Files (Recommended)',b:'Place configuration files in /apps/mysite/config/ (or config.author, config.publish etc). AEM loads these as OSGi configurations at startup. Environment-specific variants load only in the right runmode.',
+       code:'/apps/mysite/config/\n  com.mysite.core.impl.EmailServiceImpl.cfg.json\n/apps/mysite/config.author/\n  com.day.cq.replication.impl.ReplicationReceiverImpl.cfg.json\n/apps/mysite/config.publish/\n  com.mysite.core.impl.CacheServiceImpl.cfg.json\n\n# File contents:\n{\n  "smtp.host": "smtp.mysite.com",\n  "smtp.port": 587,\n  "from.address": "no-reply@mysite.com"\n}'},
+      {t:'Config via OSGi Console',b:'In development, quickly test configs at /system/console/configMgr. Changes are saved to /config in the repository, but NOT to source code — always move to .cfg.json for proper deployment.',
+       rl:'A developer needs to increase a cache TTL during a load test. They change it in OSGi Console in 30 seconds. Once confirmed, they update the .cfg.json file and commit to Git.'},
+    ]},
+    {title:'Sling Resolution Order', items:[
+      {t:'Config Resolution Priority',b:'OSGi configs are loaded based on AEM runmodes. The most specific config wins. Order (most specific first): config.author.prod → config.author → config.prod → config → (install folder).',
+       code:'# Priority (highest first):\n1. /apps/mysite/config.author.prod/  ← author + prod runmode\n2. /apps/mysite/config.author/       ← author runmode\n3. /apps/mysite/config.prod/         ← prod runmode\n4. /apps/mysite/config/              ← all environments'},
+      {t:'Sling Context-Aware Configs (CAConfig)',b:'Modern approach for component-level configs (e.g. different API keys per region). Configs stored in /conf and resolved by content hierarchy using Sling\'s CAConfig API.',
+       rl:'A global site has different Google Maps API keys per country. Using CAConfig, the Maps component reads the key from /conf/us-site/settings or /conf/uk-site/settings depending on which country\'s pages are being rendered.'},
+    ]},
+  ]
+},
+servlets: {
+  session:'Session 15', title:'Sling Servlets', subtitle:'Server-side request handlers for custom endpoints',
+  sections:[
+    {title:'Sling Servlet Fundamentals', items:[
+      {t:'What is a Sling Servlet?',b:'A Sling Servlet handles HTTP requests in AEM. Unlike Java EE servlets mapped to fixed URLs, Sling Servlets are registered by resource type or path and integrate naturally with Sling\'s URL resolution.',
+       rl:'A "Product Search" feature needs an AJAX endpoint that takes a search term and returns JSON results. A Sling Servlet at /bin/mysite/search.json handles this request.'},
+      {t:'Servlet Lifecycle',b:'Sling Servlets implement org.apache.sling.api.servlets.SlingSafeMethodsServlet (GET/HEAD only) or SlingAllMethodsServlet (all HTTP methods). doGet, doPost etc. are the entry points.',
+       code:'@Component(service = {Servlet.class})\n@SlingServletResourceTypes(\n  resourceTypes = "mysite/components/product",\n  methods = HttpConstants.METHOD_GET,\n  extensions = "json"\n)\npublic class ProductServlet extends SlingSafeMethodsServlet {\n  @Override\n  protected void doGet(SlingHttpServletRequest request,\n      SlingHttpServletResponse response) throws IOException {\n    response.setContentType("application/json");\n    // write JSON response\n  }\n}'},
+    ]},
+    {title:'Registration Methods', items:[
+      {t:'Registration by Resource Type',b:'Servlet fires when a resource with the given sling:resourceType is requested with the matching extension/selector/method. Most AEM-idiomatic approach.',
+       code:'# Servlet registered to resource type:\n@SlingServletResourceTypes(\n  resourceTypes = "mysite/components/search",\n  methods = "GET",\n  extensions = "json",\n  selectors = "results"\n)\n# Fires for URL:\n/content/mysite/search-page.results.json'},
+      {t:'Registration by Path',b:'Servlet registered to a fixed path under /bin or /services. Simpler for external API endpoints. Must be allowed by the Sling Servlet Resolver\'s allowed path patterns.',
+       code:'@SlingServletPaths("/bin/mysite/newsletter-signup")\npublic class NewsletterSignupServlet extends SlingAllMethodsServlet {\n  @Override\n  protected void doPost(SlingHttpServletRequest req,\n      SlingHttpServletResponse res) throws IOException {\n    String email = req.getParameter("email");\n    // subscribe logic\n    res.setStatus(200);\n    res.getWriter().write("{\\"success\\":true}");\n  }\n}'},
+      {t:'Default Servlet',b:'AEM falls back to the Default Servlet (GET.servlet) when no more-specific servlet matches. It renders the resource using its sling:resourceType\'s HTL template — this is normal page rendering.',
+       code:'# Sling Servlet Resolution order:\n1. Exact path match (/bin/...)\n2. Resource type + selector + extension match\n3. Resource type + extension match\n4. Resource type match\n5. Default GET servlet (renders HTL template)'},
+      {t:'Sling Servlet Resolver',b:'The Sling Servlet Resolver is the OSGi service responsible for finding the right servlet for each request. Its configuration controls security: which paths are servable, max recursion depth etc.',
+       rl:'A penetration test finds a servlet accessible without login. The team adds the path to the Sling Servlet Resolver\'s "paths to filter" list and wraps it with a CQ authentication requirement.'},
+    ]},
+  ]
+}
+};
+
+function show(key) {
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  render(key);
+}
+
+function render(key) {
+  const d = data[key];
+  let html = `<div class="topic-header">
+    <span class="session-badge">${d.session}</span>
+    <div class="topic-title">${d.title}</div>
+    <div class="topic-subtitle">${d.subtitle}</div>
+  </div>`;
+  d.sections.forEach(s => {
+    html += `<div class="section"><div class="section-title">${s.title}</div>`;
+    s.items.forEach(item => {
+      html += `<div class="concept-card">
+        <div class="concept-title">${item.t}</div>
+        <div class="concept-body">${item.b}</div>`;
+      if (item.code) html += `<div class="code-block">${item.code}</div>`;
+      if (item.rl) html += `<div class="reallife"><strong>Real-world example:</strong> ${item.rl}</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+  const ca = document.getElementById('content-area');
+  ca.innerHTML = html;
+  ca.scrollTop = 0;
+}
+
+render('cms');
+</script>

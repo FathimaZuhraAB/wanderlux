@@ -1,0 +1,761 @@
+
+<h2 class="sr-only">Session 21 JUnit Testing and Best Practices complete beginner guide</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.w{padding:8px 0 60px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:24px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.on{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:20px;margin-bottom:16px}
+.cp{background:#EEEDFE;border-color:#C4C0F5}
+.cg{background:#E1F5EE;border-color:#A3DCC9}
+.cy{background:#FFF8E7;border-color:#F5D78C}
+.cr{background:#FEECEC;border-color:#F5AAAA}
+.cb{background:#E8F4FD;border-color:#A8D4F0}
+.big{font-size:22px;font-weight:500;margin-bottom:8px}
+.lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cp .lbl{color:#3C3489}.cg .lbl{color:#085041}.cy .lbl{color:#7A5800}.cr .lbl{color:#7A1E1E}.cb .lbl{color:#0F5E8A}
+.body{font-size:14px;line-height:1.9}
+.anl{display:flex;gap:12px;align-items:flex-start;background:var(--color-background-secondary);border-radius:12px;padding:14px;margin:12px 0}
+.ai{font-size:28px;flex-shrink:0}
+.at{font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.at b{color:var(--color-text-primary);font-weight:500}
+.steps{display:flex;flex-direction:column;gap:0;margin:10px 0}
+.step{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.step:last-child{padding-bottom:0}
+.sn{width:30px;height:30px;border-radius:50%;background:#7F77DD;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--color-border-secondary)}
+.step:last-child::before{display:none}
+.sb{flex:1;padding-top:3px}
+.st{font-size:14px;font-weight:500;margin-bottom:3px}
+.sd{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.cw{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--color-border-tertiary)}
+.clf{background:var(--color-background-secondary);padding:7px 14px;font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--color-border-tertiary)}
+.ca{background:#1a1b2e;padding:14px;overflow-x:auto}
+.cline{display:flex;gap:10px;min-height:20px;margin-bottom:1px}
+.cline:hover{background:rgba(255,255,255,.03);border-radius:4px}
+.ln{font-family:var(--font-mono);font-size:12px;color:#45475a;min-width:22px;text-align:right;flex-shrink:0;user-select:none;line-height:1.8}
+.cd{font-family:var(--font-mono);font-size:12px;color:#cdd6f4;flex:1;white-space:pre;line-height:1.8}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#585b70;font-style:italic}.an{color:#fab387}.cl2{color:#89dceb}.num{color:#f9e2af}
+.ep{border-top:1px solid var(--color-border-tertiary)}
+.er{display:flex;border-bottom:1px solid var(--color-border-tertiary)}
+.er:last-child{border-bottom:none}
+.et{background:#EEEDFE;color:#3C3489;font-family:var(--font-mono);font-size:11px;font-weight:500;padding:10px;min-width:50px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--color-border-tertiary);flex-shrink:0}
+.ed{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.ed b{color:var(--color-text-primary);font-weight:500}
+.ed code{background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.nxt{margin-top:20px;padding:10px 24px;border-radius:24px;background:#7F77DD;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer}
+.nxt:hover{background:#6660CC}
+.emo{font-size:36px;display:block;margin-bottom:8px}
+.hl{border-left:3px solid #7F77DD;background:var(--color-background-secondary);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.hl b{color:var(--color-text-primary);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.cmp{border-radius:12px;padding:14px;border:1px solid}
+.cbad{background:#FEECEC;border-color:#F5AAAA}.cgood{background:#E1F5EE;border-color:#A3DCC9}
+.cbad .clb{color:#7A1E1E;font-size:12px;font-weight:500;margin-bottom:6px}
+.cgood .clb{color:#085041;font-size:12px;font-weight:500;margin-bottom:6px}
+.cmp p{font-size:12px;line-height:1.7;color:var(--color-text-secondary)}
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qb{text-align:left;padding:11px 16px;border-radius:10px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.qb:hover{border-color:#7F77DD;color:#3C3489}
+.qb.ok{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.qb.no{background:#FEECEC;border-color:#E24B4A;color:#7A1E1E}
+.qres{margin-top:10px;padding:12px;border-radius:10px;font-size:13px;display:none;line-height:1.7}
+.qres.show{display:block}
+.qres.ok{background:#E1F5EE;color:#085041}.qres.no{background:#FEECEC;color:#7A1E1E}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:10px 0}
+.fbox{background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:10px;padding:8px 12px;font-size:12px;text-align:center}
+.fbox b{display:block;font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.fbox span{color:var(--color-text-secondary)}
+.farr{font-size:18px;color:var(--color-text-tertiary);padding:0 4px;flex-shrink:0}
+.tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500;margin:2px}
+.tp{background:#EEEDFE;color:#3C3489}.tg{background:#E1F5EE;color:#085041}.ty{background:#FFF8E7;color:#7A5800}.tr{background:#FEECEC;color:#7A1E1E}
+.bp-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-tertiary);align-items:flex-start}
+.bp-row:last-child{border-bottom:none}
+.bp-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.bp-body{flex:1}
+.bp-title{font-size:14px;font-weight:500;margin-bottom:4px}
+.bp-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.test-result{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:13px;margin:4px 0}
+.test-pass{background:#E1F5EE;color:#085041}
+.test-fail{background:#FEECEC;color:#7A1E1E}
+</style>
+
+<div class="w">
+<div class="tabs">
+  <div class="tab on" onclick="go(0)">🏠 Start Here</div>
+  <div class="tab" onclick="go(1)">🧪 What is JUnit</div>
+  <div class="tab" onclick="go(2)">🏗️ AEM Mocks</div>
+  <div class="tab" onclick="go(3)">👻 Mockito</div>
+  <div class="tab" onclick="go(4)">📐 Best Practices</div>
+  <div class="tab" onclick="go(5)">🎨 HTL & ACS Commons</div>
+  <div class="tab" onclick="go(6)">✅ Quick Quiz</div>
+</div>
+
+<!-- PAGE 0: START HERE -->
+<div id="p0" class="pg on">
+  <div class="card cp">
+    <span class="emo">🤔</span>
+    <div class="big">What problem does Session 21 solve?</div>
+    <div class="body">You write Java code. You deploy it to AEM. It crashes in production at 2 AM — a page breaks for thousands of users. You stay up all night fixing it.<br><br>Unit testing means you catch that crash on your laptop <b>before</b> it ever reaches production. Tests run in milliseconds, need no AEM running, and tell you exactly what broke and why.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The scenario we use throughout this session</div>
+    <div class="body">You work for the same <b>bank</b> from Session 20. You write a Sling Model called <b>LoanCalculatorModel</b> — it reads loan amount, interest rate, and tenure from a page's properties and calculates the monthly EMI (Equated Monthly Instalment).<br><br>
+    Before you deploy this to the live bank website, you must be 100% sure:<br><br>
+    — It correctly reads the properties from the page<br>
+    — The EMI calculation is mathematically correct<br>
+    — It handles edge cases: zero interest rate, missing properties, negative values<br>
+    — The external "CreditScoreService" it depends on is called correctly<br><br>
+    All of this is verified by unit tests — without needing a running AEM instance.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">What Session 21 covers</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">JUnit basics — writing your first test</div>
+          <div class="sd">What a test is, how to write one, what @Test means, how to check results with assertEquals and assertNotNull.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">AEM Mocks — testing AEM components without a running AEM</div>
+          <div class="sd">AEM provides a testing framework that simulates the JCR repository in memory. You can create fake pages, set properties, and test your Sling Models — all in milliseconds on your laptop.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Mockito — simulating external services your code depends on</div>
+          <div class="sd">Your LoanCalculatorModel calls a CreditScoreService. You cannot test it in isolation unless you simulate that service. Mockito creates fake versions of services so you can test your code alone.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Coding best practices — writing clean AEM code</div>
+          <div class="sd">Java standards, Sling Model patterns, HTL guidelines, ACS Commons features — the rules professional AEM developers follow to keep code maintainable.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(1)">Next: What is JUnit →</button>
+</div>
+
+<!-- PAGE 1: WHAT IS JUNIT -->
+<div id="p1" class="pg">
+  <div class="card cp">
+    <span class="emo">🧪</span>
+    <div class="big">What is JUnit? What is a unit test?</div>
+    <div class="body">A unit test is a small Java program that calls your code and checks whether the result is what you expected. JUnit is the framework that makes writing these checks easy.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">🏭</div>
+      <div class="at">
+        Imagine a factory that makes calculators. Before any calculator leaves the factory, a tester sits down with it and runs a checklist:<br><br>
+        ✓ Does 2 + 2 = 4? <b>PASS</b><br>
+        ✓ Does 10 ÷ 0 show an error? <b>PASS</b><br>
+        ✓ Does the display turn on? <b>PASS</b><br>
+        ✗ Does the % button work? <b>FAIL — ship it back</b><br><br>
+        <b>JUnit is that tester's checklist.</b> You write the checks once. Every time you change your code, JUnit runs all checks automatically and tells you if anything broke.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Why unit tests? — The cost of finding bugs at different stages</div>
+    <div class="grid2">
+      <div class="cmp cbad">
+        <div class="clb">❌ Bug found in PRODUCTION</div>
+        <p>Real users are affected. Bank displays wrong EMI to customers. Legal liability. Emergency fix at 2 AM. Reputation damage. Cost: very high.</p>
+      </div>
+      <div class="cmp cgood">
+        <div class="clb">✅ Bug found by unit test</div>
+        <p>Found on your laptop in milliseconds before you even commit the code. Fix it immediately. No users affected. Cost: zero.</p>
+      </div>
+    </div>
+    <div class="body" style="margin-top:10px">Tests also act as <b>documentation</b>. A new developer joining your team reads your tests and immediately understands: "This method must return 0 when interest rate is 0", "This method must throw an exception when loan amount is negative." No other document is needed.</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Your first JUnit test — the simplest possible example</div>
+    <div class="body" style="margin-bottom:10px">Before AEM, before Sling Models — just plain Java. The EMI calculator class and its test:</div>
+    <div class="cw">
+      <div class="clf">EmiCalculator.java — the class we want to test</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">public class</span> <span class="cl2">EmiCalculator</span> {</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    <span class="cm">// Calculate monthly EMI</span></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">    <span class="cm">// principal = loan amount, annualRate = yearly interest %, months = tenure</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="kw">public double</span> calculateEmi(<span class="kw">double</span> principal,</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">                               <span class="kw">double</span> annualRate,</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">                               <span class="kw">int</span> months) {</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">        <span class="kw">if</span> (annualRate == <span class="num">0</span>) <span class="kw">return</span> principal / months;</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">        <span class="kw">double</span> r = annualRate / <span class="num">12</span> / <span class="num">100</span>;</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">        <span class="kw">return</span> principal * r * Math.pow(<span class="num">1</span>+r, months)</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">               / (Math.pow(<span class="num">1</span>+r, months) - <span class="num">1</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">}</span></div>
+      </div>
+    </div>
+
+    <div class="cw">
+      <div class="clf">EmiCalculatorTest.java — tests for the above class</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">import</span> org.junit.jupiter.api.Test;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">class</span> <span class="cl2">EmiCalculatorTest</span> {</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="cl2">EmiCalculator</span> calc = <span class="kw">new</span> <span class="cl2">EmiCalculator</span>();</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="kw">void</span> testNormalLoan() {</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">        <span class="kw">double</span> emi = calc.calculateEmi(<span class="num">100000</span>, <span class="num">10</span>, <span class="num">12</span>);</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        assertEquals(<span class="num">8791.59</span>, emi, <span class="num">0.01</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    <span class="kw">void</span> testZeroInterestRate() {</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">        <span class="kw">double</span> emi = calc.calculateEmi(<span class="num">120000</span>, <span class="num">0</span>, <span class="num">12</span>);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        assertEquals(<span class="num">10000.0</span>, emi, <span class="num">0.01</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">    <span class="kw">void</span> testResultIsNotNull() {</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">        <span class="kw">double</span> emi = calc.calculateEmi(<span class="num">50000</span>, <span class="num">8</span>, <span class="num">24</span>);</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">        assertNotNull(emi);</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">        assertTrue(emi > <span class="num">0</span>);</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L1</div><div class="ed"><b>import org.junit.jupiter.api.Test</b> — JUnit 5 (Jupiter) is the version used in modern AEM projects. The @Test annotation comes from this import. Without the import, Java doesn't know what @Test means.</div></div>
+        <div class="er"><div class="et">L2</div><div class="ed"><b>import static org.junit.jupiter.api.Assertions.*</b> — the <code>*</code> means "import everything from Assertions". This gives you <code>assertEquals</code>, <code>assertNotNull</code>, <code>assertTrue</code>, <code>assertFalse</code>, <code>assertThrows</code> etc. The word <code>static</code> means you can call them without writing <code>Assertions.assertEquals</code> every time — just <code>assertEquals</code>.</div></div>
+        <div class="er"><div class="et">L6</div><div class="ed"><b>EmiCalculator calc = new EmiCalculator()</b> — you create a real instance of the class you want to test. In unit testing, you test one class at a time. This line creates your "subject under test" — the object all the test methods will call.</div></div>
+        <div class="er"><div class="et">L8</div><div class="ed"><b>@Test</b> — this annotation tells JUnit: "this method is a test. When you run the test suite, call this method and check if it passes or throws an exception." Without @Test, JUnit ignores the method entirely. Every test method must have @Test.</div></div>
+        <div class="er"><div class="et">L9</div><div class="ed"><b>void testNormalLoan()</b> — test method naming convention: start with "test" or use a descriptive name that says what scenario is being tested. "testNormalLoan" = testing a standard loan calculation. The method takes no parameters and returns void. JUnit calls it automatically.</div></div>
+        <div class="er"><div class="et">L10</div><div class="ed"><b>double emi = calc.calculateEmi(100000, 10, 12)</b> — calling the actual method we want to test. Loan ₹1,00,000 at 10% annual interest for 12 months. We store the result in <code>emi</code>. This is the "Act" step — actually calling the code.</div></div>
+        <div class="er"><div class="et">L11</div><div class="ed"><b>assertEquals(8791.59, emi, 0.01)</b> — the core of the test. Three arguments: <b>expected value</b> (8791.59 — what we calculated by hand or formula), <b>actual value</b> (emi — what our code produced), <b>delta</b> (0.01 — acceptable difference for floating point numbers). If <code>emi</code> is not within 0.01 of 8791.59, the test FAILS and JUnit shows you: "Expected 8791.59 but was 8800.00". You immediately know something is wrong in the formula.</div></div>
+        <div class="er"><div class="et">L14-18</div><div class="ed"><b>testZeroInterestRate()</b> — testing an edge case. What happens when interest is 0%? Simple division should give ₹10,000/month. This test ensures the special case handling on line 8 of EmiCalculator works correctly. Without this test, a future developer might remove the zero-check thinking it's unnecessary — causing a division error in production.</div></div>
+        <div class="er"><div class="et">L24</div><div class="ed"><b>assertTrue(emi > 0)</b> — checks a boolean condition. Here: EMI must always be positive. <code>assertTrue(condition)</code> passes if condition is true, fails if false. Other useful assertions: <code>assertFalse(x)</code>, <code>assertNull(x)</code>, <code>assertNotNull(x)</code>, <code>assertThrows(Exception.class, () -> methodThatShouldThrow())</code>.</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="lbl">What test results look like in your IDE (IntelliJ / Eclipse)</div>
+      <div class="test-result test-pass"><i class="ti ti-circle-check" aria-hidden="true"></i> testNormalLoan() — PASSED (3ms)</div>
+      <div class="test-result test-pass"><i class="ti ti-circle-check" aria-hidden="true"></i> testZeroInterestRate() — PASSED (1ms)</div>
+      <div class="test-result test-fail"><i class="ti ti-circle-x" aria-hidden="true"></i> testResultIsNotNull() — FAILED: expected true but was false</div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(2)">Next: AEM Mocks →</button>
+</div>
+
+<!-- PAGE 2: AEM MOCKS -->
+<div id="p2" class="pg">
+  <div class="card cp">
+    <span class="emo">🏗️</span>
+    <div class="big">AEM Mocks — testing AEM components without running AEM</div>
+    <div class="body">Your Sling Models use ResourceResolver, ValueMap, Page objects, the JCR repository. These only exist inside a running AEM instance. So how do you test them without AEM?<br><br>The <b>AEM Mocks</b> framework (io.wcm.testing.aem-mock) creates a fake in-memory version of AEM's environment — a fake JCR, fake ResourceResolver, fake pages — all running in milliseconds inside your test.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">✈️</div>
+      <div class="at">
+        <b>Pilots train in flight simulators.</b> The simulator is not a real plane — it's a fake environment that looks and behaves exactly like a real plane. The pilot can practice emergency procedures, test reactions, make mistakes — all without risking a real aircraft or real passengers.<br><br>
+        <b>AEM Mocks is the flight simulator for your AEM code.</b> It gives your Java code a fake AEM environment to run in. Your code doesn't know or care that it's fake — it behaves exactly as it would on a real AEM server.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The AemContext — the heart of AEM Mocks</div>
+    <div class="body" style="margin-bottom:10px"><code>AemContext</code> is the main object from the AEM Mocks framework. It gives you a complete fake AEM environment: a fake JCR repository, a fake ResourceResolver, a fake request, fake Sling services. You create test content in it, then run your code against it.</div>
+    <div class="flow">
+      <div class="fbox"><b>AemContext</b><span>fake AEM environment</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>Load JSON</b><span>create fake pages</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>Set resource</b><span>simulate a request</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>adaptTo(Model)</b><span>run your code</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>assert</b><span>check results</span></div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Complete test for a Sling Model — every single line explained</div>
+    <div class="body" style="margin-bottom:10px">This tests our <code>LoanCalculatorModel</code> — a Sling Model that reads loan properties from a page and exposes them to HTL.</div>
+
+    <div class="cw">
+      <div class="clf">src/test/resources/loan-page.json — fake page content for the test</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd">{</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd">  <span class="str">"jcr:primaryType"</span>: <span class="str">"cq:Page"</span>,</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">  <span class="str">"jcr:content"</span>: {</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">    <span class="str">"jcr:primaryType"</span>: <span class="str">"cq:PageContent"</span>,</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">    <span class="str">"sling:resourceType"</span>: <span class="str">"bank/components/loan-calculator"</span>,</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">    <span class="str">"jcr:title"</span>: <span class="str">"Home Loan Calculator"</span>,</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">    <span class="str">"loanAmount"</span>: <span class="num">500000</span>,</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">    <span class="str">"interestRate"</span>: <span class="num">8.5</span>,</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="str">"tenureMonths"</span>: <span class="num">240</span></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">  }</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">Why JSON?</div><div class="ed">Instead of creating JCR nodes in Java code (verbose and complex), AEM Mocks lets you describe your test content in a simple JSON file. This JSON is loaded into the fake in-memory JCR. It represents a real page exactly as it would exist in AEM. The structure mirrors the JCR node structure: <code>jcr:content</code> is a child node with all the page properties. Keep these JSON files in <code>src/test/resources/</code> — they are not deployed to AEM, only used during tests.</div></div>
+      </div>
+    </div>
+
+    <div class="cw">
+      <div class="clf">LoanCalculatorModelTest.java — full test class with every line explained</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">import</span> io.wcm.testing.mock.aem.junit5.AemContext;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import</span> io.wcm.testing.mock.aem.junit5.AemContextExtension;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">import</span> org.junit.jupiter.api.Test;</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">import</span> org.junit.jupiter.api.extension.ExtendWith;</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="an">@ExtendWith</span>(<span class="cl2">AemContextExtension</span>.<span class="kw">class</span>)</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">class</span> <span class="cl2">LoanCalculatorModelTest</span> {</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="kw">private final</span> <span class="cl2">AemContext</span> ctx = <span class="kw">new</span> <span class="cl2">AemContext</span>();</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    <span class="kw">void</span> testModelReadsLoanProperties() {</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">        <span class="cm">// ARRANGE — set up the fake AEM environment</span></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">        ctx.load().json(<span class="str">"/loan-page.json"</span>, <span class="str">"/content/bank/home-loan"</span>);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">        ctx.currentResource(<span class="str">"/content/bank/home-loan/jcr:content"</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">        <span class="cm">// ACT — run the model</span></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">        <span class="cl2">LoanCalculatorModel</span> model =</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">            ctx.request().adaptTo(<span class="cl2">LoanCalculatorModel</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">        <span class="cm">// ASSERT — check the results</span></span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">        assertNotNull(model);</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">        assertEquals(<span class="num">500000</span>, model.getLoanAmount());</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">        assertEquals(<span class="num">8.5</span>, model.getInterestRate(), <span class="num">0.001</span>);</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">        assertEquals(<span class="num">240</span>, model.getTenureMonths());</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">        assertTrue(model.getMonthlyEmi() > <span class="num">0</span>);</span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">31</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">32</span><span class="cd">    <span class="kw">void</span> testMissingLoanAmount_returnsZero() {</span></div>
+        <div class="cline"><span class="ln">33</span><span class="cd">        ctx.load().json(<span class="str">"/empty-page.json"</span>, <span class="str">"/content/bank/empty"</span>);</span></div>
+        <div class="cline"><span class="ln">34</span><span class="cd">        ctx.currentResource(<span class="str">"/content/bank/empty/jcr:content"</span>);</span></div>
+        <div class="cline"><span class="ln">35</span><span class="cd">        <span class="cl2">LoanCalculatorModel</span> model =</span></div>
+        <div class="cline"><span class="ln">36</span><span class="cd">            ctx.request().adaptTo(<span class="cl2">LoanCalculatorModel</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">37</span><span class="cd">        assertEquals(<span class="num">0</span>, model.getLoanAmount());</span></div>
+        <div class="cline"><span class="ln">38</span><span class="cd">        assertEquals(<span class="num">0.0</span>, model.getMonthlyEmi(), <span class="num">0.001</span>);</span></div>
+        <div class="cline"><span class="ln">39</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">40</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L7</div><div class="ed"><b>@ExtendWith(AemContextExtension.class)</b> — this tells JUnit 5: "before and after each test, use AemContextExtension to manage the AemContext lifecycle." AemContextExtension automatically resets the fake AEM environment between tests so one test's content doesn't leak into another test. Without this, test 2 would still see the fake page created in test 1.</div></div>
+        <div class="er"><div class="et">L10</div><div class="ed"><b>private final AemContext ctx = new AemContext()</b> — creates the fake AEM environment. <code>final</code> means the reference never changes. <code>private</code> means only this test class uses it. The AemContext gives you: a fake ResourceResolver (<code>ctx.resourceResolver()</code>), a fake SlingHttpServletRequest (<code>ctx.request()</code>), and methods to load JSON content into the fake JCR.</div></div>
+        <div class="er"><div class="et">L16</div><div class="ed"><b>ctx.load().json("/loan-page.json", "/content/bank/home-loan")</b> — loads the JSON file into the fake JCR at the given path. After this line, your test's fake AEM has a page at <code>/content/bank/home-loan</code> with all the properties from the JSON. The path <code>/loan-page.json</code> is relative to <code>src/test/resources/</code> — that's where JUnit looks for test resource files.</div></div>
+        <div class="er"><div class="et">L17</div><div class="ed"><b>ctx.currentResource("/content/bank/home-loan/jcr:content")</b> — sets the "current resource" for the fake request. In real AEM, when a browser opens a page, Sling sets the current resource to that page's <code>jcr:content</code> node. Your Sling Model's <code>@ValueMapValue</code> fields read from this current resource. This line simulates "a user just opened this page in their browser."</div></div>
+        <div class="er"><div class="et">L20-21</div><div class="ed"><b>ctx.request().adaptTo(LoanCalculatorModel.class)</b> — runs your actual Sling Model. <code>ctx.request()</code> returns the fake SlingHttpServletRequest. <code>adaptTo(LoanCalculatorModel.class)</code> instantiates your model against the fake request — exactly as AEM would when rendering a real page. Your model's @ValueMapValue fields get populated from the fake JSON page, your @PostConstruct method runs, and you get back a fully populated model object.</div></div>
+        <div class="er"><div class="et">L24-28</div><div class="ed"><b>The assertions — checking every property</b><br><br>
+        <code>assertNotNull(model)</code> — the model must not be null. If adaptTo returns null, all other assertions would throw NullPointerException. Always check not-null first.<br>
+        <code>assertEquals(500000, model.getLoanAmount())</code> — loan amount read from JSON must equal 500000. If the @ValueMapValue injection is wrong (wrong property name), this fails.<br>
+        <code>assertEquals(8.5, model.getInterestRate(), 0.001)</code> — the 0.001 delta handles floating point precision issues in Java.<br>
+        <code>assertTrue(model.getMonthlyEmi() > 0)</code> — the calculated EMI must be positive.</div></div>
+        <div class="er"><div class="et">L31-39</div><div class="ed"><b>testMissingLoanAmount_returnsZero()</b> — tests the "empty page" scenario. What does the model do when no loan properties are set? It must return 0 for amount and EMI — not throw a NullPointerException. This is called testing the edge case or the "sad path." In banking code, this is critical — a crash on missing data could display wrong information to customers.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(3)">Next: Mockito →</button>
+</div>
+
+<!-- PAGE 3: MOCKITO -->
+<div id="p3" class="pg">
+  <div class="card cp">
+    <span class="emo">👻</span>
+    <div class="big">Mockito — creating fake versions of services</div>
+    <div class="body">Your <code>LoanCalculatorModel</code> calls an external <code>CreditScoreService</code> to check the applicant's credit score. In tests, you cannot call the real credit score system — it costs money per API call, it's slow, and it might return different results each time.<br><br>Mockito creates a <b>fake (mock) version</b> of CreditScoreService that you control completely — you tell it exactly what to return for each input.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">🎭</div>
+      <div class="at">
+        <b>Movie stunt doubles.</b> When filming a dangerous scene, the director doesn't put the real actor at risk. A stunt double — someone who looks similar — does the dangerous part. The scene is filmed, everything works, and the real actor is safe.<br><br>
+        <b>A Mockito mock is a stunt double for your services.</b> Your code thinks it's calling the real CreditScoreService. It's actually calling a fake one you created — that returns exactly what you need for your test, instantly, with no side effects.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Complete Mockito test — every line explained</div>
+    <div class="cw">
+      <div class="clf">LoanCalculatorModelMockitoTest.java</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">import</span> org.junit.jupiter.api.Test;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import</span> org.junit.jupiter.api.extension.ExtendWith;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">import</span> org.mockito.InjectMocks;</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="kw">import</span> org.mockito.Mock;</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">import</span> org.mockito.junit.jupiter.MockitoExtension;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="kw">import static</span> org.mockito.Mockito.*;</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"><span class="an">@ExtendWith</span>(<span class="cl2">MockitoExtension</span>.<span class="kw">class</span>)</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"><span class="kw">class</span> <span class="cl2">LoanCalculatorModelMockitoTest</span> {</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    <span class="an">@Mock</span></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    <span class="kw">private</span> <span class="cl2">CreditScoreService</span> creditScoreService;</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    <span class="an">@InjectMocks</span></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="kw">private</span> <span class="cl2">LoanCalculatorModel</span> loanModel;</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    <span class="kw">void</span> testEligible_whenCreditScoreIsHigh() {</span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">        <span class="cm">// ARRANGE — tell the mock what to return</span></span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">        when(creditScoreService.getScore(<span class="str">"PAN123"</span>))</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">            .thenReturn(<span class="num">780</span>);</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd">        <span class="cm">// ACT</span></span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">        <span class="kw">boolean</span> eligible = loanModel.isEligibleForLoan(<span class="str">"PAN123"</span>);</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">        <span class="cm">// ASSERT</span></span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">        assertTrue(eligible);</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd">        verify(creditScoreService, times(<span class="num">1</span>)).getScore(<span class="str">"PAN123"</span>);</span></div>
+        <div class="cline"><span class="ln">31</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">32</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">33</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">34</span><span class="cd">    <span class="kw">void</span> testNotEligible_whenCreditScoreIsLow() {</span></div>
+        <div class="cline"><span class="ln">35</span><span class="cd">        when(creditScoreService.getScore(<span class="str">"PAN456"</span>))</span></div>
+        <div class="cline"><span class="ln">36</span><span class="cd">            .thenReturn(<span class="num">420</span>);</span></div>
+        <div class="cline"><span class="ln">37</span><span class="cd">        <span class="kw">boolean</span> eligible = loanModel.isEligibleForLoan(<span class="str">"PAN456"</span>);</span></div>
+        <div class="cline"><span class="ln">38</span><span class="cd">        assertFalse(eligible);</span></div>
+        <div class="cline"><span class="ln">39</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">40</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">41</span><span class="cd">    <span class="an">@Test</span></span></div>
+        <div class="cline"><span class="ln">42</span><span class="cd">    <span class="kw">void</span> testWhenCreditServiceThrowsException() {</span></div>
+        <div class="cline"><span class="ln">43</span><span class="cd">        when(creditScoreService.getScore(<span class="str">"PANERR"</span>))</span></div>
+        <div class="cline"><span class="ln">44</span><span class="cd">            .thenThrow(<span class="kw">new</span> <span class="cl2">RuntimeException</span>(<span class="str">"API timeout"</span>));</span></div>
+        <div class="cline"><span class="ln">45</span><span class="cd">        <span class="kw">boolean</span> eligible = loanModel.isEligibleForLoan(<span class="str">"PANERR"</span>);</span></div>
+        <div class="cline"><span class="ln">46</span><span class="cd">        assertFalse(eligible);</span></div>
+        <div class="cline"><span class="ln">47</span><span class="cd">        <span class="cm">// model must gracefully return false, not crash!</span></span></div>
+        <div class="cline"><span class="ln">48</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">49</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L9</div><div class="ed"><b>@ExtendWith(MockitoExtension.class)</b> — tells JUnit to use Mockito's extension. This activates the @Mock and @InjectMocks annotations. Without this line, @Mock does nothing — your fields stay null.</div></div>
+        <div class="er"><div class="et">L12-13</div><div class="ed"><b>@Mock CreditScoreService creditScoreService</b> — Mockito creates a fake (mock) object of type <code>CreditScoreService</code> and assigns it to this field. You don't create the object — Mockito does. The mock has the same methods as the real service, but they return default values (0, null, false) unless you tell them what to return using <code>when(...).thenReturn(...)</code>. The real CreditScoreService code is NEVER called.</div></div>
+        <div class="er"><div class="et">L15-16</div><div class="ed"><b>@InjectMocks LoanCalculatorModel loanModel</b> — Mockito creates a real instance of <code>LoanCalculatorModel</code> AND automatically injects the mock <code>creditScoreService</code> into it. So your real model code runs, but when it calls <code>creditScoreService.getScore()</code>, it calls the fake mock — not the real API. This is the key: real code under test, fake dependencies.</div></div>
+        <div class="er"><div class="et">L22-23</div><div class="ed"><b>when(creditScoreService.getScore("PAN123")).thenReturn(780)</b> — this is "stubbing" — programming the mock's behaviour. Read it as: "WHEN getScore is called with "PAN123", THEN return 780." This is the entire power of Mockito. You can simulate any scenario: high score (780), low score (420), exception thrown — without needing the real API. The mock only returns 780 when called with exactly "PAN123". Any other argument returns 0 (default).</div></div>
+        <div class="er"><div class="et">L30</div><div class="ed"><b>verify(creditScoreService, times(1)).getScore("PAN123")</b> — verifies that your code actually CALLED the mock. Three things checked: (1) <code>creditScoreService</code> was called, (2) exactly <code>times(1)</code> — once, not twice or zero times, (3) specifically the <code>getScore</code> method with argument "PAN123". If your model has a bug that skips the credit check, this verification fails — even if the final result happened to be correct by coincidence.</div></div>
+        <div class="er"><div class="et">L42-48</div><div class="ed"><b>testWhenCreditServiceThrowsException()</b> — the most important test. What happens when the external credit score API times out? Your model must NOT crash and throw the exception up to the page renderer (which would show a 500 error to a bank customer). It must catch the exception and return false (not eligible). This test simulates the API being down and checks your error handling. Without this test, you would not know this scenario works until a real API outage in production.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(4)">Next: Best Practices →</button>
+</div>
+
+<!-- PAGE 4: BEST PRACTICES -->
+<div id="p4" class="pg">
+  <div class="card cp">
+    <span class="emo">📐</span>
+    <div class="big">AEM Coding Best Practices</div>
+    <div class="body">These are the rules that senior AEM developers follow — not because someone forced them, but because breaking these rules always causes problems later: code that is hard to maintain, bugs that are hard to find, performance issues in production.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Sling Model best practices</div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#EEEDFE">✅</div>
+      <div class="bp-body">
+        <div class="bp-title">Always use DefaultInjectionStrategy.OPTIONAL</div>
+        <div class="bp-desc">If a @ValueMapValue property doesn't exist in the JCR (maybe an author left the field blank), and you don't use OPTIONAL, AEM throws an exception and the entire component fails to render. With OPTIONAL, missing properties just get the default value (null, 0, "") — the model still works, and you handle null gracefully in the getter.</div>
+      </div>
+    </div>
+    <div class="cw">
+      <div class="clf">Correct Sling Model declaration</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">// CORRECT — with OPTIONAL strategy and proper adaptables</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="an">@Model</span>(</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd">    adaptables = <span class="cl2">SlingHttpServletRequest</span>.<span class="kw">class</span>,</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd">    defaultInjectionStrategy = <span class="cl2">DefaultInjectionStrategy</span>.OPTIONAL</span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd">)</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="kw">public class</span> <span class="cl2">LoanCalculatorModel</span> {</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd">    <span class="an">@ValueMapValue</span></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="an">@Default</span>(<span class="kw">intValues</span> = <span class="num">0</span>)</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="kw">private int</span> loanAmount;</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">    <span class="an">@ValueMapValue</span></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    <span class="an">@Default</span>(<span class="kw">doubleValues</span> = <span class="num">0.0</span>)</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="kw">private double</span> interestRate;</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    <span class="cm">// All heavy computation goes in @PostConstruct, not getters</span></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">    <span class="kw">private double</span> monthlyEmi;</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    <span class="an">@PostConstruct</span></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    <span class="kw">protected void</span> init() {</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">        <span class="kw">if</span> (loanAmount > <span class="num">0</span> && interestRate > <span class="num">0</span>) {</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">            monthlyEmi = calculateEmi(loanAmount, interestRate, tenureMonths);</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">        }</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">    <span class="cm">// Getter just returns the pre-calculated value — no logic here</span></span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">    <span class="kw">public double</span> getMonthlyEmi() { <span class="kw">return</span> monthlyEmi; }</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">    <span class="kw">public int</span>    getLoanAmount()  { <span class="kw">return</span> loanAmount;  }</span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">    <span class="kw">public double</span> getInterestRate(){ <span class="kw">return</span> interestRate; }</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L4</div><div class="ed"><b>defaultInjectionStrategy=DefaultInjectionStrategy.OPTIONAL</b> — with OPTIONAL, if a property doesn't exist on the JCR node, Sling just skips it and leaves the field at its default Java value (0 for int, null for String, false for boolean). Without OPTIONAL, a missing property causes the entire model instantiation to fail — adaptTo() returns null — and your component renders nothing.</div></div>
+        <div class="er"><div class="et">L8-14</div><div class="ed"><b>@ValueMapValue with @Default</b> — @ValueMapValue reads a property from the resource's ValueMap. The property name is derived from the field name: field <code>loanAmount</code> reads property <code>loanAmount</code> from JCR. @Default provides an explicit default value when the property is missing — cleaner than checking for 0/null in every getter.</div></div>
+        <div class="er"><div class="et">L19-24</div><div class="ed"><b>@PostConstruct void init()</b> — this method is called by Sling automatically AFTER all @ValueMapValue fields have been injected. This is where you do all your calculation work — reading from injected fields and computing derived values. NEVER put logic in getters — HTL templates call getters multiple times. If you calculate EMI inside getMonthlyEmi(), it recalculates on every call. @PostConstruct runs once; getters just return stored values.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Java best practices for AEM</div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#E8F4FD">🔒</div>
+      <div class="bp-body">
+        <div class="bp-title">Always close ResourceResolvers — use try-with-resources</div>
+        <div class="bp-desc">Every unclosed resolver = one leaked JCR session. After hundreds of leaked sessions, AEM's memory fills up and it crashes. Always use <code>try(ResourceResolver r = ...) {}</code></div>
+      </div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#E1F5EE">📝</div>
+      <div class="bp-body">
+        <div class="bp-title">Use constants for JCR property names</div>
+        <div class="bp-desc">Never write <code>"jcr:title"</code> as a raw string in multiple places. If you ever rename the property, you have to find every occurrence. Instead: <code>private static final String PROP_TITLE = "jcr:title"</code> — change in one place, everything updates.</div>
+      </div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#FFF8E7">🚫</div>
+      <div class="bp-body">
+        <div class="bp-title">Never use admin session in code</div>
+        <div class="bp-desc">Always use service users (Session 17). Admin has access to delete the entire repository. Your service user should have only the minimum permissions needed.</div>
+      </div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#FEECEC">⚠️</div>
+      <div class="bp-body">
+        <div class="bp-title">Never use System.out.println — always use Logger</div>
+        <div class="bp-desc">System.out doesn't write to log files. In production you'll never find your debug output. Always use <code>log.debug("message {}", value)</code>.</div>
+      </div>
+    </div>
+    <div class="bp-row" style="border-bottom:none">
+      <div class="bp-icon" style="background:#EEEDFE">🏗️</div>
+      <div class="bp-body">
+        <div class="bp-title">Keep business logic in Java, keep templates in HTL</div>
+        <div class="bp-desc">No Java code in HTL files. No business logic in Sling Models (only data preparation). HTL = presentation only. Sling Model = data preparation only. Java service = business logic. This separation makes each part testable and maintainable independently.</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(5)">Next: HTL and ACS Commons →</button>
+</div>
+
+<!-- PAGE 5: HTL AND ACS COMMONS -->
+<div id="p5" class="pg">
+  <div class="card cp">
+    <span class="emo">🎨</span>
+    <div class="big">HTL Best Practices & ACS Commons</div>
+    <div class="body">HTL (HTML Template Language, also called Sightly) is AEM's templating language for rendering HTML. ACS Commons is a free library of ready-made utilities that solve common AEM problems so you don't have to build them yourself.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">HTL best practices — the golden rules</div>
+    <div class="cw">
+      <div class="clf">Good vs bad HTL examples</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="cm">&lt;!-- CORRECT: use data-sly-use to bind your Sling Model --&gt;</span></span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">&lt;sly</span> data-sly-use.model=<span class="str">"com.bank.aem.models.LoanCalculatorModel"</span><span class="kw">/&gt;</span></span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="cm">&lt;!-- Display only if loanAmount exists --&gt;</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">&lt;div</span> data-sly-test=<span class="str">"${model.loanAmount}"</span><span class="kw">&gt;</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd">  <span class="kw">&lt;p&gt;</span>Loan Amount: ${model.loanAmount}<span class="kw">&lt;/p&gt;</span></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd">  <span class="kw">&lt;p&gt;</span>Monthly EMI: ${model.monthlyEmi}<span class="kw">&lt;/p&gt;</span></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">&lt;/div&gt;</span></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd"><span class="cm">&lt;!-- Loop through a list --&gt;</span></span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd"><span class="kw">&lt;ul&gt;</span></span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd">  <span class="kw">&lt;li</span> data-sly-list=<span class="str">"${model.loanTypes}"</span><span class="kw">&gt;</span></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    ${item.name} — ${item.rate}%</span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">  <span class="kw">&lt;/li&gt;</span></span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd"><span class="kw">&lt;/ul&gt;</span></span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd"><span class="cm">&lt;!-- WRONG: never put Java scriptlets in HTL --&gt;</span></span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd"><span class="kw">&lt;%</span> double emi = 500000 * 0.085 / 12; <span class="kw">%&gt;</span> <span class="cm">&lt;!-- NEVER --&gt;</span></span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L2</div><div class="ed"><b>data-sly-use.model="..."</b> — instantiates your Sling Model and binds it to the variable <code>model</code>. After this, all your model's public getter methods become accessible as <code>${model.propertyName}</code>. The full class name ensures AEM finds the right class even if multiple models have the same simple name.</div></div>
+        <div class="er"><div class="et">L5</div><div class="ed"><b>data-sly-test="${model.loanAmount}"</b> — conditionally renders this element. If <code>model.loanAmount</code> is 0, null, empty, or false, the entire div and its contents are removed from the HTML output. Equivalent to an if statement. Prevents showing "Loan Amount: 0" when the field was never filled in.</div></div>
+        <div class="er"><div class="et">L12</div><div class="ed"><b>data-sly-list="${model.loanTypes}"</b> — iterates over a List returned by your model. For each item in the list, renders the li element. The variable <code>item</code> is automatically available inside the loop (you can also name it: <code>data-sly-list.loan="${model.loanTypes}"</code> makes it <code>loan</code>). Equivalent to a for-each loop.</div></div>
+        <div class="er"><div class="et">L18</div><div class="ed"><b>NEVER use scriptlets &lt;% %&gt;</b> — JSP-style scriptlets mix Java and HTML in the same file. They are impossible to test, hard to read, and AEM's security model restricts them. Always do all logic in the Sling Model and only display results in HTL.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">ACS Commons — free tools that solve common AEM problems</div>
+    <div class="body" style="margin-bottom:12px">ACS Commons (Adobe Consulting Services Commons) is an open-source library of ready-made AEM utilities. Instead of building common features from scratch, you use these — saving days of work.</div>
+
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#EEEDFE">🔧</div>
+      <div class="bp-body">
+        <div class="bp-title">Ensure Authorizable — create users/groups on deployment</div>
+        <div class="bp-desc">Automatically creates service users and groups when your package deploys. Instead of manually creating users in every environment, you declare them in a config file and ACS Commons handles creation. Replaces the manual service user creation we discussed in Session 17 — same result, simpler config.</div>
+      </div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#E1F5EE">🖼️</div>
+      <div class="bp-body">
+        <div class="bp-title">Named Image Transforms — consistent image resizing</div>
+        <div class="bp-desc">Instead of hardcoding image dimensions in your components, you define named transforms: "hero-image" = 1920×600 cropped. Your component references "hero-image" by name. When the design changes to 1920×800, you update one config and every hero image across the site updates — no code change needed.</div>
+      </div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#FFF8E7">📊</div>
+      <div class="bp-body">
+        <div class="bp-title">MCP (Manage Controlled Processes) — bulk operations</div>
+        <div class="bp-desc">ACS Commons MCP provides a framework for running large bulk operations in AEM safely — bulk page moves, asset migrations, content reorganisation. Instead of writing your own batch job from scratch, you implement MCP's interfaces and get: a progress bar UI, pause/resume, error reporting, and rollback capability for free.</div>
+      </div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-icon" style="background:#E8F4FD">🚨</div>
+      <div class="bp-body">
+        <div class="bp-title">Error Page Handler — custom 404 and 500 pages</div>
+        <div class="bp-desc">ACS Commons Error Page Handler lets you create custom error pages per section of your website. The bank's /en/ section shows a branded English error page. The /ta/ section shows a Tamil error page. Without ACS Commons, you'd need a custom Sling error handler servlet — ACS Commons does this with just configuration.</div>
+      </div>
+    </div>
+    <div class="bp-row" style="border-bottom:none">
+      <div class="bp-icon" style="background:#FEECEC">🔍</div>
+      <div class="bp-body">
+        <div class="bp-title">ACL Packager — export and import permissions</div>
+        <div class="bp-desc">Exports all your AEM user permissions (ACLs) as a content package. You can import this package into a fresh environment and all permissions are instantly recreated — no manual re-configuration. Essential when setting up staging or production environments.</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(6)">Next: Quick Quiz →</button>
+</div>
+
+<!-- PAGE 6: QUIZ -->
+<div id="p6" class="pg">
+  <div class="card cp">
+    <span class="emo">✅</span>
+    <div class="big">Quick Quiz — check your understanding</div>
+    <div class="body">Six questions. Tap what you think is right.</div>
+  </div>
+
+  <div class="card" id="q1">
+    <div class="quiz-q">1. What does the @Test annotation do in JUnit?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(1,'a')">A. It makes the method run faster</button>
+      <button class="qb" onclick="ans(1,'b')">B. It tells JUnit: "this method is a test — run it and check if it passes or fails"</button>
+      <button class="qb" onclick="ans(1,'c')">C. It deploys the code to AEM</button>
+    </div>
+    <div class="qres" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="quiz-q">2. What does AemContext give you in a unit test?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(2,'a')">A. A connection to a live running AEM server</button>
+      <button class="qb" onclick="ans(2,'b')">B. A fake in-memory AEM environment — fake JCR, fake ResourceResolver, fake request — so you can test without a real AEM instance</button>
+      <button class="qb" onclick="ans(2,'c')">C. A tool to deploy your code to AEM</button>
+    </div>
+    <div class="qres" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="quiz-q">3. What does @Mock do in a Mockito test?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(3,'a')">A. It creates a real instance of the class and runs its actual code</button>
+      <button class="qb" onclick="ans(3,'b')">B. It creates a fake version of a service that you can program to return whatever you need, without calling real code</button>
+      <button class="qb" onclick="ans(3,'c')">C. It marks a field as optional</button>
+    </div>
+    <div class="qres" id="qr3"></div>
+  </div>
+
+  <div class="card" id="q4">
+    <div class="quiz-q">4. Why should you use DefaultInjectionStrategy.OPTIONAL in a Sling Model?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(4,'a')">A. It makes the model load faster</button>
+      <button class="qb" onclick="ans(4,'b')">B. So that if a JCR property is missing (author left a field blank), the model still works instead of throwing an exception and breaking the component</button>
+      <button class="qb" onclick="ans(4,'c')">C. It allows the model to be used in HTL</button>
+    </div>
+    <div class="qres" id="qr4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="quiz-q">5. Where should you put calculation/business logic in a Sling Model?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(5,'a')">A. Inside the getter methods like getMonthlyEmi()</button>
+      <button class="qb" onclick="ans(5,'b')">B. Inside the @PostConstruct method — runs once after injection, stores results for getters to return</button>
+      <button class="qb" onclick="ans(5,'c')">C. Inside the HTL template</button>
+    </div>
+    <div class="qres" id="qr5"></div>
+  </div>
+
+  <div class="card" id="q6">
+    <div class="quiz-q">6. What does when(mock.method()).thenReturn(value) do in Mockito?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(6,'a')">A. Calls the real method and returns its actual result</button>
+      <button class="qb" onclick="ans(6,'b')">B. Programs the mock: when this specific method is called, return this specific value instead of running real code</button>
+      <button class="qb" onclick="ans(6,'c')">C. Verifies that the method was called once</button>
+    </div>
+    <div class="qres" id="qr6"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ad={
+  1:{c:'b',e:"✅ Correct! @Test tells JUnit: 'this is a test method, run it automatically when tests execute.' Without @Test, JUnit ignores the method. If a test method throws any exception or an assertion fails (assertEquals finds a mismatch), JUnit marks it as FAILED. If it completes normally, PASSED."},
+  2:{c:'b',e:"✅ Correct! AemContext creates a complete fake AEM environment in memory. You load JSON files to create fake pages, set the current resource to simulate a browser request, then run your Sling Model against it. The whole test runs in milliseconds — no AEM server needed."},
+  3:{c:'b',e:"✅ Correct! @Mock creates a fake (mock) object. The mock has all the same methods as the real class, but they return default values (0, null, false) unless you program them with when(...).thenReturn(...). The real service code never runs — you control exactly what the mock returns."},
+  4:{c:'b',e:"✅ Correct! With OPTIONAL, missing JCR properties are silently skipped — the field keeps its default Java value. Without it, a missing property causes the Sling Model instantiation to fail completely — adaptTo() returns null — and your component renders nothing, giving users a blank page."},
+  5:{c:'b',e:"✅ Correct! @PostConstruct runs once after all @ValueMapValue fields are injected. Do all calculations here and store results in private fields. Getters just return the stored values. If you put logic in getters, HTL calls them multiple times per page render — recalculating every time, wasting CPU."},
+  6:{c:'b',e:"✅ Correct! when(mock.method(arg)).thenReturn(value) is called 'stubbing' — you're programming the mock's behaviour for a specific scenario. When getScore is called with 'PAN123', return 780. When called with 'PAN456', return 420. You can simulate any scenario including exceptions with .thenThrow()."}
+};
+function ans(q,choice){
+  const a=ad[q];
+  const btns=document.querySelectorAll('#q'+q+' .qb');
+  const letters=['a','b','c'];
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(letters[i]===a.c)b.classList.add('ok');
+    else if(letters[i]===choice&&choice!==a.c)b.classList.add('no');
+  });
+  const r=document.getElementById('qr'+q);
+  r.className='qres show '+(choice===a.c?'ok':'no');
+  r.innerHTML=(choice===a.c?'':' Not quite. ')+a.e;
+}
+function go(i){
+  document.querySelectorAll('.pg').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+}
+</script>

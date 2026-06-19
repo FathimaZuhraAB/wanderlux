@@ -1,0 +1,1242 @@
+
+<h2 class="sr-only">AEM Session 2 complete deep-dive — Maven, POM.xml, packaging, archetype, project structure, VS Code setup, build and deploy — explained from scratch with real examples and beginner language</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:700px}
+.nav{width:224px;min-width:224px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;flex-shrink:0}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-hd small{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);display:block;margin-bottom:3px}
+.nav-hd strong{font-size:13.5px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 4px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary)}
+.ni{display:flex;align-items:flex-start;gap:8px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);line-height:1.35;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:26px 30px}
+.body::-webkit-scrollbar{width:4px}.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+h1{font-size:21px;font-weight:500;margin-bottom:6px;line-height:1.25}
+.lede{font-size:14px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec{margin-bottom:28px}
+.sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+p code,li code,.step-body code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:2px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;margin-bottom:10px}
+.card-hd{font-size:13.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-hd i{font-size:16px;color:var(--color-text-info)}
+.card p{font-size:13px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.card code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.rl{border-left:3px solid var(--color-border-success);padding:12px 16px;background:var(--color-background-success);color:var(--color-text-success);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.rl .rll{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;opacity:.8}
+.warn{border-left:3px solid var(--color-border-warning);padding:12px 16px;background:var(--color-background-warning);color:var(--color-text-warning);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.info{border-left:3px solid var(--color-border-info);padding:12px 16px;background:var(--color-background-info);color:var(--color-text-info);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.step-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 14px;font-size:12.5px;color:var(--color-text-primary);text-align:center;line-height:1.4}
+.fb small{display:block;font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.fb.bl{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.fb.gr{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.fb.am{background:var(--color-background-warning);border-color:var(--color-border-warning);color:var(--color-text-warning)}
+.fa{color:var(--color-text-tertiary);font-size:18px;flex-shrink:0}
+.row-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}
+.row{display:grid;grid-template-columns:160px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:9px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;align-items:flex-start;word-break:break-all}
+.rv{padding:9px 12px;color:var(--color-text-primary);line-height:1.6}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+ul{padding-left:20px;margin:8px 0 14px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:3px}
+li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.code-block{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;margin:12px 0 16px}
+.code-top{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-fname{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.code-copy{font-size:11px;color:var(--color-text-info);cursor:pointer;background:none;border:0.5px solid var(--color-border-info);padding:2px 8px;border-radius:4px}
+.code-copy:hover{background:var(--color-background-info)}
+.code-body{padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.kw{color:#7c5cbf}.str{color:#1d9e75}.cm{color:var(--color-text-tertiary)}.tag{color:#185fa5}.attr{color:#b45309}
+.ftree{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:2;margin:12px 0 16px;color:var(--color-text-secondary);white-space:pre}
+.fth{color:var(--color-text-info);font-weight:500}
+.ftg{color:var(--color-text-success)}
+.ftd{color:var(--color-text-tertiary)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:12px 0 16px}
+.ch{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.ch:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.cb{padding:12px 14px;font-size:12.5px;color:var(--color-text-secondary);line-height:1.7;border-right:0.5px solid var(--color-border-tertiary)}
+.cb:last-child{border-right:none}
+.cb code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+.url-box{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);margin:10px 0;display:flex;align-items:flex-start;gap:8px}
+.url-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-tertiary);flex-shrink:0;margin-top:2px}
+</style>
+
+<div class="app">
+<div class="nav">
+  <div class="nav-hd"><small>Session 2 — deep dive</small><strong>Maven &amp; project setup</strong></div>
+
+  <div class="grp">Part 1 — Why Maven</div>
+  <div class="ni on" onclick="go('problem')" id="n-problem"><i class="ti ti-alert-circle" aria-hidden="true"></i>The problem Maven solves</div>
+  <div class="ni" onclick="go('maven-what')" id="n-maven-what"><i class="ti ti-package" aria-hidden="true"></i>What Maven is — 4 jobs</div>
+  <div class="ni" onclick="go('lifecycle')" id="n-lifecycle"><i class="ti ti-refresh" aria-hidden="true"></i>Build lifecycle &amp; phases</div>
+  <div class="ni" onclick="go('install-maven')" id="n-install-maven"><i class="ti ti-download" aria-hidden="true"></i>Installing Maven</div>
+
+  <div class="grp">Part 2 — POM.xml</div>
+  <div class="ni" onclick="go('pom-what')" id="n-pom-what"><i class="ti ti-file-code" aria-hidden="true"></i>What is pom.xml</div>
+  <div class="ni" onclick="go('pom-gav')" id="n-pom-gav"><i class="ti ti-id" aria-hidden="true"></i>GAV coordinates</div>
+  <div class="ni" onclick="go('pom-deps')" id="n-pom-deps"><i class="ti ti-link" aria-hidden="true"></i>Dependencies &amp; scopes</div>
+  <div class="ni" onclick="go('pom-plugins')" id="n-pom-plugins"><i class="ti ti-plug" aria-hidden="true"></i>Plugins — what does the work</div>
+  <div class="ni" onclick="go('pom-properties')" id="n-pom-properties"><i class="ti ti-adjustments" aria-hidden="true"></i>Properties &amp; profiles</div>
+  <div class="ni" onclick="go('pom-parent')" id="n-pom-parent"><i class="ti ti-git-branch" aria-hidden="true"></i>Parent POM &amp; modules</div>
+  <div class="ni" onclick="go('pom-full')" id="n-pom-full"><i class="ti ti-file-text" aria-hidden="true"></i>Full root pom.xml walkthrough</div>
+
+  <div class="grp">Part 3 — Packaging</div>
+  <div class="ni" onclick="go('pkg-types')" id="n-pkg-types"><i class="ti ti-box" aria-hidden="true"></i>Packaging types explained</div>
+  <div class="ni" onclick="go('bundle-vs-pkg')" id="n-bundle-vs-pkg"><i class="ti ti-files" aria-hidden="true"></i>Bundle vs content package</div>
+
+  <div class="grp">Part 4 — Archetype</div>
+  <div class="ni" onclick="go('arch-what')" id="n-arch-what"><i class="ti ti-template" aria-hidden="true"></i>What is the archetype</div>
+  <div class="ni" onclick="go('arch-run')" id="n-arch-run"><i class="ti ti-terminal" aria-hidden="true"></i>Running the archetype</div>
+  <div class="ni" onclick="go('arch-params')" id="n-arch-params"><i class="ti ti-list" aria-hidden="true"></i>Every parameter explained</div>
+
+  <div class="grp">Part 5 — Project structure</div>
+  <div class="ni" onclick="go('struct-overview')" id="n-struct-overview"><i class="ti ti-folder" aria-hidden="true"></i>Full folder overview</div>
+  <div class="ni" onclick="go('core-mod')" id="n-core-mod"><i class="ti ti-coffee" aria-hidden="true"></i>core/ — all Java lives here</div>
+  <div class="ni" onclick="go('uiapps-mod')" id="n-uiapps-mod"><i class="ti ti-layout" aria-hidden="true"></i>ui.apps/ — component code</div>
+  <div class="ni" onclick="go('uicontent-mod')" id="n-uicontent-mod"><i class="ti ti-file-text" aria-hidden="true"></i>ui.content/ — pages &amp; conf</div>
+  <div class="ni" onclick="go('uiconfig-mod')" id="n-uiconfig-mod"><i class="ti ti-settings" aria-hidden="true"></i>ui.config/ — OSGi configs</div>
+  <div class="ni" onclick="go('uifrontend-mod')" id="n-uifrontend-mod"><i class="ti ti-paint" aria-hidden="true"></i>ui.frontend/ — CSS &amp; JS</div>
+  <div class="ni" onclick="go('all-mod')" id="n-all-mod"><i class="ti ti-stack" aria-hidden="true"></i>all/ — master installer</div>
+
+  <div class="grp">Part 6 — VS Code &amp; deploy</div>
+  <div class="ni" onclick="go('vscode')" id="n-vscode"><i class="ti ti-brand-vscode" aria-hidden="true"></i>VS Code setup</div>
+  <div class="ni" onclick="go('deploy-cmds')" id="n-deploy-cmds"><i class="ti ti-upload" aria-hidden="true"></i>Build &amp; deploy commands</div>
+  <div class="ni" onclick="go('deploy-what-happens')" id="n-deploy-what-happens"><i class="ti ti-eye" aria-hidden="true"></i>What happens internally</div>
+  <div class="ni" onclick="go('verify')" id="n-verify"><i class="ti ti-circle-check" aria-hidden="true"></i>Verifying deployment</div>
+  <div class="ni" onclick="go('errors')" id="n-errors"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Common errors &amp; fixes</div>
+  <div class="ni" onclick="go('explore')" id="n-explore"><i class="ti ti-search" aria-hidden="true"></i>Exploring in AEM after deploy</div>
+</div>
+
+<div class="body">
+
+<!-- ======== PROBLEM ======== -->
+<div class="pg on" id="p-problem">
+<span class="badge">Part 1 — why Maven</span>
+<h1>The problem Maven solves</h1>
+<p class="lede">Before learning Maven, you need to understand the painful reality of Java development without it. Every concept in Maven makes perfect sense once you see what it replaces.</p>
+<div class="sec">
+<div class="sec-title">Java development before tools like Maven</div>
+<p>You write a <code>CardModel.java</code> file. To compile it, your code imports classes from Sling, from AEM, from Apache Commons — all external libraries stored as JAR files. Without Maven, you must do everything manually:</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Download every JAR manually</div><div class="step-body">Go to Apache's website. Download <code>sling-api-2.24.0.jar</code>. Go to Adobe's portal. Download <code>aem-api-6.5.0.jar</code>. Go to Apache Commons. Download <code>commons-lang3-3.12.0.jar</code>. Repeat for every library your code needs — could be 30+ libraries.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Manage version compatibility yourself</div><div class="step-body">Library A version 2.0 requires Library B version 1.5. But Library C requires Library B version 1.8. These conflict. You read through documentation to figure out which versions are compatible. This is called "dependency hell".</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Compile with a huge classpath</div><div class="step-body">Run: <code>javac -classpath ./libs/sling-api.jar:./libs/aem-api.jar:./libs/commons-lang3.jar:... CardModel.java</code>. One typo in the path and it fails. Every time you add a library, you update this command.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Package everything manually</div><div class="step-body">Zip all compiled <code>.class</code> files into a JAR. Write a MANIFEST.MF file by hand. Package the JAR into a content package ZIP following AEM's vault format. Upload the ZIP to AEM Package Manager. Do this every time you make any change.</div></div></div>
+</div>
+<p>This was slow, error-prone, and inconsistent between developers. The same code compiled differently on different machines because everyone had downloaded slightly different library versions.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What Maven changes — one command, everything automated</div>
+<p>With Maven, you write one XML file (<code>pom.xml</code>) that declares what your project is and what it needs. Then you run <code>mvn clean install -PautoInstallPackage</code>. Maven handles everything: downloading the right version of every library, compiling your code, running tests, packaging into the right format, and deploying to AEM. One command. Every time. Consistently on every developer's machine.</p>
+</div>
+<div class="rl">
+  <div class="rll">The npm analogy — most important</div>
+  If you have done web development with Node.js, Maven is exactly like npm. The <code>pom.xml</code> is like <code>package.json</code>. Maven Central is like the npm registry. Running <code>mvn install</code> is like running <code>npm install</code>. The core idea is identical — declare what you need and the tool fetches it.
+</div>
+</div>
+
+<!-- ======== MAVEN WHAT ======== -->
+<div class="pg" id="p-maven-what">
+<span class="badge">Part 1 — why Maven</span>
+<h1>What Maven is — four jobs in one tool</h1>
+<p class="lede">Maven does four distinct jobs. Understanding each one separately helps you understand why Maven commands are written the way they are.</p>
+<div class="sec">
+<div class="sec-title">Job 1 — dependency management</div>
+<p>You declare in <code>pom.xml</code> that you need <code>org.apache.sling:org.apache.sling.models.api:1.5.0</code>. Maven goes to Maven Central (a public registry of millions of JARs), downloads that exact version, caches it at <code>~/.m2/repository/</code> on your machine, and puts it on the classpath when compiling. Maven also handles transitive dependencies — if Library A needs Library B which needs Library C, Maven downloads all three. You only declared Library A.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Job 2 — standardised project structure</div>
+<p>Maven defines a layout that every Maven project follows. Because it is standardised, any developer who has used Maven can instantly understand any Maven project without a setup guide:</p>
+<div class="ftree">src/main/java/       <span class="ftd">← your production Java files (.java)</span>
+src/main/resources/  <span class="ftd">← non-Java files bundled with the code</span>
+src/test/java/       <span class="ftd">← your unit test files</span>
+src/test/resources/  <span class="ftd">← test resource files</span>
+pom.xml              <span class="ftd">← the Maven config file</span>
+target/              <span class="ftd">← compiled output (never edit this)</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">Job 3 — build lifecycle</div>
+<p>Maven runs builds in a standardised sequence of phases: validate → compile → test → package → verify → install → deploy. When you run <code>mvn install</code>, Maven automatically runs all phases before it in order. You never skip compile and jump to package — the sequence is enforced.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Job 4 — plugin execution</div>
+<p>Maven itself does almost nothing. All real work is done by plugins declared in <code>pom.xml</code>. The Java compiler plugin compiles code. The bnd plugin creates OSGi bundles. The content-package plugin creates and installs AEM packages. Plugins run automatically at the right lifecycle phase.</p>
+</div>
+<div class="rl">
+  <div class="rll">Real example</div>
+  A developer at a company runs <code>mvn clean install -PautoInstallPackage</code> after fixing a bug in a Sling Model. Maven: cleans the previous build, compiles 47 Java files, runs 23 unit tests, creates an OSGi bundle JAR, creates a content package ZIP containing the JAR and all HTL/XML files, uploads the ZIP to AEM's Package Manager API, and waits for AEM to activate the bundle. All from one command. Without Maven, each step would be manual work.
+</div>
+</div>
+
+<!-- ======== LIFECYCLE ======== -->
+<div class="pg" id="p-lifecycle">
+<span class="badge">Part 1 — why Maven</span>
+<h1>Build lifecycle and phases</h1>
+<p class="lede">Every Maven command triggers a sequence of phases. Understanding each phase tells you exactly what Maven is doing when you run a command — and why certain commands are faster than others.</p>
+<div class="sec">
+<div class="sec-title">The default lifecycle — all phases in order</div>
+<div class="row-list">
+  <div class="row"><div class="rk">validate</div><div class="rv">Checks that <code>pom.xml</code> is valid and the project structure is correct. Runs in milliseconds.</div></div>
+  <div class="row"><div class="rk">compile</div><div class="rv">Runs <code>javac</code> on all <code>.java</code> files in <code>src/main/java/</code>. Produces <code>.class</code> files in <code>target/classes/</code>. Java syntax errors are caught here. The build stops with a "compilation failure" message if any file has an error.</div></div>
+  <div class="row"><div class="rk">test</div><div class="rv">Compiles test code from <code>src/test/java/</code> and runs unit tests with JUnit. If any test fails, the build stops. Add <code>-DskipTests</code> to skip this phase when you need speed.</div></div>
+  <div class="row"><div class="rk">package</div><div class="rv">Takes compiled <code>.class</code> files and packages them into the output format declared by <code>&lt;packaging&gt;</code> — either a <code>.jar</code> (OSGi bundle) or a <code>.zip</code> (content package). Output goes to <code>target/</code>.</div></div>
+  <div class="row"><div class="rk">verify</div><div class="rv">Runs integration checks — validates the package structure, checks OSGi manifest correctness.</div></div>
+  <div class="row"><div class="rk">install</div><div class="rv">Copies the built artifact into your local Maven cache at <code>~/.m2/repository/</code>. Other modules in the same project can now use it as a dependency.</div></div>
+  <div class="row"><div class="rk">deploy</div><div class="rv">Uploads artifact to a remote Maven repository (Nexus, Artifactory). Used in CI/CD. Not used for AEM deployment.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">clean — the separate lifecycle</div>
+<p>The <code>clean</code> lifecycle is separate. <code>mvn clean</code> deletes the <code>target/</code> folder — removing all previous build output. You almost always combine it with install: <code>mvn clean install</code>. This ensures you are building from scratch, not from stale compiled files. Without <code>clean</code>, Maven only recompiles changed files — faster but can leave old compiled classes that cause subtle bugs.</p>
+</div>
+<div class="sec">
+<div class="sec-title">The AEM deploy profile — what -PautoInstallPackage actually does</div>
+<p>The <code>-PautoInstallPackage</code> flag activates a Maven profile defined in the archetype's <code>pom.xml</code>. This profile configures the <code>content-package-maven-plugin</code> to run after the install phase — it takes the built <code>.zip</code> and uploads it to your AEM instance via the Package Manager API at <code>http://localhost:4502/crx/packmgr/service.jsp</code>. This is not a standard Maven lifecycle phase — it is AEM-specific plugin configuration activated by the profile. That is why deployment only happens when you include <code>-PautoInstallPackage</code>.</p>
+</div>
+</div>
+
+<!-- ======== INSTALL MAVEN ======== -->
+<div class="pg" id="p-install-maven">
+<span class="badge">Part 1 — why Maven</span>
+<h1>Installing Maven on your machine</h1>
+<p class="lede">Maven must be installed before any AEM development. Here is the exact process with all verification steps.</p>
+<div class="sec">
+<div class="sec-title">Prerequisites</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Java 11 (JDK)</div><div class="rv">AEM 6.5 requires Java 11 specifically. Not 8, not 17, not 21. Download from <code>adoptium.net</code> — Temurin 11 LTS. After installing: <code>java -version</code> must show 11.x.x</div></div>
+  <div class="row"><div class="rk">Maven 3.6+</div><div class="rv">Download from <code>maven.apache.org/download.cgi</code> — Binary zip archive, e.g. <code>apache-maven-3.9.6-bin.zip</code>. After installing: <code>mvn -version</code> must show 3.6.x or higher</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Installation steps</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Check if already installed</div><div class="step-body">Run <code>mvn -version</code> in your terminal. If you see Maven version info — it is already installed. If "command not found" — proceed.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Extract Maven</div><div class="step-body">Mac/Linux: extract to <code>/opt/maven/apache-maven-3.9.6/</code>. Windows: extract to <code>C:\Program Files\Maven\apache-maven-3.9.6\</code></div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Set environment variables</div><div class="step-body">Mac/Linux — add to <code>~/.zshrc</code> or <code>~/.bash_profile</code>:<br><code>export M2_HOME=/opt/maven/apache-maven-3.9.6</code><br><code>export PATH=$PATH:$M2_HOME/bin</code><br>Windows: set system variable <code>M2_HOME</code> and add <code>%M2_HOME%\bin</code> to PATH.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Verify both Java and Maven</div><div class="step-body">Restart terminal. Run both:<br><code>java -version</code> → must show 11.x.x<br><code>mvn -version</code> → must show 3.6.x or higher AND Java 11</div></div></div>
+</div>
+</div>
+<div class="warn">If <code>mvn -version</code> shows a different Java version than <code>java -version</code>, Maven is using a different JDK. Set <code>JAVA_HOME</code> to your Java 11 installation folder and restart the terminal.</div>
+</div>
+
+<!-- ======== POM WHAT ======== -->
+<div class="pg" id="p-pom-what">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>What is pom.xml — the project's DNA</h1>
+<p class="lede">POM stands for Project Object Model. The <code>pom.xml</code> file defines everything about a Maven project — its identity, its dependencies, how it should be built, and how it should be deployed. Every single Maven module has exactly one <code>pom.xml</code>.</p>
+<div class="sec">
+<div class="sec-title">The minimum possible pom.xml</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">pom.xml — absolute minimum</span></div>
+  <div class="code-body"><span class="tag">&lt;project&gt;</span>
+  <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>  <span class="cm">← always 4.0.0, never change this</span>
+
+  <span class="tag">&lt;groupId&gt;</span>com.mysite<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>mysite.core<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;packaging&gt;</span>bundle<span class="tag">&lt;/packaging&gt;</span>  <span class="cm">← what format to produce</span>
+<span class="tag">&lt;/project&gt;</span></div>
+</div>
+<p>This alone tells Maven: "this module's identity is <code>com.mysite:mysite.core:1.0-SNAPSHOT</code> and it should produce an OSGi bundle JAR file." That is the minimum Maven needs.</p>
+</div>
+<div class="sec">
+<div class="sec-title">The six main sections of a pom.xml</div>
+<div class="row-list">
+  <div class="row"><div class="rk">coordinates</div><div class="rv">groupId + artifactId + version — the unique identity of this module (the GAV coordinates)</div></div>
+  <div class="row"><div class="rk">parent</div><div class="rv">Which parent pom.xml this module inherits from. Child modules inherit all dependency versions and plugin configurations from the parent.</div></div>
+  <div class="row"><div class="rk">properties</div><div class="rv">Reusable variables referenced anywhere in the pom.xml with <code>${propertyName}</code> syntax</div></div>
+  <div class="row"><div class="rk">dependencies</div><div class="rv">Libraries your code needs. Each has its own GAV coordinates and a scope (how it is used)</div></div>
+  <div class="row"><div class="rk">build/plugins</div><div class="rv">Which Maven plugins to run and how to configure them — compile settings, bnd OSGi generation, content package creation</div></div>
+  <div class="row"><div class="rk">modules</div><div class="rv">Only on the root pom.xml — lists all child modules that Maven should build as part of this project</div></div>
+</div>
+</div>
+</div>
+
+<!-- ======== GAV ======== -->
+<div class="pg" id="p-pom-gav">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>GAV coordinates — the unique identity of every artifact</h1>
+<p class="lede">Every JAR or ZIP in the Maven world has a unique identity made of three parts: GroupId, ArtifactId, and Version. These are called GAV coordinates. Maven uses them to know exactly which library to download and to identify your own modules.</p>
+<div class="sec">
+<div class="sec-title">GroupId — the organisation</div>
+<p>GroupId identifies the organisation or project family. Convention is a reversed domain name — just like Java packages:</p>
+<ul>
+  <li><code>com.mycompany</code> — your company's projects</li>
+  <li><code>org.apache.sling</code> — the Apache Sling project</li>
+  <li><code>com.adobe.aem</code> — Adobe's AEM libraries</li>
+  <li><code>com.day.cq</code> — older CQ/AEM libraries (Day Software was acquired by Adobe)</li>
+</ul>
+<p>For your AEM project: if your company's domain is <code>mybank.com</code>, use <code>com.mybank</code>. This becomes the root Java package for all your classes too.</p>
+</div>
+<div class="sec">
+<div class="sec-title">ArtifactId — the project name</div>
+<p>Identifies this specific project within the group. Becomes the base filename of the built artifact. AEM conventions:</p>
+<ul>
+  <li><code>mysite</code> — the root parent module</li>
+  <li><code>mysite.core</code> — the Java bundle module</li>
+  <li><code>mysite.ui.apps</code> — the component package module</li>
+  <li><code>mysite.all</code> — the master installer</li>
+</ul>
+<p>Keep it lowercase with dots or hyphens. No spaces, no uppercase.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Version — the release identifier</div>
+<div class="row-list">
+  <div class="row"><div class="rk">1.0-SNAPSHOT</div><div class="rv">SNAPSHOT = in development. Maven always fetches the latest SNAPSHOT from remote even if cached. Use during active development. The <code>-SNAPSHOT</code> suffix is a convention, not a number.</div></div>
+  <div class="row"><div class="rk">1.0.0</div><div class="rv">A release version. Maven caches this permanently — once downloaded, never fetches again. Use for stable, released artifacts.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">How Maven uses GAV to build a download URL</div>
+<p>When you declare a dependency with GAV coordinates, Maven constructs the download URL automatically:</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">GAV coordinates → download URL</span></div>
+  <div class="code-body"><span class="cm">GroupId:    org.apache.sling</span>
+<span class="cm">ArtifactId: org.apache.sling.models.api</span>
+<span class="cm">Version:    1.5.0</span>
+
+<span class="cm">→ Downloads from:</span>
+https://repo.maven.apache.org/maven2/
+  org/apache/sling/                        <span class="cm">← groupId (dots→slashes)</span>
+  org.apache.sling.models.api/             <span class="cm">← artifactId</span>
+  1.5.0/                                   <span class="cm">← version</span>
+  org.apache.sling.models.api-1.5.0.jar    <span class="cm">← artifactId-version.jar</span></div>
+</div>
+</div>
+</div>
+
+<!-- ======== DEPENDENCIES ======== -->
+<div class="pg" id="p-pom-deps">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>Dependencies and scopes — the most important concept for AEM</h1>
+<p class="lede">Dependencies are the external libraries your code needs. Each dependency has a scope that tells Maven how to use it. Getting scopes wrong in AEM causes runtime errors that are confusing to debug.</p>
+<div class="sec">
+<div class="sec-title">The four scopes</div>
+<div class="row-list">
+  <div class="row"><div class="rk">provided</div><div class="rv">The library is available at compile time so your code compiles, but do NOT bundle it into your JAR. AEM already ships this library — it will be available at runtime. Use this for all AEM APIs, Sling APIs, OSGi APIs. This is the most common scope in AEM development.</div></div>
+  <div class="row"><div class="rk">compile</div><div class="rv">Bundle this library inside your JAR. Use for third-party libraries that AEM does NOT provide — custom PDF tools, external SDK clients, etc. If you mark an AEM API as compile, you get ClassLoader conflicts at runtime because the same class loads twice.</div></div>
+  <div class="row"><div class="rk">test</div><div class="rv">Only available when compiling and running unit tests. Never bundled into your JAR. Use for JUnit, Mockito, AEM Mocks. These are only needed to test your code, not at runtime.</div></div>
+  <div class="row"><div class="rk">runtime</div><div class="rv">Not needed at compile time but needed at runtime. Rare in AEM. Used for JDBC drivers or libraries your code references only by string name via reflection.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">The golden rule — provided vs compile</div>
+<p>This is the single most common mistake in AEM Java development:</p>
+<div class="compare">
+  <div class="ch">Correct — scope: provided</div>
+  <div class="ch">Wrong — scope: compile</div>
+  <div class="cb">All AEM and Sling APIs: <code>aem-sdk-api</code>, <code>sling-api</code>, <code>osgi-core</code>, <code>jcr</code>, <code>cq-wcm-api</code> — all must be <code>provided</code> because AEM already ships them.</div>
+  <div class="cb">Using <code>compile</code> for AEM APIs bundles the same classes twice — once in AEM and once in your bundle. At runtime, AEM throws <code>ClassCastException</code> because two ClassLoaders each loaded "the same" class. Very confusing to debug.</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Complete dependencies section for core/pom.xml</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">core/pom.xml — dependencies section</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;dependencies&gt;</span>
+
+  <span class="cm">&lt;!-- AEM SDK API — provided: AEM already has this --&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>com.adobe.aem<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>aem-sdk-api<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+
+  <span class="cm">&lt;!-- Sling Models API — provided: AEM has this --&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.sling<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>org.apache.sling.models.api<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+
+  <span class="cm">&lt;!-- Apache Commons Lang — provided: AEM bundles this --&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.commons<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>commons-lang3<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+
+  <span class="cm">&lt;!-- 3rd party library AEM doesn't have — compile: bundle it --&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>com.some.thirdparty<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>custom-pdf-tool<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.1.0<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>compile<span class="tag">&lt;/scope&gt;</span>  <span class="cm">← WILL be bundled in your JAR</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+
+  <span class="cm">&lt;!-- JUnit — test: only for unit tests, never bundled --&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.junit.jupiter<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>junit-jupiter<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+
+  <span class="cm">&lt;!-- AEM Mocks for testing — test only --&gt;</span>
+  <span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>io.wcm.testing<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>io.wcm.testing.aem-mock.junit5<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+  <span class="tag">&lt;/dependency&gt;</span>
+
+<span class="tag">&lt;/dependencies&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- ======== PLUGINS ======== -->
+<div class="pg" id="p-pom-plugins">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>Plugins — what actually does the work</h1>
+<p class="lede">Maven itself is just an engine. All real work — compiling, packaging, deploying — is done by plugins declared in pom.xml. Each plugin has one specific job.</p>
+<div class="sec">
+<div class="sec-title">Key plugins in AEM projects</div>
+<div class="row-list">
+  <div class="row"><div class="rk">maven-compiler-plugin</div><div class="rv">Compiles your <code>.java</code> files using <code>javac</code>. Must be configured with <code>&lt;source&gt;11&lt;/source&gt;</code> and <code>&lt;target&gt;11&lt;/target&gt;</code> for AEM 6.5. Runs at the <code>compile</code> phase.</div></div>
+  <div class="row"><div class="rk">bnd-maven-plugin</div><div class="rv">Creates the OSGi bundle JAR with the correct <code>MANIFEST.MF</code>. Processes your <code>@Component</code>, <code>@Service</code>, <code>@Model</code> annotations and generates OSGi metadata from them. The most critical plugin for the <code>core</code> module.</div></div>
+  <div class="row"><div class="rk">content-package-maven-plugin</div><div class="rv">Creates the AEM content package ZIP from the JCR content in <code>src/main/content/</code>. Also handles installing the package to AEM when the autoInstall profile is active. Used in ui.apps, ui.content, ui.config, and all modules.</div></div>
+  <div class="row"><div class="rk">maven-surefire-plugin</div><div class="rv">Runs your unit tests during the <code>test</code> phase. Reports which tests pass and fail. Build stops if any test fails (unless you use <code>-DskipTests</code>).</div></div>
+  <div class="row"><div class="rk">frontend-maven-plugin</div><div class="rv">Used in ui.frontend only. Runs <code>npm install</code> and <code>npm run build</code> to compile SCSS and TypeScript into CSS and JS output files.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">The bnd plugin — the most important AEM plugin</div>
+<p>The bnd plugin turns a regular JAR into an OSGi bundle. It reads your Java source annotations and generates a <code>MANIFEST.MF</code> that registers your classes with OSGi. Without it, AEM does not recognise any of your components or services. The most critical configuration:</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">core/pom.xml — bnd plugin configuration</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;plugin&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>biz.aQute.bnd<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>bnd-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;configuration&gt;</span>
+    <span class="tag">&lt;bnd&gt;</span>
+<span class="cm">      # This tells AEM which Java package to scan for Sling Models.
+      # Without this one line, data-sly-use returns null silently.
+      # This is the most forgotten configuration in AEM projects.</span>
+      Sling-Model-Packages: com.mysite.core.models
+    <span class="tag">&lt;/bnd&gt;</span>
+  <span class="tag">&lt;/configuration&gt;</span>
+<span class="tag">&lt;/plugin&gt;</span></div>
+</div>
+<div class="warn">The <code>Sling-Model-Packages</code> entry is the single most commonly forgotten configuration. Without it, AEM never scans your models package and every <code>data-sly-use</code> in HTL returns null with no error message. Always add this when creating Sling Models.</div>
+</div>
+</div>
+
+<!-- ======== PROPERTIES ======== -->
+<div class="pg" id="p-pom-properties">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>Properties and profiles</h1>
+<p class="lede">Properties are reusable variables in pom.xml. Profiles are sets of configuration that activate based on conditions. Together they let one pom.xml work for all environments.</p>
+<div class="sec">
+<div class="sec-title">Properties — define once, use everywhere</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">pom.xml — properties section</span></div>
+  <div class="code-body"><span class="tag">&lt;properties&gt;</span>
+  <span class="tag">&lt;aem.host&gt;</span>localhost<span class="tag">&lt;/aem.host&gt;</span>     <span class="cm">← reference as ${aem.host}</span>
+  <span class="tag">&lt;aem.port&gt;</span>4502<span class="tag">&lt;/aem.port&gt;</span>
+  <span class="tag">&lt;aem.publish.host&gt;</span>localhost<span class="tag">&lt;/aem.publish.host&gt;</span>
+  <span class="tag">&lt;aem.publish.port&gt;</span>4503<span class="tag">&lt;/aem.publish.port&gt;</span>
+  <span class="tag">&lt;java.version&gt;</span>11<span class="tag">&lt;/java.version&gt;</span>
+  <span class="tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.build.sourceEncoding&gt;</span>
+<span class="tag">&lt;/properties&gt;</span>
+
+<span class="cm">&lt;!-- Override at command line: mvn install -Daem.host=staging.mysite.com --&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Profiles — configuration sets that activate on demand</div>
+<p>A profile is a block of configuration activated when you add <code>-PprofileName</code> to your Maven command. The archetype creates these profiles:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">autoInstallPackage</div><div class="rv">Activated with <code>-PautoInstallPackage</code>. Configures the content-package plugin to install the built package to AEM Author on port 4502.</div></div>
+  <div class="row"><div class="rk">autoInstallPackagePublish</div><div class="rv">Same but targets AEM Publish on port 4503. Use when testing published content rendering.</div></div>
+  <div class="row"><div class="rk">autoInstallBundle</div><div class="rv">Installs only the OSGi bundle (core module JAR) to AEM. Faster than installing the full package. Use when only Java code changed.</div></div>
+</div>
+<p>You can also override properties at the command line to deploy to remote servers: <code>mvn install -PautoInstallPackage -Daem.host=staging.company.com -Daem.port=4502</code></p>
+</div>
+</div>
+
+<!-- ======== PARENT ======== -->
+<div class="pg" id="p-pom-parent">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>Parent POM and multi-module projects</h1>
+<p class="lede">An AEM project is not one Maven module — it is several. The root pom.xml is the parent that coordinates all sub-modules. Understanding this relationship is essential for working with AEM projects.</p>
+<div class="sec">
+<div class="sec-title">The parent declares the children</div>
+<p>The root <code>pom.xml</code> has <code>&lt;packaging&gt;pom&lt;/packaging&gt;</code> — it produces no artifact itself. It just organises. It lists all child modules in the <code>&lt;modules&gt;</code> section. Running <code>mvn install</code> from the root builds all child modules in the correct order.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Each child declares its parent</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">core/pom.xml — the parent declaration</span></div>
+  <div class="code-body"><span class="tag">&lt;project&gt;</span>
+  <span class="cm">&lt;!-- Declare who the parent is --&gt;</span>
+  <span class="tag">&lt;parent&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>com.mysite<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>mysite<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;relativePath&gt;</span>../pom.xml<span class="tag">&lt;/relativePath&gt;</span>
+  <span class="tag">&lt;/parent&gt;</span>
+
+  <span class="cm">&lt;!-- Only set what is different from the parent --&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>mysite.core<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;packaging&gt;</span>bundle<span class="tag">&lt;/packaging&gt;</span>
+
+  <span class="cm">&lt;!-- Dependencies — no version needed if declared
+       in parent's dependencyManagement section --&gt;</span>
+  <span class="tag">&lt;dependencies&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>com.adobe.aem<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>aem-sdk-api<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="cm">&lt;!-- no &lt;version&gt; needed — inherits from parent --&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;/dependencies&gt;</span>
+<span class="tag">&lt;/project&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">What children inherit from the parent</div>
+<ul>
+  <li>All <code>&lt;dependencyManagement&gt;</code> version declarations — so children can omit version numbers</li>
+  <li>All <code>&lt;properties&gt;</code> variables like <code>${aem.host}</code></li>
+  <li>Plugin configurations and versions declared in <code>&lt;pluginManagement&gt;</code></li>
+  <li>Build profiles like autoInstallPackage</li>
+</ul>
+<div class="info">Build order: Maven analyses inter-module dependencies and builds them in the right order automatically. <code>all/</code> is always last. <code>core/</code> is always early since ui.apps may depend on the core bundle being installed first.</div>
+</div>
+</div>
+
+<!-- ======== FULL POM ======== -->
+<div class="pg" id="p-pom-full">
+<span class="badge">Part 2 — POM.xml</span>
+<h1>Full root pom.xml — annotated line by line</h1>
+<p class="lede">The complete root pom.xml with every section explained. This is the file at <code>mysite/pom.xml</code> — the parent of all other modules.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">mysite/pom.xml — complete annotated root POM</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;project&gt;</span>
+  <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>
+
+  <span class="cm">&lt;!-- ① Identity of this root project --&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>com.mysite<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>mysite<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;packaging&gt;</span>pom<span class="tag">&lt;/packaging&gt;</span>  <span class="cm">← "pom" = aggregator, no artifact produced</span>
+
+  <span class="cm">&lt;!-- ② Reusable variables --&gt;</span>
+  <span class="tag">&lt;properties&gt;</span>
+    <span class="tag">&lt;aem.host&gt;</span>localhost<span class="tag">&lt;/aem.host&gt;</span>
+    <span class="tag">&lt;aem.port&gt;</span>4502<span class="tag">&lt;/aem.port&gt;</span>
+    <span class="tag">&lt;aem.publish.host&gt;</span>localhost<span class="tag">&lt;/aem.publish.host&gt;</span>
+    <span class="tag">&lt;aem.publish.port&gt;</span>4503<span class="tag">&lt;/aem.publish.port&gt;</span>
+    <span class="tag">&lt;java.version&gt;</span>11<span class="tag">&lt;/java.version&gt;</span>
+    <span class="tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.build.sourceEncoding&gt;</span>
+  <span class="tag">&lt;/properties&gt;</span>
+
+  <span class="cm">&lt;!-- ③ Sub-projects to build (in dependency order) --&gt;</span>
+  <span class="tag">&lt;modules&gt;</span>
+    <span class="tag">&lt;module&gt;</span>core<span class="tag">&lt;/module&gt;</span>         <span class="cm">← Java code → OSGi bundle (.jar)</span>
+    <span class="tag">&lt;module&gt;</span>ui.apps<span class="tag">&lt;/module&gt;</span>      <span class="cm">← components, clientlibs → .zip</span>
+    <span class="tag">&lt;module&gt;</span>ui.content<span class="tag">&lt;/module&gt;</span>   <span class="cm">← page content, conf → .zip</span>
+    <span class="tag">&lt;module&gt;</span>ui.config<span class="tag">&lt;/module&gt;</span>   <span class="cm">← OSGi configs → .zip</span>
+    <span class="tag">&lt;module&gt;</span>ui.frontend<span class="tag">&lt;/module&gt;</span> <span class="cm">← SCSS/TS → compiled into ui.apps</span>
+    <span class="tag">&lt;module&gt;</span>all<span class="tag">&lt;/module&gt;</span>         <span class="cm">← master installer, always last</span>
+  <span class="tag">&lt;/modules&gt;</span>
+
+  <span class="cm">&lt;!-- ④ Shared dependency version declarations
+          Children reference these without specifying versions --&gt;</span>
+  <span class="tag">&lt;dependencyManagement&gt;</span>
+    <span class="tag">&lt;dependencies&gt;</span>
+      <span class="tag">&lt;dependency&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>com.adobe.aem<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>aem-sdk-api<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;version&gt;</span>2023.11.14227.20231114T064801Z-231100<span class="tag">&lt;/version&gt;</span>
+        <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+      <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;/dependencies&gt;</span>
+  <span class="tag">&lt;/dependencyManagement&gt;</span>
+
+  <span class="cm">&lt;!-- ⑤ Profiles — activated with -P flag --&gt;</span>
+  <span class="tag">&lt;profiles&gt;</span>
+    <span class="tag">&lt;profile&gt;</span>
+      <span class="tag">&lt;id&gt;</span>autoInstallPackage<span class="tag">&lt;/id&gt;</span>
+      <span class="tag">&lt;activation&gt;&lt;activeByDefault&gt;</span>false<span class="tag">&lt;/activeByDefault&gt;&lt;/activation&gt;</span>
+      <span class="tag">&lt;build&gt;</span>
+        <span class="tag">&lt;plugins&gt;</span>
+          <span class="tag">&lt;plugin&gt;</span>
+            <span class="tag">&lt;groupId&gt;</span>com.day.jcr.vault<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>content-package-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;configuration&gt;</span>
+              <span class="tag">&lt;serviceURL&gt;</span>
+                http://${aem.host}:${aem.port}/crx/packmgr/service.jsp
+              <span class="tag">&lt;/serviceURL&gt;</span>   <span class="cm">← where Maven uploads the package</span>
+            <span class="tag">&lt;/configuration&gt;</span>
+          <span class="tag">&lt;/plugin&gt;</span>
+        <span class="tag">&lt;/plugins&gt;</span>
+      <span class="tag">&lt;/build&gt;</span>
+    <span class="tag">&lt;/profile&gt;</span>
+  <span class="tag">&lt;/profiles&gt;</span>
+<span class="tag">&lt;/project&gt;</span></div>
+</div>
+</div>
+
+<!-- ======== PKG TYPES ======== -->
+<div class="pg" id="p-pkg-types">
+<span class="badge">Part 3 — packaging</span>
+<h1>Packaging types — what each module produces</h1>
+<p class="lede">The <code>&lt;packaging&gt;</code> element tells Maven what output format to produce. AEM projects use three distinct types across their modules.</p>
+<div class="row-list">
+  <div class="row"><div class="rk">pom</div><div class="rv">Produces no file artifact. Used for the root parent module and the <code>all</code> module. The root just organises child builds. <code>all</code> just pulls in all other packages as embedded dependencies.</div></div>
+  <div class="row"><div class="rk">bundle</div><div class="rv">Produces an OSGi bundle — a JAR file with a special <code>MANIFEST.MF</code> declaring Import-Package and Export-Package. Used only by the <code>core</code> module. AEM's Felix container loads this JAR at runtime. Your Sling Models and Services live here.</div></div>
+  <div class="row"><div class="rk">content-package</div><div class="rv">Produces an AEM content package — a ZIP file in Apache Jackrabbit FileVault format containing JCR content serialised as XML. Used by ui.apps, ui.content, ui.config, and all. AEM installs this via Package Manager.</div></div>
+</div>
+<div class="sec">
+<div class="sec-title">How each type gets into AEM</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">bundle (core) — indirect install</div><div class="step-body">The core bundle JAR is embedded inside the <code>all</code> content package at path <code>/apps/mysite/install/mysite.core-1.0-SNAPSHOT.jar</code>. When AEM installs the <code>all</code> package, it scans <code>/apps/*/install/</code> folders and automatically installs any JARs found there as OSGi bundles into Felix.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">content-package (ui.apps, etc.) — direct install</div><div class="step-body">Maven uploads the ZIP to AEM's Package Manager API at <code>http://localhost:4502/crx/packmgr/service.jsp</code>. AEM reads the vault metadata inside the ZIP and writes the JCR content (XML files) into the repository at the correct paths.</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- ======== BUNDLE VS PKG ======== -->
+<div class="pg" id="p-bundle-vs-pkg">
+<span class="badge">Part 3 — packaging</span>
+<h1>Bundle vs content package — the key difference</h1>
+<p class="lede">New developers often confuse these two. They are completely different things that work in completely different ways. Understanding the difference tells you immediately where each file type belongs in your project.</p>
+<div class="sec">
+<div class="sec-title">OSGi bundle — the Java runtime artifact</div>
+<p>An OSGi bundle is a JAR file containing compiled Java code (<code>.class</code> files) and a <code>MANIFEST.MF</code> that tells Felix what this bundle provides and needs. Think of it like a browser extension — you can install it, start it, stop it, and update it without restarting the browser (AEM).</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">MANIFEST.MF inside an OSGi bundle JAR</span></div>
+  <div class="code-body">Bundle-Name: My Site Core
+Bundle-SymbolicName: com.mysite.core
+Bundle-Version: 1.0.0.SNAPSHOT
+<span class="cm"># Packages this bundle makes available to other bundles:</span>
+Export-Package: com.mysite.core.models,com.mysite.core.services
+<span class="cm"># Packages this bundle needs from other bundles:</span>
+Import-Package: org.apache.sling.api,
+ org.apache.sling.models.api,
+ com.day.cq.wcm.api,
+ javax.inject
+<span class="cm"># Tell AEM which Java package to scan for Sling Models:</span>
+Sling-Model-Packages: com.mysite.core.models</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Content package — the JCR content artifact</div>
+<p>A content package is a ZIP file containing your JCR content nodes serialised as XML using Apache Jackrabbit FileVault format. When installed, AEM reads these XMLs and writes the corresponding nodes into the JCR repository.</p>
+<div class="ftree">mysite.ui.apps-1.0-SNAPSHOT.zip
+├── META-INF/vault/
+│   ├── filter.xml        <span class="ftd">← which JCR paths this package manages</span>
+│   ├── config.xml        <span class="ftd">← vault configuration</span>
+│   └── properties.xml    <span class="ftd">← package metadata</span>
+└── jcr_root/
+    └── apps/mysite/
+        └── components/
+            └── card/
+                ├── .content.xml     <span class="ftd">← component node definition</span>
+                ├── card.html        <span class="ftd">← HTL file (stored as a JCR node)</span>
+                └── _cq_dialog/
+                    └── .content.xml</div>
+</div>
+<div class="sec">
+<div class="sec-title">The golden rule — one type per module</div>
+<div class="compare">
+  <div class="ch">Goes in core/ → becomes bundle</div>
+  <div class="ch">Goes in ui.apps/ → becomes content package</div>
+  <div class="cb">Java files only: Sling Models, OSGi Services, Sling Servlets, Workflow Processes, Scheduled Jobs</div>
+  <div class="cb">Everything else: HTL templates, dialog XML, component .content.xml, clientlib CSS/JS, i18n translation files</div>
+</div>
+</div>
+</div>
+
+<!-- ======== ARCHETYPE WHAT ======== -->
+<div class="pg" id="p-arch-what">
+<span class="badge">Part 4 — archetype</span>
+<h1>What is the AEM Maven Archetype</h1>
+<p class="lede">A Maven archetype is a project template. The AEM Maven Archetype is Adobe's official template that generates a complete, correctly configured, production-ready AEM project in under a minute. You never create this structure by hand.</p>
+<div class="sec">
+<div class="sec-title">What the archetype generates for you</div>
+<ul>
+  <li>Root <code>pom.xml</code> with all profiles, <code>dependencyManagement</code>, and plugin configs pre-configured correctly</li>
+  <li><code>core/</code> module with an example Sling Model, example Servlet, unit test setup, and the correct bnd plugin configuration including <code>Sling-Model-Packages</code></li>
+  <li><code>ui.apps/</code> module with an example HelloWorld component, clientlib structure, and vault filters</li>
+  <li><code>ui.content/</code> module with sample pages and editable template starter nodes under <code>/conf</code></li>
+  <li><code>ui.config/</code> module with example OSGi config files organised by runmode</li>
+  <li><code>ui.frontend/</code> module with webpack, SCSS, and TypeScript configured</li>
+  <li><code>all/</code> module that correctly embeds all other modules for single-package deployment</li>
+  <li>A correct <code>.gitignore</code> file excluding <code>target/</code> and other generated folders</li>
+</ul>
+<p>Without the archetype, an experienced AEM developer would spend 2–3 days setting all of this up correctly from scratch. The archetype does it in 30 seconds.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Archetype version vs AEM version</div>
+<p>The archetype has its own version number (currently 48+). Higher version = newer AEM patterns and features. This is separate from your AEM version. Archetype version 48 can generate projects for AEM 6.5 or AEM as Cloud Service — you specify the AEM version with the <code>aemVersion</code> parameter. Always use the latest archetype version for new projects.</p>
+</div>
+</div>
+
+<!-- ======== ARCHETYPE RUN ======== -->
+<div class="pg" id="p-arch-run">
+<span class="badge">Part 4 — archetype</span>
+<h1>Running the archetype — step by step</h1>
+<p class="lede">The complete process to generate a new AEM project from scratch. Run this in your terminal. AEM does not need to be running to generate the project — only to deploy it.</p>
+<div class="sec">
+<div class="sec-title">The command — copy and customise</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">terminal — run from any folder where you want the project created</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body">mvn -B archetype:generate \
+  -D archetypeGroupId=com.adobe.aem \
+  -D archetypeArtifactId=aem-project-archetype \
+  -D archetypeVersion=48 \
+  -D appTitle=<span class="str">"My Bank Site"</span> \
+  -D appId=<span class="str">"mybank"</span> \
+  -D groupId=<span class="str">"com.mybank"</span> \
+  -D aemVersion=<span class="str">"6.5.0"</span> \
+  -D frontendModule=<span class="str">"general"</span> \
+  -D includeExamples=<span class="str">"y"</span></div>
+</div>
+<p>The <code>\</code> at end of each line is a line-continuation character so the command fits on screen. You can also write it all on one line. On Windows, replace <code>\</code> with <code>^</code>.</p>
+<p>The <code>-B</code> flag means "batch mode" — Maven proceeds without prompting you to confirm parameters interactively.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What happens while it runs</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Maven downloads the archetype</div><div class="step-body">Maven connects to Maven Central and downloads the archetype JAR. Takes a few seconds on first run. Cached for future use at <code>~/.m2/repository/com/adobe/aem/</code>.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Archetype generates all files</div><div class="step-body">The archetype uses your parameters to generate every file — replacing <code>appId</code>, <code>groupId</code>, and <code>appTitle</code> placeholders throughout all pom.xml files, Java package names, and XML files.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Project folder created</div><div class="step-body">A folder named after your <code>appId</code> (e.g. <code>mybank/</code>) is created in your current directory. This is your complete AEM project.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Open in VS Code</div><div class="step-body">Run <code>code ./mybank</code>. All modules appear in the VS Code Explorer panel. You are ready to start development.</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- ======== ARCHETYPE PARAMS ======== -->
+<div class="pg" id="p-arch-params">
+<span class="badge">Part 4 — archetype</span>
+<h1>Every archetype parameter explained</h1>
+<p class="lede">Every parameter has a specific impact on the generated project. Understanding each one prevents mistakes that require regenerating the project.</p>
+<div class="row-list">
+  <div class="row"><div class="rk">appTitle</div><div class="rv">Human readable name. Used as: site display name in AEM UI, browser page title, package descriptions. Can have spaces and mixed case. Example: <code>"HDFC Bank Digital"</code></div></div>
+  <div class="row"><div class="rk">appId</div><div class="rv">Short identifier. Must be lowercase, no spaces, only hyphens. Used as: JCR folder names (<code>/apps/mybank/</code>), Maven artifact IDs (<code>mybank.core</code>), component group names. Example: <code>"mybank"</code> or <code>"hdfc-digital"</code></div></div>
+  <div class="row"><div class="rk">groupId</div><div class="rv">Maven GroupId and Java package base. Reversed domain convention. Used as: root Java package for all your classes (e.g. <code>com.mybank.core.models.CardModel</code>). Must be lowercase with dots, no hyphens. Example: <code>"com.mybank"</code></div></div>
+  <div class="row"><div class="rk">aemVersion</div><div class="rv">Which AEM version to target. <code>"6.5.0"</code> for AEM 6.5 on-premise (most enterprises). <code>"cloud"</code> for AEM as Cloud Service. Controls which AEM API version is added as a dependency.</div></div>
+  <div class="row"><div class="rk">frontendModule</div><div class="rv"><code>"general"</code> — generates a webpack/npm frontend build with SCSS and TypeScript. <code>"none"</code> — skips ui.frontend entirely. Use <code>"general"</code> unless you have a specific reason not to.</div></div>
+  <div class="row"><div class="rk">includeExamples</div><div class="rv"><code>"y"</code> — includes example components (HelloWorld, Byline) and sample content pages. <code>"n"</code> — cleaner starting point. Use <code>"y"</code> when learning — the examples show correct patterns to copy from.</div></div>
+  <div class="row"><div class="rk">version</div><div class="rv">Your project's starting version. Default <code>"1.0-SNAPSHOT"</code> is fine. Do not overthink this.</div></div>
+  <div class="row"><div class="rk">singleCountry</div><div class="rv"><code>"y"</code> — content at <code>/content/mybank/</code>. <code>"n"</code> — content at <code>/content/mybank/us/en/</code> (multi-country structure). Use <code>"n"</code> for enterprise multi-region projects.</div></div>
+</div>
+</div>
+
+<!-- ======== STRUCT OVERVIEW ======== -->
+<div class="pg" id="p-struct-overview">
+<span class="badge">Part 5 — project structure</span>
+<h1>Full folder overview — every folder and its purpose</h1>
+<p class="lede">The archetype generates a specific folder structure where every location has exactly one purpose. Putting a file in the wrong folder either breaks the build or silently ignores it.</p>
+<div class="ftree">mybank/
+├── <span class="fth">pom.xml</span>                        <span class="ftd">← root parent POM, coordinates all modules</span>
+│
+├── <span class="fth">core/</span>                          <span class="ftd">← Java code only → OSGi bundle .jar</span>
+│   ├── pom.xml
+│   └── src/
+│       ├── main/java/com/mybank/core/
+│       │   ├── <span class="ftg">models/</span>            <span class="ftd">← Sling Model interfaces + impls</span>
+│       │   ├── <span class="ftg">services/</span>          <span class="ftd">← OSGi Service interfaces + impls</span>
+│       │   └── <span class="ftg">servlets/</span>          <span class="ftd">← Sling Servlets</span>
+│       └── test/java/com/mybank/core/
+│           └── <span class="ftg">models/</span>            <span class="ftd">← unit tests for models</span>
+│
+├── <span class="fth">ui.apps/</span>                       <span class="ftd">← component code → content package .zip</span>
+│   ├── pom.xml
+│   └── src/main/content/jcr_root/apps/mybank/
+│       ├── <span class="ftg">components/</span>            <span class="ftd">← component folders (HTL + dialogs)</span>
+│       ├── <span class="ftg">clientlibs/</span>            <span class="ftd">← CSS + JS library nodes</span>
+│       └── <span class="ftg">i18n/</span>                  <span class="ftd">← translation strings</span>
+│
+├── <span class="fth">ui.content/</span>                    <span class="ftd">← page content + conf → content package .zip</span>
+│   ├── pom.xml
+│   └── src/main/content/jcr_root/
+│       ├── content/mybank/            <span class="ftd">← sample pages</span>
+│       └── conf/mybank/               <span class="ftd">← editable templates, CF models, policies</span>
+│
+├── <span class="fth">ui.config/</span>                     <span class="ftd">← OSGi configs → content package .zip</span>
+│   ├── pom.xml
+│   └── src/main/content/jcr_root/apps/mybank/osgiconfig/
+│       ├── config/                    <span class="ftd">← all environments</span>
+│       ├── config.author/             <span class="ftd">← Author only</span>
+│       └── config.publish/            <span class="ftd">← Publish only</span>
+│
+├── <span class="fth">ui.frontend/</span>                   <span class="ftd">← SCSS + TypeScript → compiled into ui.apps clientlibs</span>
+│   ├── package.json
+│   └── src/main/
+│       ├── webpack/                   <span class="ftd">← JS entry points</span>
+│       └── css/                       <span class="ftd">← SCSS source files</span>
+│
+└── <span class="fth">all/</span>                           <span class="ftd">← master installer, embeds all other modules, always last</span>
+    └── pom.xml</div>
+<div class="sec">
+<div class="sec-title">The single most important rule</div>
+<div class="compare">
+  <div class="ch">Goes in core/ only</div>
+  <div class="ch">Goes in ui.apps/ only</div>
+  <div class="cb">Any file ending in <code>.java</code> — Sling Models, OSGi Services, Sling Servlets, Workflow Processes, Scheduled Jobs</div>
+  <div class="cb">Any file that is component code — <code>.html</code> HTL templates, <code>.xml</code> dialog definitions, <code>.css</code>/<code>.js</code> clientlib files</div>
+</div>
+</div>
+</div>
+
+<!-- ======== CORE MODULE ======== -->
+<div class="pg" id="p-core-mod">
+<span class="badge">Part 5 — project structure</span>
+<h1>core/ module — where all Java lives</h1>
+<p class="lede">The core module is the only place in the entire project where Java code belongs. It compiles into an OSGi bundle JAR. Everything here gets compiled by javac and runs inside AEM's Felix runtime.</p>
+<div class="sec">
+<div class="sec-title">What goes inside core/src/main/java/</div>
+<div class="row-list">
+  <div class="row"><div class="rk">models/</div><div class="rv">Sling Model interfaces and their implementations (in a sub-package called impl/). These read JCR properties saved by editors and expose them as Java getters for HTL templates to call. Example: <code>CardModel.java</code> (interface) + <code>impl/CardModelImpl.java</code> (implementation with @Model annotation).</div></div>
+  <div class="row"><div class="rk">services/</div><div class="rv">OSGi Service interfaces and implementations. Shared business logic used across multiple components — email sending, external API calls, caching, data transformation. Example: <code>EmailService.java</code> + <code>impl/EmailServiceImpl.java</code>.</div></div>
+  <div class="row"><div class="rk">servlets/</div><div class="rv">Sling Servlets that handle HTTP requests. AJAX endpoints, form submission handlers, search APIs, data export endpoints. Example: <code>SearchServlet.java</code> registered at <code>/bin/mybank/search</code>.</div></div>
+  <div class="row"><div class="rk">workflows/</div><div class="rv">AEM Workflow Process step implementations. Custom logic in content approval workflows — auto-tagging, notification sending, content validation.</div></div>
+  <div class="row"><div class="rk">schedulers/</div><div class="rv">Scheduled job implementations. Code that runs on a cron schedule — cache warming, data sync, report generation, cleanup tasks.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">What goes in core/src/test/java/</div>
+<p>Unit tests for all your Java classes. Use JUnit 5 and AEM Mocks (<code>io.wcm.testing.aem-mock</code>) to test Sling Models without a running AEM instance. Structure mirrors main: a test for <code>models/impl/CardModelImpl.java</code> goes at <code>src/test/java/.../models/impl/CardModelImplTest.java</code>.</p>
+</div>
+<div class="sec">
+<div class="sec-title">core/pom.xml — the complete annotated version</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">core/pom.xml — complete</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;project&gt;</span>
+  <span class="tag">&lt;parent&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>com.mybank<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>mybank<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;relativePath&gt;</span>../pom.xml<span class="tag">&lt;/relativePath&gt;</span>
+  <span class="tag">&lt;/parent&gt;</span>
+
+  <span class="tag">&lt;artifactId&gt;</span>mybank.core<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;packaging&gt;</span>bundle<span class="tag">&lt;/packaging&gt;</span>  <span class="cm">← produces OSGi bundle .jar</span>
+
+  <span class="tag">&lt;dependencies&gt;</span>
+    <span class="cm">&lt;!-- All provided — AEM has these at runtime --&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>com.adobe.aem<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>aem-sdk-api<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.apache.sling<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>org.apache.sling.models.api<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;scope&gt;</span>provided<span class="tag">&lt;/scope&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+    <span class="cm">&lt;!-- Test only — never bundled --&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>io.wcm.testing<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>io.wcm.testing.aem-mock.junit5<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;/dependencies&gt;</span>
+
+  <span class="tag">&lt;build&gt;</span>
+    <span class="tag">&lt;plugins&gt;</span>
+      <span class="tag">&lt;plugin&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>biz.aQute.bnd<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>bnd-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;configuration&gt;</span>
+          <span class="tag">&lt;bnd&gt;</span>
+            Sling-Model-Packages: com.mybank.core.models
+          <span class="tag">&lt;/bnd&gt;</span>
+        <span class="tag">&lt;/configuration&gt;</span>
+      <span class="tag">&lt;/plugin&gt;</span>
+    <span class="tag">&lt;/plugins&gt;</span>
+  <span class="tag">&lt;/build&gt;</span>
+<span class="tag">&lt;/project&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- ======== UIAPPS ======== -->
+<div class="pg" id="p-uiapps-mod">
+<span class="badge">Part 5 — project structure</span>
+<h1>ui.apps/ module — component code and clientlibs</h1>
+<p class="lede">ui.apps contains all the code-level JCR content that lives under <code>/apps</code> — component folders with HTL and dialogs, ClientLib nodes with CSS and JS, i18n translation files. This is deployed to <code>/apps/mybank/</code> in the JCR.</p>
+<div class="sec">
+<div class="sec-title">The path structure</div>
+<div class="ftree">ui.apps/src/main/content/jcr_root/apps/mybank/
+│
+├── <span class="fth">components/</span>              <span class="ftd">← one subfolder per component</span>
+│   ├── <span class="ftg">card/</span>
+│   │   ├── .content.xml     <span class="ftd">← component definition</span>
+│   │   ├── card.html        <span class="ftd">← HTL rendering template</span>
+│   │   └── _cq_dialog/
+│   │       └── .content.xml <span class="ftd">← author dialog</span>
+│   └── <span class="ftg">page/base/</span>
+│       ├── .content.xml
+│       ├── base.html        <span class="ftd">← page component</span>
+│       └── head.html
+│
+├── <span class="fth">clientlibs/</span>              <span class="ftd">← one subfolder per library</span>
+│   └── <span class="ftg">site/</span>
+│       ├── .content.xml     <span class="ftd">← categories, dependencies, allowProxy</span>
+│       ├── css.txt          <span class="ftd">← list of CSS files in order</span>
+│       ├── js.txt           <span class="ftd">← list of JS files in order</span>
+│       ├── css/main.css
+│       └── js/main.js
+│
+└── <span class="fth">i18n/</span>                    <span class="ftd">← translation strings</span>
+    └── en.json</div>
+</div>
+<div class="sec">
+<div class="sec-title">The vault filter — what this module manages in AEM</div>
+<p>Every ui.apps has a <code>META-INF/vault/filter.xml</code> that declares which JCR paths it "owns". When the package installs, AEM manages nodes under these paths. Anything in your project source that maps under a filter path gets written to JCR. Anything in JCR under a filter path that is NOT in your package gets deleted on install.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">ui.apps/src/main/content/META-INF/vault/filter.xml</span></div>
+  <div class="code-body"><span class="tag">&lt;workspaceFilter version=</span><span class="str">"1.0"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- This package owns everything under /apps/mybank --&gt;</span>
+  <span class="tag">&lt;filter root=</span><span class="str">"/apps/mybank"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/workspaceFilter&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- ======== UICONTENT ======== -->
+<div class="pg" id="p-uicontent-mod">
+<span class="badge">Part 5 — project structure</span>
+<h1>ui.content/ — page content and configuration</h1>
+<p class="lede">ui.content contains JCR content under <code>/content</code> and <code>/conf</code> — sample pages and editable template configuration. The crucial distinction: the <code>/content</code> (sample pages) is typically not deployed to production; the <code>/conf</code> (templates, policies) is deployed everywhere.</p>
+<div class="sec">
+<div class="sec-title">What lives here</div>
+<div class="row-list">
+  <div class="row"><div class="rk">/content/mybank/</div><div class="rv">Sample pages demonstrating the site. Homepage, example articles, example products. Used in development and staging. Do NOT deploy to production — production has real content authored by editors.</div></div>
+  <div class="row"><div class="rk">/conf/mybank/</div><div class="rv">Site configuration — editable template structure and initial content, Content Fragment model definitions, site-specific settings. Deploy to ALL environments including production because templates and configs must exist before editors can create content.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Why sample content is separate from code</div>
+<p>Because you want different things deployed to different environments:</p>
+<ul>
+  <li>Development: deploy everything including sample pages (need content to test with)</li>
+  <li>Staging: deploy ui.apps + ui.config + the <code>/conf</code> part of ui.content (templates, not sample pages)</li>
+  <li>Production: deploy ui.apps + ui.config + <code>/conf</code> templates only (never overwrite editors' real content)</li>
+</ul>
+<p>The separation of code (ui.apps) from content (ui.content) makes this selective deployment possible.</p>
+</div>
+</div>
+
+<!-- ======== UICONFIG ======== -->
+<div class="pg" id="p-uiconfig-mod">
+<span class="badge">Part 5 — project structure</span>
+<h1>ui.config/ — OSGi service configurations</h1>
+<p class="lede">ui.config contains <code>.cfg.json</code> files that configure your OSGi services. Different environments need different values — different SMTP servers, API endpoints, and cache settings. This module manages all of it through AEM's runmode folder system.</p>
+<div class="sec">
+<div class="sec-title">The folder structure and runmode resolution</div>
+<div class="ftree">ui.config/src/main/content/jcr_root/apps/mybank/osgiconfig/
+├── <span class="fth">config/</span>               <span class="ftd">← loaded in ALL environments (baseline)</span>
+│   └── com.mybank.core.services.impl.EmailServiceImpl.cfg.json
+│
+├── <span class="fth">config.author/</span>        <span class="ftd">← loaded ONLY on Author instances</span>
+│
+├── <span class="fth">config.publish/</span>       <span class="ftd">← loaded ONLY on Publish instances</span>
+│
+├── <span class="fth">config.prod/</span>          <span class="ftd">← loaded ONLY in production runmode</span>
+│
+└── <span class="fth">config.author.prod/</span>   <span class="ftd">← most specific: Author in production only</span></div>
+<p>Resolution priority — most specific wins: <code>config.author.prod</code> beats <code>config.author</code> beats <code>config.prod</code> beats <code>config</code>.</p>
+</div>
+<div class="sec">
+<div class="sec-title">The .cfg.json file — naming and format</div>
+<p>The filename must exactly match the fully-qualified class name of the OSGi service implementation:</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">config/com.mybank.core.services.impl.EmailServiceImpl.cfg.json</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body">{
+  <span class="str">"smtp.host"</span>: <span class="str">"smtp.mybank.com"</span>,
+  <span class="str">"smtp.port"</span>: 587,
+  <span class="str">"from.address"</span>: <span class="str">"no-reply@mybank.com"</span>,
+  <span class="str">"enable.tls"</span>: true,
+  <span class="str">"allowed.recipients"</span>: [<span class="str">"@mybank.com"</span>, <span class="str">"@partner.com"</span>]
+}</div>
+</div>
+<p>Property names must exactly match those in the service's <code>@ObjectClassDefinition</code> interface. JSON value types are automatically converted to the correct Java type (String, int, boolean, String[]).</p>
+</div>
+</div>
+
+<!-- ======== UIFRONTEND ======== -->
+<div class="pg" id="p-uifrontend-mod">
+<span class="badge">Part 5 — project structure</span>
+<h1>ui.frontend/ — SCSS and TypeScript</h1>
+<p class="lede">The ui.frontend module provides a webpack-based build environment for your front-end code. Write modern SCSS and TypeScript and get compiled CSS and JavaScript automatically placed into your ui.apps clientlibs.</p>
+<div class="sec">
+<div class="sec-title">What ui.frontend gives you</div>
+<div class="grid2">
+  <div class="card"><div class="card-hd"><i class="ti ti-brand-sass" aria-hidden="true"></i>SCSS compilation</div><p>Write CSS with variables, nesting, mixins, and imports. Webpack compiles SCSS to browser-compatible CSS and outputs it to the right clientlib in ui.apps.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-brand-typescript" aria-hidden="true"></i>TypeScript</div><p>Write TypeScript with type safety. Compiled to ES5 JavaScript for browser compatibility. Output goes to the clientlib in ui.apps.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-refresh" aria-hidden="true"></i>Watch mode</div><p>Run <code>npm run watch</code> in ui.frontend for a dev server that proxies to your local AEM and hot-reloads CSS changes in the browser without a page refresh.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-package" aria-hidden="true"></i>Bundling</div><p>Webpack combines, minifies, and tree-shakes all CSS and JS for production. Much more powerful than AEM's built-in clientlib minification.</p></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">How it connects to ui.apps</div>
+<p>When Maven builds ui.frontend, the <code>frontend-maven-plugin</code> runs <code>npm install</code> then <code>npm run build</code>. The webpack output — compiled CSS and JS — is written directly into the clientlib folder inside ui.apps. When ui.apps is then packaged, it includes these compiled assets. The Maven build handles all of this automatically in sequence.</p>
+<div class="info">If you are just starting to learn AEM and do not need a complex frontend build, you can skip ui.frontend and write CSS/JS directly in the ui.apps clientlibs folder. ui.frontend is for teams who want a modern frontend developer experience.</div>
+</div>
+</div>
+
+<!-- ======== ALL MODULE ======== -->
+<div class="pg" id="p-all-mod">
+<span class="badge">Part 5 — project structure</span>
+<h1>all/ — the master installer</h1>
+<p class="lede">The all module produces one single ZIP package that, when installed in AEM, deploys your entire project. It has no source files — it just pulls in all other modules as embedded packages.</p>
+<div class="sec">
+<div class="sec-title">What all/ contains</div>
+<div class="ftree">mybank.all-1.0-SNAPSHOT.zip
+├── META-INF/vault/filter.xml
+└── jcr_root/
+    └── apps/mybank-packages/
+        ├── application/install/
+        │   ├── mybank.core-1.0-SNAPSHOT.jar        <span class="ftd">← Java bundle</span>
+        │   └── mybank.ui.apps-1.0-SNAPSHOT.zip     <span class="ftd">← components/clientlibs</span>
+        └── content/install/
+            ├── mybank.ui.content-1.0-SNAPSHOT.zip
+            └── mybank.ui.config-1.0-SNAPSHOT.zip</div>
+<p>When AEM installs the <code>all</code> package, it finds these embedded packages and installs them in the correct order. The JAR in the <code>install/</code> folder is automatically loaded as an OSGi bundle by AEM's install folder scanner — this is how your Java code gets activated.</p>
+</div>
+<div class="sec">
+<div class="sec-title">When to use all vs individual module deploy</div>
+<div class="compare">
+  <div class="ch">Use all/ when</div>
+  <div class="ch">Use individual modules when</div>
+  <div class="cb">Production deployments. CI/CD pipelines. Handing off to a staging server. First-time setup. When multiple modules changed together.</div>
+  <div class="cb">Fast development iteration. Only Java changed → deploy core only. Only HTL changed → deploy ui.apps only. Much faster than a full all deployment.</div>
+</div>
+</div>
+</div>
+
+<!-- ======== VSCODE ======== -->
+<div class="pg" id="p-vscode">
+<span class="badge">Part 6 — VS Code &amp; deploy</span>
+<h1>VS Code setup for AEM development</h1>
+<p class="lede">VS Code with the right extensions gives you syntax highlighting for HTL, real-time file sync to AEM without Maven, Java IntelliSense, and an excellent development workflow.</p>
+<div class="sec">
+<div class="sec-title">Required extensions</div>
+<div class="row-list">
+  <div class="row"><div class="rk">HTL (Sightly)</div><div class="rv">Published by Adobe. Adds syntax highlighting and IntelliSense for HTL files (HTML files with <code>data-sly-*</code> attributes). Search "HTL" in the Extensions panel (Ctrl+Shift+X).</div></div>
+  <div class="row"><div class="rk">AEM Sync</div><div class="rv">Published by Adobe. Watches your project files and automatically uploads changes to a running AEM instance when you save — without running Maven. Saves minutes per iteration when working on HTL and XML.</div></div>
+  <div class="row"><div class="rk">XML Language Support</div><div class="rv">Published by Red Hat. Validates and formats XML files — essential since dialog definitions and component .content.xml files are all XML.</div></div>
+  <div class="row"><div class="rk">Java Extension Pack</div><div class="rv">Published by Microsoft. Java IntelliSense, error highlighting, refactoring, and debugging for your Sling Model and Service files.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Setting up AEM Sync</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Install the extension</div><div class="step-body">Ctrl+Shift+X → search "AEM Sync" → Install.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Create .vscode/settings.json</div><div class="step-body">In your project root, create the file: <code>{ "aemsync.targets": ["http://admin:admin@localhost:4502"] }</code></div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Activate syncing</div><div class="step-body">Ctrl+Shift+P → type "AEM Sync" → select "Toggle". A status indicator appears in the bottom bar.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Edit and save any content file</div><div class="step-body">Edit any file under <code>ui.apps/src/main/content/jcr_root/</code> and press Ctrl+S. The file uploads to AEM in under 2 seconds. Refresh the page in AEM to see the change.</div></div></div>
+</div>
+<div class="warn">AEM Sync only works for JCR content files — HTL, XML, CSS, JS. For Java changes, you still must run Maven to recompile and redeploy the OSGi bundle.</div>
+</div>
+</div>
+
+<!-- ======== DEPLOY COMMANDS ======== -->
+<div class="pg" id="p-deploy-cmds">
+<span class="badge">Part 6 — VS Code &amp; deploy</span>
+<h1>Build and deploy commands — every option</h1>
+<p class="lede">All Maven commands are run from the project root folder in your terminal. AEM must be running on port 4502 before you deploy.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">terminal — run from mybank/ (the project root)</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm"># ① Everything — use when in doubt, first deploy, or multiple modules changed</span>
+mvn clean install -PautoInstallPackage
+
+<span class="cm"># ② Only Java changed — fastest for Sling Model / Service / Servlet edits</span>
+mvn clean install -PautoInstallBundle -pl core
+
+<span class="cm"># ③ Only HTL / dialog / XML changed — for component front-end work</span>
+mvn clean install -PautoInstallPackage -pl ui.apps
+
+<span class="cm"># ④ Deploy to Publish server (port 4503) as well</span>
+mvn clean install -PautoInstallPackagePublish
+
+<span class="cm"># ⑤ Skip unit tests — faster, use during rapid iteration</span>
+mvn clean install -PautoInstallPackage -DskipTests
+
+<span class="cm"># ⑥ Build only, no deploy — useful in CI/CD or just to check it compiles</span>
+mvn clean install
+
+<span class="cm"># ⑦ Deploy to a remote AEM server (not localhost)</span>
+mvn clean install -PautoInstallPackage -Daem.host=staging.mysite.com
+
+<span class="cm"># ⑧ Build a specific module and its dependencies</span>
+mvn clean install -PautoInstallPackage -pl ui.apps --also-make</div>
+</div>
+</div>
+
+<!-- ======== WHAT HAPPENS ======== -->
+<div class="pg" id="p-deploy-what-happens">
+<span class="badge">Part 6 — VS Code &amp; deploy</span>
+<h1>What happens internally when you deploy</h1>
+<p class="lede">When you run <code>mvn clean install -PautoInstallPackage</code>, Maven runs a long sequence of steps. Understanding each step helps you understand why things fail and where to look for errors.</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">clean — delete old build output</div><div class="step-body">Deletes the <code>target/</code> directory in every module. Removes all previously compiled <code>.class</code> files and previously built JARs and ZIPs. Ensures a fresh build with no stale artifacts.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">compile — core module</div><div class="step-body">Runs <code>javac</code> on all <code>.java</code> files in <code>core/src/main/java/</code>. If any file has a Java syntax error, the build stops here with "COMPILATION ERROR" and shows you the exact file and line number.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">test — core module</div><div class="step-body">Compiles and runs all JUnit tests in <code>core/src/test/java/</code>. If any test assertion fails, the build stops here. Add <code>-DskipTests</code> to skip this if you are in a hurry.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">package — core module</div><div class="step-body">bnd-maven-plugin creates the OSGi bundle JAR at <code>core/target/mybank.core-1.0-SNAPSHOT.jar</code> with the correct MANIFEST.MF including the <code>Sling-Model-Packages</code> entry you configured.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">package — ui.apps, ui.content, ui.config</div><div class="step-body">content-package-maven-plugin zips each module's <code>src/main/content/</code> folder together with the vault metadata into content package ZIP files at <code>[module]/target/[artifactId]-1.0-SNAPSHOT.zip</code>.</div></div></div>
+  <div class="step"><div class="snum">6</div><div><div class="step-title">package — all module</div><div class="step-body">The all module's pom.xml embeds all other module ZIPs (and the core JAR) into one master ZIP at <code>all/target/mybank.all-1.0-SNAPSHOT.zip</code>. This is the single file that deploys everything.</div></div></div>
+  <div class="step"><div class="snum">7</div><div><div class="step-title">deploy to AEM — autoInstallPackage profile</div><div class="step-body">content-package-maven-plugin uploads <code>mybank.all-1.0-SNAPSHOT.zip</code> to <code>http://localhost:4502/crx/packmgr/service.jsp</code> via HTTP POST. AEM extracts the ZIP, installs each embedded package, and activates the OSGi bundle. Maven prints "BUILD SUCCESS" when complete.</div></div></div>
+</div>
+</div>
+
+<!-- ======== VERIFY ======== -->
+<div class="pg" id="p-verify">
+<span class="badge">Part 6 — VS Code &amp; deploy</span>
+<h1>Verifying deployment worked — five checks</h1>
+<p class="lede">After every deployment, verify these five things. Do not assume the build succeeded — check. Each check validates a different part of the deployment.</p>
+<div class="sec">
+<div class="sec-title">Check 1 — terminal shows BUILD SUCCESS</div>
+<p>Look at the last lines of Maven output. You want to see:</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">expected output</span></div><div class="code-body">[INFO] BUILD SUCCESS
+[INFO] Total time:  42.831 s</div></div>
+<p>If you see BUILD FAILURE, scroll up in the terminal to find the first [ERROR] line. That is where it stopped and why.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Check 2 — bundle is Active in OSGi console</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/system/console/bundles</div>
+<p>Search for your bundle symbolic name (e.g. <code>mybank.core</code>). Status must say "Active" with a green indicator. If it says "Installed" — the bundle failed to start. Click the bundle name to see which imports are unsatisfied.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Check 3 — component files are in CRXDE</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/crx/de</div>
+<p>Navigate to <code>/apps/mybank/components/</code>. Your component folders must be there. Click any component folder and verify that <code>card.html</code>, <code>.content.xml</code>, and <code>_cq_dialog/</code> are present. If the folder is missing, ui.apps did not deploy correctly.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Check 4 — package installed in Package Manager</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/crx/packmgr</div>
+<p>Find <code>mybank.all</code> package in the list. Status must show "Installed". If it shows "Uploaded" but not installed, click it and click the Install button manually.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Check 5 — component appears in the page editor</div>
+<p>Open any page in the AEM page editor. Open the component browser panel (left side). Look for your component group (e.g. "My Bank - Content"). Your component must appear there. If it does not, the <code>componentGroup</code> value in your <code>.content.xml</code> does not match what is allowed in the template's Layout Container policy.</p>
+</div>
+</div>
+
+<!-- ======== ERRORS ======== -->
+<div class="pg" id="p-errors">
+<span class="badge">Part 6 — VS Code &amp; deploy</span>
+<h1>Common errors and exactly how to fix them</h1>
+<p class="lede">These are the errors every AEM developer encounters repeatedly. Here is what each one means and the exact steps to fix it.</p>
+<div class="sec">
+<div class="sec-title">Error 1 — BUILD FAILURE: compilation error</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">terminal</span></div><div class="code-body">[ERROR] COMPILATION ERROR
+[ERROR] CardModelImpl.java:[25,5] error: cannot find symbol
+    symbol: class Resource</div></div>
+<p>Java syntax error or missing import. The numbers are [line, column]. Fix: open <code>CardModelImpl.java</code> at line 25. Add the missing import: <code>import org.apache.sling.api.resource.Resource;</code>. Run Maven again.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Error 2 — bundle stuck in "Installed" state</div>
+<p>Bundle compiled and deployed but will not start because a Java package it needs is not exported by any other active bundle.</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-body">Go to <code>/system/console/bundles</code>. Click your bundle name.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-body">In the details section, find "Unsatisfied Imports" — these are the Java packages your bundle needs but cannot find.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-body">The missing package is usually something you imported in Java but forgot to add as a <code>provided</code> dependency in <code>core/pom.xml</code>. Or you used <code>compile</code> scope for an AEM API causing a ClassLoader conflict.</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Error 3 — connection refused</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">terminal</span></div><div class="code-body">java.net.ConnectException: Connection refused (Connection refused)</div></div>
+<p>Maven tried to upload to AEM at <code>localhost:4502</code> but nothing is listening. Fix: AEM is not running. Start it: <code>java -Xmx4096m -jar aem-author-p4502.jar -gui</code>. Wait for the login page to be accessible. Then run Maven again.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Error 4 — Sling Model returns null in HTL</div>
+<p><code>${model.title}</code> renders nothing even though the editor filled in the dialog. HTL silently outputs nothing when the model is null — no error shown.</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-body">In <code>core/pom.xml</code>, find the bnd plugin config. Verify: <code>Sling-Model-Packages: com.mybank.core.models</code> is present. This is the most common cause — the model package is not declared so AEM never scans it.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-body">In your <code>CardModelImpl.java</code>, verify: <code>@Model(resourceType = "mybank/components/card")</code>. The path must exactly match the component folder path relative to <code>/apps/</code>.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-body">In <code>card.html</code>, verify: <code>data-sly-use.model="com.mybank.core.models.CardModel"</code> has the exact fully-qualified interface class name.</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Error 5 — component not in component browser</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-body">In CRXDE at <code>/apps/mybank/components/card</code>, check Properties tab — find <code>componentGroup</code> and note its exact value including capitalisation.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-body">Open the template in the Template Editor → click the Layout Container → Policy → Allowed Components. Find your group. Is it checked?</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-body">Most common fix: <code>componentGroup</code> in <code>.content.xml</code> has a different spelling or capitalisation than what is allowed in the policy. They must match exactly character for character.</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- ======== EXPLORE ======== -->
+<div class="pg" id="p-explore">
+<span class="badge">Part 6 — VS Code &amp; deploy</span>
+<h1>Exploring your deployed project in AEM</h1>
+<p class="lede">After a successful deployment, here is a tour of every AEM interface where you can see and verify what was deployed — and what to look for in each one.</p>
+<div class="sec">
+<div class="sec-title">Package Manager — verify the packages</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/crx/packmgr</div>
+<p>Your packages appear here after deployment. Find <code>mybank.all</code> — click it to see which paths it manages and which sub-packages it contains. You can also click "Contents" to browse the exact files inside the installed package.</p>
+</div>
+<div class="sec">
+<div class="sec-title">CRXDE — verify the JCR content</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/crx/de</div>
+<ul>
+  <li><code>/apps/mybank/</code> — all your components, clientlibs deployed</li>
+  <li><code>/apps/mybank/components/card/card.html</code> — click this to read your HTL code in the center editor</li>
+  <li><code>/content/mybank/</code> — sample pages from ui.content</li>
+  <li><code>/conf/mybank/settings/wcm/templates/</code> — editable template configuration</li>
+  <li><code>/apps/mybank/osgiconfig/</code> — your .cfg.json files deployed as JCR nodes</li>
+</ul>
+</div>
+<div class="sec">
+<div class="sec-title">OSGi console — verify the Java bundle</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/system/console/bundles</div>
+<p>Search for <code>mybank</code>. Click the bundle name. You can see: the bundle status (Active), all Java packages it exports and imports, and all OSGi services it has registered — including your Sling Models and Services.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Sites console — verify the sample pages</div>
+<div class="url-box"><span class="url-label">open</span>http://localhost:4502/sites.html/content/mybank</div>
+<p>Your sample pages from ui.content appear here. Navigate into them, click Edit to open the page editor. You will see the example HelloWorld component already on the page from the archetype's sample content.</p>
+</div>
+<div class="rl">
+  <div class="rll">Session 2 summary</div>
+  You now understand: why Maven exists and what problem it replaces, all four Maven lifecycle phases and what each does, the three packaging types (pom/bundle/content-package) and what each produces, every element in pom.xml from GAV coordinates to plugins to profiles, why dependency scopes matter and how to get them right, the complete archetype command and every parameter, the golden rule of what file goes in which module, all eight build/deploy commands and when to use each, what happens step by step when you run a deployment, how to verify it worked, and how to fix the five most common errors.
+</div>
+<div style="margin-top:16px">
+  <button onclick="sendPrompt('Now explain Session 4 — Developing Custom Components, HTL templates, Dialogs, Edit Config, Design Dialog, Inheritance, Overlay, and the Style System — in the same complete beginner detail, explaining everything from scratch with real examples, all the code line by line, and exactly what to do where')">Explain Session 4 in the same detail ↗</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+function copyCode(btn){
+  var code=btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var orig=btn.textContent;btn.textContent='copied!';
+    setTimeout(function(){btn.textContent=orig},1500);
+  });
+}
+</script>

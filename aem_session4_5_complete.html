@@ -1,0 +1,1565 @@
+
+<h2 class="sr-only">AEM Sessions 4 and 5 complete deep-dive — Custom Components, HTL, Dialogs, Edit Config, Design Dialog, Inheritance, Overlay, Style System, Granite UI, Touch UI Dialogs, Data Source, Multifield — explained from scratch with all code</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:700px}
+.nav{width:224px;min-width:224px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;flex-shrink:0}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-hd small{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);display:block;margin-bottom:3px}
+.nav-hd strong{font-size:13.5px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 4px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary)}
+.ni{display:flex;align-items:flex-start;gap:8px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);line-height:1.35;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:26px 30px}
+.body::-webkit-scrollbar{width:4px}.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+.badge.g{background:var(--color-background-success);color:var(--color-text-success)}
+h1{font-size:21px;font-weight:500;margin-bottom:6px;line-height:1.25}
+.lede{font-size:14px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec{margin-bottom:28px}
+.sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+p code,li code,.stb code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:2px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;margin-bottom:10px}
+.card-hd{font-size:13.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-hd i{font-size:16px;color:var(--color-text-info)}
+.card p,.card li{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.card p{margin-bottom:8px}.card p:last-child{margin-bottom:0}
+.card code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.rl{border-left:3px solid var(--color-border-success);padding:12px 16px;background:var(--color-background-success);color:var(--color-text-success);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.rl .rll{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;opacity:.8}
+.warn{border-left:3px solid var(--color-border-warning);padding:12px 16px;background:var(--color-background-warning);color:var(--color-text-warning);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.info{border-left:3px solid var(--color-border-info);padding:12px 16px;background:var(--color-background-info);color:var(--color-text-info);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.stb{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.stt{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 14px;font-size:12.5px;color:var(--color-text-primary);text-align:center;line-height:1.4}
+.fb small{display:block;font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.fb.bl{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.fb.gr{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.fb.am{background:var(--color-background-warning);border-color:var(--color-border-warning);color:var(--color-text-warning)}
+.fa{color:var(--color-text-tertiary);font-size:18px;flex-shrink:0}
+.row-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}
+.row{display:grid;grid-template-columns:170px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:9px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;align-items:flex-start;word-break:break-all}
+.rv{padding:9px 12px;color:var(--color-text-primary);line-height:1.6}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+ul{padding-left:20px;margin:8px 0 14px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:3px}
+li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.code-block{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;margin:12px 0 16px}
+.code-top{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-fname{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.code-copy{font-size:11px;color:var(--color-text-info);cursor:pointer;background:none;border:0.5px solid var(--color-border-info);padding:2px 8px;border-radius:4px}
+.code-copy:hover{background:var(--color-background-info)}
+.code-body{padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.kw{color:#7c5cbf}.str{color:#1d9e75}.cm{color:var(--color-text-tertiary)}.tag{color:#185fa5}.attr{color:#b45309}
+.ftree{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:2;margin:12px 0 16px;color:var(--color-text-secondary);white-space:pre}
+.fth{color:var(--color-text-info);font-weight:500}
+.ftg{color:var(--color-text-success)}
+.ftd{color:var(--color-text-tertiary)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:12px 0 16px}
+.ch{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.ch:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.cb{padding:12px 14px;font-size:12.5px;color:var(--color-text-secondary);line-height:1.7;border-right:0.5px solid var(--color-border-tertiary)}
+.cb:last-child{border-right:none}
+.cb code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+</style>
+
+<div class="app">
+<div class="nav">
+  <div class="nav-hd"><small>Sessions 4 &amp; 5 — deep dive</small><strong>Components &amp; dialogs</strong></div>
+
+  <div class="grp">Session 4 — custom components</div>
+  <div class="ni on" onclick="go('comp-anatomy')" id="n-comp-anatomy"><i class="ti ti-puzzle" aria-hidden="true"></i>Component anatomy</div>
+  <div class="ni" onclick="go('comp-folder')" id="n-comp-folder"><i class="ti ti-folder-open" aria-hidden="true"></i>Component folder — every file</div>
+  <div class="ni" onclick="go('content-xml')" id="n-content-xml"><i class="ti ti-file-description" aria-hidden="true"></i>.content.xml — line by line</div>
+  <div class="ni" onclick="go('htl-deep')" id="n-htl-deep"><i class="ti ti-code" aria-hidden="true"></i>HTL — every attribute</div>
+  <div class="ni" onclick="go('htl-contexts')" id="n-htl-contexts"><i class="ti ti-shield" aria-hidden="true"></i>HTL contexts &amp; XSS safety</div>
+  <div class="ni" onclick="go('dialog-s4')" id="n-dialog-s4"><i class="ti ti-forms" aria-hidden="true"></i>Dialog — structure &amp; fields</div>
+  <div class="ni" onclick="go('editconfig')" id="n-editconfig"><i class="ti ti-edit" aria-hidden="true"></i>_cq_editConfig — complete</div>
+  <div class="ni" onclick="go('design-dialog')" id="n-design-dialog"><i class="ti ti-adjustments" aria-hidden="true"></i>_cq_design_dialog</div>
+  <div class="ni" onclick="go('sling-model')" id="n-sling-model"><i class="ti ti-coffee" aria-hidden="true"></i>Sling Model — full example</div>
+  <div class="ni" onclick="go('inheritance')" id="n-inheritance"><i class="ti ti-git-branch" aria-hidden="true"></i>Inheritance — resourceSuperType</div>
+  <div class="ni" onclick="go('overlay')" id="n-overlay"><i class="ti ti-layers-intersect" aria-hidden="true"></i>Overlay &amp; override</div>
+  <div class="ni" onclick="go('style-system')" id="n-style-system"><i class="ti ti-palette" aria-hidden="true"></i>Style system</div>
+  <div class="ni" onclick="go('comp-build-workflow')" id="n-comp-build-workflow"><i class="ti ti-list-check" aria-hidden="true"></i>Build workflow — end to end</div>
+
+  <div class="grp">Session 5 — touch UI dialogs</div>
+  <div class="ni" onclick="go('granite-what')" id="n-granite-what"><i class="ti ti-layout" aria-hidden="true"></i>Granite UI — what it is</div>
+  <div class="ni" onclick="go('touchui-what')" id="n-touchui-what"><i class="ti ti-hand-finger" aria-hidden="true"></i>Touch UI dialog explained</div>
+  <div class="ni" onclick="go('dialog-structure')" id="n-dialog-structure"><i class="ti ti-sitemap" aria-hidden="true"></i>Dialog structure — node tree</div>
+  <div class="ni" onclick="go('all-field-types')" id="n-all-field-types"><i class="ti ti-list" aria-hidden="true"></i>All field types — every one</div>
+  <div class="ni" onclick="go('tabs-sections')" id="n-tabs-sections"><i class="ti ti-layout-bottombar" aria-hidden="true"></i>Tabs &amp; sections</div>
+  <div class="ni" onclick="go('cq-editconfig-s5')" id="n-cq-editconfig-s5"><i class="ti ti-tool" aria-hidden="true"></i>cq:editConfig in dialogs</div>
+  <div class="ni" onclick="go('datasource')" id="n-datasource"><i class="ti ti-database" aria-hidden="true"></i>Data source — dynamic options</div>
+  <div class="ni" onclick="go('multifield-what')" id="n-multifield-what"><i class="ti ti-stack" aria-hidden="true"></i>Multifield — what &amp; why</div>
+  <div class="ni" onclick="go('multifield-create')" id="n-multifield-create"><i class="ti ti-plus" aria-hidden="true"></i>Creating a multifield</div>
+  <div class="ni" onclick="go('multifield-java')" id="n-multifield-java"><i class="ti ti-coffee" aria-hidden="true"></i>Reading multifield in Java</div>
+  <div class="ni" onclick="go('multifield-htl')" id="n-multifield-htl"><i class="ti ti-code" aria-hidden="true"></i>Rendering multifield in HTL</div>
+  <div class="ni" onclick="go('full-example')" id="n-full-example"><i class="ti ti-rocket" aria-hidden="true"></i>Full working example</div>
+</div>
+
+<div class="body">
+
+<div class="pg on" id="p-comp-anatomy">
+<span class="badge">Session 4 — custom components</span>
+<h1>Component anatomy — understanding the whole picture first</h1>
+<p class="lede">Before writing a single line of code, understand what a component actually is, what files it needs, and how data flows through the entire system from editor to browser.</p>
+<div class="sec">
+<div class="sec-title">What is a component</div>
+<p>A component is a reusable piece of UI. Editors drag it onto a page. They fill in a dialog form to configure it. AEM saves those values to the JCR. A Java class (Sling Model) reads those values. An HTML template (HTL) renders them as HTML. The browser displays the result.</p>
+<p>Think of it as a form with logic. The dialog is the form. The Sling Model is the logic. The HTL file is the output template.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Data flow — from editor click to browser HTML</div>
+<div class="flow">
+  <div class="fb bl">Editor types "Summer Sale" in dialog title field</div>
+  <span class="fa">→</span>
+  <div class="fb">AEM saves <code>title="Summer Sale"</code> to JCR node</div>
+  <span class="fa">→</span>
+  <div class="fb">Sling Model reads it with <code>@ValueMapValue</code></div>
+  <span class="fa">→</span>
+  <div class="fb">HTL outputs <code>${model.title}</code></div>
+  <span class="fa">→</span>
+  <div class="fb gr">Browser sees <code>&lt;h2&gt;Summer Sale&lt;/h2&gt;</code></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">The four required files — every component needs these</div>
+<div class="grid2">
+  <div class="card"><div class="card-hd"><i class="ti ti-file-description" aria-hidden="true"></i>.content.xml</div><p>Registers the component with AEM. Sets the name editors see in the component browser, which group it belongs to, and which parent component it extends.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-file-code" aria-hidden="true"></i>card.html (HTL)</div><p>The HTML output template. Filename MUST match the component folder name. Runs when the component is rendered on a page.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-forms" aria-hidden="true"></i>_cq_dialog/.content.xml</div><p>Defines the "Configure" dialog editors fill in. Each form field saves a JCR property. The most important file for editor experience.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-coffee" aria-hidden="true"></i>CardModel.java (Sling Model)</div><p>Java class that reads JCR properties and prepares them for the HTL template. The bridge between stored data and rendered output.</p></div>
+</div>
+</div>
+<div class="rl">
+  <div class="rll">Real example</div>
+  A bank's "Interest Rate Card" component shows a product name, rate percentage, and apply button. The developer builds it once — four files. Editors use it 200 times across the site, each configured with a different product and rate through the dialog. One component, 200 pages, zero code duplication.
+</div>
+</div>
+
+<div class="pg" id="p-comp-folder">
+<span class="badge">Session 4 — custom components</span>
+<h1>Component folder — every file and its job</h1>
+<p class="lede">Every component is a folder inside <code>/apps/mysite/components/</code>. The folder name becomes the component's identifier. Here is every file that can go inside, what it does, and when you need it.</p>
+<div class="sec">
+<div class="sec-title">Location in your project</div>
+<div class="ftree"><span class="fth">ui.apps</span>/src/main/content/jcr_root/apps/mysite/components/
+└── <span class="fth">card/</span>                        <span class="ftd">← component folder name = component ID</span>
+    ├── <span class="ftg">.content.xml</span>             <span class="ftd">← required: component registration</span>
+    ├── <span class="ftg">card.html</span>                <span class="ftd">← required: HTL rendering template</span>
+    ├── <span class="ftg">_cq_dialog/</span>              <span class="ftd">← required: author configure dialog</span>
+    │    └── .content.xml
+    ├── <span class="ftg">_cq_editConfig/</span>          <span class="ftd">← optional: author toolbar behaviour</span>
+    │    └── .content.xml
+    ├── <span class="ftg">_cq_design_dialog/</span>       <span class="ftd">← optional: template policy settings</span>
+    │    └── .content.xml
+    ├── <span class="ftg">_cq_htmlTag/</span>             <span class="ftd">← optional: customise wrapper element</span>
+    │    └── .content.xml
+    └── <span class="ftg">thumbnail.png</span>            <span class="ftd">← optional: icon in component browser (80×80px)</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">Each file — what it does and when you need it</div>
+<div class="row-list">
+  <div class="row"><div class="rk">.content.xml</div><div class="rv">The component node itself. Required. Sets <code>jcr:primaryType=cq:Component</code>, <code>jcr:title</code> (browser name), <code>componentGroup</code> (browser group), <code>sling:resourceSuperType</code> (parent). Without this, AEM does not know the component exists.</div></div>
+  <div class="row"><div class="rk">card.html</div><div class="rv">The HTL rendering file. Required. Must match the folder name exactly. AEM runs this file when the component is requested. Loads the Sling Model and renders HTML.</div></div>
+  <div class="row"><div class="rk">_cq_dialog/</div><div class="rv">The configure dialog. Required for any component that has editable content. Defines form fields — textfields, selects, pathfields. Each field saves a JCR property when the editor saves the dialog.</div></div>
+  <div class="row"><div class="rk">_cq_editConfig/</div><div class="rv">Author toolbar behaviour. Optional but recommended. Controls which buttons appear in the blue edit bar, what text shows when the component is empty, and what refreshes after editing.</div></div>
+  <div class="row"><div class="rk">_cq_design_dialog/</div><div class="rv">Template-level policy form. Optional. Opened by template authors (not page editors) through the template editor. Settings apply to ALL instances of this component on ALL pages using that template.</div></div>
+  <div class="row"><div class="rk">thumbnail.png</div><div class="rv">80×80 PNG icon shown in the component browser. Optional but strongly recommended — it helps editors identify components visually in a long browser list.</div></div>
+</div>
+</div>
+<div class="info">Start with just .content.xml, card.html, and _cq_dialog/.content.xml. Add editConfig and design dialog later when needed. Never create empty placeholder files.</div>
+</div>
+
+<div class="pg" id="p-content-xml">
+<span class="badge">Session 4 — custom components</span>
+<h1>.content.xml — the component definition file</h1>
+<p class="lede">This file is the component's identity. It tells AEM the component exists, what it is called, where it appears in the browser, and which parent component it extends. Without this file, the component is invisible.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">.content.xml — complete annotated example</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span>
+  <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+  <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+  <span class="attr">xmlns:sling</span>=<span class="str">"http://sling.apache.org/jcr/sling/1.0"</span>
+
+  <span class="attr">jcr:primaryType</span>=<span class="str">"cq:Component"</span>
+  <span class="cm">↑ REQUIRED — tells AEM this is a component definition node.
+    Without this exact value, AEM ignores the folder.</span>
+
+  <span class="attr">jcr:title</span>=<span class="str">"Card"</span>
+  <span class="cm">↑ The name editors see in the component browser.
+    Make it human-readable: "Product Card", "Hero Banner", "FAQ Item".</span>
+
+  <span class="attr">jcr:description</span>=<span class="str">"A card with image, title, description and CTA button"</span>
+  <span class="cm">↑ Tooltip shown when editors hover over the component in the browser.
+    Write a clear one-sentence description of what it does.</span>
+
+  <span class="attr">componentGroup</span>=<span class="str">"My Site - Content"</span>
+  <span class="cm">↑ Which tab/group in the component browser.
+    ALL your custom components should share the same group name.
+    This name must EXACTLY match what you allow in the template policy.
+    Case-sensitive. One typo and your component disappears from the browser.</span>
+
+  <span class="attr">sling:resourceSuperType</span>=<span class="str">"core/wcm/components/teaser/v2/teaser"</span>
+  <span class="cm">↑ Parent component to inherit from.
+    Inheriting from Core Components means you get accessibility,
+    image handling, and policies for free.
+    Your component only overrides what it needs to change.
+    Remove this line if you are building 100% from scratch.</span>
+/<span class="tag">&gt;</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">The componentGroup rule — the most common mistake</div>
+<p>The value in <code>componentGroup</code> must exactly match what is allowed in the template's Layout Container policy. If you write <code>"My Site - Content"</code> here but the policy allows <code>"my site - content"</code>, your component will be invisible in the browser — no error, just gone. Always copy-paste the group name, never type it by hand.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Other optional properties</div>
+<div class="row-list">
+  <div class="row"><div class="rk">cq:isContainer</div><div class="rv">Set to <code>{Boolean}true</code> if this component can hold other components (like a custom Layout Container).</div></div>
+  <div class="row"><div class="rk">allowedParents</div><div class="rv">Restricts where this component can be dropped. Example: <code>["*/parsys","*/responsivegrid"]</code> — only inside containers.</div></div>
+  <div class="row"><div class="rk">allowedChildren</div><div class="rv">For container components — which component types can be dropped inside this component.</div></div>
+  <div class="row"><div class="rk">noDecoration</div><div class="rv">Set to <code>{Boolean}true</code> to suppress AEM's auto-generated wrapper div around the component output.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-htl-deep">
+<span class="badge">Session 4 — custom components</span>
+<h1>HTL — every attribute explained with examples</h1>
+<p class="lede">HTL (HTML Template Language) is AEM's templating language. It replaced JSP. It is HTML with special <code>data-sly-*</code> attributes that add logic. All output is automatically XSS-escaped. No Java code inside the template — only in the Sling Model.</p>
+<div class="sec">
+<div class="sec-title">Why HTL instead of JSP</div>
+<div class="compare">
+  <div class="ch">JSP (old)</div>
+  <div class="ch">HTL (modern)</div>
+  <div class="cb">Java scriptlets mixed directly in HTML. Easy to create XSS vulnerabilities. Business logic and presentation entangled.</div>
+  <div class="cb">No Java in templates. Auto-escaping prevents XSS by default. Logic goes in Sling Models. Clean separation of concerns.</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">A complete card.html with every attribute</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">card.html — every HTL attribute demonstrated</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm">&lt;!-- ① data-sly-use: load a Sling Model and bind to variable "model" --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.CardModel"</span>
+     <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- ② data-sly-test: only renders element if condition is truthy --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__image-wrap"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.imageUrl}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"${model.imageUrl @ context='uri'}"</span>
+         <span class="attr">alt</span>=<span class="str">"${model.imageAlt}"</span> <span class="attr">loading</span>=<span class="str">"lazy"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- ③ data-sly-test with stored result for reuse --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__body"</span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"card__eyebrow"</span>
+          <span class="attr">data-sly-test</span>=<span class="str">"${model.eyebrow}"</span><span class="tag">&gt;</span>
+      ${model.eyebrow}
+    <span class="tag">&lt;/span&gt;</span>
+
+    <span class="cm">&lt;!-- ④ data-sly-element: change the tag name dynamically --&gt;</span>
+    <span class="tag">&lt;h3</span> <span class="attr">data-sly-element</span>=<span class="str">"${model.headingLevel}"</span>
+         <span class="attr">class</span>=<span class="str">"card__title"</span><span class="tag">&gt;</span>
+      ${model.title}
+    <span class="tag">&lt;/h3&gt;</span>
+    <span class="cm">&lt;!-- If model.headingLevel = "h2", renders &lt;h2&gt; instead of &lt;h3&gt; --&gt;</span>
+
+    <span class="cm">&lt;!-- ⑤ data-sly-text: set element text content (replaces inner HTML) --&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"card__description"</span>
+       <span class="attr">data-sly-text</span>=<span class="str">"${model.description}"</span><span class="tag">&gt;</span>
+      Placeholder text removed at runtime
+    <span class="tag">&lt;/p&gt;</span>
+
+    <span class="cm">&lt;!-- ⑥ data-sly-attribute: set HTML attributes dynamically --&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">class</span>=<span class="str">"card__cta"</span>
+       <span class="attr">data-sly-attribute.href</span>=<span class="str">"${model.ctaLink @ context='uri'}"</span>
+       <span class="attr">data-sly-attribute.target</span>=<span class="str">"${model.newTab ? '_blank' : ''}"</span>
+       <span class="attr">data-sly-attribute.rel</span>=<span class="str">"${model.newTab ? 'noopener' : ''}"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.hasLink}"</span><span class="tag">&gt;</span>
+      ${model.ctaText}
+    <span class="tag">&lt;/a&gt;</span>
+
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- ⑦ data-sly-list: loop over a collection --&gt;</span>
+<span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="str">"tag-list"</span> <span class="attr">data-sly-test</span>=<span class="str">"${model.tags}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">data-sly-list.tag</span>=<span class="str">"${model.tags}"</span><span class="tag">&gt;</span>
+    <span class="cm">&lt;!-- tagList.index=0-based, tagList.count=1-based,
+         tagList.first, tagList.last, tagList.odd, tagList.even --&gt;</span>
+    <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"tag ${tagList.first ? 'tag--first' : ''}"</span><span class="tag">&gt;</span>
+      ${tagList.count}. ${tag}
+    <span class="tag">&lt;/span&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="cm">&lt;!-- ⑧ data-sly-repeat: repeat the element itself (not parent) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span> <span class="attr">data-sly-repeat.item</span>=<span class="str">"${model.cards}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>${item.title}<span class="tag">&lt;/h3&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+<span class="cm">&lt;!-- Renders multiple &lt;div class="card"&gt; elements, one per card --&gt;</span>
+
+<span class="cm">&lt;!-- ⑨ data-sly-include: include another HTL file as a partial --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"partials/card-footer.html"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- ⑩ data-sly-resource: render another JCR resource by its own template --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-resource</span>=<span class="str">"${'image' @ resourceType='mysite/components/image'}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- ⑪ data-sly-template + data-sly-call: reusable template functions --&gt;</span>
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.badge</span>=<span class="str">"${@ text, type}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"badge badge--${type @ context='styleToken'}"</span><span class="tag">&gt;</span>${text}<span class="tag">&lt;/span&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+<span class="cm">&lt;!-- Call it: --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${badge @ text='New', type='success'}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- ⑫ data-sly-set: define a local variable --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.greeting</span>=<span class="str">"${'Hello, ' + model.name}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;p&gt;</span>${greeting}<span class="tag">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- ⑬ data-sly-unwrap: keep children but remove the wrapper element --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-unwrap</span>=<span class="str">"${!wcmmode.edit}"</span><span class="tag">&gt;</span>
+  children here  <span class="cm">&lt;!-- wrapper div removed in publish mode --&gt;</span>
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-htl-contexts">
+<span class="badge">Session 4 — custom components</span>
+<h1>HTL contexts — XSS safety explained</h1>
+<p class="lede">HTL automatically escapes all output to prevent Cross-Site Scripting (XSS). But the type of escaping depends on WHERE in the HTML the value appears. You must specify the right context for each output location.</p>
+<div class="sec">
+<div class="sec-title">All contexts and when to use each</div>
+<div class="row-list">
+  <div class="row"><div class="rk">text (default)</div><div class="rv">HTML element content. Auto-applied when you write <code>${model.title}</code> between tags. HTML-encodes <code>&lt;</code> <code>&gt;</code> <code>&amp;</code>. Most common context.</div></div>
+  <div class="row"><div class="rk">html</div><div class="rv">Use when the value contains trusted HTML markup you want to render. <code>${richText @ context='html'}</code>. Only use for content from AEM's own RTE — never for user-submitted data.</div></div>
+  <div class="row"><div class="rk">uri</div><div class="rv">Use for <code>href</code> and <code>src</code> attribute values. URL-encodes the value AND blocks <code>javascript:</code> protocol. Without this, a malicious link could inject JavaScript.</div></div>
+  <div class="row"><div class="rk">attributeName</div><div class="rv">Use when setting dynamic attribute names (not values). Validates the name against a whitelist of safe HTML attributes.</div></div>
+  <div class="row"><div class="rk">styleToken</div><div class="rv">Use for CSS class names. Allows only valid CSS identifier characters. Prevents CSS injection.</div></div>
+  <div class="row"><div class="rk">scriptToken</div><div class="rv">Use for JavaScript identifiers. Only allows valid JS identifier characters.</div></div>
+  <div class="row"><div class="rk">number</div><div class="rv">Use for numeric values in attributes. Only allows digits and decimal points.</div></div>
+  <div class="row"><div class="rk">unsafe</div><div class="rv">No escaping at all. NEVER use for content that comes from editors or users. Only for completely static developer-controlled strings.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Correct context usage in practice</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">HTL context examples</span></div>
+  <div class="code-body"><span class="cm">&lt;!-- CORRECT: uri context for links --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.link @ context='uri'}"</span><span class="tag">&gt;</span>Click<span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- CORRECT: html context for rich text --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"rte-content"</span><span class="tag">&gt;</span>${model.bodyText @ context='html'}<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- CORRECT: styleToken for dynamic CSS classes --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card card--${model.theme @ context='styleToken'}"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- WRONG: missing uri context — javascript: URLs pass through --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.link}"</span><span class="tag">&gt;</span>Unsafe<span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- WRONG: using html context for unknown/user content --&gt;</span>
+<span class="tag">&lt;div&gt;</span>${userComment @ context='html'}<span class="tag">&lt;/div&gt;</span>  <span class="cm">← XSS vulnerability</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-dialog-s4">
+<span class="badge">Session 4 — custom components</span>
+<h1>Dialog — structure and all field types</h1>
+<p class="lede">The dialog is the popup form that appears when an editor clicks the wrench (Configure) icon on a component. It is a single XML file that defines a Granite UI form. Every field in it saves a JCR property when the editor saves.</p>
+<div class="sec">
+<div class="sec-title">The name="./property" rule — the most important rule</div>
+<p>Every dialog field has a <code>name</code> property. This tells AEM where to save the value in the JCR. The <code>./</code> prefix means "relative to this component's content node". So <code>name="./title"</code> saves the value as a <code>title</code> property at the component's JCR path.</p>
+<p>For example: a card on the homepage saves to <code>/content/mysite/en/home/jcr:content/root/card</code>. The dialog's <code>name="./title"</code> saves to <code>/content/mysite/en/home/jcr:content/root/card/title</code>. Your Sling Model's <code>@ValueMapValue private String title;</code> reads that exact property. The field name in XML and the Java field name must match.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Complete dialog with every common field type</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_dialog/.content.xml — all field types</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span>
+  <span class="attr">xmlns:sling</span>=<span class="str">"http://sling.apache.org/jcr/sling/1.0"</span>
+  <span class="attr">xmlns:granite</span>=<span class="str">"http://www.adobe.com/jcr/granite/1.0"</span>
+  <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+  <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+  <span class="attr">xmlns:nt</span>=<span class="str">"http://www.jcp.org/jcr/nt/1.0"</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"cq/gui/components/authoring/dialog"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"Card Settings"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;content</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="cm">&lt;!-- TEXT FIELD: single line text input --&gt;</span>
+      <span class="tag">&lt;title</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Title"</span>
+        <span class="attr">fieldDescription</span>=<span class="str">"The main heading of the card"</span>
+        <span class="attr">name</span>=<span class="str">"./title"</span>
+        <span class="attr">required</span>=<span class="str">"{Boolean}true"</span>
+        <span class="attr">maxlength</span>=<span class="str">"80"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- TEXTAREA: multi-line text input --&gt;</span>
+      <span class="tag">&lt;description</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textarea"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Description"</span>
+        <span class="attr">name</span>=<span class="str">"./description"</span>
+        <span class="attr">rows</span>=<span class="str">"3"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- PATHFIELD: browse/select a page or DAM asset --&gt;</span>
+      <span class="tag">&lt;ctaLink</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/pathfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Button Link"</span>
+        <span class="attr">name</span>=<span class="str">"./ctaLink"</span>
+        <span class="attr">rootPath</span>=<span class="str">"/content"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- IMAGE FIELD via fileupload --&gt;</span>
+      <span class="tag">&lt;imageRef</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/pathfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Background Image"</span>
+        <span class="attr">name</span>=<span class="str">"./imageRef"</span>
+        <span class="attr">rootPath</span>=<span class="str">"/content/dam"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- SELECT: dropdown with fixed options --&gt;</span>
+      <span class="tag">&lt;theme</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/select"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Card Theme"</span>
+        <span class="attr">name</span>=<span class="str">"./theme"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;default</span> <span class="attr">jcr:title</span>=<span class="str">"Default"</span> <span class="attr">value</span>=<span class="str">""</span> <span class="attr">selected</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;dark</span>    <span class="attr">jcr:title</span>=<span class="str">"Dark"</span>    <span class="attr">value</span>=<span class="str">"theme-dark"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;light</span>   <span class="attr">jcr:title</span>=<span class="str">"Light"</span>   <span class="attr">value</span>=<span class="str">"theme-light"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/items&gt;</span>
+      <span class="tag">&lt;/theme&gt;</span>
+
+      <span class="cm">&lt;!-- CHECKBOX: boolean toggle --&gt;</span>
+      <span class="tag">&lt;openInNewTab</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/checkbox"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Open link in new tab"</span>
+        <span class="attr">name</span>=<span class="str">"./openInNewTab"</span>
+        <span class="attr">value</span>=<span class="str">"true"</span>
+        <span class="attr">uncheckedValue</span>=<span class="str">"false"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- NUMBER FIELD --&gt;</span>
+      <span class="tag">&lt;priority</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/numberfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Priority"</span>
+        <span class="attr">name</span>=<span class="str">"./priority"</span>
+        <span class="attr">min</span>=<span class="str">"1"</span> <span class="attr">max</span>=<span class="str">"10"</span> <span class="attr">step</span>=<span class="str">"1"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- DATE PICKER --&gt;</span>
+      <span class="tag">&lt;expiryDate</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/datepicker"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Expiry Date"</span>
+        <span class="attr">name</span>=<span class="str">"./expiryDate"</span>
+        <span class="attr">type</span>=<span class="str">"datetime"</span><span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/content&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-editconfig">
+<span class="badge">Session 4 — custom components</span>
+<h1>_cq_editConfig — author toolbar behaviour</h1>
+<p class="lede">The editConfig controls how your component looks and behaves in author mode — the blue toolbar, the placeholder text when empty, and what gets refreshed after editing.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_editConfig/.content.xml — complete annotated</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span>
+  <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+  <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"cq:EditConfig"</span>
+
+  <span class="attr">cq:actions</span>=<span class="str">"[edit,delete,insert,copymove]"</span>
+  <span class="cm">↑ Buttons in the blue toolbar when this component is selected.
+    edit       → opens the Configure dialog (wrench icon)
+    delete     → removes the component from the page
+    insert     → insert a new component after this one
+    copymove   → copy and move handles</span>
+
+  <span class="attr">cq:layout</span>=<span class="str">"editbar"</span>
+  <span class="cm">↑ How the toolbar appears:
+    "editbar"  → toolbar bar floating above the component (default)
+    "rollover" → toolbar appears as an overlay when hovering</span>
+
+  <span class="attr">cq:emptyText</span>=<span class="str">"Click to configure the Card component"</span>
+  <span class="cm">↑ Text shown on the page when component has no content yet.
+    Editors see this as a placeholder before configuring the component.</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- LISTENERS: what happens after editing actions --&gt;</span>
+  <span class="tag">&lt;cq:listeners</span>
+    <span class="attr">jcr:primaryType</span>=<span class="str">"cq:EditListenersConfig"</span>
+    <span class="attr">afteredit</span>=<span class="str">"REFRESH_PAGE"</span>
+    <span class="cm">↑ After saving the dialog: REFRESH_PAGE = reload whole page
+      REFRESH_SELF = reload only this component (faster)
+      REFRESH_PARENT = reload the parent container</span>
+    <span class="attr">aftercopy</span>=<span class="str">"REFRESH_SELF"</span>
+    <span class="attr">afterdelete</span>=<span class="str">"REFRESH_PARENT"</span>
+    <span class="attr">aftermove</span>=<span class="str">"REFRESH_PAGE"</span><span class="tag">/&gt;</span>
+
+  <span class="cm">&lt;!-- INPLACE EDITING: click on text to edit directly on page --&gt;</span>
+  <span class="tag">&lt;cq:inplaceEditing</span>
+    <span class="attr">cq:childEditors</span>=<span class="str">"[title]"</span>
+    <span class="cm">↑ Which child fields support inline editing (from the dialog)</span>
+    <span class="attr">active</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">When to use REFRESH_PAGE vs REFRESH_SELF</div>
+<div class="compare">
+  <div class="ch">REFRESH_PAGE — reload the whole page</div>
+  <div class="ch">REFRESH_SELF — reload only this component</div>
+  <div class="cb">Use when your component affects page structure, other components, or generates navigation. Slower but ensures everything is consistent.</div>
+  <div class="cb">Use for most components that only affect their own output. Much faster — the page does not flash. Editors prefer this.</div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-design-dialog">
+<span class="badge">Session 4 — custom components</span>
+<h1>_cq_design_dialog — template-level settings</h1>
+<p class="lede">The design dialog is opened by template authors (not page editors) through the template editor policy panel. Settings here apply to all instances of this component on all pages using that template.</p>
+<div class="sec">
+<div class="sec-title">Design dialog vs regular dialog</div>
+<div class="compare">
+  <div class="ch">Regular dialog (_cq_dialog)</div>
+  <div class="ch">Design dialog (_cq_design_dialog)</div>
+  <div class="cb">Per-instance settings. Each component on each page has different values. The editor sets these when they configure a specific component on a specific page.</div>
+  <div class="cb">Template-wide settings. Applied to ALL instances of this component on ALL pages using this template. Set by template authors once in the template editor.</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Where values are stored</div>
+<p>Regular dialog values → <code>/content/mysite/en/page/jcr:content/root/card</code> (per page, per component instance)</p>
+<p>Design dialog values → <code>/conf/mysite/settings/wcm/policies/</code> (shared across all pages using the template)</p>
+</div>
+<div class="sec">
+<div class="sec-title">Reading design dialog values in Sling Model</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">CardModelImpl.java — reading policy/design values</span></div>
+  <div class="code-body"><span class="kw">import</span> com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
+<span class="kw">import</span> com.day.cq.wcm.api.designer.Style;
+
+<span class="cm">// Inject the current style (policy configuration)</span>
+<span class="kw">@ScriptVariable</span>
+<span class="kw">private</span> Style currentStyle;
+
+<span class="kw">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// Read a policy value — e.g. maximum allowed heading level</span>
+  <span class="cm">// Second param is the default value if not configured</span>
+  <span class="kw">int</span> maxHeadingLevel = currentStyle.get(<span class="str">"headingLevels"</span>, <span class="kw">3</span>);
+  String defaultTheme  = currentStyle.get(<span class="str">"defaultTheme"</span>, <span class="str">"light"</span>);
+  <span class="kw">boolean</span> showBadge   = currentStyle.get(<span class="str">"enableBadge"</span>, <span class="kw">false</span>);
+}</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Example design dialog — restricting heading levels</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_design_dialog/.content.xml</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;jcr:root</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"cq/gui/components/authoring/dialog"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"Card Design"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;content</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="tag">&lt;headingLevels</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/select"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Default heading level"</span>
+        <span class="attr">name</span>=<span class="str">"./headingLevels"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;h2</span> <span class="attr">jcr:title</span>=<span class="str">"H2"</span> <span class="attr">value</span>=<span class="str">"h2"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;h3</span> <span class="attr">jcr:title</span>=<span class="str">"H3"</span> <span class="attr">value</span>=<span class="str">"h3"</span> <span class="attr">selected</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;h4</span> <span class="attr">jcr:title</span>=<span class="str">"H4"</span> <span class="attr">value</span>=<span class="str">"h4"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/items&gt;</span>
+      <span class="tag">&lt;/headingLevels&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/content&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-sling-model">
+<span class="badge">Session 4 — custom components</span>
+<h1>Sling Model — complete production example</h1>
+<p class="lede">The Sling Model is the Java class that bridges the JCR (where data is stored) and the HTL template (where data is rendered). It reads JCR properties, computes derived values, and exposes everything as Java getters.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">core/src/main/java/com/mysite/core/models/impl/CardModelImpl.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="kw">package</span> com.mysite.core.models.impl;
+
+<span class="kw">import</span> com.mysite.core.models.CardModel;
+<span class="kw">import</span> org.apache.sling.api.resource.Resource;
+<span class="kw">import</span> org.apache.sling.models.annotations.*;
+<span class="kw">import</span> org.apache.sling.models.annotations.injectorspecific.*;
+<span class="kw">import</span> com.day.cq.wcm.api.Page;
+<span class="kw">import</span> org.apache.commons.lang3.StringUtils;
+<span class="kw">import</span> javax.annotation.PostConstruct;
+
+<span class="attr">@Model</span>(
+  adaptables  = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> },
+  adapters    = { CardModel.<span class="kw">class</span> },
+  resourceType = <span class="str">"mysite/components/card"</span>,
+  <span class="cm">↑ Must exactly match the component folder path relative to /apps</span>
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+  <span class="cm">↑ Missing properties return null instead of throwing an exception</span>
+)
+<span class="kw">public class</span> CardModelImpl <span class="kw">implements</span> CardModel {
+
+  <span class="cm">// ── JCR properties from the dialog ──────────────────────────────</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String title;
+  <span class="cm">// reads the "title" JCR property saved by name="./title" in dialog</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String description;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String ctaLink;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="attr">@Default</span>(values = <span class="str">"Read More"</span>)
+  <span class="kw">private</span> String ctaText;
+  <span class="cm">// @Default provides a fallback if editor left the field empty</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String theme;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private boolean</span> openInNewTab;
+
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"jcr:title"</span>)
+  <span class="kw">private</span> String pageTitle;
+  <span class="cm">// @ValueMapValue(name=) overrides the property name to read</span>
+
+  <span class="cm">// ── AEM/Sling objects ────────────────────────────────────────────</span>
+
+  <span class="attr">@SlingObject</span>
+  <span class="kw">private</span> Resource currentResource;
+  <span class="cm">// the JCR node this component renders</span>
+
+  <span class="attr">@SlingObject</span>
+  <span class="kw">private</span> ResourceResolver resourceResolver;
+
+  <span class="attr">@ScriptVariable</span>
+  <span class="kw">private</span> Page currentPage;
+  <span class="cm">// the AEM Page object this component is on</span>
+
+  <span class="cm">// ── Child resource ───────────────────────────────────────────────</span>
+
+  <span class="attr">@ChildResource</span>
+  <span class="kw">private</span> Resource image;
+  <span class="cm">// injects the child JCR node named "image" under this component</span>
+
+  <span class="cm">// ── Computed fields (not injected — calculated in @PostConstruct) ─</span>
+
+  <span class="kw">private boolean</span> hasLink;
+  <span class="kw">private</span> String  themeClass;
+  <span class="kw">private</span> String  formattedTitle;
+
+  <span class="cm">// ── Lifecycle ────────────────────────────────────────────────────</span>
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    <span class="cm">// Called AFTER all @ValueMapValue / @SlingObject fields are injected.
+    // Safe to use all injected values here.
+    // Put ALL computed logic here — not in getters.</span>
+
+    hasLink = StringUtils.isNotBlank(ctaLink);
+
+    themeClass = StringUtils.isNotBlank(theme)
+      ? <span class="str">"card--"</span> + theme
+      : <span class="str">""</span>;
+
+    formattedTitle = StringUtils.isNotBlank(title)
+      ? title.trim()
+      : <span class="str">""</span>;
+  }
+
+  <span class="cm">// ── Getters (called by HTL as ${model.xxx}) ──────────────────────</span>
+  <span class="cm">// HTL calls getTitle() when you write ${model.title}
+  // HTL calls isHasLink() when you write ${model.hasLink}</span>
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getTitle()        { <span class="kw">return</span> formattedTitle; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getDescription()   { <span class="kw">return</span> description; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getCtaLink()       { <span class="kw">return</span> ctaLink; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getCtaText()       { <span class="kw">return</span> ctaText; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span> isHasLink()        { <span class="kw">return</span> hasLink; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getThemeClass()    { <span class="kw">return</span> themeClass; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span> isOpenInNewTab()  { <span class="kw">return</span> openInNewTab; }
+}</div>
+</div>
+</div>
+
+<div class="pg" id="p-inheritance">
+<span class="badge">Session 4 — custom components</span>
+<h1>Inheritance — sling:resourceSuperType</h1>
+<p class="lede">Inheritance lets your component extend another. You get all its files (dialog, HTL, logic) automatically and only override what you need to change. This is the correct way to build on top of Adobe's Core Components.</p>
+<div class="sec">
+<div class="sec-title">How it works</div>
+<p>Set <code>sling:resourceSuperType</code> in your component's <code>.content.xml</code>. When AEM resolves a file for your component, it checks your folder first. If the file is not found, it walks up to the parent and uses that file. Then the grandparent. And so on.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">Script resolution order for inherited components</span></div>
+  <div class="code-body"><span class="cm"># Your component: /apps/mysite/components/fancy-teaser
+# sling:resourceSuperType = "core/wcm/components/teaser/v2/teaser"</span>
+
+<span class="cm"># When AEM looks for "fancy-teaser.html":</span>
+1. Check /apps/mysite/components/fancy-teaser/fancy-teaser.html  <span class="cm">← YOUR file</span>
+2. Not found → check /apps/core/wcm/components/teaser/v2/teaser/teaser.html
+3. Not found → check its parent, and so on
+
+<span class="cm"># When AEM looks for "_cq_dialog":</span>
+1. Check /apps/mysite/components/fancy-teaser/_cq_dialog/  <span class="cm">← YOUR dialog</span>
+2. Not found → use Core Teaser's dialog (from /libs/core/...)</span>
+
+<span class="cm"># Result: you only need to create the files that DIFFER from the parent.</span>
+<span class="cm"># Everything else is inherited automatically.</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Practical example — adding one field to Core Teaser</div>
+<p>A bank needs a Teaser component with an extra "Disclaimer Text" field for regulatory compliance. Without inheritance, you copy 1000 lines of Core Teaser code. With inheritance:</p>
+<div class="ftree">mysite/components/bank-teaser/
+├── .content.xml          <span class="ftd">← sling:resourceSuperType="core/wcm/components/teaser/v2/teaser"</span>
+└── _cq_dialog/
+    └── .content.xml      <span class="ftd">← your dialog with the extra disclaimer field added</span></div>
+<p>That is all. Two files. AEM inherits: the HTL template, image handling, CTA logic, accessibility, SEO features, and all other dialog fields from Core Teaser. You only added the one new field. When Adobe updates Core Teaser, you automatically pick up the improvements.</p>
+</div>
+<div class="rl">
+  <div class="rll">Real example</div>
+  A pharmaceutical company extends Core Teaser for their drug product cards. They add: a "Dosage Information" text field, a "Prescription Required" checkbox, and a "Side Effects" multifield. Four files total. Core Teaser handles everything else — image rendering, link handling, accessibility. The team focused on the business requirement, not rebuilding what Adobe already built.
+</div>
+</div>
+
+<div class="pg" id="p-overlay">
+<span class="badge">Session 4 — custom components</span>
+<h1>Overlay and override — customising without touching /libs</h1>
+<p class="lede">The /libs folder contains AEM's own code. It is overwritten during every Service Pack upgrade. The rule is absolute: never edit anything in /libs. Overlay and override are the two safe mechanisms to customise AEM's built-in behaviour.</p>
+<div class="sec">
+<div class="sec-title">The golden rule</div>
+<p>AEM resolves scripts and resources from <code>/apps</code> before <code>/libs</code>. If the same path exists in both <code>/apps</code> and <code>/libs</code>, AEM always uses the <code>/apps</code> version. This is why overlaying works — you copy a file to the same path under <code>/apps</code> and AEM uses your copy.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Overlay — same path in /apps shadows /libs</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">overlay example — customising AEM's 404 error page</span></div>
+  <div class="code-body"><span class="cm"># Original in /libs — DO NOT TOUCH this file:</span>
+/libs/sling/servlet/errorhandler/404.jsp
+
+<span class="cm"># Overlay in /apps — create this file with your customised version:</span>
+/apps/sling/servlet/errorhandler/404.jsp
+
+<span class="cm"># AEM resolves /apps first.
+# Your /apps version is used. /libs version is completely ignored.
+# When Adobe updates /libs, your customisation is unaffected.</span>
+
+<span class="cm"># Another example — overlaying an AEM admin UI component:</span>
+<span class="cm"># Original: /libs/cq/gui/components/authoring/page/toolbar/...</span>
+<span class="cm"># Overlay:  /apps/cq/gui/components/authoring/page/toolbar/...</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Override — pointing sling:resourceType to your component</div>
+<p>Override means changing a content node's <code>sling:resourceType</code> to point to YOUR component instead of the default. Used when you want to completely replace a component's rendering for specific content.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">override example — page component</span></div>
+  <div class="code-body"><span class="cm"># In your template's structure/jcr:content node:</span>
+sling:resourceType = <span class="str">"mysite/components/page/base"</span>
+
+<span class="cm"># Instead of AEM's default page:
+# sling:resourceType = "core/wcm/components/page/v3/page"
+
+# Now YOUR page component renders all pages using this template.
+# The /libs Core page component is completely bypassed.</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">When to use which</div>
+<div class="compare">
+  <div class="ch">Use overlay when</div>
+  <div class="ch">Use override/inheritance when</div>
+  <div class="cb">Customising AEM's own UI — admin screens, RTE plugins, author clientlibs. Things in /libs with no inheritance mechanism available.</div>
+  <div class="cb">Building your own components that extend Core Components. Extend via sling:resourceSuperType and only override specific files in your component folder.</div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-style-system">
+<span class="badge">Session 4 — custom components</span>
+<h1>Style system — one component, many looks</h1>
+<p class="lede">The Style System lets template authors define named visual styles for a component. Editors pick a style from a paint palette. AEM adds the corresponding CSS class to the component wrapper. Zero code change to add a new visual variant.</p>
+<div class="sec">
+<div class="sec-title">The full setup — developer, template author, and editor roles</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="stt">Developer adds CSS classes to the clientlib</div><div class="stb">In your component's CSS: <code>.card--featured { border: 2px solid gold; font-size: 1.2em; }</code> and <code>.card--minimal { background: none; padding: 0; }</code></div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="stt">Template author creates the styles in the policy</div><div class="stb">Template editor → click the Card component → Policy icon → Styles section → Add Style Group "Theme" → add: "Standard" (class: empty), "Featured" (class: <code>card--featured</code>), "Minimal" (class: <code>card--minimal</code>) → save</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="stt">Editor picks a style on a specific component instance</div><div class="stb">On the page, click the Card → click the paintbrush icon in the toolbar → pick "Featured" → AEM adds <code>card--featured</code> to the wrapper div automatically</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">What AEM adds to the HTML</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">rendered HTML when "Featured" style is selected</span></div>
+  <div class="code-body"><span class="cm">&lt;!-- Before style selected: --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>...<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- After "Featured" style selected: --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card card--featured"</span><span class="tag">&gt;</span>...<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- AEM stores the selection in JCR as:
+     cq:styleIds = ["style-id-for-featured"]
+     On render, looks up the class name from the policy. --&gt;</span></div>
+</div>
+</div>
+<div class="rl">
+  <div class="rll">Real example</div>
+  A telecom company has a "Plan Card" component. The developer builds one component. The template author creates three styles: Standard (normal display), "Best Value" (gold border + star badge via CSS), "Budget" (minimal grey). Marketing switches plans between styles any time through the editor — no developer, no deployment, no waiting. One component code, three visual presentations.
+</div>
+</div>
+
+<div class="pg" id="p-comp-build-workflow">
+<span class="badge">Session 4 — custom components</span>
+<h1>Complete build workflow — from idea to working component</h1>
+<p class="lede">Here is the exact sequence every developer follows to build a new AEM component from start to finish. Every step in order.</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="stt">Create the component folder in ui.apps</div><div class="stb">In VS Code: <code>ui.apps/src/main/content/jcr_root/apps/mysite/components/card/</code> — right-click → New Folder</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="stt">Create .content.xml</div><div class="stb">Inside the card folder. Set <code>jcr:title</code>, <code>componentGroup</code>, and optionally <code>sling:resourceSuperType</code>.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="stt">Create _cq_dialog subfolder and its .content.xml</div><div class="stb">Define all the form fields editors will fill in. Set the <code>name="./fieldname"</code> property on every field.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="stt">Create the Sling Model interface in core</div><div class="stb"><code>core/src/main/java/com/mysite/core/models/CardModel.java</code> — declare all the getter methods HTL will call.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="stt">Create the Sling Model implementation</div><div class="stb"><code>core/src/main/java/com/mysite/core/models/impl/CardModelImpl.java</code> — add <code>@Model</code>, <code>@ValueMapValue</code> fields matching dialog field names, and <code>@PostConstruct</code> for computed logic.</div></div></div>
+  <div class="step"><div class="snum">6</div><div><div class="stt">Create card.html</div><div class="stb">Inside the card component folder. Start with <code>data-sly-use.model</code> pointing to your model's interface, then render model getters with <code>${model.xxx}</code>.</div></div></div>
+  <div class="step"><div class="snum">7</div><div><div class="stt">Deploy with Maven</div><div class="stb"><code>mvn clean install -PautoInstallPackage</code> from the project root. Watch for BUILD SUCCESS in the terminal.</div></div></div>
+  <div class="step"><div class="snum">8</div><div><div class="stt">Allow the component in a template policy</div><div class="stb">Template editor → click Layout Container → Policy → Allowed Components → check your component group → save.</div></div></div>
+  <div class="step"><div class="snum">9</div><div><div class="stt">Test on a page</div><div class="stb">Open a page in the editor → drag your component from the browser → click Configure → fill in dialog → verify values appear in CRXDE at the component's content node → verify they render correctly in the page.</div></div></div>
+</div>
+</div>
+
+<div class="pg" id="p-granite-what">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Granite UI — what it is and why it matters</h1>
+<p class="lede">Granite UI is Adobe's component library for building AEM's authoring interface. Every dialog, every admin screen, every configuration form in AEM is built with Granite UI components. You use it to build component dialogs.</p>
+<div class="sec">
+<div class="sec-title">The technology stack behind dialogs</div>
+<div class="flow">
+  <div class="fb bl">CoralUI<br><small>Adobe's design system / CSS</small></div>
+  <span class="fa">→</span>
+  <div class="fb">Granite UI<br><small>AEM's component library on top of Coral</small></div>
+  <span class="fa">→</span>
+  <div class="fb">Your dialog XML<br><small>uses Granite UI component paths</small></div>
+  <span class="fa">→</span>
+  <div class="fb gr">Rendered dialog<br><small>in the page editor</small></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">How Granite UI works</div>
+<p>Every Granite UI component is itself an AEM component — it has a <code>sling:resourceType</code>. When AEM renders a dialog, it reads the XML nodes and renders each field by looking up its <code>sling:resourceType</code>. A textfield node with <code>sling:resourceType="granite/ui/components/coral/foundation/form/textfield"</code> renders as a Coral UI text input.</p>
+<p>The full Granite UI component library path is: <code>granite/ui/components/coral/foundation/</code>. Everything under <code>form/</code> is a form field. Everything under <code>layouts/</code> is a layout container (tabs, accordion, columns). Everything under <code>containers/</code> is a structural wrapper.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Classic UI vs Touch UI</div>
+<div class="compare">
+  <div class="ch">Classic UI (old, ExtJS)</div>
+  <div class="ch">Touch UI (modern, Granite/Coral)</div>
+  <div class="cb">Built with Sencha ExtJS. JavaScript-heavy. Dialog XML defined under <code>dialog/</code> node. Looked different on mobile. Being phased out.</div>
+  <div class="cb">Built with Granite UI + CoralUI. Responsive, works on tablet. Dialog XML defined under <code>_cq_dialog/</code> node. The only approach for modern AEM development.</div>
+</div>
+<div class="info">Always use Touch UI (_cq_dialog) for new development. Classic UI dialogs still work but are not supported for new features.</div>
+</div>
+</div>
+
+<div class="pg" id="p-touchui-what">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Touch UI dialog — what it is and how it appears</h1>
+<p class="lede">A Touch UI dialog is the popup form that slides in from the right of the page editor when an editor clicks the Configure (wrench) icon on a component. It is defined entirely as a JCR node tree in a single XML file.</p>
+<div class="sec">
+<div class="sec-title">What editors see</div>
+<p>When an editor clicks the wrench on a component, a panel slides in from the right side of the screen (or a modal appears for some configurations). It shows a form with labeled fields — text inputs, dropdowns, path browsers, checkboxes. The editor fills in the fields and clicks the checkmark (top right of the dialog) to save. AEM immediately writes the values to the JCR content node.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What you create as a developer</div>
+<p>One XML file at <code>_cq_dialog/.content.xml</code>. This XML defines the complete node tree that AEM interprets to render the dialog form. Every node in the XML becomes a JCR node. Every JCR node with a Granite UI <code>sling:resourceType</code> gets rendered as a UI component.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What happens when an editor saves the dialog</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="stb">Editor fills in all fields and clicks the checkmark button</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="stb">AEM's authoring servlet receives a POST request with all field values</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="stb">AEM writes each value as a JCR property at the component's content node path. The property name is the last part of the field's <code>name</code> attribute (after <code>./</code>).</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="stb">AEM refreshes the component on the page using the listener configured in editConfig (REFRESH_PAGE or REFRESH_SELF)</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="stb">The component re-renders using the new JCR property values — the editor sees the updated content immediately</div></div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-dialog-structure">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Dialog structure — the complete node tree</h1>
+<p class="lede">A Touch UI dialog has a specific node tree structure. Every level has a purpose. Understanding this tree lets you build any dialog configuration.</p>
+<div class="sec">
+<div class="sec-title">The node tree visualised</div>
+<div class="ftree">_cq_dialog/                          <span class="ftd">← root node</span>
+  jcr:primaryType = nt:unstructured
+  sling:resourceType = <span class="fth">cq/gui/components/authoring/dialog</span>
+  jcr:title = "Card Settings"
+  └── content                          <span class="ftd">← layout root</span>
+        sling:resourceType = <span class="fth">granite/ui/components/coral/foundation/tabs</span>
+        <span class="ftd">(or "container" for no-tabs layout)</span>
+        └── items                      <span class="ftd">← always named "items"</span>
+              ├── tab1                 <span class="ftd">← first tab</span>
+              │    jcr:title = "Content"
+              │    sling:resourceType = <span class="fth">granite/ui/components/coral/foundation/container</span>
+              │    └── items           <span class="ftd">← tab's fields</span>
+              │         ├── title      <span class="ftd">← textfield</span>
+              │         ├── description <span class="ftd">← textarea</span>
+              │         └── ctaLink    <span class="ftd">← pathfield</span>
+              └── tab2                 <span class="ftd">← second tab</span>
+                   jcr:title = "Settings"
+                   └── items
+                        ├── theme      <span class="ftd">← select</span>
+                        └── openInNewTab <span class="ftd">← checkbox</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">Container vs tabs layout</div>
+<div class="row-list">
+  <div class="row"><div class="rk">granite/ui/…/container</div><div class="rv">Simple layout — all fields stacked vertically, no tabs. Good for simple components with a few fields.</div></div>
+  <div class="row"><div class="rk">granite/ui/…/tabs</div><div class="rv">Tab layout — fields organised into named tabs. Good for complex components with many fields grouped by category (Content, Settings, Advanced).</div></div>
+  <div class="row"><div class="rk">granite/ui/…/accordion</div><div class="rv">Accordion layout — collapsible sections. Good for long forms with many optional fields.</div></div>
+  <div class="row"><div class="rk">granite/ui/…/fixedcolumns</div><div class="rv">Two-column layout — fields arranged in columns. Good for compact dialogs where related fields should be side by side.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-all-field-types">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>All field types — every Granite UI form field</h1>
+<p class="lede">Here is every Granite UI field type you will use, what it renders, and when to use each one. All paths start with <code>granite/ui/components/coral/foundation/form/</code>.</p>
+<div class="row-list">
+  <div class="row"><div class="rk">textfield</div><div class="rv">Single-line text input. Use for short text: title, label, URL slug, code. Properties: <code>maxlength</code>, <code>emptyText</code> (placeholder), <code>required</code>, <code>validation</code>.</div></div>
+  <div class="row"><div class="rk">textarea</div><div class="rv">Multi-line text input. Use for longer text: description, body copy, notes. Properties: <code>rows</code> (height), <code>maxlength</code>.</div></div>
+  <div class="row"><div class="rk">richtext</div><div class="rv">Rich text editor (RTE) within a dialog. Use when formatted text is needed — bold, links, lists. Properties: <code>useFixedInlineToolbar</code>, plugin configuration.</div></div>
+  <div class="row"><div class="rk">pathfield</div><div class="rv">Path browser with autocomplete. Use for selecting pages (<code>rootPath="/content"</code>) or DAM assets (<code>rootPath="/content/dam"</code>). Properties: <code>rootPath</code>, <code>filter</code> (hierarchyNotFile for pages only, dam for assets only).</div></div>
+  <div class="row"><div class="rk">select</div><div class="rv">Dropdown with predefined options. Use when there are a fixed set of choices (theme, size, layout). Options defined as child <code>&lt;items&gt;</code> nodes with <code>jcr:title</code> and <code>value</code> properties.</div></div>
+  <div class="row"><div class="rk">checkbox</div><div class="rv">Boolean toggle (on/off). Properties: <code>value</code> (what is saved when checked, usually <code>"true"</code>), <code>uncheckedValue</code> (what is saved when unchecked, usually <code>"false"</code>).</div></div>
+  <div class="row"><div class="rk">numberfield</div><div class="rv">Numeric input with stepper arrows. Properties: <code>min</code>, <code>max</code>, <code>step</code>.</div></div>
+  <div class="row"><div class="rk">datepicker</div><div class="rv">Calendar date/time picker. Properties: <code>type</code> (date, time, datetime), <code>displayedFormat</code>, <code>valueFormat</code>.</div></div>
+  <div class="row"><div class="rk">colorfield</div><div class="rv">Colour picker. Returns the selected colour as a hex value string.</div></div>
+  <div class="row"><div class="rk">radio</div><div class="rv">Radio button group — select one from multiple options. Defined with child items. Alternative to select for a small number of choices that are always visible.</div></div>
+  <div class="row"><div class="rk">hidden</div><div class="rv">Hidden field — saves a fixed value without showing a UI input. Use for storing technical values that should not be editable.</div></div>
+  <div class="row"><div class="rk">multifield</div><div class="rv">Repeating group — editors can add, remove, and reorder items. Each item has the same set of sub-fields. This gets its own detailed topic.</div></div>
+  <div class="row"><div class="rk">tags</div><div class="rv">Tag picker — editors select from AEM's tag taxonomy. Saves tag paths as an array. Properties: <code>rootPath</code> to restrict to a tag namespace.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-tabs-sections">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Tabs and sections — organising complex dialogs</h1>
+<p class="lede">For components with many settings, a flat list of fields is overwhelming. Tabs and sections group related fields and make the dialog scannable for editors.</p>
+<div class="sec">
+<div class="sec-title">When to use tabs</div>
+<p>Use tabs when your component has more than 5–6 fields, or when fields clearly belong to separate concerns. Common tab groupings:</p>
+<ul>
+  <li>"Content" tab — the main editorial fields: title, description, image, CTA text</li>
+  <li>"Link" tab — all link-related fields: URL, open in new tab, aria label</li>
+  <li>"Style" tab — visual options: theme, size, layout variant</li>
+  <li>"Advanced" tab — technical fields most editors never touch</li>
+</ul>
+</div>
+<div class="sec">
+<div class="sec-title">Tab dialog XML example</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_dialog/.content.xml — tabbed layout</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;jcr:root</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"cq/gui/components/authoring/dialog"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"Card Settings"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;content</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/tabs"</span>
+    <span class="attr">maximized</span>=<span class="str">"{Boolean}true"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="cm">&lt;!-- TAB 1: Content --&gt;</span>
+      <span class="tag">&lt;content</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+        <span class="attr">jcr:title</span>=<span class="str">"Content"</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;title</span>
+            <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+            <span class="attr">fieldLabel</span>=<span class="str">"Title"</span>
+            <span class="attr">name</span>=<span class="str">"./title"</span>
+            <span class="attr">required</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;description</span>
+            <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textarea"</span>
+            <span class="attr">fieldLabel</span>=<span class="str">"Description"</span>
+            <span class="attr">name</span>=<span class="str">"./description"</span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/items&gt;</span>
+      <span class="tag">&lt;/content&gt;</span>
+
+      <span class="cm">&lt;!-- TAB 2: Style --&gt;</span>
+      <span class="tag">&lt;style</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+        <span class="attr">jcr:title</span>=<span class="str">"Style"</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;theme</span>
+            <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/select"</span>
+            <span class="attr">fieldLabel</span>=<span class="str">"Theme"</span>
+            <span class="attr">name</span>=<span class="str">"./theme"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+              <span class="tag">&lt;light</span> <span class="attr">jcr:title</span>=<span class="str">"Light"</span> <span class="attr">value</span>=<span class="str">"light"</span><span class="tag">/&gt;</span>
+              <span class="tag">&lt;dark</span>  <span class="attr">jcr:title</span>=<span class="str">"Dark"</span>  <span class="attr">value</span>=<span class="str">"dark"</span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;/items&gt;</span>
+          <span class="tag">&lt;/theme&gt;</span>
+        <span class="tag">&lt;/items&gt;</span>
+      <span class="tag">&lt;/style&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/content&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-cq-editconfig-s5">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>cq:editConfig in the context of dialogs</h1>
+<p class="lede">The <code>cq:editConfig</code> node controls how the component behaves in author mode. While the dialog defines what editors can configure, the editConfig defines the authoring experience around that configuration.</p>
+<div class="sec">
+<div class="sec-title">How editConfig and dialog work together</div>
+<div class="flow">
+  <div class="fb bl">Editor clicks component</div>
+  <span class="fa">→</span>
+  <div class="fb">editConfig: shows the blue toolbar<br><small>with configured cq:actions buttons</small></div>
+  <span class="fa">→</span>
+  <div class="fb">Editor clicks wrench</div>
+  <span class="fa">→</span>
+  <div class="fb gr">Dialog opens<br><small>defined in _cq_dialog</small></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">dialogLayout property — where the dialog appears</div>
+<div class="row-list">
+  <div class="row"><div class="rk">cq:dialogLayout = "auto"</div><div class="rv">AEM decides — usually the sliding panel from the right. Default behaviour.</div></div>
+  <div class="row"><div class="rk">cq:dialogLayout = "floating"</div><div class="rv">Dialog appears as a floating overlay (modal) on top of the page. Used for large complex dialogs that need more space.</div></div>
+  <div class="row"><div class="rk">cq:dialogLayout = "inline"</div><div class="rv">Dialog appears directly below the component. Rarely used.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">dropTarget — drag assets directly onto the component</div>
+<p>You can configure a drop target on your component so editors can drag images from the left panel directly onto the component instead of opening the dialog and browsing. The dragged asset path is automatically saved to the specified JCR property.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_editConfig/.content.xml — dropTarget for images</span></div>
+  <div class="code-body"><span class="tag">&lt;cq:dropTargets</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;image</span>
+    <span class="attr">jcr:primaryType</span>=<span class="str">"cq:DropTargetConfig"</span>
+    <span class="attr">accept</span>=<span class="str">"[image/.*]"</span>          <span class="cm">← MIME types accepted</span>
+    <span class="attr">groups</span>=<span class="str">"[media]"</span>             <span class="cm">← asset groups accepted</span>
+    <span class="attr">propertyName</span>=<span class="str">"./imageRef"</span><span class="tag">/&gt;</span>  <span class="cm">← where the asset path is saved</span>
+<span class="tag">&lt;/cq:dropTargets&gt;</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-datasource">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Data source — dynamic dropdown options</h1>
+<p class="lede">A data source makes a Select field's options dynamic — fetched from a servlet, JCR query, or external API at dialog open time. Instead of hardcoding options in XML, the options come from live data.</p>
+<div class="sec">
+<div class="sec-title">When to use a data source</div>
+<p>Use a data source when the dropdown options cannot be hardcoded because they change over time or come from external data:</p>
+<ul>
+  <li>A "Product Category" dropdown populated from the product catalogue in the JCR</li>
+  <li>A "Country" dropdown fetched from a configuration node</li>
+  <li>An "Author" dropdown populated from AEM user accounts</li>
+  <li>A "Layout Variant" dropdown populated from a remote API</li>
+</ul>
+</div>
+<div class="sec">
+<div class="sec-title">Step 1 — reference the data source in the dialog</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_dialog/.content.xml — select with datasource</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;category</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/select"</span>
+  <span class="attr">fieldLabel</span>=<span class="str">"Product Category"</span>
+  <span class="attr">name</span>=<span class="str">"./category"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- Instead of hardcoded items, reference a datasource --&gt;</span>
+  <span class="tag">&lt;datasource</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"mysite/datasources/product-categories"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/category&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Step 2 — create the data source servlet in core</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">core/…/servlets/ProductCategoryDataSource.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="kw">package</span> com.mysite.core.servlets;
+
+<span class="kw">import</span> com.adobe.granite.ui.components.ds.*;
+<span class="kw">import</span> org.apache.sling.api.resource.ResourceResolver;
+<span class="kw">import</span> org.osgi.service.component.annotations.Component;
+
+<span class="attr">@Component</span>(service = {Servlet.<span class="kw">class</span>})
+<span class="attr">@SlingServletResourceTypes</span>(
+  resourceTypes = <span class="str">"mysite/datasources/product-categories"</span>
+  <span class="cm">↑ This matches the sling:resourceType in the dialog XML above</span>
+)
+<span class="kw">public class</span> ProductCategoryDataSource
+    <span class="kw">extends</span> SlingSafeMethodsServlet {
+
+  <span class="attr">@Override</span>
+  <span class="kw">protected void</span> doGet(SlingHttpServletRequest request,
+                         SlingHttpServletResponse response) {
+
+    ResourceResolver rr = request.getResourceResolver();
+
+    <span class="cm">// Build the list of options — from JCR, API, config, or hardcoded</span>
+    List&lt;Resource&gt; options = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+    <span class="cm">// Example: read categories from a JCR config node</span>
+    Resource categoriesNode = rr.getResource(
+        <span class="str">"/content/mysite/config/product-categories"</span>);
+
+    <span class="kw">if</span> (categoriesNode != <span class="kw">null</span>) {
+      <span class="kw">for</span> (Resource cat : categoriesNode.getChildren()) {
+        ValueMap vm = cat.getValueMap();
+        <span class="cm">// SimpleDataSource.Option(label, value)</span>
+        options.add(<span class="kw">new</span> ValueMapResource(rr, cat.getPath(),
+          <span class="str">"nt:unstructured"</span>,
+          <span class="kw">new</span> ValueMapDecorator(ImmutableMap.of(
+            <span class="str">"text"</span>, vm.get(<span class="str">"jcr:title"</span>, cat.getName()),
+            <span class="str">"value"</span>, cat.getName()
+          ))
+        ));
+      }
+    }
+
+    <span class="cm">// Set the data source on the request</span>
+    DataSource ds = <span class="kw">new</span> SimpleDataSource(options.iterator());
+    request.setAttribute(DataSource.<span class="kw">class</span>.getName(), ds);
+  }
+}</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Step 3 — create the datasource component node in ui.apps</div>
+<div class="ftree">ui.apps/…/apps/mysite/<span class="fth">datasources/product-categories/</span>
+└── .content.xml
+    jcr:primaryType = sling:Folder
+    <span class="ftd">← just a folder node; the servlet handles the rendering</span></div>
+</div>
+<div class="rl">
+  <div class="rll">Real example</div>
+  An e-commerce site has 200 product categories managed by a merchandising team in a JCR config tree. The product component's dialog has a "Category" dropdown. Without a data source, a developer would have to manually update the dialog XML every time a category is added or removed. With a data source, the servlet reads the JCR config tree at dialog-open time. The merchandising team adds or removes categories through a config page and the dropdown automatically reflects the changes — no developer involved.
+</div>
+</div>
+
+<div class="pg" id="p-multifield-what">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Multifield — what it is and why you need it</h1>
+<p class="lede">Multifield is a special Granite UI component that lets editors add, remove, and reorder a repeating group of fields. It solves the problem of "I need a list of items where each item has multiple properties".</p>
+<div class="sec">
+<div class="sec-title">The problem multifield solves</div>
+<p>Without multifield: you need to know in advance how many items there will be and hardcode that many sets of fields. An editor who needs 8 team members but you only added 5 sets of fields is stuck.</p>
+<p>With multifield: you define the fields for ONE item. Editors add as many items as they need using the "+ Add" button. They can remove items with the trash icon. They can reorder items by dragging the handle. The number of items is completely flexible at authoring time.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What multifield looks like to an editor</div>
+<p>The editor sees a section in the dialog with a label (e.g. "Team Members") and an empty list. A blue "+ Add" button is at the bottom. When they click it, one set of sub-fields appears (e.g. Name, Role, Photo, LinkedIn URL). Clicking "+ Add" again adds another set. Each set has a trash icon to delete it and a drag handle to reorder.</p>
+</div>
+<div class="sec">
+<div class="sec-title">How multifield data is stored in JCR</div>
+<p>With <code>composite={Boolean}true</code> (the standard way), each added item becomes a child JCR node. For a component at <code>/content/mysite/.../jcr:content/root/teamblock</code>, adding three team members creates:</p>
+<div class="ftree">/content/mysite/en/home/jcr:content/root/teamblock/
+└── <span class="fth">team/</span>              <span class="ftd">← the multifield property group</span>
+    ├── <span class="ftg">item0/</span>           <span class="ftd">← first added item</span>
+    │    name = "Priya Sharma"
+    │    role = "CTO"
+    │    linkedin = "/in/priyasharma"
+    ├── <span class="ftg">item1/</span>           <span class="ftd">← second item</span>
+    │    name = "Rohan Mehta"
+    │    role = "Lead Engineer"
+    └── <span class="ftg">item2/</span>           <span class="ftd">← third item</span>
+         name = "Anita Desai"
+         role = "UX Designer"</div>
+</div>
+</div>
+
+<div class="pg" id="p-multifield-create">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Creating a multifield — complete XML</h1>
+<p class="lede">Here is the complete XML to create a multifield dialog section where each item has a name, role, and link. This is a common pattern for team members, social links, FAQ items, and product features.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">_cq_dialog/.content.xml — multifield section</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm">&lt;!-- Add this inside your dialog's items section --&gt;</span>
+
+<span class="tag">&lt;team</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/multifield"</span>
+  <span class="attr">fieldLabel</span>=<span class="str">"Team Members"</span>
+  <span class="attr">fieldDescription</span>=<span class="str">"Add team members. Use the drag handle to reorder."</span>
+  <span class="attr">composite</span>=<span class="str">"{Boolean}true"</span>
+  <span class="cm">↑ true = each item stored as a child node (use this always)
+    false = stored as a flat string array (limited, avoid)</span>
+  <span class="attr">name</span>=<span class="str">"./team"</span>
+  <span class="cm">↑ The JCR path where items are stored (creates a child node "team")</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- FIELD: this is the template for each repeated item --&gt;</span>
+  <span class="tag">&lt;field</span>
+    <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span>
+    <span class="attr">name</span>=<span class="str">"./team"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="cm">&lt;!-- Sub-field 1: member name --&gt;</span>
+      <span class="tag">&lt;name</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Name"</span>
+        <span class="attr">name</span>=<span class="str">"./name"</span>
+        <span class="attr">required</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- Sub-field 2: member role --&gt;</span>
+      <span class="tag">&lt;role</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Role / Title"</span>
+        <span class="attr">name</span>=<span class="str">"./role"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- Sub-field 3: photo from DAM --&gt;</span>
+      <span class="tag">&lt;photo</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/pathfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Photo"</span>
+        <span class="attr">name</span>=<span class="str">"./photo"</span>
+        <span class="attr">rootPath</span>=<span class="str">"/content/dam"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- Sub-field 4: LinkedIn URL --&gt;</span>
+      <span class="tag">&lt;linkedin</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"LinkedIn URL"</span>
+        <span class="attr">name</span>=<span class="str">"./linkedin"</span><span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/field&gt;</span>
+<span class="tag">&lt;/team&gt;</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">Key properties on the multifield node</div>
+<div class="row-list">
+  <div class="row"><div class="rk">composite</div><div class="rv">Always set to <code>{Boolean}true</code>. This stores each item as a separate JCR child node. Without it, items are stored as a flat string array which is very limiting.</div></div>
+  <div class="row"><div class="rk">name</div><div class="rv">The path of the container node — <code>./team</code> creates a child node called "team" under the component's content node. All item nodes are created inside this container.</div></div>
+  <div class="row"><div class="rk">field node</div><div class="rv">This is the template for one item. It must be a <code>container</code> type. The sub-field names inside use <code>./fieldname</code> which is relative to each item's own node.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-multifield-java">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Reading multifield data in the Sling Model</h1>
+<p class="lede">The multifield stores items as child nodes under a container node. In your Sling Model you use @ChildResource to get the container, then iterate over its children, adapting each child to a model.</p>
+<div class="sec">
+<div class="sec-title">Option 1 — nested Sling Model (recommended)</div>
+<p>Create a separate Sling Model for each multifield item. The parent model adapts each child resource to the item model.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">TeamMember.java — interface for each item</span></div>
+  <div class="code-body"><span class="kw">package</span> com.mysite.core.models;
+
+<span class="kw">public interface</span> TeamMember {
+  String getName();
+  String getRole();
+  String getPhoto();
+  String getLinkedin();
+  <span class="kw">boolean</span> isHasLinkedin();
+}</div>
+</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">TeamMemberImpl.java — item model implementation</span></div>
+  <div class="code-body"><span class="attr">@Model</span>(
+  adaptables = Resource.<span class="kw">class</span>,
+  adapters   = { TeamMember.<span class="kw">class</span> },
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+<span class="kw">public class</span> TeamMemberImpl <span class="kw">implements</span> TeamMember {
+
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String name;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String role;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String photo;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String linkedin;
+
+  <span class="kw">private boolean</span> hasLinkedin;
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    hasLinkedin = StringUtils.isNotBlank(linkedin);
+  }
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getName()       { <span class="kw">return</span> name; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getRole()       { <span class="kw">return</span> role; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getPhoto()      { <span class="kw">return</span> photo; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getLinkedin()   { <span class="kw">return</span> linkedin; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span> isHasLinkedin() { <span class="kw">return</span> hasLinkedin; }
+}</div>
+</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">TeamBlockModelImpl.java — parent model reading the multifield</span></div>
+  <div class="code-body"><span class="attr">@Model</span>(adaptables = Resource.<span class="kw">class</span>, ...)
+<span class="kw">public class</span> TeamBlockModelImpl <span class="kw">implements</span> TeamBlockModel {
+
+  <span class="attr">@SlingObject</span>
+  <span class="kw">private</span> Resource currentResource;
+
+  <span class="kw">private</span> List&lt;TeamMember&gt; members = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    <span class="cm">// Get the "team" container node</span>
+    Resource teamNode = currentResource.getChild(<span class="str">"team"</span>);
+
+    <span class="kw">if</span> (teamNode != <span class="kw">null</span>) {
+      <span class="cm">// Iterate over all child nodes (item0, item1, item2, ...)</span>
+      <span class="kw">for</span> (Resource itemResource : teamNode.getChildren()) {
+        <span class="cm">// Adapt each child to the TeamMember model</span>
+        TeamMember member = itemResource.adaptTo(TeamMember.<span class="kw">class</span>);
+        <span class="kw">if</span> (member != <span class="kw">null</span> && StringUtils.isNotBlank(member.getName())) {
+          members.add(member);
+        }
+      }
+    }
+  }
+
+  <span class="attr">@Override</span>
+  <span class="kw">public</span> List&lt;TeamMember&gt; getMembers() { <span class="kw">return</span> members; }
+}</div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-multifield-htl">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Rendering multifield data in HTL</h1>
+<p class="lede">Once the Sling Model provides the list of items, HTL uses data-sly-list to loop over them and render each one. The list renders exactly as many items as the editor added — zero to unlimited.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">teamblock.html — rendering the multifield list</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.TeamBlockModel"</span>
+     <span class="attr">class</span>=<span class="str">"team-block"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- Only show the section if there are members --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"team-block__grid"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.members}"</span><span class="tag">&gt;</span>
+
+    <span class="cm">&lt;!-- Loop over every member item from the multifield --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"team-card"</span>
+         <span class="attr">data-sly-list.member</span>=<span class="str">"${model.members}"</span><span class="tag">&gt;</span>
+
+      <span class="cm">&lt;!-- member = one TeamMember object from the list
+           memberList.index, .count, .first, .last are also available --&gt;</span>
+
+      <span class="tag">&lt;img</span>
+        <span class="attr">src</span>=<span class="str">"${member.photo @ context='uri'}"</span>
+        <span class="attr">alt</span>=<span class="str">"${member.name}"</span>
+        <span class="attr">class</span>=<span class="str">"team-card__photo"</span>
+        <span class="attr">data-sly-test</span>=<span class="str">"${member.photo}"</span><span class="tag">/&gt;</span>
+
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"team-card__info"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h3</span> <span class="attr">class</span>=<span class="str">"team-card__name"</span><span class="tag">&gt;</span>${member.name}<span class="tag">&lt;/h3&gt;</span>
+        <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"team-card__role"</span>
+           <span class="attr">data-sly-test</span>=<span class="str">"${member.role}"</span><span class="tag">&gt;</span>${member.role}<span class="tag">&lt;/p&gt;</span>
+
+        <span class="tag">&lt;a</span> <span class="attr">class</span>=<span class="str">"team-card__linkedin"</span>
+           <span class="attr">href</span>=<span class="str">"${member.linkedin @ context='uri'}"</span>
+           <span class="attr">target</span>=<span class="str">"_blank"</span>
+           <span class="attr">rel</span>=<span class="str">"noopener"</span>
+           <span class="attr">data-sly-test</span>=<span class="str">"${member.hasLinkedin}"</span><span class="tag">&gt;</span>
+          LinkedIn
+        <span class="tag">&lt;/a&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- Empty state for author mode --&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"team-block__empty"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${!model.members}"</span><span class="tag">&gt;</span>
+    No team members configured. Click to add members.
+  <span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+
+<div class="pg" id="p-full-example">
+<span class="badge">Session 5 — touch UI dialogs</span>
+<h1>Full working example — FAQ component with multifield</h1>
+<p class="lede">A complete FAQ component from start to finish: the dialog with a multifield for Q&amp;A pairs, the Sling Models, and the HTL template. This is a real-world pattern used on thousands of enterprise AEM sites.</p>
+<div class="sec">
+<div class="sec-title">What this builds</div>
+<p>An FAQ component where editors can add any number of question/answer pairs through the dialog. Each pair has a question (text field) and an answer (textarea). The HTL renders them as a definition list.</p>
+</div>
+<div class="sec">
+<div class="sec-title">File 1 — dialog XML with multifield</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">faq/_cq_dialog/.content.xml</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;jcr:root</span> <span class="attr">xmlns:sling</span>=<span class="str">"..."</span> <span class="attr">xmlns:jcr</span>=<span class="str">"..."</span> <span class="attr">xmlns:nt</span>=<span class="str">"..."</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"cq/gui/components/authoring/dialog"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"FAQ Settings"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;content</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="tag">&lt;heading</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Section Heading"</span>
+        <span class="attr">name</span>=<span class="str">"./heading"</span><span class="tag">/&gt;</span>
+
+      <span class="tag">&lt;items</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/multifield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"FAQ Items"</span>
+        <span class="attr">composite</span>=<span class="str">"{Boolean}true"</span>
+        <span class="attr">name</span>=<span class="str">"./items"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;field</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+          <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span>
+          <span class="attr">name</span>=<span class="str">"./items"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;question</span>
+              <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+              <span class="attr">fieldLabel</span>=<span class="str">"Question"</span>
+              <span class="attr">name</span>=<span class="str">"./question"</span>
+              <span class="attr">required</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;answer</span>
+              <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textarea"</span>
+              <span class="attr">fieldLabel</span>=<span class="str">"Answer"</span>
+              <span class="attr">name</span>=<span class="str">"./answer"</span>
+              <span class="attr">required</span>=<span class="str">"{Boolean}true"</span>
+              <span class="attr">rows</span>=<span class="str">"4"</span><span class="tag">/&gt;</span>
+          <span class="tag">&lt;/items&gt;</span>
+        <span class="tag">&lt;/field&gt;</span>
+      <span class="tag">&lt;/items&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/content&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">File 2 — FaqItem Sling Model (for each multifield item)</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">FaqItemImpl.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="attr">@Model</span>(adaptables = Resource.<span class="kw">class</span>, adapters = {FaqItem.<span class="kw">class</span>},
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+<span class="kw">public class</span> FaqItemImpl <span class="kw">implements</span> FaqItem {
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String question;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String answer;
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String getQuestion() { <span class="kw">return</span> question; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String getAnswer()   { <span class="kw">return</span> answer; }
+}</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">File 3 — FaqModel (reads the multifield list)</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">FaqModelImpl.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="attr">@Model</span>(adaptables = Resource.<span class="kw">class</span>, adapters = {FaqModel.<span class="kw">class</span>},
+       resourceType = <span class="str">"mysite/components/faq"</span>,
+       defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+<span class="kw">public class</span> FaqModelImpl <span class="kw">implements</span> FaqModel {
+
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String heading;
+  <span class="attr">@SlingObject</span>   <span class="kw">private</span> Resource currentResource;
+  <span class="kw">private</span> List&lt;FaqItem&gt; items = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    Resource itemsNode = currentResource.getChild(<span class="str">"items"</span>);
+    <span class="kw">if</span> (itemsNode != <span class="kw">null</span>) {
+      <span class="kw">for</span> (Resource child : itemsNode.getChildren()) {
+        FaqItem item = child.adaptTo(FaqItem.<span class="kw">class</span>);
+        <span class="kw">if</span> (item != <span class="kw">null</span>) items.add(item);
+      }
+    }
+  }
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getHeading() { <span class="kw">return</span> heading; }
+  <span class="attr">@Override</span> <span class="kw">public</span> List&lt;FaqItem&gt; getItems()   { <span class="kw">return</span> items; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>       isEmpty()    { <span class="kw">return</span> items.isEmpty(); }
+}</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">File 4 — faq.html (HTL template)</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">faq.html</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.FaqModel"</span>
+     <span class="attr">class</span>=<span class="str">"faq"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;h2</span> <span class="attr">class</span>=<span class="str">"faq__heading"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.heading}"</span><span class="tag">&gt;</span>
+    ${model.heading}
+  <span class="tag">&lt;/h2&gt;</span>
+
+  <span class="tag">&lt;dl</span> <span class="attr">class</span>=<span class="str">"faq__list"</span>
+      <span class="attr">data-sly-test</span>=<span class="str">"${!model.empty}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;sly</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.items}"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;dt</span> <span class="attr">class</span>=<span class="str">"faq__question"</span><span class="tag">&gt;</span>${item.question}<span class="tag">&lt;/dt&gt;</span>
+      <span class="tag">&lt;dd</span> <span class="attr">class</span>=<span class="str">"faq__answer"</span><span class="tag">&gt;</span>${item.answer}<span class="tag">&lt;/dd&gt;</span>
+    <span class="tag">&lt;/sly&gt;</span>
+  <span class="tag">&lt;/dl&gt;</span>
+
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"faq__empty"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${model.empty}"</span><span class="tag">&gt;</span>
+    No FAQ items configured yet.
+  <span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+<div class="rl">
+  <div class="rll">What the editor sees and does</div>
+  Editor drags the FAQ component onto a page. Clicks Configure. Sees a "Section Heading" text field and an empty "FAQ Items" multifield with a "+ Add" button. Clicks "+ Add" — one Question and Answer field appears. Types the first Q&amp;A. Clicks "+ Add" again for the second. Adds 8 items total. Clicks the checkmark. The page shows an accordion-style FAQ with all 8 items. When a 9th FAQ is added next week, the editor opens the dialog, clicks "+ Add" once, types it, saves. No developer, no deployment.
+</div>
+<div style="margin-top:16px">
+  <button onclick="sendPrompt('Now explain Session 6 — Sling Models in complete detail — every annotation, adaptables, PostConstruct, the Java Use API in HTL, reading multifield data, reading child resources, injecting OSGi services, all explained from scratch with real examples and full code')">Explain Session 6 (Sling Models) in the same detail ↗</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+function copyCode(btn){
+  var code=btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var orig=btn.textContent;btn.textContent='copied!';
+    setTimeout(function(){btn.textContent=orig},1500);
+  });
+}
+</script>

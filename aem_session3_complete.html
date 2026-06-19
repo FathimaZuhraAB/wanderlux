@@ -1,0 +1,1480 @@
+
+<h2 class="sr-only">AEM Session 3 complete deep-dive — Authoring, Templates, Layout Container, Policies, Components, and Sling Resource Resolution — explained from scratch with real examples</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:700px}
+.nav{width:220px;min-width:220px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;flex-shrink:0}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-hd small{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);display:block;margin-bottom:3px}
+.nav-hd strong{font-size:13.5px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 4px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary)}
+.ni{display:flex;align-items:flex-start;gap:8px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);line-height:1.35;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:26px 30px}
+.body::-webkit-scrollbar{width:4px}.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+h1{font-size:21px;font-weight:500;margin-bottom:6px;line-height:1.25}
+.lede{font-size:14px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec{margin-bottom:28px}
+.sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+p code,li code,.step-body code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:2px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;margin-bottom:10px}
+.card-hd{font-size:13.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-hd i{font-size:16px;color:var(--color-text-info)}
+.card p{font-size:13px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.card code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.rl{border-left:3px solid var(--color-border-success);padding:12px 16px;background:var(--color-background-success);color:var(--color-text-success);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.rl .rll{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;opacity:.8}
+.warn{border-left:3px solid var(--color-border-warning);padding:12px 16px;background:var(--color-background-warning);color:var(--color-text-warning);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.info{border-left:3px solid var(--color-border-info);padding:12px 16px;background:var(--color-background-info);color:var(--color-text-info);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.step-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 14px;font-size:12.5px;color:var(--color-text-primary);text-align:center;line-height:1.4}
+.fb small{display:block;font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.fb.bl{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.fb.gr{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.fb.am{background:var(--color-background-warning);border-color:var(--color-border-warning);color:var(--color-text-warning)}
+.fa{color:var(--color-text-tertiary);font-size:18px;flex-shrink:0}
+.row-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}
+.row{display:grid;grid-template-columns:160px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:9px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;align-items:flex-start;word-break:break-all}
+.rv{padding:9px 12px;color:var(--color-text-primary);line-height:1.6}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+ul{padding-left:20px;margin:8px 0 14px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:2px}
+li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.code-block{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;margin:12px 0 16px}
+.code-top{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-fname{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.code-copy{font-size:11px;color:var(--color-text-info);cursor:pointer;background:none;border:0.5px solid var(--color-border-info);padding:2px 8px;border-radius:4px}
+.code-copy:hover{background:var(--color-background-info)}
+.code-body{padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.kw{color:#7c5cbf}.str{color:#1d9e75}.cm{color:var(--color-text-tertiary)}.tag{color:#185fa5}.attr{color:#b45309}.val{color:#1d9e75}
+.file-tree{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:2;margin:12px 0 16px;color:var(--color-text-secondary);white-space:pre}
+.ft-hl{color:var(--color-text-info);font-weight:500}
+.ft-gr{color:var(--color-text-success)}
+.ft-dim{color:var(--color-text-tertiary)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:12px 0 16px}
+.ch{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.ch:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.cb{padding:12px 14px;font-size:12.5px;color:var(--color-text-secondary);line-height:1.7;border-right:0.5px solid var(--color-border-tertiary)}
+.cb:last-child{border-right:none}
+.cb code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+.url-box{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);margin:10px 0;display:flex;align-items:flex-start;gap:8px}
+.url-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-tertiary);flex-shrink:0;margin-top:2px}
+</style>
+
+<div class="app">
+<div class="nav">
+  <div class="nav-hd"><small>Session 3 — deep dive</small><strong>Authoring, templates &amp; components</strong></div>
+
+  <div class="grp">Part 1 — Page authoring</div>
+  <div class="ni on" onclick="go('auth-what')" id="n-auth-what"><i class="ti ti-pencil" aria-hidden="true"></i>What is page authoring</div>
+  <div class="ni" onclick="go('create-page')" id="n-create-page"><i class="ti ti-file-plus" aria-hidden="true"></i>Creating a page — step by step</div>
+  <div class="ni" onclick="go('editor-tour')" id="n-editor-tour"><i class="ti ti-browser" aria-hidden="true"></i>Page editor — full tour</div>
+  <div class="ni" onclick="go('edit-modes')" id="n-edit-modes"><i class="ti ti-toggle-left" aria-hidden="true"></i>Edit, Layout, Preview modes</div>
+  <div class="ni" onclick="go('adding-components')" id="n-adding-components"><i class="ti ti-drag-drop" aria-hidden="true"></i>Adding &amp; configuring components</div>
+  <div class="ni" onclick="go('publishing')" id="n-publishing"><i class="ti ti-world" aria-hidden="true"></i>Publishing pages</div>
+
+  <div class="grp">Part 2 — Templates</div>
+  <div class="ni" onclick="go('tmpl-what')" id="n-tmpl-what"><i class="ti ti-template" aria-hidden="true"></i>What is a template</div>
+  <div class="ni" onclick="go('static-tmpl')" id="n-static-tmpl"><i class="ti ti-file-code" aria-hidden="true"></i>Static templates (legacy)</div>
+  <div class="ni" onclick="go('editable-tmpl')" id="n-editable-tmpl"><i class="ti ti-layout" aria-hidden="true"></i>Editable templates (modern)</div>
+  <div class="ni" onclick="go('tmpl-3layers')" id="n-tmpl-3layers"><i class="ti ti-layers" aria-hidden="true"></i>Template 3 layers — structure, initial, policies</div>
+  <div class="ni" onclick="go('create-tmpl')" id="n-create-tmpl"><i class="ti ti-plus" aria-hidden="true"></i>Creating a template step by step</div>
+  <div class="ni" onclick="go('page-component')" id="n-page-component"><i class="ti ti-code" aria-hidden="true"></i>Page component</div>
+
+  <div class="grp">Part 3 — Layout Container</div>
+  <div class="ni" onclick="go('lc-what')" id="n-lc-what"><i class="ti ti-layout-grid" aria-hidden="true"></i>What is the Layout Container</div>
+  <div class="ni" onclick="go('parsys')" id="n-parsys"><i class="ti ti-history" aria-hidden="true"></i>Parsys — the old way</div>
+  <div class="ni" onclick="go('12col-grid')" id="n-12col-grid"><i class="ti ti-columns" aria-hidden="true"></i>12-column responsive grid</div>
+  <div class="ni" onclick="go('lc-in-editor')" id="n-lc-in-editor"><i class="ti ti-hand-finger" aria-hidden="true"></i>Using layout container as editor</div>
+  <div class="ni" onclick="go('lc-html')" id="n-lc-html"><i class="ti ti-file-type-html" aria-hidden="true"></i>How it renders in HTML</div>
+
+  <div class="grp">Part 4 — Policies</div>
+  <div class="ni" onclick="go('policy-what')" id="n-policy-what"><i class="ti ti-shield" aria-hidden="true"></i>What is a policy</div>
+  <div class="ni" onclick="go('policy-allowed')" id="n-policy-allowed"><i class="ti ti-check" aria-hidden="true"></i>Allowed components</div>
+  <div class="ni" onclick="go('policy-style')" id="n-policy-style"><i class="ti ti-palette" aria-hidden="true"></i>Style system in policies</div>
+  <div class="ni" onclick="go('policy-design-mode')" id="n-policy-design-mode"><i class="ti ti-paint" aria-hidden="true"></i>Design mode (legacy)</div>
+  <div class="ni" onclick="go('policy-create')" id="n-policy-create"><i class="ti ti-settings" aria-hidden="true"></i>Creating &amp; editing policies</div>
+
+  <div class="grp">Part 5 — Components</div>
+  <div class="ni" onclick="go('comp-what')" id="n-comp-what"><i class="ti ti-puzzle" aria-hidden="true"></i>What is a component</div>
+  <div class="ni" onclick="go('core-components')" id="n-core-components"><i class="ti ti-components" aria-hidden="true"></i>Core components — all of them</div>
+  <div class="ni" onclick="go('comp-browser')" id="n-comp-browser"><i class="ti ti-apps" aria-hidden="true"></i>Component browser explained</div>
+
+  <div class="grp">Part 6 — Sling resolution</div>
+  <div class="ni" onclick="go('sling-what')" id="n-sling-what"><i class="ti ti-route" aria-hidden="true"></i>What is Sling</div>
+  <div class="ni" onclick="go('url-anatomy')" id="n-url-anatomy"><i class="ti ti-link" aria-hidden="true"></i>URL anatomy — every part</div>
+  <div class="ni" onclick="go('resolution-steps')" id="n-resolution-steps"><i class="ti ti-list-numbers" aria-hidden="true"></i>Resolution — step by step</div>
+  <div class="ni" onclick="go('selectors')" id="n-selectors"><i class="ti ti-dots" aria-hidden="true"></i>Selectors — multiple renderings</div>
+  <div class="ni" onclick="go('resourcetype')" id="n-resourcetype"><i class="ti ti-key" aria-hidden="true"></i>sling:resourceType — the key</div>
+</div>
+
+<div class="body">
+
+<div class="pg on" id="p-auth-what">
+<span class="badge">Part 1 — authoring</span>
+<h1>What is page authoring</h1>
+<p class="lede">Page authoring is the process of building web pages inside the AEM editor — adding components, configuring their content, arranging layout, and publishing. It requires zero technical knowledge. A marketing manager can do everything a developer would do in a page builder tool.</p>
+
+<div class="sec">
+<div class="sec-title">Who does authoring and why it matters to developers</div>
+<p>Content editors — marketing managers, copywriters, product managers — do the authoring. They are not developers. They do not know HTML, CSS, or Java. They need a tool that is as simple as Microsoft Word but produces professional web pages.</p>
+<p>As a developer, you are not the one who builds pages. You are the one who builds the tools editors use to build pages — the components, the templates, the dialog forms. Your job is to make authoring easy and safe. When a component's dialog is confusing or a template is too restrictive, editors suffer. When your work is good, editors can build any page they need without calling you.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The authoring workflow</div>
+<div class="flow">
+  <div class="fb bl">Open Sites console<br><small>browse page tree</small></div><span class="fa">→</span>
+  <div class="fb">Create page<br><small>pick a template</small></div><span class="fa">→</span>
+  <div class="fb">Open editor<br><small>WYSIWYG canvas</small></div><span class="fa">→</span>
+  <div class="fb">Add components<br><small>drag from browser</small></div><span class="fa">→</span>
+  <div class="fb">Configure each<br><small>fill in dialog</small></div><span class="fa">→</span>
+  <div class="fb am">Preview<br><small>check result</small></div><span class="fa">→</span>
+  <div class="fb gr">Publish<br><small>go live</small></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">What authoring produces in the JCR</div>
+<p>Every action an editor takes in the authoring interface writes data into the JCR repository. When they drag a component onto the page, a new JCR node is created. When they fill in a dialog and save, the field values are written as JCR properties on that node. When they publish, those nodes are replicated to the Publish server.</p>
+<p>This is the complete data flow to keep in mind:</p>
+<div class="flow">
+  <div class="fb bl">Editor fills dialog<br><small>types "Summer Sale"</small></div><span class="fa">→</span>
+  <div class="fb">JCR node<br><small>title="Summer Sale"</small></div><span class="fa">→</span>
+  <div class="fb">Sling Model reads it<br><small>@ValueMapValue</small></div><span class="fa">→</span>
+  <div class="fb">HTL renders it<br><small>${model.title}</small></div><span class="fa">→</span>
+  <div class="fb gr">Browser shows HTML<br><small>&lt;h2&gt;Summer Sale&lt;/h2&gt;</small></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rll">Real example</div>
+  A content editor at Swiggy needs to create a "Diwali 2024" campaign page. She opens the Sites console, navigates to the Campaigns section, creates a new page using the "Campaign Page" template, and opens the editor. She drags a Hero Banner component onto the page, clicks the wrench icon, fills in the headline "Diwali Dhamaka Offers", uploads the Diwali-themed image, and sets the CTA button text to "Order Now". She saves, switches to Preview mode to check, then clicks Publish. The page is live in under 10 minutes. No developer involved.
+</div>
+</div>
+
+<div class="pg" id="p-create-page">
+<span class="badge">Part 1 — authoring</span>
+<h1>Creating a page — exact steps</h1>
+<p class="lede">Here is the precise, step-by-step process to create a new page in AEM from start to finish. Every click and every field is explained.</p>
+
+<div class="sec">
+<div class="sec-title">Step 1 — open the Sites console</div>
+<div class="url-box"><span class="url-label">URL</span>http://localhost:4502/sites.html/content</div>
+<p>After logging in, this is the main screen. You see a tree or card view of all your pages. You need to navigate to the parent folder where you want to create the new page.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 2 — navigate to the right folder</div>
+<p>Click into your site folder. For example, if your site is at <code>/content/mysite/en/</code>, click through the folders until you are in the section where the new page should live. The URL in the Sites console changes as you navigate — it reflects the JCR path.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 3 — click Create</div>
+<p>Click the blue "Create" button in the top-right toolbar. A dropdown appears. Select "Page". This opens the page creation wizard.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 4 — the template picker</div>
+<p>The first screen of the wizard shows all templates that are allowed in this location. Templates are shown as cards with a thumbnail and title. The allowed templates are controlled by the template's <code>allowedPaths</code> property and the folder's <code>cq:allowedTemplates</code> property.</p>
+<p>Select the appropriate template for this page type — for example "Article Page", "Campaign Page", or "Product Page". Click "Next".</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 5 — fill in the page properties</div>
+<p>The second screen has required fields:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">Title</div><div class="rv">The page's display title. Shown in browser tab, page header, navigation, and search results. Example: "Home Loans 2024". Required.</div></div>
+  <div class="row"><div class="rk">Name</div><div class="rv">The URL slug — the last part of the page's URL. Auto-generated from the Title but you can change it. Must be URL-safe: lowercase, hyphens instead of spaces, no special characters. Example: "home-loans-2024". If Title is "Home Loans 2024", Name auto-fills as "home-loans-2024".</div></div>
+  <div class="row"><div class="rk">Tags</div><div class="rv">Optional. Categorise the page with taxonomy tags for filtering and search.</div></div>
+  <div class="row"><div class="rk">Hide in Navigation</div><div class="rv">Optional checkbox. If checked, this page won't appear in automatically-generated navigation components.</div></div>
+</div>
+<p>Click "Create" to create the page.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 6 — what AEM creates in the JCR</div>
+<p>AEM creates a new <code>cq:Page</code> node at the path <code>/content/mysite/en/home-loans-2024</code> with a <code>jcr:content</code> child node. The <code>jcr:content</code> node gets the Title from your wizard input, a reference to the selected template, and the initial content from the template's "Initial Content" layer pre-populated.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 7 — click Open to go to the editor</div>
+<p>After creation, AEM shows a "Page Created" confirmation with two options: "Open" (go to the editor now) and "Done" (stay in the Sites console). Click "Open" to immediately start editing your new page.</p>
+</div>
+
+<div class="rl">
+  <div class="rll">What the Name field does to your URL</div>
+  If your site is at <code>/content/mysite/en/</code> and you create a page with Name "summer-sale", the page lives at JCR path <code>/content/mysite/en/summer-sale</code>. AEM renders it at the URL <code>http://localhost:4502/content/mysite/en/summer-sale.html</code>. On the live site through the Dispatcher, it might appear as <code>https://www.mysite.com/en/summer-sale.html</code>.
+</div>
+</div>
+
+<div class="pg" id="p-editor-tour">
+<span class="badge">Part 1 — authoring</span>
+<h1>Page editor — complete tour of every part</h1>
+<p class="lede">The page editor is AEM's WYSIWYG editing environment. Everything you see here has a specific purpose. Here is every panel, every button, and every feature explained.</p>
+
+<div class="url-box"><span class="url-label">URL pattern</span>http://localhost:4502/editor.html/content/mysite/en/home.html</div>
+
+<div class="sec">
+<div class="sec-title">The top toolbar — always visible</div>
+<div class="row-list">
+  <div class="row"><div class="rk">AEM logo / back arrow</div><div class="rv">Click to go back to the Sites console. Unsaved changes are preserved in the JCR — AEM auto-saves component dialog changes when you click the checkmark, so there is no "Unsaved changes" prompt.</div></div>
+  <div class="row"><div class="rk">Page info (i icon)</div><div class="rv">Opens the page properties dialog — title, tags, on/off time, thumbnail, SEO metadata, cloud service assignments. This is separate from the component dialogs. Also has Publish, Unpublish, and View as Published buttons.</div></div>
+  <div class="row"><div class="rk">Edit / Layout / Preview / Developer</div><div class="rv">Mode selector. Changes what you can do on the page canvas. Edit is default. Layout for grid resizing. Preview to see visitor view. Developer mode shows component annotations.</div></div>
+  <div class="row"><div class="rk">Emulator (phone/tablet icon)</div><div class="rv">Switches the editor to simulate different screen sizes. Shows how the page looks on tablet and mobile viewports. The actual responsive CSS is applied.</div></div>
+  <div class="row"><div class="rk">Undo / Redo</div><div class="rv">Standard undo/redo for the current editing session. Undoes dialog changes, component moves, and deletions. Keyboard shortcut: Ctrl+Z / Ctrl+Y.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The left rail — three panels</div>
+<p>Click the panel toggle icon (looks like three horizontal lines) in the top bar to open/close the left rail. Three tabs are available:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">Components panel</div><div class="rv">Shows all components available for this page's template policy, organised into groups. Scroll to find components. The search box at the top filters by component name. Drag a component from this panel onto the page canvas to add it.</div></div>
+  <div class="row"><div class="rk">Assets panel</div><div class="rv">Browse the DAM (Digital Asset Manager) to find images, videos, and documents. Search by keyword. Drag an image directly onto an Image component on the page — AEM automatically sets the image path in the component's dialog.</div></div>
+  <div class="row"><div class="rk">Content tree panel</div><div class="rv">Shows the entire component structure of the current page as a collapsible tree, mirroring the JCR hierarchy. Clicking a node in the tree selects and highlights that component on the page. Extremely useful for finding deeply nested components.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The page canvas</div>
+<p>The large central area is the page canvas. It renders the actual page — your real CSS, real images, real layout — with a thin authoring layer overlaid. In Edit mode, each component has a faint blue outline even when not selected, showing the boundary between components. When you click a component, the outline turns solid blue and the blue edit toolbar appears above it.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The component edit toolbar — every button</div>
+<p>When you click any component, a blue toolbar appears above it. The exact buttons depend on what the component's <code>_cq_editConfig</code> allows, but the standard set is:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">Edit (pencil)</div><div class="rv">For text components: activates inline rich text editing directly on the page. For other components: opens the configure dialog (same as wrench).</div></div>
+  <div class="row"><div class="rk">Configure (wrench)</div><div class="rv">Opens the component's dialog — the form with all the settings (title, image, link, etc.). After filling in fields, click the checkmark (top right of dialog) to save.</div></div>
+  <div class="row"><div class="rk">Style (paintbrush)</div><div class="rv">Opens the Style System palette — named styles defined in the template policy. Selecting a style applies CSS classes to the component. Only visible if styles are configured in the policy.</div></div>
+  <div class="row"><div class="rk">Copy</div><div class="rv">Copies the component including its content. Then click another container's insertion point to paste it there.</div></div>
+  <div class="row"><div class="rk">Cut</div><div class="rv">Removes the component and places it in the clipboard for pasting elsewhere on the page or another page.</div></div>
+  <div class="row"><div class="rk">Delete (trash)</div><div class="rv">Permanently removes the component from this page. Undo with Ctrl+Z immediately after if accidental.</div></div>
+  <div class="row"><div class="rk">Group (when parent selected)</div><div class="rv">When a Layout Container is selected, shows a "Select parent" option to go up one level in the component hierarchy.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-edit-modes">
+<span class="badge">Part 1 — authoring</span>
+<h1>Edit, Layout, and Preview modes — deep explanation</h1>
+<p class="lede">The page editor has three modes that completely change what you see and what you can do. You switch between them using the dropdown in the top toolbar.</p>
+
+<div class="sec">
+<div class="sec-title">Edit mode — the content creation mode</div>
+<p>Edit mode is the default. Every component has a blue selection handle. Clicking a component shows its edit toolbar. This is the mode where all content changes happen:</p>
+<ul>
+  <li>Drag components from the left panel onto the page</li>
+  <li>Click a text component and double-click to activate inline text editing</li>
+  <li>Click the wrench icon on any component to open its configure dialog</li>
+  <li>Drag components to reorder them within a container</li>
+  <li>Select a component and press Delete to remove it</li>
+</ul>
+<p>In Edit mode, the blue outlines are visible even on non-selected components. This helps editors see the page structure clearly — which areas are separate components, which components are inside which containers.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Layout mode — the responsive grid editor</div>
+<p>Layout mode activates the 12-column grid system. You use it to control how wide each component is at different screen sizes. Switch to it by clicking "Layout" in the mode dropdown.</p>
+<p>In Layout mode:</p>
+<ul>
+  <li>Each component shows a blue resize handle on its right edge</li>
+  <li>Drag the handle left or right to change how many columns the component spans (1 to 12)</li>
+  <li>A column counter shows the current span as you drag</li>
+  <li>The breakpoint selector in the toolbar switches between Desktop (default), Tablet, and Mobile views</li>
+  <li>You can set completely different column spans for each breakpoint</li>
+</ul>
+<p>For example: a Text component and an Image component sitting side by side. On desktop you might set Text to 8 columns and Image to 4 columns. On mobile you set both to 12 columns so they stack vertically. This is controlled entirely in Layout mode, no CSS needed.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Preview mode — see exactly what visitors see</div>
+<p>Preview mode removes all authoring overlays. No blue outlines, no edit toolbars, no left panel. The page looks and behaves exactly as it will on the live website. Links are clickable, animations play, carousels slide.</p>
+<p>Use Preview mode to:</p>
+<ul>
+  <li>Verify the page looks right before publishing</li>
+  <li>Test hover effects and interactive elements</li>
+  <li>Check that all links go to the right destinations</li>
+  <li>Simulate mobile by combining Preview mode with the Emulator</li>
+  <li>Show the page to a stakeholder for review without the authoring chrome</li>
+</ul>
+<div class="info">Preview mode is rendered by the Author server using your real CSS and templates. In rare cases the live site through the Dispatcher may look slightly different due to Dispatcher cache configurations. Always check the actual Publish URL for final sign-off.</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Timewarp mode — see the past</div>
+<p>A fourth mode available via the page info menu. Timewarp lets you set a date and time to see what the page looked like at that point in history. Useful for audits and debugging when content was changed accidentally. AEM stores all published versions with timestamps.</p>
+</div>
+</div>
+
+<div class="pg" id="p-adding-components">
+<span class="badge">Part 1 — authoring</span>
+<h1>Adding and configuring components — exact steps</h1>
+<p class="lede">This is the core activity in page authoring. Here is the exact process an editor follows to add a component to a page and configure it.</p>
+
+<div class="sec">
+<div class="sec-title">Method 1 — drag from the component browser</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Open the left panel</div>
+    <div class="step-body">Click the panel toggle icon in the top-left of the editor. The left rail opens showing the three tab icons. Make sure the Components tab (puzzle piece icon) is selected.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Find your component</div>
+    <div class="step-body">Components are listed in groups. Scroll to find yours, or type a name in the search box at the top of the panel. For example, type "card" to find the Card component.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Drag to the page</div>
+    <div class="step-body">Click and hold the component tile in the left panel. Drag it over the page canvas. As you drag over valid drop targets (Layout Containers), they highlight in blue. Release to drop the component.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">The component appears with a placeholder</div>
+    <div class="step-body">The new component appears on the page showing its empty placeholder text (configured in <code>_cq_editConfig</code> via <code>cq:emptyText</code>). The blue toolbar is already showing.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Method 2 — insertion point click</div>
+<p>Every empty space between components and at the bottom of a container shows a "+" insertion point when you hover near it. Clicking the "+" opens a mini component browser inline. You can click a component from this inline browser to insert it at that exact position without dragging.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Configuring the component — the dialog</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Click the component to select it</div>
+    <div class="step-body">Click once on the component. The blue edit toolbar appears above it.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Click the wrench (Configure) icon</div>
+    <div class="step-body">The component's dialog opens as a sliding panel from the right side of the screen (or a modal for some components). It shows all the form fields the developer defined in <code>_cq_dialog/.content.xml</code>.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Fill in the fields</div>
+    <div class="step-body">Each field is a piece of configuration — text fields for headings and descriptions, path browsers for images and links, dropdowns for theme/style selections, checkboxes for toggles. Fill in everything needed.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Click the checkmark to save</div>
+    <div class="step-body">The checkmark (tick) button in the top-right of the dialog saves the values. AEM immediately writes the values to the JCR node. The component on the page behind the dialog updates in real time to show the new content.</div>
+  </div></div>
+</div>
+<div class="warn">Clicking the X button (close) on the dialog DISCARDS your changes for that dialog session. The checkmark SAVES. Many editors accidentally click X and lose their work. Make sure to always click the checkmark.</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">What gets saved — inside the JCR</div>
+<p>When an editor saves a dialog, AEM writes each field's value as a JCR property on the component's content node. For example, if the editor fills in "Summer Sale 2024" in the Title field (which has <code>name="./title"</code> in the dialog XML), AEM creates a property <code>title = "Summer Sale 2024"</code> on the JCR node at <code>/content/mysite/en/home/jcr:content/root/main/card</code>.</p>
+<p>You can see this immediately in CRXDE by navigating to that path and clicking the Properties tab.</p>
+</div>
+</div>
+
+<div class="pg" id="p-publishing">
+<span class="badge">Part 1 — authoring</span>
+<h1>Publishing pages — everything about it</h1>
+<p class="lede">Publishing is the act of making a page live — copying it from the Author server to the Publish server so real users can see it. Until a page is published, no visitor can see it regardless of how complete it looks in the editor.</p>
+
+<div class="sec">
+<div class="sec-title">Three ways to publish a page</div>
+<div class="row-list">
+  <div class="row"><div class="rk">From the page editor</div><div class="rv">Click the Page Info icon (top-left of editor) → "Publish Page". This publishes the current page immediately. A green notification confirms success.</div></div>
+  <div class="row"><div class="rk">From the Sites console</div><div class="rv">Select one or more pages (checkboxes) → click "Manage Publication" in the top toolbar → "Publish" → choose "Now" (immediate) or a scheduled future date/time → Next → Publish.</div></div>
+  <div class="row"><div class="rk">Quick Publish</div><div class="rv">From Sites console, hover over a page → three-dots menu → "Quick Publish". Fastest method, no wizard. No option to schedule or include references.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Publishing with references</div>
+<p>When you publish a page, you often also need to publish the assets it references — images from the DAM, Content Fragments, Experience Fragments. AEM's "Manage Publication" wizard has a "Include referenced items" option that detects all referenced content and publishes everything in one go.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Scheduled publishing</div>
+<p>In "Manage Publication", instead of "Now", select "Later". Set a specific date and time. AEM creates a replication job scheduled for that time. At the exact moment, AEM publishes the page automatically. This is how editors schedule content for specific launch dates — a product launch at midnight, a news article at 6:00 AM, a sale banner on sale day.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Page publication states</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Not published</div><div class="rv">Grey indicator. Page exists on Author only. Visitors cannot see it.</div></div>
+  <div class="row"><div class="rk">Published</div><div class="rv">Green indicator. Page is live on Publish. Visitors can see the current version.</div></div>
+  <div class="row"><div class="rk">Modified</div><div class="rv">Yellow indicator. Page was published before, but has been edited since. The live version is the old version. Publish again to push the changes live.</div></div>
+  <div class="row"><div class="rk">Deactivated</div><div class="rv">Red indicator. Page was published but has been unpublished (deactivated). It existed on Publish but has been removed. Visitors now get a 404.</div></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rll">Real example — scheduled bank rate update</div>
+  The Reserve Bank of India announces a rate change effective next Monday. HDFC Bank's content team updates all 47 loan pages on Author on Thursday. They set Scheduled Publication for Monday 00:01 AM. On Monday at 00:01, AEM automatically publishes all 47 pages simultaneously. The website shows the correct rate the moment it is officially effective. Zero manual work on Monday.
+</div>
+</div>
+
+<div class="pg" id="p-tmpl-what">
+<span class="badge">Part 2 — templates</span>
+<h1>What is a template — from scratch</h1>
+<p class="lede">A template is the blueprint for a page. When an editor creates a new page, they pick a template. The template determines: the page's initial structure (which components are already on it), which components editors are allowed to add, and what the page looks like before any content is added.</p>
+
+<div class="sec">
+<div class="sec-title">The restaurant menu analogy</div>
+<p>Think of a template as a restaurant menu format. Every menu at a restaurant follows the same structure — starter section, main course section, dessert section. The format is fixed. But the actual food items inside each section are different for every restaurant and change every day. The template is the format. The page content is the food items.</p>
+<p>An "Article Page" template always has a hero image at the top, a title, a body text area, and a related articles section at the bottom. Every article page has this structure. But each article has different photos, different headlines, different body text. The template enforces consistency. The editors provide variety.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">What a template controls</div>
+<div class="grid2">
+  <div class="card"><div class="card-hd"><i class="ti ti-lock" aria-hidden="true"></i>Structure (locked)</div><p>Components that are always on every page made from this template and cannot be moved or deleted by editors. Used for global header, global footer, required legal disclaimers.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-edit" aria-hidden="true"></i>Initial content</div><p>Components that are pre-added to new pages but CAN be edited or deleted by editors. A starting point, not a lock. Saves editors from starting completely blank.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-list-check" aria-hidden="true"></i>Allowed components</div><p>Which components editors can add to each container area. Enforced by policies. If a component is not in the allowed list, editors cannot add it no matter how hard they try.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-browser" aria-hidden="true"></i>Page component</div><p>Which Java/HTL component renders the outer HTML shell of every page made from this template — the doctype, head, header, footer, scripts.</p></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Why templates matter for developers</div>
+<p>As a developer, you:</p>
+<ul>
+  <li>Create the Page Component that the template references</li>
+  <li>Create the components that editors can add to pages</li>
+  <li>Set up the initial template structure (or the template author does this in the UI)</li>
+  <li>Configure policies to allow the right components</li>
+</ul>
+<p>Once you set up the template correctly, a template author can modify it any time through the AEM UI without any code changes from you.</p>
+</div>
+</div>
+
+<div class="pg" id="p-static-tmpl">
+<span class="badge">Part 2 — templates</span>
+<h1>Static templates — the legacy approach</h1>
+<p class="lede">Static templates are the original AEM template system (used before AEM 6.2). You will encounter them in older projects. Understanding them helps you recognise legacy code and understand why editable templates were invented.</p>
+
+<div class="sec">
+<div class="sec-title">How static templates work</div>
+<p>A static template is a JCR node at <code>/apps/mysite/templates/article-page</code> with <code>jcr:primaryType = cq:Template</code>. A developer defines the template's properties in a <code>.content.xml</code> file in the project source. The template node has:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">jcr:title</div><div class="rv">The name shown in the template picker when creating a page.</div></div>
+  <div class="row"><div class="rk">allowedPaths</div><div class="rv">A regex pattern of JCR paths where this template can be used. Example: <code>/content/mysite(/.*)?</code> means anywhere under <code>/content/mysite/</code>.</div></div>
+  <div class="row"><div class="rk">allowedChildren</div><div class="rv">Which templates can be used for child pages of pages made from this template.</div></div>
+  <div class="row"><div class="rk">ranking</div><div class="rv">The order this template appears in the picker. Lower number = shown first.</div></div>
+  <div class="row"><div class="rk">thumbnail</div><div class="rv">Path to an image shown in the template picker to preview the layout.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The problems with static templates</div>
+<div class="compare">
+  <div class="ch">Static templates (legacy)</div>
+  <div class="ch">Why this is a problem</div>
+  <div class="cb">Template structure is hardcoded in XML files. Changing the layout requires a developer to edit code and deploy.</div>
+  <div class="cb">Marketing needs a new page layout urgently. They have to wait for a developer sprint to get it. Days of delay.</div>
+  <div class="cb">Allowed components are set via Design Mode — a developer or admin visits the page with <code>?wcmmode=design</code> and clicks to enable components.</div>
+  <div class="cb">This is a separate workflow disconnected from template management. Easy to forget. Cannot be version-controlled properly.</div>
+  <div class="cb">All pages using a template share the exact same structure. No flexibility within the template for different page variations.</div>
+  <div class="cb">Need a slightly different article layout for opinion pieces? Need a separate template. Template proliferation over time.</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where static templates are stored in the project</div>
+<div class="file-tree"><span class="ft-hl">ui.apps</span>/src/main/content/jcr_root/apps/mysite/templates/
+└── article-page/
+    └── .content.xml  <span class="ft-dim">← template definition (jcr:primaryType = cq:Template)</span></div>
+<p>In CRXDE: <code>/apps/mysite/templates/article-page</code></p>
+</div>
+</div>
+
+<div class="pg" id="p-editable-tmpl">
+<span class="badge">Part 2 — templates</span>
+<h1>Editable templates — the modern approach</h1>
+<p class="lede">Editable templates (introduced in AEM 6.2) solve every problem static templates had. Template authors — not developers — create and manage them through a visual editor in the AEM UI. No code deployment needed to create or change a template.</p>
+
+<div class="sec">
+<div class="sec-title">The key differences at a glance</div>
+<div class="compare">
+  <div class="ch">Static template</div>
+  <div class="ch">Editable template</div>
+  <div class="cb">Stored in <code>/apps</code> (code)<br>Changed by developers only<br>Requires Maven deployment<br>Fixed structure</div>
+  <div class="cb">Stored in <code>/conf</code> (content)<br>Changed by template authors in AEM UI<br>No code needed<br>Structure editable in visual editor</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where editable templates live</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Created through</div><div class="rv">Tools → Sites → Templates → select your site conf folder. Or directly at <code>http://localhost:4502/libs/wcm/core/content/sites/templates.html/conf/mysite</code></div></div>
+  <div class="row"><div class="rk">Stored in JCR</div><div class="rv"><code>/conf/mysite/settings/wcm/templates/article-page/</code></div></div>
+  <div class="row"><div class="rk">In project source</div><div class="rv"><code>ui.content/src/main/content/jcr_root/conf/mysite/settings/wcm/templates/</code></div></div>
+  <div class="row"><div class="rk">Policies stored</div><div class="rv"><code>/conf/mysite/settings/wcm/policies/</code></div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Template types — the parent of every editable template</div>
+<p>Every editable template is created from a "Template Type". A Template Type is a skeleton template (stored under <code>/libs/</code> or <code>/conf/</code>) that defines the technical structure a template must have. Think of it like a class in object-oriented programming — the Template is an instance of the Template Type.</p>
+<p>For AEM Sites, the standard Template Type is "Empty Page" — it creates a completely blank template with the correct structural nodes. AEM provides several built-in Template Types and you can create your own.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Who manages editable templates</div>
+<p>Editable templates are managed by "Template Authors" — a user role in AEM with permissions to edit templates. Template authors are typically senior content editors or UX leads, not developers. They understand what page structures are needed and configure them visually.</p>
+<p>Developers set up the initial Template Type and the Page Component. Template authors do everything else.</p>
+</div>
+
+<div class="rl">
+  <div class="rll">Real example — a template author's workflow</div>
+  The UX lead at a media company decides they need a new "Video Article" template — like a regular article but with a full-width video embed at the top instead of a static hero image. She opens the template editor, duplicates the existing "Article" template, renames it "Video Article", changes the top structure area to use a Video Player component instead of the Hero Image component, and adjusts the allowed components in the body container. The new template is available to editors within 15 minutes. No developer involved. No code deployed.
+</div>
+</div>
+
+<div class="pg" id="p-tmpl-3layers">
+<span class="badge">Part 2 — templates</span>
+<h1>Template 3 layers — structure, initial content, policies</h1>
+<p class="lede">Every editable template has three distinct layers. Each layer has a different purpose and is controlled by different people. Understanding these three layers is the most important thing about editable templates.</p>
+
+<div class="sec">
+<div class="sec-title">Layer 1 — Structure (the locked parts)</div>
+<p>The Structure layer defines components that are locked on every page made from this template. Editors cannot move, delete, or configure these components. They are typically used for:</p>
+<ul>
+  <li>Global site header (navigation, logo)</li>
+  <li>Global site footer (links, copyright)</li>
+  <li>Mandatory legal disclaimers that cannot be removed</li>
+  <li>The global Layout Container in which editors can add components</li>
+</ul>
+<p>When template authors add components to the Structure layer, they can also lock individual component instances — making the configuration fixed (editors cannot change the dialog values either). Or they can unlock them — editors can reconfigure the component per page but cannot delete or move it.</p>
+<div class="info">Structure components are stored at <code>/conf/mysite/settings/wcm/templates/article-page/structure/</code> in the JCR. They are the same JCR nodes as normal page components — just locked with a special property.</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Layer 2 — Initial content (the pre-populated parts)</div>
+<p>Initial content components appear on every new page created from this template, but editors CAN modify or delete them. They are starting point content, not locked content. Used for:</p>
+<ul>
+  <li>A pre-configured intro text block so editors know where to start</li>
+  <li>A default image placeholder pointing to a generic stock image</li>
+  <li>A standard CTA button pre-configured with the company's primary action</li>
+</ul>
+<p>When an editor creates a page from a template with initial content, the initial components are copied to the new page's <code>jcr:content</code>. From that point, the page's copies are completely independent of the template's initial content. Changing initial content does NOT affect pages already created.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Layer 3 — Policies (the rules)</div>
+<p>Policies control what editors can and cannot do. They are set per-container (per Layout Container) on the template. Each container in the template can have its own policy defining:</p>
+<ul>
+  <li>Which components are allowed in this container</li>
+  <li>Which style options are available for each component</li>
+  <li>Design dialog settings for each component type</li>
+</ul>
+<p>Policies are stored separately from the template itself at <code>/conf/mysite/settings/wcm/policies/</code>. Multiple templates can share the same policy — if you have an "Article Page" and a "News Page" template, both can reference the same "Article Body Content" policy rather than duplicating it.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">In the JCR — how the three layers map to nodes</div>
+<div class="file-tree"><code>/conf/mysite/settings/wcm/templates/article-page/</code>
+├── <span class="ft-hl">structure/</span>        <span class="ft-dim">← Layer 1 — locked components</span>
+│   └── jcr:content/
+│       └── root/     <span class="ft-dim">← the main layout container</span>
+├── <span class="ft-hl">initial/</span>          <span class="ft-dim">← Layer 2 — pre-populated components</span>
+│   └── jcr:content/
+│       └── root/
+├── <span class="ft-hl">policies/</span>         <span class="ft-dim">← Layer 3 — policy references per container</span>
+└── jcr:content       <span class="ft-dim">← template metadata (title, thumbnail, status)</span></div>
+</div>
+</div>
+
+<div class="pg" id="p-create-tmpl">
+<span class="badge">Part 2 — templates</span>
+<h1>Creating a template — exact steps</h1>
+<p class="lede">Here is the complete process to create a new editable template from scratch in the AEM UI.</p>
+
+<div class="sec">
+<div class="sec-title">Step 1 — open the template console</div>
+<div class="url-box"><span class="url-label">URL</span>http://localhost:4502/libs/wcm/core/content/sites/templates.html/conf/mysite</div>
+<p>Or navigate via: Tools (hammer icon) → Sites → Templates → click your site's conf folder (e.g. "mysite").</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 2 — create the template</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Click "Create" button</div>
+    <div class="step-body">Top-right. A wizard opens.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Pick a Template Type</div>
+    <div class="step-body">Select "Empty Page" for a blank start. Or select an existing template type that provides a base structure.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Fill in details</div>
+    <div class="step-body">Template Title: "Article Page". Description: "For all news and editorial articles". Thumbnail: optional image.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Click Create and then Open</div>
+    <div class="step-body">The template editor opens showing a blank canvas.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 3 — build the structure layer</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">You are in Structure mode by default</div>
+    <div class="step-body">The mode indicator in the top bar shows "Structure". Anything you add here will be locked on every page.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Add a Layout Container</div>
+    <div class="step-body">The canvas shows an empty page with just the page component wrapper. Click the "+" to add a Layout Container. This will be the editable area on pages. Configure its policy now (step 5).</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Optionally lock or unlock components</div>
+    <div class="step-body">Components in Structure have a lock icon. Unlocked = editors can configure it but not delete it. Locked = editors cannot touch it at all. The Layout Container should be unlocked so editors can add components inside it.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 4 — configure the Layout Container policy</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Click the Layout Container in the template editor</div>
+    <div class="step-body">The blue toolbar appears. Click the Policy icon (looks like a clipboard or shield).</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Create or select a policy</div>
+    <div class="step-body">Click "Create new policy" or select an existing one from the dropdown. Give it a name like "Article Body Content".</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Select allowed components</div>
+    <div class="step-body">A list of all component groups appears. Expand "My Site - Content" (your group). Check the boxes for components you want to allow: Card, Text, Image, Video, FAQ. Uncheck any you do not want editors to be able to add.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Save the policy</div>
+    <div class="step-body">Click the checkmark. The policy is saved and assigned to this Layout Container. Editors using this template can now only add the components you checked.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Step 5 — enable the template</div>
+<p>A newly created template is in "Draft" state. Editors cannot use a Draft template to create pages. Toggle the status to "Enabled" using the toggle button in the top-right of the template console (visible when the template card is selected). Once Enabled, the template appears in the template picker when editors create new pages.</p>
+</div>
+</div>
+
+<div class="pg" id="p-page-component">
+<span class="badge">Part 2 — templates</span>
+<h1>Page component — the HTML document wrapper</h1>
+<p class="lede">Every page in AEM is rendered by a "Page Component". This component generates the complete HTML document — the doctype, head section, body, header, footer, and global scripts. Every page template references one Page Component.</p>
+
+<div class="sec">
+<div class="sec-title">What the Page Component is responsible for</div>
+<ul>
+  <li>The <code>&lt;!DOCTYPE html&gt;</code> declaration</li>
+  <li>The <code>&lt;html lang="en"&gt;</code> tag with the correct language</li>
+  <li>The entire <code>&lt;head&gt;</code> — title tag, meta tags, SEO tags, canonical URLs, Open Graph tags, clientlib CSS includes</li>
+  <li>The global site header (navigation, logo, search)</li>
+  <li>The main <code>&lt;main&gt;</code> area where the page's own components render</li>
+  <li>The global site footer</li>
+  <li>The clientlib JavaScript includes at the bottom of body</li>
+  <li>The AEM context hub script for personalization</li>
+  <li>Analytics and tag manager scripts</li>
+</ul>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where the Page Component lives</div>
+<div class="file-tree"><span class="ft-hl">ui.apps</span>/src/main/content/jcr_root/apps/mysite/components/page/base/
+├── .content.xml      <span class="ft-dim">← sling:resourceSuperType = core/wcm/components/page/v3/page</span>
+├── base.html         <span class="ft-dim">← the root HTML document template</span>
+├── head.html         <span class="ft-dim">← everything inside &lt;head&gt;</span>
+├── header.html       <span class="ft-dim">← global site header</span>
+├── footer.html       <span class="ft-dim">← global site footer</span>
+└── bodyEnd.html      <span class="ft-dim">← scripts before &lt;/body&gt;</span></div>
+</div>
+
+<div class="sec">
+<div class="sec-title">How a template references the Page Component</div>
+<p>In the template's JCR structure, the template's <code>structure/jcr:content</code> node has a <code>sling:resourceType</code> property pointing to the Page Component. When AEM renders a page, it first runs the Page Component to produce the outer HTML shell, then renders the page's own components inside the <code>&lt;main&gt;</code> area.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">/conf/mysite/settings/wcm/templates/article-page/structure/jcr:content</span></div>
+  <div class="code-body"><span class="attr">sling:resourceType</span> = <span class="str">"mysite/components/page/base"</span>
+<span class="cm">↑ This is the Page Component path in /apps</span>
+<span class="cm">  AEM runs base.html to produce the &lt;html&gt;&lt;head&gt;&lt;body&gt; shell</span></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Extending Core Components' Page component</div>
+<p>Your Page Component should not be built from scratch. It should extend Adobe's Core Components Page component via <code>sling:resourceSuperType</code>. This gives you all the SEO tags, multilingual support, accessibility features, and correct script loading for free. You only override the head.html, header.html, and footer.html to add your site-specific content.</p>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">page/base/.content.xml</span></div>
+  <div class="code-body"><span class="attr">jcr:primaryType</span>=<span class="str">"cq:Component"</span>
+<span class="attr">jcr:title</span>=<span class="str">"My Site Base Page"</span>
+<span class="attr">sling:resourceSuperType</span>=<span class="str">"core/wcm/components/page/v3/page"</span>
+<span class="cm">↑ Inherit everything from Core Components Page.
+  Only override the files that differ for your site.</span></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-lc-what">
+<span class="badge">Part 3 — layout container</span>
+<h1>What is the Layout Container</h1>
+<p class="lede">The Layout Container is the droppable area on a page where editors can drag and drop components. Without a Layout Container, editors cannot add any components to a page. It is the fundamental building block of page construction.</p>
+
+<div class="sec">
+<div class="sec-title">The simplest explanation</div>
+<p>Imagine a page as a blank whiteboard. The Layout Container is the frame you draw on that whiteboard that says "you can draw things inside here". Outside the frame, nothing can be drawn. Inside the frame, you can draw anything that is allowed by the policy attached to that frame.</p>
+<p>A page can have multiple Layout Containers — one for the main content area, one for a sidebar, one for a hero section. Each container can have its own policy allowing different sets of components and different layout rules.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Layout Container vs Parsys</div>
+<div class="compare">
+  <div class="ch">Parsys (paragraph system — legacy)</div>
+  <div class="ch">Layout Container (modern)</div>
+  <div class="cb">Basic droppable area. No responsive grid. No column resizing. Components just stack vertically. Used in AEM before 6.0.</div>
+  <div class="cb">Advanced droppable area with a 12-column responsive grid built in. Editors can resize components, set different layouts per breakpoint. The standard for all modern AEM projects.</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where the Layout Container component comes from</div>
+<p>The Layout Container is actually a Core Component called "Layout Container" or "Responsive Grid". Its <code>sling:resourceType</code> is <code>wcm/foundation/components/responsivegrid</code> (old) or <code>core/wcm/components/container/v1/container</code> (new). When template authors add a Layout Container to a template's structure, they are adding this Core Component. Developers do not need to build it — it is provided by AEM/Core Components.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Nested Layout Containers</div>
+<p>Layout Containers can be nested — a Layout Container inside another Layout Container. This is how you create complex multi-column layouts. For example: a full-width outer container holds a two-column inner container, where one column has a text+image stack and the other has a sidebar component.</p>
+</div>
+</div>
+
+<div class="pg" id="p-parsys">
+<span class="badge">Part 3 — layout container</span>
+<h1>Parsys — the old droppable system</h1>
+<p class="lede">Parsys stands for "paragraph system". It is the original AEM component that creates a droppable area for editors. You will find it in legacy projects from before AEM 6.0. Modern projects use Layout Container instead, but understanding Parsys helps when working with older codebases.</p>
+
+<div class="sec">
+<div class="sec-title">How Parsys worked</div>
+<p>A developer added a Parsys to a page component's JSP/HTL file with the tag <code>&lt;cq:include path="par" resourceType="foundation/components/parsys"/&gt;</code>. This created a droppable zone at the path <code>par</code> (or whatever name was given). Editors could drag and drop components into it.</p>
+<p>The components in a Parsys were stored as child nodes of the Parsys node in the JCR — just like Layout Container stores its child components. The fundamental concept is the same: a container node that holds child component nodes.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">What Parsys lacked</div>
+<ul>
+  <li>No responsive grid — components could not be resized or placed side by side. Everything was always full-width stacked vertically.</li>
+  <li>No policy system — allowed components were managed through Design Mode, a separate and inconvenient mechanism.</li>
+  <li>No template author tooling — structure was hardcoded in JSP files by developers.</li>
+</ul>
+<p>These limitations are exactly what the Layout Container and editable templates solved.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">If you see Parsys in a project</div>
+<p>If you are working on an older AEM project and see <code>foundation/components/parsys</code> or <code>wcm/foundation/components/parsys</code> in the code, this is a legacy Parsys. The project predates AEM 6.2's editable templates and Layout Container. The functionality still works but is considered outdated. New development on such a project should still use editable templates and Layout Container where possible.</p>
+</div>
+</div>
+
+<div class="pg" id="p-12col-grid">
+<span class="badge">Part 3 — layout container</span>
+<h1>The 12-column responsive grid — complete explanation</h1>
+<p class="lede">The Layout Container uses a 12-column grid system identical to Bootstrap's grid. Every component inside a container can be set to span 1 to 12 columns. This is how editors create multi-column layouts without any CSS knowledge.</p>
+
+<div class="sec">
+<div class="sec-title">Why 12 columns?</div>
+<p>12 is divisible by 1, 2, 3, 4, 6, and 12. This means you can create equal columns of almost any count: 2 columns (6+6), 3 columns (4+4+4), 4 columns (3+3+3+3), a 2/3 + 1/3 split (8+4), a 3/4 + 1/4 split (9+3). Almost any layout ratio is achievable without fractional columns.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Column span examples</div>
+<div class="row-list">
+  <div class="row"><div class="rk">12 columns</div><div class="rv">Full width of the container. Default for most components. A full-width hero banner.</div></div>
+  <div class="row"><div class="rk">6 + 6</div><div class="rv">Two equal columns. A text block on the left, an image on the right. Equal weight.</div></div>
+  <div class="row"><div class="rk">8 + 4</div><div class="rv">Main content area (wider) + sidebar (narrower). Classic article layout.</div></div>
+  <div class="row"><div class="rk">4 + 4 + 4</div><div class="rv">Three equal columns. Three feature cards side by side. Product comparison.</div></div>
+  <div class="row"><div class="rk">3 + 3 + 3 + 3</div><div class="rv">Four equal columns. Four team member cards. Four category tiles.</div></div>
+  <div class="row"><div class="rk">9 + 3</div><div class="rv">Wide main content with narrow sidebar. 75%/25% split.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Responsive breakpoints</div>
+<p>Each component can have a different column span at each breakpoint. AEM uses three breakpoints:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">Desktop (default)</div><div class="rv">Above 1024px. Set in Layout mode without selecting a specific breakpoint.</div></div>
+  <div class="row"><div class="rk">Tablet</div><div class="rv">768px – 1024px. Select the tablet icon in Layout mode's breakpoint selector.</div></div>
+  <div class="row"><div class="rk">Mobile</div><div class="rv">Below 768px. Select the mobile icon.</div></div>
+</div>
+<p>A typical pattern: three product cards at 4+4+4 on desktop (three columns side by side), 6+6+12 on tablet (two side by side, one below), 12+12+12 on mobile (all stacked vertically).</p>
+</div>
+
+<div class="rl">
+  <div class="rll">Real example</div>
+  An editor building a credit card comparison page needs four cards side by side on desktop (4+4+4+4 = 3 columns each), two per row on tablet (6+6 = two columns each), and stacked on mobile (12 each). She selects all four card components, switches to Layout mode, drags each to 3 columns on Desktop breakpoint, then selects Tablet and adjusts the first two to 6 columns (the second two automatically drop to the next row at 6 columns each), then selects Mobile and sets each to 12. Done — fully responsive layout with zero CSS.
+</div>
+</div>
+
+<div class="pg" id="p-lc-in-editor">
+<span class="badge">Part 3 — layout container</span>
+<h1>Using the Layout Container as an editor</h1>
+<p class="lede">Here is exactly what an editor does to add components to a Layout Container, resize them, and create multi-column layouts.</p>
+
+<div class="sec">
+<div class="sec-title">Adding components to a Layout Container</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Identify the Layout Container</div>
+    <div class="step-body">In Edit mode, hover over the page. Layout Containers have a faint blue dashed outline. At the bottom of an empty container, you see a "Drag components here" placeholder text.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Drag a component in</div>
+    <div class="step-body">Open the left panel → Components tab. Drag a component from the panel and hover over the container. The container highlights in solid blue when it is a valid drop target. Release to drop.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Add more components</div>
+    <div class="step-body">Drag more components into the same container. They stack below each other by default (each takes 12 columns = full width). You can reorder them by clicking and dragging the component handle (six dots icon in the toolbar).</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Resizing components in Layout mode</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Switch to Layout mode</div>
+    <div class="step-body">Click the mode dropdown in the top toolbar. Select "Layout". The page switches to a grid editing view. All components show a blue resize handle on their right edge.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Click a component to select it</div>
+    <div class="step-body">Click the component. A column counter appears showing the current span (e.g. "12"). The resize handle appears as a blue tab on the right edge.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Drag the resize handle</div>
+    <div class="step-body">Drag the handle left to make the component narrower. Drag right to make it wider. The column count updates live as you drag. Release to set. The next component automatically fills the remaining columns.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Set breakpoint-specific sizes</div>
+    <div class="step-body">In Layout mode, the top bar shows breakpoint icons (desktop, tablet, phone). Click "Tablet" to switch to tablet view. Resize components for tablet. Then click "Phone" and resize for mobile. Each breakpoint is saved independently.</div>
+  </div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-lc-html">
+<span class="badge">Part 3 — layout container</span>
+<h1>How the Layout Container renders in HTML</h1>
+<p class="lede">Understanding the generated HTML helps you write CSS for the components inside the grid. AEM generates specific CSS class names that control the column layout.</p>
+
+<div class="sec">
+<div class="sec-title">The generated HTML structure</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">HTML output from a Layout Container with 2 components</span></div>
+  <div class="code-body"><span class="cm">&lt;!-- The Layout Container itself --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"aem-Grid aem-Grid--12 aem-Grid--default--12"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- Component 1: Text, set to 8 columns on desktop --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"text aem-GridColumn aem-GridColumn--default--8"</span><span class="tag">&gt;</span>
+    <span class="cm">&lt;!-- Text component output --&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- Component 2: Image, set to 4 columns on desktop --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"image aem-GridColumn aem-GridColumn--default--4"</span><span class="tag">&gt;</span>
+    <span class="cm">&lt;!-- Image component output --&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- With responsive breakpoints set (8 desktop, 12 mobile): --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"text aem-GridColumn aem-GridColumn--default--8 aem-GridColumn--phone--12"</span><span class="tag">&gt;</span></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The CSS class naming convention</div>
+<div class="row-list">
+  <div class="row"><div class="rk">aem-Grid</div><div class="rv">Applied to the Layout Container div. Establishes the grid context.</div></div>
+  <div class="row"><div class="rk">aem-Grid--12</div><div class="rv">This grid has 12 columns total.</div></div>
+  <div class="row"><div class="rk">aem-Grid--default--12</div><div class="rv">At the "default" (desktop) breakpoint, 12 columns.</div></div>
+  <div class="row"><div class="rk">aem-GridColumn</div><div class="rv">Applied to each component wrapper div. Marks it as a grid column.</div></div>
+  <div class="row"><div class="rk">aem-GridColumn--default--8</div><div class="rv">At the "default" breakpoint, this column spans 8 of the 12 available columns.</div></div>
+  <div class="row"><div class="rk">aem-GridColumn--phone--12</div><div class="rv">At the "phone" breakpoint, this column spans all 12 columns (full width).</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The CSS that makes it work</div>
+<p>AEM includes a CSS file (<code>grid.css</code>) that defines the float-based or flexbox layout for these class names. This CSS is part of the Core Components clientlib and is included automatically when you use the Layout Container. You do not need to write this CSS yourself.</p>
+</div>
+</div>
+
+<div class="pg" id="p-policy-what">
+<span class="badge">Part 4 — policies</span>
+<h1>What is a policy — from scratch</h1>
+<p class="lede">A policy is a set of rules attached to a component in a template that controls what editors can do with that component on pages. Policies enforce consistency — brand guidelines, technical constraints, and UX standards — without relying on editors to remember the rules.</p>
+
+<div class="sec">
+<div class="sec-title">The security guard analogy</div>
+<p>Think of a policy as a security guard at the door of a Layout Container. The security guard has a guest list. Only people on the guest list are allowed inside. Editors are the guests. Components are the people trying to get in. If a component is not on the policy's allowed list, the editor literally cannot see it in the component browser when they are inside that container.</p>
+<p>This is not a gentle suggestion — it is a hard technical enforcement. Even if an editor knows the component exists, the AEM UI will not let them add it to a container whose policy does not allow it.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Who creates and manages policies</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Template authors</div><div class="rv">Create and edit policies through the template editor in the AEM UI. They are typically senior content people or UX leads who understand what should and should not be allowed on each type of page.</div></div>
+  <div class="row"><div class="rk">Developers</div><div class="rv">Create the components and define what policy-level settings are available (via the <code>_cq_design_dialog</code>). Also set up the initial allowed components list when deploying.</div></div>
+  <div class="row"><div class="rk">Editors</div><div class="rv">Cannot create or edit policies. They work within the constraints the template authors set.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where policies are stored in the JCR</div>
+<div class="file-tree"><code>/conf/mysite/settings/wcm/policies/</code>
+└── mysite/
+    └── components/
+        └── responsivegrid/       <span class="ft-dim">← Layout Container policy</span>
+            └── article-body/     <span class="ft-dim">← policy name</span>
+                jcr:primaryType = nt:unstructured
+                <span class="ft-hl">components</span> = [         <span class="ft-dim">← the allowed components list</span>
+                  "mysite/components/text",
+                  "mysite/components/image",
+                  "mysite/components/card"
+                ]</div>
+</div>
+</div>
+
+<div class="pg" id="p-policy-allowed">
+<span class="badge">Part 4 — policies</span>
+<h1>Allowed components — exactly how it works</h1>
+<p class="lede">The "Allowed Components" section of a policy is the most critical policy setting. It directly controls the component browser — which components editors can see and drag onto a page within a specific container.</p>
+
+<div class="sec">
+<div class="sec-title">How to configure allowed components</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Open the template editor</div>
+    <div class="step-body">Tools → Sites → Templates → click your template → click Open.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Click the Layout Container</div>
+    <div class="step-body">Click once on the Layout Container on the template canvas. The blue toolbar appears.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Click the Policy icon</div>
+    <div class="step-body">Click the clipboard/shield icon in the toolbar. The policy editor opens on the right side of the screen.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Find "Allowed Components"</div>
+    <div class="step-body">The policy editor has an "Allowed Components" section. Component groups are listed with expand/collapse arrows.</div>
+  </div></div>
+  <div class="step"><div class="snum">5</div><div>
+    <div class="step-title">Check the components to allow</div>
+    <div class="step-body">Expand "My Site - Content" (or whatever your component group is named). Check the boxes for each component you want editors to be able to add. Leave unchecked = blocked.</div>
+  </div></div>
+  <div class="step"><div class="snum">6</div><div>
+    <div class="step-title">Save</div>
+    <div class="step-body">Click the checkmark. The policy is saved. Immediately, only the checked components will appear in the component browser for editors using this template.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Component group vs individual component</div>
+<p>In the policy editor you can allow an entire group with one click (checking the group header checkbox) or allow individual components within a group. Best practice: have a small, well-named component group for your custom components, and only enable that group in your policies. Do not enable all of "Adobe Experience Manager" components or editors will be overwhelmed with hundreds of components.</p>
+</div>
+
+<div class="rl">
+  <div class="rll">Real example — why this matters</div>
+  A compliance team at a financial services company wants to ensure that the "Terms and Conditions" footer component can never be removed from a product page and the "Risk Disclaimer" component must always be present. They configure the footer Layout Container in the template Structure layer with these components pre-added and the container locked. They configure the body Layout Container's policy to exclude the "Testimonial" component because regulations prohibit unverified customer quotes on product pages. Editors literally cannot add Testimonials — the UI prevents it, no policy document needed.
+</div>
+</div>
+
+<div class="pg" id="p-policy-style">
+<span class="badge">Part 4 — policies</span>
+<h1>Style System in policies — one component, many looks</h1>
+<p class="lede">The Style System is a feature of policies that lets template authors define named visual styles for a component. Editors pick from these named styles. The correct CSS class is automatically applied. Zero code change needed to add a new visual variant.</p>
+
+<div class="sec">
+<div class="sec-title">The concept</div>
+<p>Without the Style System, if you want a "Card" component to have three visual variants (Standard, Featured, Minimal), you need three separate components, three separate HTL files, and three separate dialog registrations. That is three times the code to maintain.</p>
+<p>With the Style System, you have ONE Card component. A template author creates three named styles in the policy. Each style maps to one or more CSS class names. When an editor picks "Featured", AEM adds the CSS class <code>card--featured</code> to the component's wrapper div. Your CSS file makes it look featured. Same component, same HTL, same dialog — different visual outcome.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Setting up a style in the policy</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Open the component's policy in the template editor</div>
+    <div class="step-body">Click the Card component in the template → click Policy icon.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Find "Styles" section</div>
+    <div class="step-body">In the policy editor, below "Allowed Components", find the "Styles" section.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Add a Style Group</div>
+    <div class="step-body">Click "+ Add Style Group". Name it "Theme". Then add individual styles within the group: click "+ Add Style", enter Name "Standard" leave CSS class empty, add "Featured" with class <code>card--featured</code>, add "Minimal" with class <code>card--minimal</code>.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Add CSS to your clientlib</div>
+    <div class="step-body">In your clientlib CSS: <code>.card--featured { border: 2px solid gold; font-size: 1.2em; }</code> and <code>.card--minimal { background: none; padding: 0; }</code>.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">How editors use styles</div>
+<p>In the page editor, the editor clicks on a Card component. The blue toolbar appears. There is now a paintbrush icon alongside the wrench and delete icons. Clicking the paintbrush opens a style palette showing all named styles. The editor picks "Featured". AEM adds <code>card--featured</code> to the component's wrapper div. The card immediately updates on the page to show the featured styling.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where the selected style is stored in JCR</div>
+<p>When an editor selects a style, AEM stores the style ID as a <code>cq:styleIds</code> property on the component's JCR content node. On render, AEM looks up the style ID in the policy, finds the corresponding CSS class name, and adds it to the component's wrapper element.</p>
+</div>
+</div>
+
+<div class="pg" id="p-policy-design-mode">
+<span class="badge">Part 4 — policies</span>
+<h1>Design mode — the legacy policy system</h1>
+<p class="lede">Design mode is the predecessor to policies. It was the mechanism for controlling allowed components in static templates. You will encounter it in older AEM projects. Understanding it prevents confusion when you see it.</p>
+
+<div class="sec">
+<div class="sec-title">How Design mode worked</div>
+<p>In Design mode, a developer or admin would visit a page with the URL parameter <code>?wcmmode=design</code>. The page would switch to a special mode where each Parsys had a "Configure" icon. Clicking it opened a dialog where allowed components could be checked and unchecked.</p>
+<p>These design settings were stored in the JCR under <code>/etc/designs/mysite/</code> — separate from both the template and the page content. When a new page was created, it inherited the design settings from its parent path.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Problems with Design mode</div>
+<ul>
+  <li>Settings stored in <code>/etc/designs/</code> were not version-controlled and easily lost during migrations</li>
+  <li>Editing required a special URL parameter — not discoverable for non-developers</li>
+  <li>No visual indication of what was allowed when in normal authoring mode</li>
+  <li>Design dialog settings were managed entirely separately from template structure</li>
+</ul>
+</div>
+
+<div class="sec">
+<div class="sec-title">If you encounter Design mode today</div>
+<p>If you see <code>/etc/designs/mysite/</code> in a JCR or a project's source code, you are looking at a pre-AEM 6.2 project using static templates. Design mode still works in current AEM versions for backward compatibility but should not be used for new development. Migrate to editable templates and policies when possible.</p>
+</div>
+</div>
+
+<div class="pg" id="p-policy-create">
+<span class="badge">Part 4 — policies</span>
+<h1>Creating and editing policies — practical guide</h1>
+<p class="lede">Policies are the most common configuration task for template authors. Here is everything about creating, editing, and sharing policies.</p>
+
+<div class="sec">
+<div class="sec-title">Creating a new policy vs reusing one</div>
+<div class="compare">
+  <div class="ch">Create a new policy</div>
+  <div class="ch">Reuse an existing policy</div>
+  <div class="cb">Use when this container needs unique allowed components or styles that no other template needs. Click "+ Create new policy" and give it a descriptive name.</div>
+  <div class="cb">Use when multiple templates should have identical component rules. Select the existing policy from the dropdown. Any changes to that policy affect ALL templates using it simultaneously.</div>
+</div>
+<div class="info">Shared policies are powerful — one policy update can change allowed components across 10 templates instantly. But be careful: changing a shared policy affects every template that uses it, not just the one you are editing.</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Policy for a specific component</div>
+<p>Not just Layout Containers have policies — individual components have them too. When you click the Policy icon on a Text component in the template, you get a policy editor for that component type — it shows the component's <code>_cq_design_dialog</code> fields as a form. For example, the Text Core Component's policy lets you configure which paragraph formats (h1-h6) are available in the RTE toolbar.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Policy inheritance</div>
+<p>Pages inherit their template's policies. A page can override a policy for a specific container by setting its own policy, but this requires the "Allow Page-Level Policy Override" setting to be enabled on the template. This is an advanced feature rarely used outside enterprise multi-brand deployments.</p>
+</div>
+</div>
+
+<div class="pg" id="p-comp-what">
+<span class="badge">Part 5 — components</span>
+<h1>What is an AEM component — complete explanation</h1>
+<p class="lede">An AEM component is a reusable piece of UI that editors drag onto pages. Each component has a specific purpose — a text block, a hero banner, a product card, a testimonial slider. Developers build components. Editors use them to build pages.</p>
+
+<div class="sec">
+<div class="sec-title">The Lego analogy</div>
+<p>Think of AEM components as Lego bricks. Each brick has a specific shape and function. Developers design and manufacture the bricks. Editors are the people who snap the bricks together to build something. The quality of the page depends on both: the developer's well-designed bricks and the editor's creative assembly.</p>
+<p>A page is just a collection of component instances, each with its own data stored in the JCR, all rendered together by AEM to produce the final HTML.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">What makes up a component</div>
+<div class="grid2">
+  <div class="card"><div class="card-hd"><i class="ti ti-file-description" aria-hidden="true"></i>.content.xml</div><p>The component registration. Sets the name shown in the browser, the group, and the parent component. AEM reads this to know the component exists.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-file-code" aria-hidden="true"></i>card.html (HTL)</div><p>The HTML template. Renders the final HTML output using data from the JCR via the Sling Model. Filename must match the component folder name.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-forms" aria-hidden="true"></i>_cq_dialog</div><p>The configure form. Defines the fields editors fill in. Each field saves a JCR property. The most important file for editor experience.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-coffee" aria-hidden="true"></i>Sling Model (Java)</div><p>The data layer. Reads JCR properties and prepares data for the HTL template. The bridge between stored data and rendered output.</p></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Custom components vs Core Components</div>
+<div class="compare">
+  <div class="ch">Core Components (Adobe-provided)</div>
+  <div class="ch">Custom components (you build)</div>
+  <div class="cb">Pre-built, tested, accessible, maintained by Adobe. Text, Image, Teaser, Navigation, List, Carousel, Accordion, Tabs. Download and use directly. Zero development time.</div>
+  <div class="cb">Built for your specific requirements that Core Components do not cover. A financial product card, a store locator, a custom search widget. Built on top of Core Components whenever possible.</div>
+</div>
+<div class="info">The rule of thumb: never build a custom component for something a Core Component already does. Always extend or inherit from Core Components. Build custom only for genuinely unique business requirements.</div>
+</div>
+</div>
+
+<div class="pg" id="p-core-components">
+<span class="badge">Part 5 — components</span>
+<h1>Core Components — all of them explained</h1>
+<p class="lede">Core Components (WCM Core Components) is Adobe's open-source library of production-ready AEM components. They are accessible, performant, localisation-ready, and follow all AEM best practices. The library is at github.com/adobe/aem-core-wcm-components.</p>
+
+<div class="sec">
+<div class="sec-title">Content components</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Text</div><div class="rv">Rich text editor with configurable toolbar. Outputs semantic HTML (p, h1-h6, ul, ol, strong, em, a, table). Supports inline editing directly on the page. The most-used component on any AEM site.</div></div>
+  <div class="row"><div class="rk">Title</div><div class="rv">A heading component (h1-h6). Configurable heading level via dialog or inline editing. The level can be restricted in the policy. Linked titles supported.</div></div>
+  <div class="row"><div class="rk">Image</div><div class="rv">Smart image with auto-generated srcset for responsive loading, lazy loading, WebP conversion, alt text, caption, and DAM asset integration. Simply selecting an image in the dialog generates all size variants automatically.</div></div>
+  <div class="row"><div class="rk">Teaser</div><div class="rv">The most versatile content component — combines image + title + description + CTA button. Used for article teasers, product cards, promotional blocks. Supports image crop ratios, linked components, and multiple style variants.</div></div>
+  <div class="row"><div class="rk">Button</div><div class="rv">A CTA button with configurable text, link, icon, and style. Handles internal and external links. Accessible by default.</div></div>
+  <div class="row"><div class="rk">Download</div><div class="rv">Links to a DAM asset (PDF, Word, etc.) with automatic file size and type display. "Download" or "Open" action configurable.</div></div>
+  <div class="row"><div class="rk">List</div><div class="rv">Auto-generates a list of pages based on query rules: child pages of a path, pages with specific tags, search results, or manually selected pages. Very powerful for article listings, blog indexes, news feeds.</div></div>
+  <div class="row"><div class="rk">Embed</div><div class="rv">Embeds third-party content: YouTube videos, social posts, custom iframes. Handles consent management for GDPR-compliant lazy loading.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Layout and navigation components</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Container</div><div class="rv">A Layout Container component. The standard droppable area. Supports the 12-column grid, background images, and background colors. Nested containers create complex layouts.</div></div>
+  <div class="row"><div class="rk">Carousel</div><div class="rv">Auto-playing slideshow with configurable transition effects, timing, and autoplay controls. Each slide is an editable panel accepting other components.</div></div>
+  <div class="row"><div class="rk">Tabs</div><div class="rv">Tab-based content organisation. Each tab panel is fully editable with its own components. Tab labels are configurable.</div></div>
+  <div class="row"><div class="rk">Accordion</div><div class="rv">Collapsible/expandable content panels. Each panel is fully editable. Useful for FAQ sections, pricing details, product specifications.</div></div>
+  <div class="row"><div class="rk">Navigation</div><div class="rv">Reads the AEM page tree and auto-generates site navigation. Configurable depth levels (1 level = top nav, 2 levels = dropdown). Auto-marks the current page as active. Updates automatically when pages are created or deleted.</div></div>
+  <div class="row"><div class="rk">Breadcrumb</div><div class="rv">Auto-generates breadcrumb navigation based on the page's position in the site hierarchy. No manual configuration needed. Updates automatically when pages are moved.</div></div>
+  <div class="row"><div class="rk">Search</div><div class="rv">Provides a search input that queries AEM's Lucene search index. Configurable search scope (which paths to search), result count, and placeholder text.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Structure components</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Page</div><div class="rv">The page component that generates the HTML document shell. Contains head, body, header, footer structure. Every AEM page is rendered through this component. Extend it for your site's global elements.</div></div>
+  <div class="row"><div class="rk">Experience Fragment</div><div class="rv">Embeds a reusable Experience Fragment (a composed block of components) from <code>/content/experience-fragments/</code>. Update the XF once, all pages referencing it update automatically.</div></div>
+  <div class="row"><div class="rk">Content Fragment</div><div class="rv">Renders a Content Fragment (structured headless content) from the DAM. Bridge between headless content and traditional page rendering.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-comp-browser">
+<span class="badge">Part 5 — components</span>
+<h1>Component browser — how it works</h1>
+<p class="lede">The component browser is the left panel in the page editor that shows all components available to add to the current page. Understanding how components appear in it — and why some don't — is important for both developers and editors.</p>
+
+<div class="sec">
+<div class="sec-title">How components appear in the browser</div>
+<p>For a component to appear in the component browser for a specific Layout Container, ALL of these conditions must be true:</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">The component must be deployed to AEM</div>
+    <div class="step-body">Its folder must exist at <code>/apps/mysite/components/card</code> with a valid <code>.content.xml</code> defining <code>jcr:primaryType = cq:Component</code>.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">The component must have a componentGroup</div>
+    <div class="step-body">The <code>componentGroup</code> property in <code>.content.xml</code> must be set to a non-empty value like <code>"My Site - Content"</code>. Components without a group are hidden from the browser.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">The group must be allowed in the active container's policy</div>
+    <div class="step-body">The Layout Container where the editor is trying to drop must have a policy that includes this component. If the policy does not allow "My Site - Content" group or the specific "Card" component, it does not appear.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">The editor must be inside the container</div>
+    <div class="step-body">The component browser shows only components allowed in the container nearest the current cursor position. If you hover over a container in a nested layout, the browser updates to show that container's allowed components.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Component thumbnail and name</div>
+<p>In the component browser, each component shows its <code>jcr:title</code> (from .content.xml) as its display name and a <code>thumbnail.png</code> image (if present in the component folder) or a default icon. Always set a meaningful <code>jcr:title</code> — "Product Card" is more helpful to editors than "pcard" or "comp1". Provide a thumbnail if the component has a distinctive visual — it helps editors quickly identify what they want.</p>
+</div>
+</div>
+
+<div class="pg" id="p-sling-what">
+<span class="badge">Part 6 — Sling resolution</span>
+<h1>What is Sling — the web request engine</h1>
+<p class="lede">Apache Sling is the web framework inside AEM. Every single HTTP request to AEM goes through Sling. Sling decides which script (which HTL file) renders each request. Understanding Sling is understanding how AEM renders pages.</p>
+
+<div class="sec">
+<div class="sec-title">The core principle — REST-ful content</div>
+<p>Sling is built on one central idea: every URL maps to a JCR node, and the data on that node determines how it is rendered. This is called "Resource-oriented" or "Content-centric" design. There are no controller classes, no servlet mappings, no routing tables. The URL IS the data path.</p>
+<p>In Spring MVC (a typical Java web framework), you would write a controller class with <code>@RequestMapping("/articles/summer-sale")</code> that handles that URL. In Sling, there is no such mapping. The URL <code>/content/mysite/articles/summer-sale</code> directly corresponds to the JCR node at that path. Sling finds the node, reads its <code>sling:resourceType</code>, and renders it with the matching script.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Why this matters for AEM developers</div>
+<p>Because Sling's resolution is based on <code>sling:resourceType</code>, you never configure URL routes. Instead, you:</p>
+<ul>
+  <li>Set <code>sling:resourceType = "mysite/components/card"</code> on a content node</li>
+  <li>Create the rendering script at <code>/apps/mysite/components/card/card.html</code></li>
+  <li>Sling automatically connects the two — whenever a node with that resourceType is requested, Sling runs that script</li>
+</ul>
+<p>This is why the HTL filename must match the component folder name — Sling looks for a script named after the component name (last part of the resourceType path).</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Sling script resolution search order</div>
+<p>When Sling looks for a rendering script for a given resource, it searches in this order:</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Check /apps first</div>
+    <div class="step-body">Sling always looks in <code>/apps/</code> before <code>/libs/</code>. This is how overlays work — your script in <code>/apps/</code> takes precedence over AEM's default in <code>/libs/</code>.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Walk up the sling:resourceSuperType chain</div>
+    <div class="step-body">If the script is not found in your component folder, Sling checks the parent component (defined in <code>sling:resourceSuperType</code>), then the parent's parent, and so on until it finds the script or runs out of parents.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Fall back to /libs</div>
+    <div class="step-body">If no script is found in <code>/apps/</code>, Sling looks in <code>/libs/</code> for the same path. This is how Core Components work — their scripts live in <code>/libs/core/wcm/components/</code>.</div>
+  </div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-url-anatomy">
+<span class="badge">Part 6 — Sling resolution</span>
+<h1>URL anatomy — every part of an AEM URL</h1>
+<p class="lede">AEM URLs have a specific structure. Every part has a meaning. Understanding this structure is essential for writing selectors, configuring servlets, and debugging rendering issues.</p>
+
+<div class="sec">
+<div class="sec-title">The full URL broken down</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">AEM URL anatomy</span></div>
+  <div class="code-body">http://localhost:4502/content/mysite/en/home.article.wide.html/suffix/data
+
+|__________________|
+      host:port
+
+                   |_________________________|
+                             JCR path
+                             (resolves to a JCR node)
+
+                                             |______|
+                                             selector(s)
+                                             (dot-separated, before extension)
+
+                                                    |___|
+                                                    extension
+                                                    (.html, .json, .xml)
+
+                                                         |____________|
+                                                         suffix
+                                                         (after extension, before ?)</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Each part explained</div>
+<div class="row-list">
+  <div class="row"><div class="rk">JCR path</div><div class="rv"><code>/content/mysite/en/home</code> — this is the path to the JCR node. Sling looks up this exact node in the JCR repository. All the content for this page is stored here.</div></div>
+  <div class="row"><div class="rk">Selectors</div><div class="rv"><code>article.wide</code> — dot-separated words between the resource path and the extension. Multiple selectors are listed from left to right. Used to request a specific rendering variant.</div></div>
+  <div class="row"><div class="rk">Extension</div><div class="rv"><code>.html</code> — the rendering format. <code>.html</code> returns HTML. <code>.json</code> returns JSON. <code>.xml</code> returns XML. Sling uses the extension to determine the content type and helps select the script.</div></div>
+  <div class="row"><div class="rk">Suffix</div><div class="rv"><code>/suffix/data</code> — everything after the extension. Used to pass additional path-like data to the rendering script. Not used in most AEM pages but used by some components (e.g. pagination in the List component).</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Accessing URL parts in Java/HTL</div>
+<div class="code-block">
+  <div class="code-top"><span class="code-fname">accessing URL parts in Sling Model</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="kw">@SlingObject</span>
+<span class="kw">private</span> SlingHttpServletRequest request;
+
+<span class="kw">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  String[] selectors = request.getRequestPathInfo().getSelectors();
+  <span class="cm">// ["article", "wide"]</span>
+
+  String extension = request.getRequestPathInfo().getExtension();
+  <span class="cm">// "html"</span>
+
+  String suffix = request.getRequestPathInfo().getSuffix();
+  <span class="cm">// "/suffix/data"</span>
+
+  String resourcePath = request.getRequestPathInfo().getResourcePath();
+  <span class="cm">// "/content/mysite/en/home"</span>
+}</div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-resolution-steps">
+<span class="badge">Part 6 — Sling resolution</span>
+<h1>Sling resolution — step by step</h1>
+<p class="lede">When a request arrives at AEM, here is the exact sequence of steps Sling follows to find the right rendering script. This is the most important algorithm in AEM to understand.</p>
+
+<div class="sec">
+<div class="sec-title">The full resolution sequence</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>
+    <div class="step-title">Request arrives: /content/mysite/en/home.html</div>
+    <div class="step-body">Sling receives the HTTP GET request. It parses the URL into: JCR path = <code>/content/mysite/en/home</code>, no selectors, extension = <code>html</code>.</div>
+  </div></div>
+  <div class="step"><div class="snum">2</div><div>
+    <div class="step-title">Resolve the JCR node</div>
+    <div class="step-body">Sling looks up <code>/content/mysite/en/home</code> in the JCR. It finds a <code>cq:Page</code> node. The actual content is on its child node <code>jcr:content</code> — Sling automatically uses this for rendering.</div>
+  </div></div>
+  <div class="step"><div class="snum">3</div><div>
+    <div class="step-title">Read sling:resourceType</div>
+    <div class="step-body">Sling reads the <code>sling:resourceType</code> property from <code>/content/mysite/en/home/jcr:content</code>. Value: <code>mysite/components/page/base</code>. This is the component that will render this node.</div>
+  </div></div>
+  <div class="step"><div class="snum">4</div><div>
+    <div class="step-title">Determine the script name to look for</div>
+    <div class="step-body">From the resourceType, Sling extracts the component name: <code>base</code> (last part of the path). With extension <code>html</code> and no selectors, it looks for a script named <code>base.html</code> first, then <code>GET.html</code> as fallback.</div>
+  </div></div>
+  <div class="step"><div class="snum">5</div><div>
+    <div class="step-title">Search for the script in /apps first</div>
+    <div class="step-body">Sling checks <code>/apps/mysite/components/page/base/base.html</code>. Found! Uses this script.</div>
+  </div></div>
+  <div class="step"><div class="snum">6</div><div>
+    <div class="step-title">Execute the script</div>
+    <div class="step-body">Sling runs <code>base.html</code> with the JCR node as the current resource. The HTL template can access all properties of the <code>jcr:content</code> node via <code>${properties.xxx}</code> or via a Sling Model.</div>
+  </div></div>
+  <div class="step"><div class="snum">7</div><div>
+    <div class="step-title">Return the HTML response</div>
+    <div class="step-body">The rendered HTML string is returned as the HTTP response body. The browser receives the complete HTML page.</div>
+  </div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Script search priority when a script is NOT found</div>
+<p>If Sling does not find <code>base.html</code> at <code>/apps/mysite/components/page/base/</code>, it continues searching in this priority order:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">1st (most specific)</div><div class="rv">Script matching selector(s) + extension: <code>base.article.wide.html</code></div></div>
+  <div class="row"><div class="rk">2nd</div><div class="rv">Script matching first selector + extension: <code>base.article.html</code></div></div>
+  <div class="row"><div class="rk">3rd</div><div class="rv">Script matching extension only: <code>base.html</code> or <code>GET.html</code></div></div>
+  <div class="row"><div class="rk">4th</div><div class="rv">Check parent via sling:resourceSuperType — repeat the same search on the parent component</div></div>
+  <div class="row"><div class="rk">5th</div><div class="rv">Check /libs at the same path pattern</div></div>
+  <div class="row"><div class="rk">Last resort</div><div class="rv">Default GET servlet — renders the resource as a simple dump of its properties</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-selectors">
+<span class="badge">Part 6 — Sling resolution</span>
+<h1>Selectors — multiple renderings from one JCR node</h1>
+<p class="lede">Selectors are the parts of the URL between the resource path and the extension. They let you request different renderings of the same JCR content without creating separate pages. Same data, different presentation.</p>
+
+<div class="sec">
+<div class="sec-title">How selectors work</div>
+<p>When a URL has a selector, Sling looks for a script whose name matches that selector. For the URL <code>/content/mysite/article.print.html</code>:</p>
+<ul>
+  <li>JCR path: <code>/content/mysite/article</code></li>
+  <li>Selector: <code>print</code></li>
+  <li>Extension: <code>html</code></li>
+  <li>Sling looks for: <code>article.print.html</code> in the component folder first, then <code>article.html</code> as fallback</li>
+</ul>
+<p>So if you create a file <code>/apps/mysite/components/page/article/article.print.html</code>, it will render for all requests with the <code>.print.</code> selector. Requests without the selector still use <code>article.html</code>. Two different renderings of the same page content.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Common use cases for selectors</div>
+<div class="row-list">
+  <div class="row"><div class="rk">.print.html</div><div class="rv">Printer-friendly version of a page — minimal CSS, no navigation, optimised for printing.</div></div>
+  <div class="row"><div class="rk">.amp.html</div><div class="rv">AMP (Accelerated Mobile Pages) version — special stripped HTML for Google's AMP framework.</div></div>
+  <div class="row"><div class="rk">.model.json</div><div class="rv">JSON representation of the component data. Used by AEM's SPA (Single Page Application) framework to deliver content to React/Angular apps.</div></div>
+  <div class="row"><div class="rk">.results.json</div><div class="rv">Search results endpoint. A search page with this selector returns JSON results for AJAX requests instead of a full HTML page.</div></div>
+  <div class="row"><div class="rk">.infinity.json</div><div class="rv">AEM's built-in infinite-depth JSON dump of a JCR node's entire subtree. Useful for debugging.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Multiple selectors</div>
+<p>URLs can have multiple selectors: <code>/content/mysite/article.article.wide.html</code> has two selectors: <code>article</code> and <code>wide</code>. Sling searches for scripts in this order: <code>article.article.wide.html</code> → <code>article.article.html</code> → <code>article.html</code>. Most specific to least specific.</p>
+</div>
+
+<div class="rl">
+  <div class="rll">Real example</div>
+  A newspaper site has article pages at <code>/content/news/articles/story.html</code>. They need: normal web version, printer-friendly version, AMP version for Google, and a JSON API for their mobile app. They create four scripts in the article component: <code>story.html</code> (web), <code>story.print.html</code> (print), <code>story.amp.html</code> (AMP), <code>story.model.json</code> (API). All four renderings serve the same JCR content — the editor writes the article once and all four channels are automatically served.
+</div>
+</div>
+
+<div class="pg" id="p-resourcetype">
+<span class="badge">Part 6 — Sling resolution</span>
+<h1>sling:resourceType — the most important property in AEM</h1>
+<p class="lede">sling:resourceType is a single JCR property that connects content to code. It is the answer to "which component renders this node?". Every content node that needs to produce output must have this property set correctly.</p>
+
+<div class="sec">
+<div class="sec-title">What sling:resourceType does</div>
+<p>When Sling encounters a JCR node during request processing, the first thing it does is read the <code>sling:resourceType</code> property. This property contains a path (relative to <code>/apps</code> or <code>/libs</code>) to the component that should render this node.</p>
+<p>Example: a card component's content node at <code>/content/mysite/en/home/jcr:content/root/card</code> has <code>sling:resourceType = "mysite/components/card"</code>. Sling finds the rendering script at <code>/apps/mysite/components/card/card.html</code> and uses it.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where sling:resourceType is set</div>
+<div class="row-list">
+  <div class="row"><div class="rk">On page's jcr:content</div><div class="rv">Set to the Page Component path. Determines which Page Component wraps this page. Set via the template reference or manually: <code>mysite/components/page/base</code></div></div>
+  <div class="row"><div class="rk">On component content nodes</div><div class="rv">Set automatically by AEM when an editor drags a component onto a page. AEM reads the sling:resourceType from the component's .content.xml and sets it on the new content node.</div></div>
+  <div class="row"><div class="rk">In component .content.xml</div><div class="rv">Not the resourceType of the component — instead this is the component's own identity. The component's folder path IS its resourceType. No explicit property needed here.</div></div>
+  <div class="row"><div class="rk">In dialogs and editConfigs</div><div class="rv">Used to specify which Granite UI component type to use for each field: <code>sling:resourceType = "granite/ui/components/coral/foundation/form/textfield"</code></div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Debugging with sling:resourceType</div>
+<p>The #1 debugging step for any rendering problem: open CRXDE, navigate to the content node of the misbehaving component, click the Properties tab, and check <code>sling:resourceType</code>. Ask:</p>
+<ul>
+  <li>Does the value match the folder path under <code>/apps</code>?</li>
+  <li>Does that folder actually exist in <code>/apps</code>?</li>
+  <li>Does a script with the right name (folder-name.html) exist inside that folder?</li>
+</ul>
+<p>90% of "component not rendering" or "component rendering blank" issues are caused by a wrong or missing <code>sling:resourceType</code>.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">sling:resourceSuperType — component inheritance</div>
+<p>While <code>sling:resourceType</code> says "which component am I?", <code>sling:resourceSuperType</code> says "who is my parent?". Set in the component's <code>.content.xml</code>, it creates an inheritance chain that Sling follows when looking for scripts. If your component does not have <code>card.html</code>, Sling checks the parent, then the grandparent. This is how extending Core Components works.</p>
+
+<div style="margin-top:16px">
+  <button onclick="sendPrompt('Now explain Session 4 — Developing Custom Components, HTL, Dialogs, Edit Config, Design Dialog, Inheritance, Overlay, and Style System — in the same complete beginner style with every detail, all the code, real examples, and exactly what to do where')">Explain Session 4 in the same detail ↗</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+function copyCode(btn){
+  var code=btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var orig=btn.textContent;btn.textContent='copied!';
+    setTimeout(function(){btn.textContent=orig},1500);
+  });
+}
+</script>

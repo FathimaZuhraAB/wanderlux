@@ -1,0 +1,639 @@
+
+<h2 class="sr-only">Step-by-step AEM component creation guide — navigate through every step to see exactly what file to create, where to put it, and what code to write</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);font-size:13px}
+.shell{display:flex;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:640px}
+.steps-nav{width:220px;min-width:220px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;overflow-y:auto}
+.steps-nav::-webkit-scrollbar{width:3px}.steps-nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-top{padding:14px 14px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-top p{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em}
+.nav-top h3{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-top:2px}
+.sitem{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;cursor:pointer;border-left:2px solid transparent;transition:background .1s}
+.sitem:hover{background:var(--color-background-primary)}
+.sitem.done .snum{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+.sitem.active{background:var(--color-background-primary);border-left-color:var(--color-border-info)}
+.sitem.active .snum{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.snum{width:22px;height:22px;border-radius:50%;border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--color-text-tertiary);flex-shrink:0;margin-top:1px;transition:all .2s}
+.slabel{display:flex;flex-direction:column;gap:2px}
+.stitle{font-size:12.5px;color:var(--color-text-secondary);line-height:1.3}
+.sitem.active .stitle{color:var(--color-text-info);font-weight:500}
+.sfile{font-size:10.5px;color:var(--color-text-tertiary);font-family:var(--font-mono)}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.main::-webkit-scrollbar{width:4px}.main::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.step-content{flex:1;padding:22px 26px;display:none}
+.step-content.active{display:block}
+.step-hd{margin-bottom:18px}
+.step-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:8px}
+.step-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;line-height:1.3}
+.step-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:0}
+.loc-box{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 14px;margin:14px 0;display:flex;flex-direction:column;gap:5px}
+.loc-row{display:flex;gap:8px;align-items:baseline}
+.loc-k{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.06em;min-width:60px;flex-shrink:0}
+.loc-v{font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-info);line-height:1.5;word-break:break-all}
+.loc-v.g{color:var(--color-text-success)}
+.sec-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin:16px 0 8px}
+.code-wrap{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;margin-bottom:14px}
+.code-top{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.code-fname{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.code-copy{font-size:11px;color:var(--color-text-info);cursor:pointer;background:none;border:none;padding:2px 6px;border-radius:4px}
+.code-copy:hover{background:var(--color-background-info)}
+.code-body{padding:12px 14px;font-family:var(--font-mono);font-size:11.5px;line-height:1.75;color:var(--color-text-primary);overflow-x:auto;white-space:pre}
+.kw{color:#7c5cbf}.str{color:#2e9e6e}.cm{color:var(--color-text-tertiary)}.attr{color:#d97706}.tag{color:#1d6fa5}.val{color:#7c5cbf}
+.rows{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:120px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.rk{background:var(--color-background-secondary);padding:7px 10px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);word-break:break-all;display:flex;align-items:flex-start;line-height:1.5}
+.rv{padding:7px 11px;font-size:12.5px;color:var(--color-text-primary);line-height:1.55}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.tip{border-left:2px solid var(--color-border-success);padding:9px 12px;border-radius:0;background:var(--color-background-success);color:var(--color-text-success);font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.warn{border-left:2px solid var(--color-border-warning);padding:9px 12px;border-radius:0;background:var(--color-background-warning);color:var(--color-text-warning);font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.ck-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.ck{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;transition:background .1s}
+.ck:hover{background:var(--color-background-secondary)}
+.ck.checked{background:var(--color-background-success);border-color:var(--color-border-success)}
+.ck-box{width:16px;height:16px;border:0.5px solid var(--color-border-secondary);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ck.checked .ck-box{background:var(--color-border-success);border-color:var(--color-border-success);color:white}
+.ck-text{font-size:12.5px;color:var(--color-text-primary);line-height:1.5}
+.ck-text code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.ck.checked .ck-text{color:var(--color-text-success)}
+.nav-btns{padding:16px 26px;border-top:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--color-background-primary)}
+.btn{padding:7px 16px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary)}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.primary{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info);font-weight:500}
+.btn.primary:hover{opacity:.85}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.progress-track{flex:1;height:4px;background:var(--color-background-tertiary);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--color-border-info);border-radius:2px;transition:width .3s}
+.file-tree{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:12px 14px;font-family:var(--font-mono);font-size:11.5px;line-height:1.9;margin-bottom:14px;color:var(--color-text-secondary)}
+.file-tree .hl{color:var(--color-text-info);font-weight:500}
+.file-tree .new{color:var(--color-text-success)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.mini-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.mini-card-t{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.mini-card-v{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.mini-card-v code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-primary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+</style>
+
+<div class="shell">
+<div class="steps-nav">
+  <div class="nav-top"><p>component walkthrough</p><h3>Create a Card component</h3></div>
+  <div id="s0" class="sitem active" onclick="go(0)"><div class="snum">1</div><div class="slabel"><div class="stitle">Understand the goal</div><div class="sfile">overview</div></div></div>
+  <div id="s1" class="sitem" onclick="go(1)"><div class="snum">2</div><div class="slabel"><div class="stitle">Create the folder</div><div class="sfile">/components/card/</div></div></div>
+  <div id="s2" class="sitem" onclick="go(2)"><div class="snum">3</div><div class="slabel"><div class="stitle">Write .content.xml</div><div class="sfile">.content.xml</div></div></div>
+  <div id="s3" class="sitem" onclick="go(3)"><div class="snum">4</div><div class="slabel"><div class="stitle">Create the dialog</div><div class="sfile">_cq_dialog/.content.xml</div></div></div>
+  <div id="s4" class="sitem" onclick="go(4)"><div class="snum">5</div><div class="slabel"><div class="stitle">Write the Sling Model</div><div class="sfile">CardModel.java</div></div></div>
+  <div id="s5" class="sitem" onclick="go(5)"><div class="snum">6</div><div class="slabel"><div class="stitle">Write the HTL template</div><div class="sfile">card.html</div></div></div>
+  <div id="s6" class="sitem" onclick="go(6)"><div class="snum">7</div><div class="slabel"><div class="stitle">Add CSS (ClientLib)</div><div class="sfile">clientlibs/card/</div></div></div>
+  <div id="s7" class="sitem" onclick="go(7)"><div class="snum">8</div><div class="slabel"><div class="stitle">Deploy to AEM</div><div class="sfile">mvn command</div></div></div>
+  <div id="s8" class="sitem" onclick="go(8)"><div class="snum">9</div><div class="slabel"><div class="stitle">Add to a template</div><div class="sfile">AEM UI — policy</div></div></div>
+  <div id="s9" class="sitem" onclick="go(9)"><div class="snum">10</div><div class="slabel"><div class="stitle">Use it on a page</div><div class="sfile">AEM Sites editor</div></div></div>
+  <div id="s10" class="sitem" onclick="go(10)"><div class="snum">11</div><div class="slabel"><div class="stitle">Verify everything</div><div class="sfile">checklist</div></div></div>
+</div>
+
+<div class="main">
+
+<div id="p0" class="step-content active">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-map" aria-hidden="true" style="font-size:13px"></i>Overview</div>
+  <div class="step-title">What you are about to build</div>
+  <div class="step-desc">A "Card" component — a reusable UI block with a title, description, and a button. Editors configure it by filling in a dialog. We will create every file from scratch.</div>
+</div>
+<div class="sec-lbl">The 5 things every AEM component needs</div>
+<div class="rows">
+  <div class="row"><div class="rk">Component folder</div><div class="rv">A folder at <code>/apps/mysite/components/card/</code>. The folder name = the component name.</div></div>
+  <div class="row"><div class="rk">.content.xml</div><div class="rv">Defines the component — its title, group, and parent. AEM reads this to register it.</div></div>
+  <div class="row"><div class="rk">Dialog XML</div><div class="rv">The form editors fill in — title, description, link. Saved as JCR properties on the content node.</div></div>
+  <div class="row"><div class="rk">Sling Model</div><div class="rv">A Java class that reads those JCR properties and exposes them as getter methods for the template.</div></div>
+  <div class="row"><div class="rk">HTL file</div><div class="rv">The HTML template that calls the model and renders the output on the page.</div></div>
+</div>
+<div class="sec-lbl">How data flows through the component</div>
+<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+  <div style="background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);padding:5px 11px;font-size:12px;color:var(--color-text-info)">Editor fills dialog</div>
+  <span style="color:var(--color-text-tertiary)">→</span>
+  <div style="background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 11px;font-size:12px">Saves to JCR node</div>
+  <span style="color:var(--color-text-tertiary)">→</span>
+  <div style="background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 11px;font-size:12px">Sling Model reads JCR</div>
+  <span style="color:var(--color-text-tertiary)">→</span>
+  <div style="background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:5px 11px;font-size:12px;color:var(--color-text-success)">HTL renders HTML</div>
+</div>
+<div class="sec-lbl">Final file structure you will create</div>
+<div class="file-tree">
+ui.apps/src/main/content/jcr_root/apps/mysite/
+└── components/
+    └── <span class="hl">card/</span>
+        ├── <span class="new">.content.xml</span>          ← component definition
+        ├── <span class="new">card.html</span>             ← HTL rendering template
+        └── _cq_dialog/
+            └── <span class="new">.content.xml</span>      ← author dialog
+
+core/src/main/java/com/mysite/core/
+├── models/
+│   └── <span class="new">CardModel.java</span>        ← interface
+└── models/impl/
+    └── <span class="new">CardModelImpl.java</span>    ← implementation</div>
+<div class="tip">We are building a real working example. Every line of code shown is production-ready and will work in your AEM instance.</div>
+</div>
+
+<div id="p1" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-folder-plus" aria-hidden="true" style="font-size:13px"></i>Step 1 of 10</div>
+  <div class="step-title">Create the component folder</div>
+  <div class="step-desc">The component folder is where all component files live. Create it in your Maven project — NOT directly in AEM. Maven deploys it to AEM.</div>
+</div>
+<div class="sec-lbl">Where to create it — in your VS Code project</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">navigate to</span><span class="loc-v">ui.apps/src/main/content/jcr_root/apps/mysite/components/</span></div>
+  <div class="loc-row"><span class="loc-k">create folder</span><span class="loc-v">card</span></div>
+  <div class="loc-row"><span class="loc-k">full path</span><span class="loc-v">ui.apps/src/main/content/jcr_root/apps/mysite/components/card/</span></div>
+</div>
+<div class="sec-lbl">How to create it</div>
+<div class="rows">
+  <div class="row"><div class="rk">In VS Code</div><div class="rv">Right-click the <code>components/</code> folder in the Explorer → New Folder → type <code>card</code></div></div>
+  <div class="row"><div class="rk">In terminal</div><div class="rv"><code>mkdir ui.apps/src/main/content/jcr_root/apps/mysite/components/card</code></div></div>
+</div>
+<div class="sec-lbl">Also create the subfolders for the dialog</div>
+<div class="rows">
+  <div class="row"><div class="rk">Dialog folder</div><div class="rv">Inside <code>card/</code>, create a subfolder named exactly <code>_cq_dialog</code></div></div>
+</div>
+<div class="file-tree">
+components/
+└── <span class="hl">card/</span>                ← create this
+    └── <span class="new">_cq_dialog/</span>      ← create this inside card/</div>
+<div class="warn">The folder name <code>card</code> is the component identifier. The HTL file inside MUST be named <code>card.html</code> — they must match exactly.</div>
+</div>
+
+<div id="p2" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-file-description" aria-hidden="true" style="font-size:13px"></i>Step 2 of 10</div>
+  <div class="step-title">Create .content.xml — the component definition</div>
+  <div class="step-desc">This file tells AEM what this component is — its display name, which browser group it belongs to, and which parent component it extends. Create it directly inside the <code>card/</code> folder.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">file</span><span class="loc-v">ui.apps/…/components/card/.content.xml</span></div>
+  <div class="loc-row"><span class="loc-k">in AEM JCR</span><span class="loc-v">This file IS the node at /apps/mysite/components/card</span></div>
+</div>
+<div class="sec-lbl">Exact file content — copy this exactly</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">.content.xml</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span> <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+           <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+           <span class="attr">xmlns:sling</span>=<span class="str">"http://sling.apache.org/jcr/sling/1.0"</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"cq:Component"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"Card"</span>
+  <span class="attr">jcr:description</span>=<span class="str">"A card with title, description, and CTA button"</span>
+  <span class="attr">componentGroup</span>=<span class="str">"My Site - Content"</span>
+  <span class="attr">sling:resourceSuperType</span>=<span class="str">"core/wcm/components/teaser/v2/teaser"</span>
+/<span class="tag">&gt;</span></div>
+</div>
+<div class="sec-lbl">What every line does</div>
+<div class="rows">
+  <div class="row"><div class="rk">jcr:primaryType</div><div class="rv">Always <code>cq:Component</code> — tells AEM this node is a component definition. Required.</div></div>
+  <div class="row"><div class="rk">jcr:title</div><div class="rv"><code>"Card"</code> — name shown in the component browser panel when editors drag components. Make it descriptive.</div></div>
+  <div class="row"><div class="rk">jcr:description</div><div class="rv">Tooltip shown when hovering the component in the browser. Helps editors understand what it does.</div></div>
+  <div class="row"><div class="rk">componentGroup</div><div class="rv"><code>"My Site - Content"</code> — which tab/group in the component browser. All your custom components should share the same group name.</div></div>
+  <div class="row"><div class="rk">sling:resourceSuperType</div><div class="rv">The parent component we inherit from. We extend Core Components' Teaser so we get image handling, policies, and accessibility for free. Can be removed if building from scratch.</div></div>
+</div>
+<div class="tip">After deployment, look for "My Site - Content" as a group in the component browser in the page editor. Your "Card" component will appear there.</div>
+</div>
+
+<div id="p3" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-layout-bottombar" aria-hidden="true" style="font-size:13px"></i>Step 3 of 10</div>
+  <div class="step-title">Create the dialog — the author form</div>
+  <div class="step-desc">The dialog is what pops up when an editor clicks the wrench (Configure) on your component. It is a single XML file inside the <code>_cq_dialog</code> subfolder. Each field saves a JCR property.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">file</span><span class="loc-v">ui.apps/…/components/card/_cq_dialog/.content.xml</span></div>
+  <div class="loc-row"><span class="loc-k">this creates</span><span class="loc-v">JCR node at /apps/mysite/components/card/_cq_dialog</span></div>
+</div>
+<div class="sec-lbl">Exact file content</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">_cq_dialog/.content.xml</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span> <span class="attr">xmlns:sling</span>=<span class="str">"http://sling.apache.org/jcr/sling/1.0"</span>
+           <span class="attr">xmlns:granite</span>=<span class="str">"http://www.adobe.com/jcr/granite/1.0"</span>
+           <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+           <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+           <span class="attr">xmlns:nt</span>=<span class="str">"http://www.jcp.org/jcr/nt/1.0"</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"cq/gui/components/authoring/dialog"</span>
+  <span class="attr">jcr:title</span>=<span class="str">"Card Settings"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;content</span>
+    <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+    <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;items</span> <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span><span class="tag">&gt;</span>
+
+      <span class="cm">&lt;!-- Field 1: Title --&gt;</span>
+      <span class="tag">&lt;title</span>
+        <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Card Title"</span>
+        <span class="attr">fieldDescription</span>=<span class="str">"The main heading of the card"</span>
+        <span class="attr">name</span>=<span class="str">"./title"</span>
+        <span class="attr">required</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- Field 2: Description --&gt;</span>
+      <span class="tag">&lt;description</span>
+        <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textarea"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Description"</span>
+        <span class="attr">fieldDescription</span>=<span class="str">"Supporting text below the title"</span>
+        <span class="attr">name</span>=<span class="str">"./description"</span>
+        <span class="attr">rows</span>=<span class="str">"3"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- Field 3: CTA Link --&gt;</span>
+      <span class="tag">&lt;ctaLink</span>
+        <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/pathfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Button Link"</span>
+        <span class="attr">fieldDescription</span>=<span class="str">"Page or URL for the button"</span>
+        <span class="attr">name</span>=<span class="str">"./ctaLink"</span><span class="tag">/&gt;</span>
+
+      <span class="cm">&lt;!-- Field 4: CTA Text --&gt;</span>
+      <span class="tag">&lt;ctaText</span>
+        <span class="attr">jcr:primaryType</span>=<span class="str">"nt:unstructured"</span>
+        <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/components/coral/foundation/form/textfield"</span>
+        <span class="attr">fieldLabel</span>=<span class="str">"Button Text"</span>
+        <span class="attr">name</span>=<span class="str">"./ctaText"</span><span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;/items&gt;</span>
+  <span class="tag">&lt;/content&gt;</span>
+<span class="tag">&lt;/jcr:root&gt;</span></div>
+</div>
+<div class="sec-lbl">The critical rule — the <code>name</code> property</div>
+<div class="rows">
+  <div class="row"><div class="rk">name="./title"</div><div class="rv">The <code>./</code> prefix means "relative to this component's content node". After saving, the value appears as a <code>title</code> property at <code>/content/mysite/.../jcr:content/root/card</code></div></div>
+  <div class="row"><div class="rk">node name vs name</div><div class="rv">The XML node name (<code>&lt;title</code>) is just for organization. The <code>name</code> attribute is what actually determines the JCR property name.</div></div>
+</div>
+</div>
+
+<div id="p4" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-file-type-java" aria-hidden="true" style="font-size:13px"></i>Step 4 of 10</div>
+  <div class="step-title">Write the Sling Model — the Java data layer</div>
+  <div class="step-desc">The Sling Model reads the JCR properties that the editor set in the dialog, and exposes them as Java getter methods for the HTL template. Create TWO files — an interface and an implementation.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">interface</span><span class="loc-v">core/src/main/java/com/mysite/core/models/CardModel.java</span></div>
+  <div class="loc-row"><span class="loc-k">impl</span><span class="loc-v">core/src/main/java/com/mysite/core/models/impl/CardModelImpl.java</span></div>
+</div>
+<div class="sec-lbl">File 1 — CardModel.java (the interface)</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">CardModel.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="kw">package</span> com.mysite.core.models;
+
+<span class="kw">public interface</span> CardModel {
+    String getTitle();
+    String getDescription();
+    String getCtaLink();
+    String getCtaText();
+    <span class="kw">boolean</span> isHasLink();
+}</div>
+</div>
+<div class="sec-lbl">File 2 — CardModelImpl.java (the implementation)</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">CardModelImpl.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="kw">package</span> com.mysite.core.models.impl;
+
+<span class="kw">import</span> com.mysite.core.models.CardModel;
+<span class="kw">import</span> org.apache.sling.api.resource.Resource;
+<span class="kw">import</span> org.apache.sling.models.annotations.Model;
+<span class="kw">import</span> org.apache.sling.models.annotations.Default;
+<span class="kw">import</span> org.apache.sling.models.annotations.DefaultInjectionStrategy;
+<span class="kw">import</span> org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+<span class="kw">import</span> javax.annotation.PostConstruct;
+<span class="kw">import</span> org.apache.commons.lang3.StringUtils;
+
+<span class="attr">@Model</span>(
+    adaptables = Resource.<span class="kw">class</span>,
+    adapters   = { CardModel.<span class="kw">class</span> },
+    resourceType = <span class="str">"mysite/components/card"</span>,
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+<span class="kw">public class</span> CardModelImpl <span class="kw">implements</span> CardModel {
+
+    <span class="cm">// These read the JCR properties saved by the dialog</span>
+    <span class="attr">@ValueMapValue</span>
+    <span class="kw">private</span> String title;
+
+    <span class="attr">@ValueMapValue</span>
+    <span class="kw">private</span> String description;
+
+    <span class="attr">@ValueMapValue</span>
+    <span class="kw">private</span> String ctaLink;
+
+    <span class="attr">@ValueMapValue</span>
+    <span class="attr">@Default</span>(values = <span class="str">"Read More"</span>)
+    <span class="kw">private</span> String ctaText;
+
+    <span class="cm">// Computed fields — set in @PostConstruct</span>
+    <span class="kw">private boolean</span> hasLink;
+
+    <span class="attr">@PostConstruct</span>
+    <span class="kw">protected void</span> init() {
+        <span class="cm">// Runs after all @ValueMapValue fields are injected</span>
+        hasLink = StringUtils.isNotBlank(ctaLink);
+    }
+
+    <span class="attr">@Override</span>
+    <span class="kw">public</span> String getTitle()       { <span class="kw">return</span> title; }
+
+    <span class="attr">@Override</span>
+    <span class="kw">public</span> String getDescription() { <span class="kw">return</span> description; }
+
+    <span class="attr">@Override</span>
+    <span class="kw">public</span> String getCtaLink()     { <span class="kw">return</span> ctaLink; }
+
+    <span class="attr">@Override</span>
+    <span class="kw">public</span> String getCtaText()     { <span class="kw">return</span> ctaText; }
+
+    <span class="attr">@Override</span>
+    <span class="kw">public boolean</span> isHasLink()    { <span class="kw">return</span> hasLink; }
+}</div>
+</div>
+<div class="sec-lbl">What each annotation does</div>
+<div class="rows">
+  <div class="row"><div class="rk">@Model</div><div class="rv"><code>resourceType</code> must exactly match the component's folder path relative to /apps. This links the model to the component.</div></div>
+  <div class="row"><div class="rk">@ValueMapValue</div><div class="rv">Reads the JCR property with the same name as the field. <code>private String title</code> reads the <code>title</code> property saved by the dialog's <code>name="./title"</code> field.</div></div>
+  <div class="row"><div class="rk">@Default</div><div class="rv">Fallback value if the editor left the field blank. <code>ctaText</code> defaults to "Read More" if empty.</div></div>
+  <div class="row"><div class="rk">@PostConstruct</div><div class="rv">Runs after all injections. Use it for any computed logic — in this case, checking if ctaLink is not blank.</div></div>
+</div>
+<div class="sec-lbl">Also add this to core/pom.xml if not already present</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">core/pom.xml — bnd plugin config</span></div>
+  <div class="code-body"><span class="cm">&lt;!-- Inside the bnd-maven-plugin configuration: --&gt;</span>
+<span class="tag">&lt;bnd&gt;</span>
+  Sling-Model-Packages: com.mysite.core.models
+<span class="tag">&lt;/bnd&gt;</span></div>
+</div>
+<div class="warn">Without <code>Sling-Model-Packages</code> in the bnd config, AEM will never scan your models package and <code>data-sly-use</code> will return null silently.</div>
+</div>
+
+<div id="p5" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-file-code" aria-hidden="true" style="font-size:13px"></i>Step 5 of 10</div>
+  <div class="step-title">Write the HTL template — card.html</div>
+  <div class="step-desc">The HTL file produces the HTML output. It uses <code>data-sly-use</code> to load the Sling Model, then outputs its values. The filename MUST be <code>card.html</code> — matching the component folder name.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">file</span><span class="loc-v">ui.apps/…/components/card/card.html</span></div>
+  <div class="loc-row"><span class="loc-k">naming rule</span><span class="loc-v">MUST match the folder name — folder is "card" so file must be "card.html"</span></div>
+</div>
+<div class="sec-lbl">Exact file content</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">card.html</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm">&lt;!-- Load the Sling Model. "model" is now your Java object. --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.CardModel"</span>
+     <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- Card title — only render if title is not null --&gt;</span>
+  <span class="tag">&lt;h3</span> <span class="attr">class</span>=<span class="str">"card__title"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.title}"</span><span class="tag">&gt;</span>
+    ${model.title}
+  <span class="tag">&lt;/h3&gt;</span>
+
+  <span class="cm">&lt;!-- Description — only render if description is not null --&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"card__description"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${model.description}"</span><span class="tag">&gt;</span>
+    ${model.description}
+  <span class="tag">&lt;/p&gt;</span>
+
+  <span class="cm">&lt;!-- CTA Button — only render if a link was set --&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">class</span>=<span class="str">"card__cta"</span>
+     <span class="attr">href</span>=<span class="str">"${model.ctaLink @ context='uri'}"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${model.hasLink}"</span><span class="tag">&gt;</span>
+    ${model.ctaText}
+  <span class="tag">&lt;/a&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+<div class="sec-lbl">Key HTL concepts used here</div>
+<div class="rows">
+  <div class="row"><div class="rk">data-sly-use.model</div><div class="rv">Loads <code>CardModel</code> and binds it to the variable <code>model</code>. Every <code>${model.xxx}</code> call goes to the Java getter <code>getXxx()</code>.</div></div>
+  <div class="row"><div class="rk">${model.title}</div><div class="rv">Calls <code>getTitle()</code> in Java and outputs the result. Automatically HTML-escaped for security — no XSS risk.</div></div>
+  <div class="row"><div class="rk">data-sly-test</div><div class="rv">Hides the element entirely if the expression is falsy (null, empty, false). The element is not even in the DOM output.</div></div>
+  <div class="row"><div class="rk">@ context='uri'</div><div class="rv">Tells HTL this value is a URL — apply URL encoding instead of HTML encoding. Always use this on href and src attributes.</div></div>
+  <div class="row"><div class="rk">model.hasLink</div><div class="rv">Calls <code>isHasLink()</code> in Java (boolean getters use "is" prefix). HTL removes the "is" automatically.</div></div>
+</div>
+</div>
+
+<div id="p6" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-paint" aria-hidden="true" style="font-size:13px"></i>Step 6 of 10</div>
+  <div class="step-title">Add CSS with a ClientLib</div>
+  <div class="step-desc">AEM manages CSS through ClientLibs — special JCR folders that bundle and serve CSS/JS. Create one for your component's styles.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">folder</span><span class="loc-v">ui.apps/…/apps/mysite/clientlibs/card/</span></div>
+</div>
+<div class="sec-lbl">Files to create inside clientlibs/card/</div>
+<div class="file-tree">
+clientlibs/
+└── <span class="hl">card/</span>
+    ├── <span class="new">.content.xml</span>    ← defines this as a ClientLib node
+    ├── <span class="new">css.txt</span>         ← list of CSS files to include
+    └── css/
+        └── <span class="new">card.css</span>    ← your actual styles</div>
+<div class="sec-lbl">.content.xml for the ClientLib</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">clientlibs/card/.content.xml</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body"><span class="cm">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;jcr:root</span> <span class="attr">xmlns:cq</span>=<span class="str">"http://www.day.com/jcr/cq/1.0"</span>
+           <span class="attr">xmlns:jcr</span>=<span class="str">"http://www.jcp.org/jcr/1.0"</span>
+  <span class="attr">jcr:primaryType</span>=<span class="str">"cq:ClientLibraryFolder"</span>
+  <span class="attr">categories</span>=<span class="str">"[mysite.card]"</span>
+  <span class="attr">allowProxy</span>=<span class="str">"{Boolean}true"</span><span class="tag">/&gt;</span></div>
+</div>
+<div class="sec-lbl">css.txt — the file list</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">css.txt</span></div>
+  <div class="code-body">#base=css
+card.css</div>
+</div>
+<div class="sec-lbl">card.css — the actual styles</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">css/card.css</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+  <div class="code-body">.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  background: #ffffff;
+}
+
+.card__title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card__description {
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.card__cta {
+  display: inline-block;
+  padding: 8px 20px;
+  background: #0066cc;
+  color: #ffffff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+}</div>
+</div>
+<div class="sec-lbl">Include this ClientLib in your page component</div>
+<div class="rows">
+  <div class="row"><div class="rk">Where to add</div><div class="rv">Open <code>/apps/mysite/components/page/base/head.html</code> and add the clientlib include after the existing ones.</div></div>
+  <div class="row"><div class="rk">HTL include code</div><div class="rv"><code>data-sly-call="${clientlib.css @ categories='mysite.card'}"</code></div></div>
+</div>
+</div>
+
+<div id="p7" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-upload" aria-hidden="true" style="font-size:13px"></i>Step 7 of 10</div>
+  <div class="step-title">Deploy to AEM</div>
+  <div class="step-desc">Now that all files are created, deploy everything to your local AEM instance with one Maven command. AEM must be running on port 4502.</div>
+</div>
+<div class="sec-lbl">Run this command from the project root</div>
+<div class="code-wrap">
+  <div class="code-top"><span class="code-fname">terminal — project root folder</span></div>
+  <div class="code-body"><span class="cm"># Deploy everything (first time or when unsure)</span>
+mvn clean install -PautoInstallPackage
+
+<span class="cm"># Or if you only changed Java files (faster)</span>
+mvn clean install -PautoInstallBundle -pl core
+
+<span class="cm"># Or if you only changed HTL/dialog/XML files (faster)</span>
+mvn clean install -PautoInstallPackage -pl ui.apps</div>
+</div>
+<div class="sec-lbl">Verify the deployment worked — check these 3 things</div>
+<div class="rows">
+  <div class="row"><div class="rk">1. Bundle active?</div><div class="rv">Go to <code>http://localhost:4502/system/console/bundles</code> → search <code>mysite.core</code> → must say <code>Active</code>. If it says "Installed", your Java has a broken import.</div></div>
+  <div class="row"><div class="rk">2. Component in JCR?</div><div class="rv">Go to CRXDE at <code>http://localhost:4502/crx/de</code> → navigate to <code>/apps/mysite/components/card</code> → you should see the folder and files.</div></div>
+  <div class="row"><div class="rk">3. Model registered?</div><div class="rv">Go to <code>/system/console/services</code> → search <code>CardModel</code> → it should appear in the list.</div></div>
+</div>
+<div class="sec-lbl">Common errors and fixes</div>
+<div class="rows">
+  <div class="row"><div class="rk">BUILD FAILURE</div><div class="rv">Maven compilation error — read the error message. Usually a Java syntax error or missing import.</div></div>
+  <div class="row"><div class="rk">Bundle "Installed"</div><div class="rv">A Java package import in your code doesn't exist. Check the Import-Package section in <code>/system/console/bundles</code> → click your bundle → look for "Missing Dependencies".</div></div>
+  <div class="row"><div class="rk">Component missing in AEM</div><div class="rv">ui.apps didn't deploy. Run <code>mvn clean install -PautoInstallPackage -pl ui.apps</code> separately.</div></div>
+</div>
+</div>
+
+<div id="p8" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-shield" aria-hidden="true" style="font-size:13px"></i>Step 8 of 10</div>
+  <div class="step-title">Allow the component on a template</div>
+  <div class="step-desc">Before editors can drag the Card component onto a page, a template author must add it to the template's allowed components policy. This is done entirely in the AEM UI — no code needed.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">open this URL</span><span class="loc-v g">http://localhost:4502/libs/wcm/core/content/sites/templates.html/conf/mysite</span></div>
+</div>
+<div class="sec-lbl">Steps in AEM UI</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Open the Templates console. Find your template (e.g. "Article Page") → click it to open the template editor.</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Click on the Layout Container in the template → the blue toolbar appears. Click the Policy icon (looks like a shield/clipboard).</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">In the policy editor → scroll to "Allowed Components". Find your group <code>"My Site - Content"</code> → expand it → check the box next to <code>Card</code>.</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Click the checkmark to save. The Card component is now available on all pages using this template.</div></div>
+</div>
+<div class="tip">If you do not see "My Site - Content" in the allowed components list, your <code>componentGroup</code> in .content.xml does not match. Check it — it is case-sensitive.</div>
+</div>
+
+<div id="p9" class="step-content">
+<div class="step-hd">
+  <div class="step-badge"><i class="ti ti-layout" aria-hidden="true" style="font-size:13px"></i>Step 9 of 10</div>
+  <div class="step-title">Use the component on a page</div>
+  <div class="step-desc">Open a page in the AEM editor, drag your Card component onto it, fill in the dialog, and see it render. This is the full end-to-end test.</div>
+</div>
+<div class="loc-box">
+  <div class="loc-row"><span class="loc-k">open editor</span><span class="loc-v g">http://localhost:4502/editor.html/content/mysite/en/test-page.html</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Open the page editor. Click the sidebar toggle (left panel icon). The component browser opens on the left.</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Find <code>My Site - Content</code> group → find <code>Card</code> → drag it into the Layout Container on the page.</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Click the component → click the wrench icon (Configure). Your dialog opens with the Title, Description, Button Link, and Button Text fields.</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Fill in the fields. Click the checkmark to save. The component renders on the page with your content.</div></div>
+  <div style="display:flex;gap:9px;align-items:flex-start"><div style="width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">5</div><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.55">Go to CRXDE → navigate to <code>/content/mysite/en/test-page/jcr:content/root/card</code> → click Properties → see your dialog values saved there as JCR properties.</div></div>
+</div>
+<div class="tip">Seeing the values in CRXDE is the proof that the full cycle works: editor → dialog → JCR → Sling Model → HTL → rendered HTML.</div>
+</div>
+
+<div id="p10" class="step-content">
+<div class="step-hd">
+  <div class="step-badge g"><i class="ti ti-circle-check" aria-hidden="true" style="font-size:13px"></i>Step 10 of 10</div>
+  <div class="step-title">Final checklist — verify everything works</div>
+  <div class="step-desc">Go through each item. Click to mark it done. If anything is failing, click the question to see what to check.</div>
+</div>
+<div class="ck-list" id="checklist">
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text"><code>card/</code> folder exists at <code>ui.apps/…/apps/mysite/components/card/</code></div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text"><code>.content.xml</code> has <code>jcr:primaryType="cq:Component"</code> and <code>componentGroup</code> set</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text"><code>_cq_dialog/.content.xml</code> has fields with <code>name="./title"</code> etc. (all starting with <code>./</code>)</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text"><code>CardModelImpl.java</code> has <code>@Model(resourceType="mysite/components/card")</code> matching the component path</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text"><code>Sling-Model-Packages: com.mysite.core.models</code> is in the bnd plugin config in core/pom.xml</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text"><code>card.html</code> filename matches the component folder name exactly</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">Maven build succeeded — no BUILD FAILURE in terminal</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">Bundle shows <code>Active</code> at <code>/system/console/bundles</code></div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">Component folder visible in CRXDE at <code>/apps/mysite/components/card</code></div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">Card appears in the component browser under "My Site - Content" group in the page editor</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">Dialog opens when clicking Configure — all 4 fields appear</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">After saving dialog, values visible as JCR properties in CRXDE on the component content node</div></div>
+  <div class="ck" onclick="check(this)"><div class="ck-box"><i class="ti ti-check" aria-hidden="true" style="font-size:11px;display:none"></i></div><div class="ck-text">Card renders on the page with correct title, description, and button</div></div>
+</div>
+<div id="done-msg" style="display:none" class="tip">All checks complete. Your Card component is fully working end-to-end.</div>
+<button onclick="sendPrompt('What should I do next after creating a component in AEM? What are common things to add like edit config, design dialog, or style system?')" style="margin-top:4px">What to add next ↗</button>
+</div>
+
+<div class="nav-btns">
+  <button class="btn" id="btn-prev" onclick="prev()" disabled>← previous</button>
+  <div class="progress-track"><div class="progress-fill" id="prog" style="width:9%"></div></div>
+  <span style="font-size:12px;color:var(--color-text-tertiary);min-width:40px;text-align:center" id="prog-txt">1 / 11</span>
+  <button class="btn primary" id="btn-next" onclick="next()">next →</button>
+</div>
+</div>
+</div>
+
+<script>
+var cur=0,total=11;
+function go(n){
+  document.querySelectorAll('.step-content').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.sitem').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('p'+n).classList.add('active');
+  document.getElementById('s'+n).classList.add('active');
+  document.getElementById('s'+n).scrollIntoView({block:'nearest'});
+  cur=n;
+  document.getElementById('btn-prev').disabled=(cur===0);
+  document.getElementById('btn-next').disabled=(cur===total-1);
+  document.getElementById('prog').style.width=Math.round((cur+1)/total*100)+'%';
+  document.getElementById('prog-txt')=(cur+1)+' / '+total;
+  document.getElementById('prog-txt').textContent=(cur+1)+' / '+total;
+  document.querySelector('.main').scrollTop=0;
+  for(var i=0;i<cur;i++){
+    var s=document.getElementById('s'+i);
+    s.classList.remove('active');
+    s.classList.add('done');
+    s.querySelector('.snum').textContent='✓';
+  }
+}
+function next(){if(cur<total-1)go(cur+1)}
+function prev(){if(cur>0)go(cur-1)}
+function copyCode(btn){
+  var code=btn.closest('.code-wrap').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var orig=btn.textContent;
+    btn.textContent='copied!';
+    setTimeout(function(){btn.textContent=orig},1500);
+  });
+}
+function check(el){
+  el.classList.toggle('checked');
+  var box=el.querySelector('.ck-box i');
+  if(el.classList.contains('checked')){box.style.display='block'}else{box.style.display='none'}
+  var all=document.querySelectorAll('.ck').length;
+  var done=document.querySelectorAll('.ck.checked').length;
+  document.getElementById('done-msg').style.display=(done===all)?'block':'none';
+}
+</script>

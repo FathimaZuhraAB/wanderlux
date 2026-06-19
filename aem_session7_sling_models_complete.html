@@ -1,0 +1,1768 @@
+
+<h2 class="sr-only">AEM Session 7 complete deep-dive — Sling Models from scratch: every annotation, adaptables, PostConstruct, interface and impl pattern, all injectors, OSGi services, HTL integration, unit testing, common errors</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:700px}
+.nav{width:224px;min-width:224px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;flex-shrink:0}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-hd small{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);display:block;margin-bottom:3px}
+.nav-hd strong{font-size:13.5px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 4px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary)}
+.ni{display:flex;align-items:flex-start;gap:8px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);line-height:1.35;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:26px 30px}
+.body::-webkit-scrollbar{width:4px}.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+h1{font-size:21px;font-weight:500;margin-bottom:6px;line-height:1.25}
+.lede{font-size:14px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec{margin-bottom:28px}
+.sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+p code,li code,.stb code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:2px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;margin-bottom:10px}
+.card-hd{font-size:13.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-hd i{font-size:16px;color:var(--color-text-info)}
+.card p{font-size:13px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.card code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.rl{border-left:3px solid var(--color-border-success);padding:12px 16px;background:var(--color-background-success);color:var(--color-text-success);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.rl .rll{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;opacity:.8}
+.warn{border-left:3px solid var(--color-border-warning);padding:12px 16px;background:var(--color-background-warning);color:var(--color-text-warning);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.info{border-left:3px solid var(--color-border-info);padding:12px 16px;background:var(--color-background-info);color:var(--color-text-info);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.stb{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.stt{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.row-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}
+.row{display:grid;grid-template-columns:170px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:9px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;align-items:flex-start;word-break:break-all}
+.rv{padding:9px 12px;color:var(--color-text-primary);line-height:1.6}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+ul{padding-left:20px;margin:8px 0 14px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:3px}
+li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.code-block{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;margin:12px 0 16px}
+.code-top{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-fname{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.code-copy{font-size:11px;color:var(--color-text-info);cursor:pointer;background:none;border:0.5px solid var(--color-border-info);padding:2px 8px;border-radius:4px}
+.code-copy:hover{background:var(--color-background-info)}
+.code-body{padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.kw{color:#7c5cbf}.str{color:#1d9e75}.cm{color:var(--color-text-tertiary)}.tag{color:#185fa5}.attr{color:#b45309}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:12px 0 16px}
+.ch{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.ch:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.cb{padding:12px 14px;font-size:12.5px;color:var(--color-text-secondary);line-height:1.7;border-right:0.5px solid var(--color-border-tertiary)}
+.cb:last-child{border-right:none}
+.cb code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+.ftree{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:2;margin:12px 0 16px;color:var(--color-text-secondary);white-space:pre}
+.fth{color:var(--color-text-info);font-weight:500}
+.ftg{color:var(--color-text-success)}
+.ftd{color:var(--color-text-tertiary)}
+</style>
+
+<div class="app">
+<div class="nav">
+  <div class="nav-hd"><small>Session 7 — deep dive</small><strong>Sling Models</strong></div>
+
+  <div class="grp">Part 1 — What &amp; why</div>
+  <div class="ni on" onclick="go('what-why')" id="n-what-why"><i class="ti ti-question-mark" aria-hidden="true"></i>What is a Sling Model &amp; why</div>
+  <div class="ni" onclick="go('mvc')" id="n-mvc"><i class="ti ti-layout" aria-hidden="true"></i>MVC in AEM</div>
+  <div class="ni" onclick="go('lifecycle')" id="n-lifecycle"><i class="ti ti-refresh" aria-hidden="true"></i>Full lifecycle — step by step</div>
+
+  <div class="grp">Part 2 — @Model annotation</div>
+  <div class="ni" onclick="go('model-anno')" id="n-model-anno"><i class="ti ti-at" aria-hidden="true"></i>@Model annotation — every parameter</div>
+  <div class="ni" onclick="go('adaptables')" id="n-adaptables"><i class="ti ti-arrows-exchange" aria-hidden="true"></i>adaptables — Resource vs Request</div>
+  <div class="ni" onclick="go('adapters')" id="n-adapters"><i class="ti ti-plug" aria-hidden="true"></i>adapters — linking impl to interface</div>
+  <div class="ni" onclick="go('resourcetype')" id="n-resourcetype"><i class="ti ti-key" aria-hidden="true"></i>resourceType — auto-adapt</div>
+  <div class="ni" onclick="go('injection-strategy')" id="n-injection-strategy"><i class="ti ti-shield" aria-hidden="true"></i>defaultInjectionStrategy</div>
+
+  <div class="grp">Part 3 — All injectors</div>
+  <div class="ni" onclick="go('valuemapvalue')" id="n-valuemapvalue"><i class="ti ti-database" aria-hidden="true"></i>@ValueMapValue — JCR properties</div>
+  <div class="ni" onclick="go('default-anno')" id="n-default-anno"><i class="ti ti-circle-check" aria-hidden="true"></i>@Default — fallback values</div>
+  <div class="ni" onclick="go('slingobject')" id="n-slingobject"><i class="ti ti-box" aria-hidden="true"></i>@SlingObject — AEM objects</div>
+  <div class="ni" onclick="go('scriptvariable')" id="n-scriptvariable"><i class="ti ti-variable" aria-hidden="true"></i>@ScriptVariable — page &amp; style</div>
+  <div class="ni" onclick="go('childresource')" id="n-childresource"><i class="ti ti-sitemap" aria-hidden="true"></i>@ChildResource — child nodes</div>
+  <div class="ni" onclick="go('osgiservice')" id="n-osgiservice"><i class="ti ti-settings" aria-hidden="true"></i>@OSGiService — inject services</div>
+  <div class="ni" onclick="go('requestattr')" id="n-requestattr"><i class="ti ti-http-connect" aria-hidden="true"></i>@RequestAttribute &amp; @Named</div>
+  <div class="ni" onclick="go('inject')" id="n-inject"><i class="ti ti-needle" aria-hidden="true"></i>@Inject — generic injector</div>
+
+  <div class="grp">Part 4 — Lifecycle methods</div>
+  <div class="ni" onclick="go('postconstruct')" id="n-postconstruct"><i class="ti ti-player-play" aria-hidden="true"></i>@PostConstruct — init logic</div>
+  <div class="ni" onclick="go('predestroy')" id="n-predestroy"><i class="ti ti-player-stop" aria-hidden="true"></i>@PreDestroy — cleanup</div>
+  <div class="ni" onclick="go('lifecycle-order')" id="n-lifecycle-order"><i class="ti ti-list-numbers" aria-hidden="true"></i>Lifecycle order — complete</div>
+
+  <div class="grp">Part 5 — Interface &amp; impl pattern</div>
+  <div class="ni" onclick="go('iface-why')" id="n-iface-why"><i class="ti ti-puzzle" aria-hidden="true"></i>Why interface + impl</div>
+  <div class="ni" onclick="go('iface-code')" id="n-iface-code"><i class="ti ti-file-code" aria-hidden="true"></i>Interface — what goes in it</div>
+  <div class="ni" onclick="go('impl-code')" id="n-impl-code"><i class="ti ti-coffee" aria-hidden="true"></i>Impl — complete annotated class</div>
+  <div class="ni" onclick="go('folder-structure')" id="n-folder-structure"><i class="ti ti-folder" aria-hidden="true"></i>Folder structure &amp; Maven config</div>
+
+  <div class="grp">Part 6 — HTL integration</div>
+  <div class="ni" onclick="go('htl-connect')" id="n-htl-connect"><i class="ti ti-link" aria-hidden="true"></i>Connecting model to HTL</div>
+  <div class="ni" onclick="go('naming-convention')" id="n-naming-convention"><i class="ti ti-abc" aria-hidden="true"></i>Getter naming convention</div>
+  <div class="ni" onclick="go('nested-models')" id="n-nested-models"><i class="ti ti-stack" aria-hidden="true"></i>Nested models — multifield</div>
+
+  <div class="grp">Part 7 — Advanced patterns</div>
+  <div class="ni" onclick="go('osgi-service-impl')" id="n-osgi-service-impl"><i class="ti ti-server" aria-hidden="true"></i>OSGi Service — complete example</div>
+  <div class="ni" onclick="go('adaptto')" id="n-adaptto"><i class="ti ti-transform" aria-hidden="true"></i>adaptTo() — using models in Java</div>
+  <div class="ni" onclick="go('externalizer')" id="n-externalizer"><i class="ti ti-external-link" aria-hidden="true"></i>Externalizer &amp; URL mapping</div>
+  <div class="ni" onclick="go('full-example')" id="n-full-example"><i class="ti ti-rocket" aria-hidden="true"></i>Full production example</div>
+
+  <div class="grp">Part 8 — Testing &amp; errors</div>
+  <div class="ni" onclick="go('unit-testing')" id="n-unit-testing"><i class="ti ti-test-pipe" aria-hidden="true"></i>Unit testing with AEM Mocks</div>
+  <div class="ni" onclick="go('common-errors')" id="n-common-errors"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Common errors — all fixes</div>
+</div>
+
+<div class="body">
+
+<!-- WHAT AND WHY -->
+<div class="pg on" id="p-what-why">
+<span class="badge">Part 1 — what &amp; why</span>
+<h1>What is a Sling Model and why does it exist</h1>
+<p class="lede">A Sling Model is a Java class that automatically reads data from the JCR when a component is rendered. It bridges the content repository and the HTL template. Without Sling Models, there would be no clean way to get JCR data into HTML.</p>
+<div class="sec">
+<div class="sec-title">The problem before Sling Models</div>
+<p>Before Sling Models (introduced in 2012), AEM developers wrote JSP files. To get data from the JCR, you had to write code like this inside the template:</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">old JSP way — the pain</span></div>
+<div class="code-body"><span class="cm">// In card.jsp — mixing Java data-access logic inside HTML template</span>
+<span class="tag">&lt;%</span>
+  Resource resource = resourceResolver.getResource(currentNode.getPath());
+  ValueMap props = resource.adaptTo(ValueMap.<span class="kw">class</span>);
+  String title = props != <span class="kw">null</span> ? props.get(<span class="str">"title"</span>, String.<span class="kw">class</span>) : <span class="str">""</span>;
+  String link  = props != <span class="kw">null</span> ? props.get(<span class="str">"link"</span>,  String.<span class="kw">class</span>) : <span class="str">""</span>;
+  <span class="kw">if</span> (link == <span class="kw">null</span>) link = <span class="str">""</span>;
+  <span class="cm">// ... 40 more lines of setup code before any HTML</span>
+<span class="tag">%&gt;</span>
+<span class="tag">&lt;h2&gt;</span>&lt;%= xssAPI.encodeForHTML(title) %&gt;<span class="tag">&lt;/h2&gt;</span></div></div>
+<p>This was hard to read, impossible to unit test, mixed concerns badly, and created security vulnerabilities when developers forgot to escape output. Every JSP was different. There was no standard.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What Sling Models provide</div>
+<div class="grid2">
+<div class="card"><div class="card-hd"><i class="ti ti-test-pipe" aria-hidden="true"></i>Unit testable</div><p>A plain Java class. You can test it with JUnit without a running AEM instance using AEM Mocks. The most important improvement over JSP.</p></div>
+<div class="card"><div class="card-hd"><i class="ti ti-shield" aria-hidden="true"></i>Automatic injection</div><p>JCR properties, Sling objects, OSGi services — all injected automatically using annotations. No boilerplate setup code.</p></div>
+<div class="card"><div class="card-hd"><i class="ti ti-layers" aria-hidden="true"></i>Clean separation</div><p>Business logic stays in Java. Presentation stays in HTL. Templates become simple — just call getters, no logic.</p></div>
+<div class="card"><div class="card-hd"><i class="ti ti-components" aria-hidden="true"></i>Reusable</div><p>Any Java code can call <code>resource.adaptTo(CardModel.class)</code> to get a populated model — not just HTL. Export as JSON, use in servlets, use in other models.</p></div>
+</div>
+</div>
+<div class="rl">
+<div class="rll">The simplest mental model</div>
+A Sling Model is a POJO (Plain Old Java Object) that reads from the JCR when instantiated. You declare what you want with annotations. AEM fills it in automatically. Your HTL template just calls the getters.
+</div>
+</div>
+
+<!-- MVC -->
+<div class="pg" id="p-mvc">
+<span class="badge">Part 1 — what &amp; why</span>
+<h1>MVC in AEM — where each piece lives</h1>
+<p class="lede">AEM follows the Model-View-Controller pattern. Once you understand where each AEM concept maps to MVC, the whole system makes sense.</p>
+<div class="sec">
+<div class="sec-title">The three layers</div>
+<div class="row-list">
+<div class="row"><div class="rk">Model</div><div class="rv">The Sling Model. Reads data from the JCR (the editor's input), computes derived values, calls services. Knows nothing about HTML. Returns pure data through getters.</div></div>
+<div class="row"><div class="rk">View</div><div class="rv">The HTL template (<code>card.html</code>). Renders data from the Model as HTML. Contains zero business logic — only calls getters and uses the 13 <code>data-sly-*</code> block statements for display logic.</div></div>
+<div class="row"><div class="rk">Controller</div><div class="rv">Apache Sling itself. Receives the HTTP request, resolves the resource, finds the right model and template, passes control to them. Developers never write controller code — Sling handles it automatically.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">What belongs where — the rule</div>
+<div class="compare">
+<div class="ch">Belongs in the Sling Model</div><div class="ch">Belongs in the HTL template</div>
+<div class="cb">Reading JCR properties, null checks, string formatting, URL mapping, permission checks, calling OSGi services, computing derived values (e.g. "is this card featured?"), reading child nodes (multifield items)</div>
+<div class="cb">Looping over lists (<code>data-sly-list</code>), conditional rendering (<code>data-sly-test</code>), outputting strings (<code>${model.title}</code>), choosing elements (<code>data-sly-element</code>), including partials (<code>data-sly-include</code>)</div>
+</div>
+</div>
+<div class="warn">Never put an <code>if</code> statement, a string split, a null check, or a service call inside an HTL template. The template should only call getters. All logic belongs in <code>@PostConstruct</code>.</div>
+</div>
+
+<!-- LIFECYCLE -->
+<div class="pg" id="p-lifecycle">
+<span class="badge">Part 1 — what &amp; why</span>
+<h1>Full lifecycle — what happens when a component renders</h1>
+<p class="lede">When a browser requests a page, here is the exact sequence from HTTP request to HTML response, showing where the Sling Model fits in.</p>
+<div class="steps">
+<div class="step"><div class="snum">1</div><div><div class="stt">Browser requests /content/mysite/en/home.html</div><div class="stb">HTTP GET request reaches AEM's Sling request processing layer.</div></div></div>
+<div class="step"><div class="snum">2</div><div><div class="stt">Sling resolves the JCR resource</div><div class="stb">Finds the <code>cq:Page</code> node at <code>/content/mysite/en/home</code> and its <code>jcr:content</code> child.</div></div></div>
+<div class="step"><div class="snum">3</div><div><div class="stt">Sling reads sling:resourceType</div><div class="stb">Reads <code>sling:resourceType = "mysite/components/page/base"</code> from <code>jcr:content</code>. Finds the rendering script at <code>/apps/mysite/components/page/base/base.html</code>.</div></div></div>
+<div class="step"><div class="snum">4</div><div><div class="stt">HTL processes data-sly-use</div><div class="stb">HTL finds <code>data-sly-use.model="com.mysite.core.models.CardModel"</code>. Calls <code>request.adaptTo(CardModel.class)</code>.</div></div></div>
+<div class="step"><div class="snum">5</div><div><div class="stt">Sling Models factory instantiates CardModelImpl</div><div class="stb">Sling Models scans all <code>@Model</code> classes registered (from <code>Sling-Model-Packages</code> in MANIFEST.MF). Finds <code>CardModelImpl</code> because its <code>resourceType</code> matches the current resource's <code>sling:resourceType</code>. Creates a new instance.</div></div></div>
+<div class="step"><div class="snum">6</div><div><div class="stt">All annotated fields are injected</div><div class="stb">For each <code>@ValueMapValue</code> field: reads the JCR property with that name. For each <code>@SlingObject</code> field: injects the right AEM object. For each <code>@OSGiService</code> field: looks up the OSGi service. All done automatically.</div></div></div>
+<div class="step"><div class="snum">7</div><div><div class="stt">@PostConstruct runs</div><div class="stb">After all fields are injected, AEM calls the method annotated with <code>@PostConstruct</code>. This is where your business logic runs — null checks, derived computations, string formatting. All injected fields are available here.</div></div></div>
+<div class="step"><div class="snum">8</div><div><div class="stt">Model is bound to "model" variable in HTL</div><div class="stb">The populated <code>CardModelImpl</code> instance is now available in the HTL template as the variable name from <code>data-sly-use.model</code>.</div></div></div>
+<div class="step"><div class="snum">9</div><div><div class="stt">HTL calls getters</div><div class="stb"><code>${model.title}</code> calls <code>getTitle()</code>. <code>${model.hasLink}</code> calls <code>isHasLink()</code>. The return values are escaped and inserted into the HTML output.</div></div></div>
+<div class="step"><div class="snum">10</div><div><div class="stt">HTML is returned to browser</div><div class="stb">The Sling Model instance is garbage collected. No state persists between requests.</div></div></div>
+</div>
+</div>
+
+<!-- @MODEL ANNOTATION -->
+<div class="pg" id="p-model-anno">
+<span class="badge">Part 2 — @Model annotation</span>
+<h1>@Model annotation — every parameter explained</h1>
+<p class="lede">The <code>@Model</code> annotation on a class registers it as a Sling Model. It has four parameters. Understanding each one precisely prevents the most common Sling Model bugs.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@Model — all four parameters</span></div>
+<div class="code-body"><span class="attr">@Model</span>(
+  <span class="cm">// ① adaptables — what this model can be created FROM</span>
+  <span class="cm">//   Resource.class = can be created from a Sling Resource</span>
+  <span class="cm">//   SlingHttpServletRequest.class = can be created from an HTTP request</span>
+  <span class="cm">//   Use both to cover all scenarios (see next topic)</span>
+  adaptables = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> },
+
+  <span class="cm">// ② adapters — which interfaces this impl provides</span>
+  <span class="cm">//   Links this implementation to its interface.</span>
+  <span class="cm">//   Required for resource.adaptTo(CardModel.class) to work.</span>
+  <span class="cm">//   Without this, adaptTo() returns null.</span>
+  adapters = { CardModel.<span class="kw">class</span> },
+
+  <span class="cm">// ③ resourceType — which component uses this model</span>
+  <span class="cm">//   Path relative to /apps. Case-sensitive. No leading slash.</span>
+  <span class="cm">//   When a resource with this resourceType is adapted,</span>
+  <span class="cm">//   Sling automatically picks this model — no class name needed in HTL.</span>
+  resourceType = <span class="str">"mysite/components/card"</span>,
+
+  <span class="cm">// ④ defaultInjectionStrategy — what happens when a field has no value</span>
+  <span class="cm">//   OPTIONAL = null is injected if the property does not exist (recommended)</span>
+  <span class="cm">//   REQUIRED = throws MissingElementException if any field has no value</span>
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)</div></div>
+<div class="sec">
+<div class="sec-title">Required imports</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">imports needed for @Model</span></div>
+<div class="code-body"><span class="kw">import</span> org.apache.sling.models.annotations.Model;
+<span class="kw">import</span> org.apache.sling.models.annotations.DefaultInjectionStrategy;
+<span class="kw">import</span> org.apache.sling.api.resource.Resource;
+<span class="kw">import</span> org.apache.sling.api.SlingHttpServletRequest;</div></div>
+</div>
+</div>
+
+<!-- ADAPTABLES -->
+<div class="pg" id="p-adaptables">
+<span class="badge">Part 2 — @Model annotation</span>
+<h1>adaptables — Resource vs SlingHttpServletRequest</h1>
+<p class="lede">The <code>adaptables</code> parameter tells Sling which object this model can be created from. This determines which injectors are available to the model. Getting this wrong silently prevents certain fields from being injected.</p>
+<div class="sec">
+<div class="sec-title">Resource.class — the simpler adaptable</div>
+<p>When <code>adaptables = Resource.class</code>, the model is created from the JCR resource node. Available injectors:</p>
+<ul>
+<li><code>@ValueMapValue</code> — reads JCR properties from the resource's ValueMap</li>
+<li><code>@ChildResource</code> — reads child nodes of the resource</li>
+<li><code>@SlingObject</code> fields: <code>Resource</code>, <code>ResourceResolver</code>, <code>SlingScriptHelper</code>, <code>BundleContext</code></li>
+<li><code>@OSGiService</code> — OSGi services from the BundleContext</li>
+</ul>
+<p>NOT available: <code>@ScriptVariable</code> (needs request context), request-based fields like <code>currentPage</code>, <code>currentStyle</code>.</p>
+</div>
+<div class="sec">
+<div class="sec-title">SlingHttpServletRequest.class — the request adaptable</div>
+<p>When <code>adaptables = SlingHttpServletRequest.class</code>, the model is created from the HTTP request. Available injectors: everything from Resource.class PLUS:</p>
+<ul>
+<li><code>@ScriptVariable</code> — page manager, current page, current style, XSS API</li>
+<li><code>@RequestAttribute</code> — request attributes set by other components</li>
+<li>Request parameters via <code>request.getParameter()</code></li>
+</ul>
+</div>
+<div class="sec">
+<div class="sec-title">Using both — the recommended approach</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">adaptables — use both for maximum flexibility</span></div>
+<div class="code-body"><span class="cm">// RECOMMENDED for most components:</span>
+adaptables = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> }
+
+<span class="cm">// This means:
+// - When adapted from HTL (request context): request-based injection works
+// - When adapted from other Java code (resource context): resource-based injection works
+// - The @ScriptVariable fields only work in request context, but
+//   with OPTIONAL strategy they just remain null in resource context</span>
+
+<span class="cm">// Use Resource.class ONLY when:</span>
+<span class="cm">// - The model is used for multifield items (child resources)</span>
+<span class="cm">// - The model is called from other Java code, never from HTL directly</span>
+<span class="cm">// - The model never needs currentPage or currentStyle</span></div></div>
+</div>
+</div>
+
+<!-- ADAPTERS -->
+<div class="pg" id="p-adapters">
+<span class="badge">Part 2 — @Model annotation</span>
+<h1>adapters — linking the impl to the interface</h1>
+<p class="lede">The <code>adapters</code> parameter lists which interfaces (or classes) this implementation satisfies. It is what makes <code>resource.adaptTo(CardModel.class)</code> return your <code>CardModelImpl</code> instance.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">adapters — what it does</span></div>
+<div class="code-body"><span class="cm">// Without adapters parameter — adaptTo returns null:</span>
+<span class="attr">@Model</span>(adaptables = Resource.<span class="kw">class</span>)
+<span class="kw">public class</span> CardModelImpl { }
+
+Resource r = ...;
+CardModel model = r.adaptTo(CardModel.<span class="kw">class</span>); <span class="cm">// ← returns null! No adapter registered</span>
+
+<span class="cm">// WITH adapters parameter — adaptTo works:</span>
+<span class="attr">@Model</span>(adaptables = Resource.<span class="kw">class</span>, adapters = { CardModel.<span class="kw">class</span> })
+<span class="kw">public class</span> CardModelImpl <span class="kw">implements</span> CardModel { }
+
+CardModel model = r.adaptTo(CardModel.<span class="kw">class</span>); <span class="cm">// ← returns CardModelImpl instance</span>
+
+<span class="cm">// Multiple adapters — one impl satisfies multiple interfaces:</span>
+<span class="attr">@Model</span>(
+  adaptables = Resource.<span class="kw">class</span>,
+  adapters   = { CardModel.<span class="kw">class</span>, Exportable.<span class="kw">class</span> }
+)
+<span class="kw">public class</span> CardModelImpl <span class="kw">implements</span> CardModel, Exportable { }</div></div>
+<div class="info">The <code>adapters</code> parameter is the connection between the interface and the implementation. Without it, AEM does not know that <code>CardModelImpl</code> can be used as a <code>CardModel</code>. Always include it.</div>
+</div>
+
+<!-- RESOURCETYPE -->
+<div class="pg" id="p-resourcetype">
+<span class="badge">Part 2 — @Model annotation</span>
+<h1>resourceType — automatic model selection</h1>
+<p class="lede">The <code>resourceType</code> parameter in <code>@Model</code> allows Sling to automatically select the correct model for a resource without needing to specify the fully-qualified class name in HTL.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">resourceType — how it removes class names from HTL</span></div>
+<div class="code-body"><span class="cm">// Without resourceType — must specify full class name in HTL:</span>
+<span class="cm">// data-sly-use.model="com.mysite.core.models.CardModel"</span>
+
+<span class="cm">// With resourceType in @Model:</span>
+<span class="attr">@Model</span>(
+  adaptables   = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> },
+  adapters     = { CardModel.<span class="kw">class</span> },
+  resourceType = <span class="str">"mysite/components/card"</span>
+)
+<span class="kw">public class</span> CardModelImpl <span class="kw">implements</span> CardModel { }
+
+<span class="cm">// Now in HTL you can write just the interface name:
+// data-sly-use.model="com.mysite.core.models.CardModel"
+// Sling finds CardModelImpl because:
+//   1. The current resource has sling:resourceType = "mysite/components/card"
+//   2. CardModelImpl has resourceType = "mysite/components/card" in @Model
+//   3. CardModelImpl's adapters includes CardModel.class
+// They match → CardModelImpl is used automatically</span>
+
+<span class="cm">// CRITICAL: resourceType value rules:
+// ✓ "mysite/components/card"     — relative path, no /apps prefix
+// ✗ "/apps/mysite/components/card" — WRONG: do not include /apps
+// ✗ "Mysite/Components/Card"     — WRONG: case-sensitive, must be lowercase</span></div></div>
+</div>
+
+<!-- INJECTION STRATEGY -->
+<div class="pg" id="p-injection-strategy">
+<span class="badge">Part 2 — @Model annotation</span>
+<h1>defaultInjectionStrategy — OPTIONAL vs REQUIRED</h1>
+<p class="lede">The injection strategy controls what happens when Sling cannot find a value for an annotated field. This is a global setting for the entire model, with per-field overrides available.</p>
+<div class="row-list">
+<div class="row"><div class="rk">OPTIONAL (recommended)</div><div class="rv">If a JCR property does not exist or an object cannot be injected, the field receives <code>null</code> (or the primitive default like <code>false</code> for boolean). No exception is thrown. Your <code>@PostConstruct</code> must handle nulls. This is the right choice for almost all components.</div></div>
+<div class="row"><div class="rk">REQUIRED</div><div class="rv">If any field cannot be injected, Sling throws <code>org.apache.sling.models.factory.MissingElementException</code> and the model cannot be created. The component renders nothing. Use only when every field is truly mandatory for the component to make sense.</div></div>
+</div>
+<div class="sec">
+<div class="sec-title">Per-field strategy overrides</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">per-field strategy overrides</span></div>
+<div class="code-body"><span class="cm">// Model defaults to OPTIONAL — but specific fields can be required:</span>
+<span class="attr">@Model</span>(..., defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+<span class="kw">public class</span> CardModelImpl {
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String title;          <span class="cm">// optional: null if not set</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="attr">@Required</span>                      <span class="cm">// THIS field is required even though model is OPTIONAL</span>
+  <span class="kw">private</span> String productCode;    <span class="cm">// exception thrown if not present</span>
+
+  <span class="attr">@OSGiService</span>
+  <span class="attr">@Optional</span>                      <span class="cm">// THIS service is optional even if model defaults to REQUIRED</span>
+  <span class="kw">private</span> AnalyticsService analytics; <span class="cm">// null if service not available</span>
+}</div></div>
+</div>
+</div>
+
+<!-- @VALUEMAPVALUE -->
+<div class="pg" id="p-valuemapvalue">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@ValueMapValue — reading JCR properties</h1>
+<p class="lede"><code>@ValueMapValue</code> is the most-used injector. It reads a JCR property from the component's content node and injects it into a Java field. The field name maps directly to the JCR property name.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@ValueMapValue — complete reference</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="attr">@Model</span>(adaptables = Resource.<span class="kw">class</span>, ..., defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+<span class="kw">public class</span> CardModelImpl {
+
+  <span class="cm">// ── Basic usage — field name = JCR property name ──────────────</span>
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String title;
+  <span class="cm">// Reads the "title" JCR property. If title="Summer Sale" in JCR → title = "Summer Sale"
+  // If property does not exist → title = null (with OPTIONAL strategy)</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String description;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String ctaLink;
+
+  <span class="cm">// ── Supported types — AEM auto-converts ──────────────────────</span>
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private boolean</span> openInNewTab;     <span class="cm">// reads Boolean JCR property</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private long</span> viewCount;           <span class="cm">// reads Long JCR property</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private double</span> price;             <span class="cm">// reads Double JCR property</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String[] tags;            <span class="cm">// reads String[] (multi-value) JCR property</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> Calendar publishDate;     <span class="cm">// reads Date JCR property as Calendar</span>
+
+  <span class="cm">// ── Override the property name to read ───────────────────────</span>
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"jcr:title"</span>)
+  <span class="kw">private</span> String pageTitle;
+  <span class="cm">// Field is named "pageTitle" but reads the "jcr:title" JCR property.
+  // Required when the JCR property name has special characters
+  // (colons: jcr:title, cq:tags) or is a Java reserved word.</span>
+
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"fileReference"</span>)
+  <span class="kw">private</span> String imageRef;
+  <span class="cm">// field "imageRef" reads JCR property "fileReference"</span>
+
+  <span class="cm">// ── Inject via ResourceResolver for multi-value ─────────────</span>
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"cq:tags"</span>)
+  <span class="kw">private</span> String[] cqTags;
+  <span class="cm">// reads the cq:tags array — multiple tag paths as strings</span>
+}</div></div>
+<div class="sec">
+<div class="sec-title">How the field name maps to the dialog</div>
+<p>In the dialog XML, each field has <code>name="./title"</code>. The <code>./</code> prefix means "relative to this component's node". So <code>name="./title"</code> saves to a JCR property called <code>title</code>. Your <code>@ValueMapValue private String title;</code> reads that same property. The field name in Java and the last part of the dialog <code>name</code> attribute MUST match exactly.</p>
+</div>
+</div>
+
+<!-- @DEFAULT -->
+<div class="pg" id="p-default-anno">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@Default — fallback values when properties are not set</h1>
+<p class="lede"><code>@Default</code> combined with <code>@ValueMapValue</code> provides a fallback value when the JCR property does not exist. Avoids null checks in <code>@PostConstruct</code> for simple defaults.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@Default — all type variants</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="cm">// String default</span>
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Default</span>(values = <span class="str">"Learn More"</span>)
+<span class="kw">private</span> String ctaText;
+<span class="cm">// If "ctaText" JCR property is missing: ctaText = "Learn More"
+// If "ctaText" is present in JCR: uses that value</span>
+
+<span class="cm">// Boolean default</span>
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Default</span>(booleanValues = <span class="kw">false</span>)
+<span class="kw">private boolean</span> openInNewTab;
+
+<span class="cm">// Long default</span>
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Default</span>(longValues = <span class="kw">0L</span>)
+<span class="kw">private long</span> itemCount;
+
+<span class="cm">// Double default</span>
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Default</span>(doubleValues = <span class="kw">0.0</span>)
+<span class="kw">private double</span> price;
+
+<span class="cm">// String array default</span>
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Default</span>(values = { <span class="str">"technology"</span>, <span class="str">"general"</span> })
+<span class="kw">private</span> String[] categories;
+
+<span class="cm">// When to use @Default vs handling in @PostConstruct:
+// Use @Default when: the fallback is a simple constant value
+// Use @PostConstruct when: the fallback is computed from other values</span>
+<span class="cm">// Example — computed fallback in @PostConstruct:</span>
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// Can't use @Default here because the fallback depends on other fields:</span>
+  <span class="kw">if</span> (StringUtils.isBlank(ctaText)) {
+    ctaText = StringUtils.isNotBlank(title) ? <span class="str">"Read about "</span> + title : <span class="str">"Read More"</span>;
+  }
+}</div></div>
+</div>
+
+<!-- @SLINGOBJECT -->
+<div class="pg" id="p-slingobject">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@SlingObject — injecting AEM runtime objects</h1>
+<p class="lede"><code>@SlingObject</code> injects standard Sling and AEM objects that your model needs to interact with the AEM runtime — the resource itself, the resolver, the request, or the OSGi bundle context.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@SlingObject — all injectable types</span></div>
+<div class="code-body"><span class="cm">// ── Available with Resource.class adaptable ──────────────────</span>
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> Resource currentResource;
+<span class="cm">// The JCR node this component is rendering.
+// Use: currentResource.getPath(), currentResource.getChildren(),
+//      currentResource.getChild("image"), currentResource.getValueMap()</span>
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> ResourceResolver resourceResolver;
+<span class="cm">// Use: resourceResolver.getResource("/content/mysite/en/home"),
+//      resourceResolver.map("/content/mysite/en/home.html"),
+//      resourceResolver.adaptTo(Session.class)</span>
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> SlingScriptHelper slingScriptHelper;
+<span class="cm">// Use: slingScriptHelper.getService(MyService.class) — alternative to @OSGiService</span>
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> BundleContext bundleContext;
+<span class="cm">// OSGi bundle context — use to look up services dynamically</span>
+
+<span class="cm">// ── Available with SlingHttpServletRequest.class adaptable only ─</span>
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> SlingHttpServletRequest request;
+<span class="cm">// Use: request.getParameter("q"), request.getRequestPathInfo().getSelectors()</span>
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> SlingHttpServletResponse response;
+<span class="cm">// Rarely needed in Sling Models — typically set headers or status codes</span></div></div>
+<div class="sec">
+<div class="sec-title">Most common use — reading child resources</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">using currentResource and resourceResolver</span></div>
+<div class="code-body"><span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// Read a child node by name</span>
+  Resource imageNode = currentResource.getChild(<span class="str">"image"</span>);
+
+  <span class="cm">// Get all children (multifield items)</span>
+  Resource itemsNode = currentResource.getChild(<span class="str">"items"</span>);
+  <span class="kw">if</span> (itemsNode != <span class="kw">null</span>) {
+    <span class="kw">for</span> (Resource child : itemsNode.getChildren()) {
+      <span class="cm">// process each item</span>
+    }
+  }
+
+  <span class="cm">// Map a path to a URL (removes /content prefix etc.)</span>
+  String mappedUrl = resourceResolver.map(ctaLink);
+
+  <span class="cm">// Get a resource by absolute path</span>
+  Resource sharedContent = resourceResolver.getResource(<span class="str">"/content/mysite/shared"</span>);
+}</div></div>
+</div>
+</div>
+
+<!-- @SCRIPTVARIABLE -->
+<div class="pg" id="p-scriptvariable">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@ScriptVariable — page, style, and WCM objects</h1>
+<p class="lede"><code>@ScriptVariable</code> injects objects that are available in the HTL/Sling scripting context — the current page, the template policy (currentStyle), the page manager, and XSS utility. Requires the <code>SlingHttpServletRequest</code> adaptable.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@ScriptVariable — all injectable types</span></div>
+<div class="code-body"><span class="cm">// IMPORTANT: These only work when adaptables includes SlingHttpServletRequest.class</span>
+
+<span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> Page currentPage;
+<span class="cm">// com.day.cq.wcm.api.Page
+// Use: currentPage.getTitle(), currentPage.getPath(), currentPage.getDepth(),
+//      currentPage.getParent(), currentPage.listChildren()</span>
+
+<span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> PageManager pageManager;
+<span class="cm">// com.day.cq.wcm.api.PageManager
+// Use: pageManager.getContainingPage(resource),
+//      pageManager.getPage("/content/mysite/en/home")</span>
+
+<span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> Style currentStyle;
+<span class="cm">// com.day.cq.wcm.api.designer.Style
+// Reads values from the component's template policy (design dialog).
+// Use: currentStyle.get("headingLevel", "h2"),
+//      currentStyle.get("maxItems", 6)</span>
+
+<span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> ValueMap pageProperties;
+<span class="cm">// JCR properties of the current page's jcr:content node
+// Use: pageProperties.get("jcr:title", String.class)</span>
+
+<span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> XSSAPI xssApi;
+<span class="cm">// com.adobe.granite.xss.XSSAPI
+// Use: xssApi.encodeForHTML(str), xssApi.getValidHref(url)
+// Most escaping is done by HTL automatically; use this for values
+// that need to be escaped in Java before passing to HTL</span>
+
+<span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> WCMMode wcmMode;
+<span class="cm">// com.day.cq.wcm.api.WCMMode
+// Tells you if you are in EDIT, PREVIEW, DISABLED (publish) mode
+// Use: WCMMode.EDIT.equals(wcmMode), WCMMode.DISABLED.equals(wcmMode)</span></div></div>
+<div class="sec">
+<div class="sec-title">Reading policy values with currentStyle</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">reading design dialog / policy values</span></div>
+<div class="code-body"><span class="attr">@ScriptVariable</span>
+<span class="kw">private</span> Style currentStyle;
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// currentStyle reads values set by template authors in the policy
+  // Second argument is the default if the policy has not been configured</span>
+  String headingLevel = currentStyle.get(<span class="str">"headingLevel"</span>, <span class="str">"h3"</span>);
+  <span class="kw">int</span>    maxItems     = currentStyle.get(<span class="str">"maxItems"</span>,     <span class="kw">6</span>);
+  <span class="kw">boolean</span> showDate   = currentStyle.get(<span class="str">"showDate"</span>,    <span class="kw">false</span>);
+}</div></div>
+</div>
+</div>
+
+<!-- @CHILDRESOURCE -->
+<div class="pg" id="p-childresource">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@ChildResource — injecting child JCR nodes</h1>
+<p class="lede"><code>@ChildResource</code> injects a direct child node of the current resource. The field name maps to the child node name. Use it for structural sub-components or as the starting point for reading multifield items.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@ChildResource — all usage patterns</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="cm">// ── Pattern 1: Inject a child node as Resource ─────────────────</span>
+<span class="attr">@ChildResource</span>
+<span class="kw">private</span> Resource image;
+<span class="cm">// Injects the child JCR node named "image" as a Resource object.
+// Use when you need to pass the resource to another model or
+// read its properties manually.</span>
+
+<span class="cm">// ── Pattern 2: Inject a child node as another Sling Model ──────</span>
+<span class="attr">@ChildResource</span>
+<span class="kw">private</span> ImageModel image;
+<span class="cm">// If ImageModel is a Sling Model, AEM automatically adapts the
+// "image" child resource to ImageModel. Very clean pattern.</span>
+
+<span class="cm">// ── Pattern 3: Override the child node name ────────────────────</span>
+<span class="attr">@ChildResource</span>(name = <span class="str">"jcr:content"</span>)
+<span class="kw">private</span> Resource pageContent;
+<span class="cm">// Field is named "pageContent" but reads child node "jcr:content"</span>
+
+<span class="cm">// ── Pattern 4: Container for multifield items ──────────────────</span>
+<span class="attr">@ChildResource</span>
+<span class="kw">private</span> Resource items;
+<span class="cm">// Injects the "items" container node.
+// Then in @PostConstruct, iterate over items.getChildren()
+// to read each multifield item.</span>
+
+<span class="cm">// ── Manual iteration pattern (for multifield) ─────────────────</span>
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> Resource currentResource;
+
+<span class="kw">private</span> List&lt;TeamMember&gt; members = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  Resource teamContainer = currentResource.getChild(<span class="str">"team"</span>);
+  <span class="kw">if</span> (teamContainer != <span class="kw">null</span>) {
+    <span class="kw">for</span> (Resource child : teamContainer.getChildren()) {
+      TeamMember m = child.adaptTo(TeamMember.<span class="kw">class</span>);
+      <span class="kw">if</span> (m != <span class="kw">null</span>) members.add(m);
+    }
+  }
+}</div></div>
+</div>
+
+<!-- @OSGISERVICE -->
+<div class="pg" id="p-osgiservice">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@OSGiService — injecting OSGi services</h1>
+<p class="lede"><code>@OSGiService</code> injects a registered OSGi service into your model. This is how you call shared business logic — email services, search services, external API clients, caching services.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@OSGiService — all patterns</span></div>
+<div class="code-body"><span class="cm">// ── Basic service injection ───────────────────────────────────</span>
+<span class="attr">@OSGiService</span>
+<span class="kw">private</span> ExternalizerService externalizerService;
+<span class="cm">// Injects AEM's Externalizer service for mapping paths to URLs</span>
+
+<span class="attr">@OSGiService</span>
+<span class="kw">private</span> QueryBuilder queryBuilder;
+<span class="cm">// Injects AEM's QueryBuilder for JCR queries</span>
+
+<span class="attr">@OSGiService</span>
+<span class="kw">private</span> EmailService emailService;
+<span class="cm">// Injects your own custom OSGi service</span>
+
+<span class="cm">// ── Optional service (use @Optional for services that may not be deployed) ─</span>
+<span class="attr">@OSGiService</span>
+<span class="attr">@Optional</span>
+<span class="kw">private</span> AnalyticsService analyticsService;
+<span class="cm">// If AnalyticsService is not deployed, analyticsService = null
+// Without @Optional, a missing service causes model instantiation to fail</span>
+
+<span class="cm">// ── Service with filter (when multiple implementations exist) ──</span>
+<span class="attr">@OSGiService</span>(filter = <span class="str">"(service.type=premium)"</span>)
+<span class="kw">private</span> ProductService premiumProductService;
+<span class="cm">// Injects only the ProductService implementation that has
+// the OSGi property service.type=premium</span>
+
+<span class="cm">// ── Using the service in @PostConstruct ──────────────────────</span>
+<span class="attr">@OSGiService</span>
+<span class="kw">private</span> ExternalizerService externalizer;
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> ResourceResolver resourceResolver;
+
+<span class="kw">private</span> String absoluteUrl;
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="kw">if</span> (externalizer != <span class="kw">null</span> && StringUtils.isNotBlank(ctaLink)) {
+    absoluteUrl = externalizer.externalLink(resourceResolver, <span class="str">"publish"</span>, ctaLink);
+    <span class="cm">// Converts "/content/mysite/en/home.html"</span>
+    <span class="cm">// to      "https://www.mysite.com/en/home.html"</span>
+  }
+}</div></div>
+<div class="sec">
+<div class="sec-title">Commonly injected AEM services</div>
+<div class="row-list">
+<div class="row"><div class="rk">ExternalizerService</div><div class="rv">Maps internal AEM paths (<code>/content/mysite/...</code>) to external URLs (<code>https://www.mysite.com/...</code>). Package: <code>com.day.cq.commons</code></div></div>
+<div class="row"><div class="rk">QueryBuilder</div><div class="rv">Executes AEM's QueryBuilder API queries to find JCR nodes. Package: <code>com.day.cq.search</code></div></div>
+<div class="row"><div class="rk">ModelFactory</div><div class="rv">Programmatically creates other Sling Models. Package: <code>org.apache.sling.models.factory</code></div></div>
+<div class="row"><div class="rk">TagManager</div><div class="rv">Resolves tag paths to Tag objects for reading tag titles and namespaces. Package: <code>com.day.cq.tagging</code></div></div>
+</div>
+</div>
+</div>
+
+<!-- @REQUESTATTRIBUTE and @NAMED -->
+<div class="pg" id="p-requestattr">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@RequestAttribute and @Named</h1>
+<p class="lede"><code>@RequestAttribute</code> injects values from the HTTP request attributes. <code>@Named</code> lets you override the property name for any injector when the Java field name cannot match the JCR property name.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@RequestAttribute and @Named</span></div>
+<div class="code-body"><span class="cm">// ── @RequestAttribute ─────────────────────────────────────────</span>
+<span class="cm">// Injects request.getAttribute("attrName")</span>
+<span class="cm">// Used when one component sets a request attribute that another reads</span>
+
+<span class="attr">@RequestAttribute</span>
+<span class="kw">private</span> String searchQuery;
+<span class="cm">// Reads request.getAttribute("searchQuery")</span>
+
+<span class="attr">@RequestAttribute</span>(name = <span class="str">"com.mysite.pageContext"</span>)
+<span class="kw">private</span> PageContext pageContext;
+<span class="cm">// Reads request.getAttribute("com.mysite.pageContext")</span>
+
+<span class="cm">// ── @Named — override the property name for any injector ──────</span>
+<span class="cm">// Use when the JCR property name is a Java reserved word or
+// has characters not allowed in Java identifiers</span>
+
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Named</span>(<span class="str">"jcr:title"</span>)
+<span class="kw">private</span> String jcrTitle;
+<span class="cm">// "jcr:title" has a colon — illegal as a Java field name
+// @Named("jcr:title") tells the injector to use that JCR property name
+// while the Java field is called "jcrTitle"</span>
+
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Named</span>(<span class="str">"sling:resourceType"</span>)
+<span class="kw">private</span> String resourceTypeProp;
+
+<span class="attr">@ValueMapValue</span>
+<span class="attr">@Named</span>(<span class="str">"cq:tags"</span>)
+<span class="kw">private</span> String[] cqTags;
+
+<span class="cm">// Note: @ValueMapValue also has a name= parameter that does the same thing:
+// @ValueMapValue(name = "jcr:title") is equivalent to @ValueMapValue + @Named("jcr:title")</span></div></div>
+</div>
+
+<!-- @INJECT -->
+<div class="pg" id="p-inject">
+<span class="badge">Part 3 — all injectors</span>
+<h1>@Inject — the generic injector (avoid in new code)</h1>
+<p class="lede"><code>@Inject</code> is the original, generic injector from before the specific injectors existed. It tries all available injectors in order until one works. Avoid it in new code — use the specific injectors instead.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@Inject — what it does and why to avoid it</span></div>
+<div class="code-body"><span class="cm">// OLD pattern (before specific injectors existed):</span>
+<span class="attr">@Inject</span>
+<span class="kw">private</span> String title;            <span class="cm">// tries all injectors until one works</span>
+
+<span class="attr">@Inject</span>
+<span class="kw">private</span> Resource currentResource;
+
+<span class="attr">@Inject</span>
+<span class="kw">private</span> Page currentPage;
+
+<span class="cm">// PROBLEM: @Inject is ambiguous — hard to know which injector won.
+// It is also slightly slower because it tries all injectors.
+// And it is harder to read — other developers cannot tell at a glance
+// where each value comes from.</span>
+
+<span class="cm">// MODERN equivalent — explicit and clear:</span>
+<span class="attr">@ValueMapValue</span>       <span class="kw">private</span> String title;        <span class="cm">// clearly: from JCR</span>
+<span class="attr">@SlingObject</span>         <span class="kw">private</span> Resource currentResource; <span class="cm">// clearly: from Sling</span>
+<span class="attr">@ScriptVariable</span>      <span class="kw">private</span> Page currentPage;    <span class="cm">// clearly: from script context</span>
+
+<span class="cm">// Rule: never use @Inject in new code.
+// If you see it in existing code, it works but is a code smell.
+// Replace it with specific injectors during refactoring.</span></div></div>
+</div>
+
+<!-- @POSTCONSTRUCT -->
+<div class="pg" id="p-postconstruct">
+<span class="badge">Part 4 — lifecycle methods</span>
+<h1>@PostConstruct — where your logic lives</h1>
+<p class="lede"><code>@PostConstruct</code> marks a method that AEM calls after all injected fields have been populated. This is the correct place for ALL your business logic. It is called exactly once per model instance.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@PostConstruct — complete patterns</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// ── At this point, ALL injected fields have their values ──────
+  // @ValueMapValue fields: have JCR values (or null if OPTIONAL)
+  // @SlingObject fields:   have their AEM objects
+  // @ScriptVariable fields: have their scripting objects
+  // @OSGiService fields:   have service references (or null if @Optional)</span>
+
+  <span class="cm">// ── Null safety — always check @ValueMapValue fields first ────</span>
+  <span class="kw">if</span> (StringUtils.isBlank(title)) {
+    title = <span class="str">""</span>;  <span class="cm">// normalise: never let title be null in getters</span>
+  }
+
+  <span class="cm">// ── Computed booleans ─────────────────────────────────────────</span>
+  hasLink        = StringUtils.isNotBlank(ctaLink);
+  hasDescription = StringUtils.isNotBlank(description);
+  hasTags        = tags != <span class="kw">null</span> && tags.length > <span class="kw">0</span>;
+
+  <span class="cm">// ── Derived string values ─────────────────────────────────────</span>
+  themeClass = StringUtils.isNotBlank(theme)
+    ? <span class="str">"card--"</span> + theme.trim().toLowerCase()
+    : <span class="str">""</span>;
+
+  displayTitle = StringUtils.defaultIfBlank(title,
+    currentPage != <span class="kw">null</span> ? currentPage.getTitle() : <span class="str">"Untitled"</span>);
+
+  <span class="cm">// ── URL processing ────────────────────────────────────────────</span>
+  <span class="kw">if</span> (hasLink && ctaLink.startsWith(<span class="str">"/content"</span>)) {
+    <span class="cm">// Append .html to internal AEM paths</span>
+    processedLink = ctaLink + (<span class="str">".html"</span>.equals(
+      ctaLink.substring(ctaLink.lastIndexOf(<span class="str">'.'</span>) + <span class="kw">1</span>)) ? <span class="str">""</span> : <span class="str">".html"</span>);
+  } <span class="kw">else</span> {
+    processedLink = ctaLink;
+  }
+
+  <span class="cm">// ── Reading multifield items ──────────────────────────────────</span>
+  Resource itemsNode = currentResource.getChild(<span class="str">"items"</span>);
+  <span class="kw">if</span> (itemsNode != <span class="kw">null</span>) {
+    <span class="kw">for</span> (Resource child : itemsNode.getChildren()) {
+      FaqItem item = child.adaptTo(FaqItem.<span class="kw">class</span>);
+      <span class="kw">if</span> (item != <span class="kw">null</span>) faqItems.add(item);
+    }
+  }
+}
+
+<span class="cm">// ── Method name can be anything — "init" is just convention ───</span>
+<span class="cm">// The annotation, not the name, tells Sling to call it.
+// You can have only ONE @PostConstruct per class.
+// It must be non-static, return void, and have no parameters.</span></div></div>
+<div class="warn">Do NOT do anything in the constructor. The constructor runs before injection. All injected fields are null when the constructor runs. All logic must be in <code>@PostConstruct</code>.</div>
+</div>
+
+<!-- @PREDESTROY -->
+<div class="pg" id="p-predestroy">
+<span class="badge">Part 4 — lifecycle methods</span>
+<h1>@PreDestroy — cleanup after rendering</h1>
+<p class="lede"><code>@PreDestroy</code> marks a method called just before the model instance is garbage collected. Use it to close any resources you opened in <code>@PostConstruct</code>.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">@PreDestroy — when and how to use it</span></div>
+<div class="code-body"><span class="cm">// @PreDestroy is rarely needed. Most models use injected services
+// which manage their own resources. Use it only when YOU open something.</span>
+
+<span class="cm">// Example — model that opens a JCR session directly:</span>
+<span class="kw">private</span> Session jcrSession;
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// Sometimes you need a privileged JCR session for special operations:</span>
+  <span class="kw">try</span> {
+    jcrSession = resourceResolver.adaptTo(Session.<span class="kw">class</span>);
+    <span class="cm">// ... use session for queries</span>
+  } <span class="kw">catch</span> (Exception e) {
+    log.error(<span class="str">"Failed to get JCR session"</span>, e);
+  }
+}
+
+<span class="attr">@PreDestroy</span>
+<span class="kw">protected void</span> cleanup() {
+  <span class="kw">if</span> (jcrSession != <span class="kw">null</span> && jcrSession.isLive()) {
+    jcrSession.logout();  <span class="cm">// always close what you open</span>
+  }
+}
+
+<span class="cm">// NOTE: In modern AEM development, most operations go through
+// the injected ResourceResolver (which is managed by Sling).
+// Directly opening JCR sessions is rarely needed.
+// If you do not open resources yourself, do not write @PreDestroy.</span></div></div>
+</div>
+
+<!-- LIFECYCLE ORDER -->
+<div class="pg" id="p-lifecycle-order">
+<span class="badge">Part 4 — lifecycle methods</span>
+<h1>Lifecycle order — exact sequence</h1>
+<p class="lede">Here is the complete, precise sequence of every step from HTL requesting a model to the model being garbage collected.</p>
+<div class="steps">
+<div class="step"><div class="snum">1</div><div><div class="stt">HTL evaluates data-sly-use</div><div class="stb">HTL processes <code>data-sly-use.model="com.mysite.core.models.CardModel"</code>. Calls <code>request.adaptTo(CardModel.class)</code>.</div></div></div>
+<div class="step"><div class="snum">2</div><div><div class="stt">Sling Models factory scans registered models</div><div class="stb">Finds <code>CardModelImpl</code> because: its <code>adapters</code> includes <code>CardModel.class</code>, and its <code>resourceType</code> matches the current resource's <code>sling:resourceType</code>.</div></div></div>
+<div class="step"><div class="snum">3</div><div><div class="stt">Constructor runs</div><div class="stb">Java creates a new <code>CardModelImpl</code> instance. The constructor runs. All fields are <code>null</code> at this point. Do NOT access injected fields here.</div></div></div>
+<div class="step"><div class="snum">4</div><div><div class="stt">@ValueMapValue fields are injected</div><div class="stb">For each <code>@ValueMapValue</code> field, Sling reads the corresponding JCR property from the resource's ValueMap and sets the field. Type coercion happens automatically.</div></div></div>
+<div class="step"><div class="snum">5</div><div><div class="stt">@SlingObject fields are injected</div><div class="stb">AEM runtime objects (Resource, ResourceResolver, Request) are injected.</div></div></div>
+<div class="step"><div class="snum">6</div><div><div class="stt">@ScriptVariable fields are injected</div><div class="stb">Script-context objects (Page, PageManager, Style) are injected from the request context.</div></div></div>
+<div class="step"><div class="snum">7</div><div><div class="stt">@ChildResource fields are injected</div><div class="stb">Named child nodes are resolved and injected as Resource objects or adapted to their own Sling Models.</div></div></div>
+<div class="step"><div class="snum">8</div><div><div class="stt">@OSGiService fields are injected</div><div class="stb">OSGi services are looked up in the bundle context and injected.</div></div></div>
+<div class="step"><div class="snum">9</div><div><div class="stt">@PostConstruct method runs</div><div class="stb">AEM calls your <code>init()</code> method. All injected fields are available. This is where your business logic runs.</div></div></div>
+<div class="step"><div class="snum">10</div><div><div class="stt">Model returned to HTL</div><div class="stb">The populated model instance is bound to the variable name in HTL (e.g. <code>model</code>).</div></div></div>
+<div class="step"><div class="snum">11</div><div><div class="stt">HTL calls getters during rendering</div><div class="stb"><code>${model.title}</code> calls <code>getTitle()</code>. Returns the pre-computed value. Getters should be fast — no logic, just return the field.</div></div></div>
+<div class="step"><div class="snum">12</div><div><div class="stt">@PreDestroy runs, model garbage collected</div><div class="stb">After the request completes, <code>@PreDestroy</code> runs (if defined). The instance is then eligible for garbage collection. Sling Models are request-scoped — a new instance per request.</div></div></div>
+</div>
+</div>
+
+<!-- INTERFACE WHY -->
+<div class="pg" id="p-iface-why">
+<span class="badge">Part 5 — interface &amp; impl pattern</span>
+<h1>Why interface + implementation — the pattern explained</h1>
+<p class="lede">Every Sling Model should have two Java files: an interface and an implementation class. This is not just a Java convention — it has specific benefits in AEM that make production code significantly better.</p>
+<div class="sec">
+<div class="sec-title">The four reasons</div>
+<div class="grid2">
+<div class="card"><div class="card-hd"><i class="ti ti-test-pipe" aria-hidden="true"></i>Unit testable</div><p>In tests, you can swap the real <code>CardModelImpl</code> for a mock that implements <code>CardModel</code>. Other models that depend on <code>CardModel</code> can be tested in isolation without the real implementation.</p></div>
+<div class="card"><div class="card-hd"><i class="ti ti-eye-off" aria-hidden="true"></i>HTL stays clean</div><p>HTL uses the interface class name: <code>data-sly-use.model="com.mysite.core.models.CardModel"</code>. The interface has no annotations, no imports, no AEM dependencies — it is a pure Java contract.</p></div>
+<div class="card"><div class="card-hd"><i class="ti ti-arrows-exchange" aria-hidden="true"></i>Swappable impls</div><p>You can provide a second implementation (e.g. for an A/B test) by creating another class with <code>adapters = { CardModel.class }</code>. Switch between them with OSGi service ranking — no HTL changes needed.</p></div>
+<div class="card"><div class="card-hd"><i class="ti ti-book" aria-hidden="true"></i>Clear contract</div><p>The interface declares exactly what data the component exposes. Other developers reading the interface immediately know what data is available without reading the implementation details.</p></div>
+</div>
+</div>
+</div>
+
+<!-- INTERFACE CODE -->
+<div class="pg" id="p-iface-code">
+<span class="badge">Part 5 — interface &amp; impl pattern</span>
+<h1>The interface — what goes in it</h1>
+<p class="lede">The interface is a pure Java contract. It declares only getter method signatures. No AEM imports, no annotations, no field declarations, no logic. Keep it minimal and readable.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">core/src/main/java/com/mysite/core/models/CardModel.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="kw">package</span> com.mysite.core.models;
+
+<span class="kw">import</span> java.util.List;
+
+<span class="cm">/**
+ * Sling Model interface for the Card component.
+ * Exposes data for the card.html HTL template.
+ * All methods are getters — no logic, no AEM imports.
+ */</span>
+<span class="kw">public interface</span> CardModel {
+
+  <span class="cm">/** The main headline of the card. Never null — returns empty string if not set. */</span>
+  String getTitle();
+
+  <span class="cm">/** The optional eyebrow label above the title. Null if not configured. */</span>
+  String getEyebrow();
+
+  <span class="cm">/** The body description. May contain HTML from the RTE. */</span>
+  String getDescription();
+
+  <span class="cm">/** The heading element level (h2, h3, h4) from the design dialog policy. */</span>
+  String getHeadingLevel();
+
+  <span class="cm">/** The DAM path of the card image. Null if not set. */</span>
+  String getImageUrl();
+
+  <span class="cm">/** The alt text for the image. Falls back to title if not explicitly set. */</span>
+  String getImageAlt();
+
+  <span class="cm">/** The target URL for the card's CTA button. Null if not set. */</span>
+  String getCtaLink();
+
+  <span class="cm">/** The label for the CTA button. Defaults to "Read More" if not set. */</span>
+  String getCtaText();
+
+  <span class="cm">/** True if the CTA link is configured and non-empty. */</span>
+  <span class="kw">boolean</span> isHasLink();
+
+  <span class="cm">/** True if the link should open in a new browser tab. */</span>
+  <span class="kw">boolean</span> isOpenInNewTab();
+
+  <span class="cm">/** The CSS modifier class for the selected theme (e.g. "card--dark"). */</span>
+  String getThemeClass();
+
+  <span class="cm">/** List of string tags applied to this card. Empty list if none. */</span>
+  List&lt;String&gt; getTags();
+
+  <span class="cm">/** True if this card has no configured title or description. */</span>
+  <span class="kw">boolean</span> isEmpty();
+}</div></div>
+<div class="sec">
+<div class="sec-title">Interface rules</div>
+<ul>
+<li>Only getter method signatures — no implementations</li>
+<li>No <code>@Model</code>, <code>@ValueMapValue</code>, or any other Sling/AEM annotations</li>
+<li>No AEM imports except for return types (e.g. <code>List</code>, <code>String</code>, primitive types)</li>
+<li>Write Javadoc on every method — describe what it returns and any defaults</li>
+<li>Keep it in the <code>models/</code> package, not <code>models/impl/</code></li>
+</ul>
+</div>
+</div>
+
+<!-- IMPL CODE -->
+<div class="pg" id="p-impl-code">
+<span class="badge">Part 5 — interface &amp; impl pattern</span>
+<h1>The implementation — complete annotated class</h1>
+<p class="lede">The implementation has all the AEM annotations, injected fields, and business logic. It lives in the <code>impl</code> sub-package and implements the interface.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">core/…/models/impl/CardModelImpl.java — complete</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="kw">package</span> com.mysite.core.models.impl;
+
+<span class="kw">import</span> com.mysite.core.models.CardModel;
+<span class="kw">import</span> org.apache.sling.api.resource.Resource;
+<span class="kw">import</span> org.apache.sling.api.SlingHttpServletRequest;
+<span class="kw">import</span> org.apache.sling.models.annotations.*;
+<span class="kw">import</span> org.apache.sling.models.annotations.injectorspecific.*;
+<span class="kw">import</span> com.day.cq.wcm.api.Page;
+<span class="kw">import</span> com.day.cq.wcm.api.designer.Style;
+<span class="kw">import</span> org.apache.commons.lang3.StringUtils;
+<span class="kw">import</span> javax.annotation.PostConstruct;
+<span class="kw">import</span> java.util.*;
+
+<span class="attr">@Model</span>(
+  adaptables            = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> },
+  adapters              = { CardModel.<span class="kw">class</span> },
+  resourceType          = <span class="str">"mysite/components/card"</span>,
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+<span class="kw">public class</span> CardModelImpl <span class="kw">implements</span> CardModel {
+
+  <span class="cm">// ── JCR properties from the dialog ────────────────────────────</span>
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String title;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String eyebrow;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String description;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String ctaLink;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="attr">@Default</span>(values = <span class="str">"Read More"</span>)
+  <span class="kw">private</span> String ctaText;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String theme;
+
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private boolean</span> openInNewTab;
+
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"fileReference"</span>)
+  <span class="kw">private</span> String imageRef;
+  <span class="cm">// JCR property is "fileReference", Java field is "imageRef"</span>
+
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"imageAlt"</span>)
+  <span class="kw">private</span> String imageAltText;
+
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"cq:tags"</span>)
+  <span class="kw">private</span> String[] rawTags;
+
+  <span class="cm">// ── AEM runtime objects ────────────────────────────────────────</span>
+
+  <span class="attr">@SlingObject</span>
+  <span class="kw">private</span> Resource currentResource;
+
+  <span class="attr">@ScriptVariable</span>
+  <span class="kw">private</span> Page currentPage;
+
+  <span class="attr">@ScriptVariable</span>
+  <span class="kw">private</span> Style currentStyle;
+
+  <span class="cm">// ── Computed fields — not injected ────────────────────────────</span>
+  <span class="cm">// Populated in @PostConstruct, returned by getters</span>
+  <span class="kw">private boolean</span> hasLink;
+  <span class="kw">private</span> String  themeClass;
+  <span class="kw">private</span> String  headingLevel;
+  <span class="kw">private</span> String  imageAlt;
+  <span class="kw">private</span> List&lt;String&gt; tags = Collections.emptyList();
+
+  <span class="cm">// ── @PostConstruct — all logic runs here ──────────────────────</span>
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    <span class="cm">// Null-safe normalisation</span>
+    title       = StringUtils.trimToEmpty(title);
+    description = StringUtils.trimToEmpty(description);
+
+    <span class="cm">// Computed booleans</span>
+    hasLink = StringUtils.isNotBlank(ctaLink);
+
+    <span class="cm">// Theme class — only add modifier if theme is set</span>
+    themeClass = StringUtils.isNotBlank(theme)
+      ? <span class="str">"card--"</span> + theme.trim().toLowerCase()
+      : <span class="str">""</span>;
+
+    <span class="cm">// Heading level from template policy (currentStyle)</span>
+    headingLevel = currentStyle != <span class="kw">null</span>
+      ? currentStyle.get(<span class="str">"headingLevel"</span>, <span class="str">"h3"</span>)
+      : <span class="str">"h3"</span>;
+
+    <span class="cm">// Image alt: explicit → title → empty</span>
+    imageAlt = StringUtils.isNotBlank(imageAltText)
+      ? imageAltText
+      : StringUtils.defaultString(title);
+
+    <span class="cm">// Convert raw tag paths to display names</span>
+    <span class="kw">if</span> (rawTags != <span class="kw">null</span> && rawTags.length > <span class="kw">0</span>) {
+      tags = Arrays.asList(rawTags);
+    }
+  }
+
+  <span class="cm">// ── Getters — called by HTL ────────────────────────────────────</span>
+  <span class="cm">// Getters are dumb: just return the pre-computed field.
+  // Never add logic inside a getter.</span>
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getTitle()       { <span class="kw">return</span> title; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getEyebrow()     { <span class="kw">return</span> eyebrow; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getDescription() { <span class="kw">return</span> description; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getCtaLink()     { <span class="kw">return</span> ctaLink; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getCtaText()     { <span class="kw">return</span> ctaText; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>       isHasLink()      { <span class="kw">return</span> hasLink; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>       isOpenInNewTab() { <span class="kw">return</span> openInNewTab; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getThemeClass()  { <span class="kw">return</span> themeClass; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getHeadingLevel(){ <span class="kw">return</span> headingLevel; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getImageUrl()    { <span class="kw">return</span> imageRef; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getImageAlt()    { <span class="kw">return</span> imageAlt; }
+  <span class="attr">@Override</span> <span class="kw">public</span> List&lt;String&gt;  getTags()        { <span class="kw">return</span> tags; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>       isEmpty()        { <span class="kw">return</span> title.isEmpty() && description.isEmpty(); }
+}</div></div>
+</div>
+
+<!-- FOLDER STRUCTURE AND MAVEN -->
+<div class="pg" id="p-folder-structure">
+<span class="badge">Part 5 — interface &amp; impl pattern</span>
+<h1>Folder structure and Maven configuration</h1>
+<p class="lede">Where the files live in your project and what Maven config you must have for Sling Models to work.</p>
+<div class="sec">
+<div class="sec-title">Java file locations</div>
+<div class="ftree"><span class="fth">core</span>/src/main/java/com/mysite/core/
+├── <span class="fth">models/</span>                            <span class="ftd">← interfaces live here</span>
+│   ├── <span class="ftg">CardModel.java</span>               <span class="ftd">← interface (no AEM annotations)</span>
+│   ├── <span class="ftg">NavigationModel.java</span>
+│   ├── <span class="ftg">FaqModel.java</span>
+│   ├── <span class="ftg">FaqItem.java</span>                 <span class="ftd">← multifield item interface</span>
+│   └── <span class="fth">impl/</span>                        <span class="ftd">← implementations live here</span>
+│       ├── <span class="ftg">CardModelImpl.java</span>       <span class="ftd">← impl (has @Model and all annotations)</span>
+│       ├── <span class="ftg">NavigationModelImpl.java</span>
+│       ├── <span class="ftg">FaqModelImpl.java</span>
+│       └── <span class="ftg">FaqItemImpl.java</span>
+├── <span class="fth">services/</span>
+│   ├── <span class="ftg">EmailService.java</span>           <span class="ftd">← OSGi service interface</span>
+│   └── <span class="ftg">impl/</span>
+│       └── <span class="ftg">EmailServiceImpl.java</span>   <span class="ftd">← OSGi service impl (@Component)</span>
+└── <span class="fth">servlets/</span>
+    └── <span class="ftg">SearchServlet.java</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">The one Maven config that MUST be correct</div>
+<p>In <code>core/pom.xml</code>, the bnd plugin must declare the <code>Sling-Model-Packages</code> header. This tells AEM which Java package(s) to scan when looking for Sling Models. Without this, AEM never finds your models.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">core/pom.xml — the critical bnd configuration</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="tag">&lt;plugin&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>biz.aQute.bnd<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>bnd-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;configuration&gt;</span>
+    <span class="tag">&lt;bnd&gt;</span>
+<span class="cm">      # REQUIRED: tells AEM which packages to scan for @Model classes
+      # Without this, data-sly-use returns null with no error message
+      # Includes all sub-packages (impl/ is scanned automatically)</span>
+      Sling-Model-Packages: com.mysite.core.models
+
+<span class="cm">      # If you have models in multiple top-level packages, comma-separate:</span>
+<span class="cm">      # Sling-Model-Packages: com.mysite.core.models,com.mysite.core.export</span>
+    <span class="tag">&lt;/bnd&gt;</span>
+  <span class="tag">&lt;/configuration&gt;</span>
+<span class="tag">&lt;/plugin&gt;</span>
+
+<span class="cm">&lt;!-- After deploying, verify in CRXDE that MANIFEST.MF contains: --&gt;</span>
+<span class="cm">&lt;!-- Go to /apps/mysite/install/mysite.core-1.0-SNAPSHOT.jar --&gt;</span>
+<span class="cm">&lt;!-- Or: check /system/console/bundles → your bundle → Headers --&gt;</span></div></div>
+</div>
+</div>
+
+<!-- HTL CONNECT -->
+<div class="pg" id="p-htl-connect">
+<span class="badge">Part 6 — HTL integration</span>
+<h1>Connecting the model to HTL — the four-step chain</h1>
+<p class="lede">Here is the exact connection between each part — the dialog XML field name, the JCR property, the Java field, and the HTL expression. Every link in this chain must be consistent.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">the complete chain from dialog to browser</span></div>
+<div class="code-body"><span class="cm">// STEP 1: Dialog XML field saves to JCR</span>
+<span class="cm">// name="./title" → saves to JCR property "title" on component node</span>
+<span class="tag">&lt;title</span>
+  <span class="attr">sling:resourceType</span>=<span class="str">"granite/ui/…/textfield"</span>
+  <span class="attr">name</span>=<span class="str">"./title"</span>                <span class="cm">← property name in JCR</span>
+  <span class="attr">fieldLabel</span>=<span class="str">"Title"</span><span class="tag">/&gt;</span>
+
+<span class="cm">// STEP 2: JCR stores it</span>
+<span class="cm">// /content/mysite/en/home/jcr:content/root/card
+// └── title = "Summer Sale"</span>
+
+<span class="cm">// STEP 3: Sling Model reads it</span>
+<span class="attr">@ValueMapValue</span>
+<span class="kw">private</span> String title;         <span class="cm">← field name matches JCR property "title"</span>
+
+<span class="kw">public</span> String getTitle() {    <span class="cm">← getter: getTitle() = "get" + "Title"</span>
+  <span class="kw">return</span> title;
+}
+
+<span class="cm">// STEP 4: HTL calls the getter</span>
+<span class="cm">// ${model.title} = model.getTitle()</span>
+<span class="tag">&lt;h3</span><span class="tag">&gt;</span>${model.title}<span class="tag">&lt;/h3&gt;</span>
+
+<span class="cm">// ────────────────────────────────────────────────────────────
+// ALL FOUR MUST BE CONSISTENT:
+// Dialog:  name="./title"
+// JCR:     title = "Summer Sale"
+// Java:    @ValueMapValue private String title;  +  getTitle()
+// HTL:     ${model.title}
+// ────────────────────────────────────────────────────────────</span></div></div>
+</div>
+
+<!-- NAMING CONVENTION -->
+<div class="pg" id="p-naming-convention">
+<span class="badge">Part 6 — HTL integration</span>
+<h1>Getter naming convention — HTL to Java</h1>
+<p class="lede">HTL converts property names in expressions to Java getter method names following the JavaBeans convention. Getting this wrong means the expression silently returns null.</p>
+<div class="row-list">
+<div class="row"><div class="rk">${model.title}</div><div class="rv">Calls <code>getTitle()</code>. Rule: capitalise first letter, prepend <code>get</code>.</div></div>
+<div class="row"><div class="rk">${model.firstName}</div><div class="rv">Calls <code>getFirstName()</code>. CamelCase stays as-is.</div></div>
+<div class="row"><div class="rk">${model.hasLink}</div><div class="rv">Calls <code>isHasLink()</code> first, then <code>getHasLink()</code> as fallback. Boolean getters use <code>is</code> prefix.</div></div>
+<div class="row"><div class="rk">${model.empty}</div><div class="rv">Calls <code>isEmpty()</code> first. AEM convention: booleans like <code>empty</code> use <code>is</code>.</div></div>
+<div class="row"><div class="rk">${model.items}</div><div class="rv">Calls <code>getItems()</code>. Returns <code>List&lt;?&gt;</code> which HTL can loop over with <code>data-sly-list</code>.</div></div>
+<div class="row"><div class="rk">${model.items.size}</div><div class="rv">Calls <code>getItems().size()</code>. HTL supports chained calls for collection metadata.</div></div>
+<div class="row"><div class="rk">${model.ctaLink}</div><div class="rv">Calls <code>getCtaLink()</code>. Multi-word camelCase: each word capitalised.</div></div>
+</div>
+<div class="code-block"><div class="code-top"><span class="code-fname">naming table — complete reference</span></div>
+<div class="code-body"><span class="cm">// HTL expression   →  Java method called</span>
+${model.title}       → getTitle()
+${model.ctaText}     → getCtaText()
+${model.imageUrl}    → getImageUrl()
+${model.hasLink}     → isHasLink()   (boolean: "is" prefix)
+${model.isEmpty}     → isEmpty()     (boolean: "is" prefix)
+${model.isActive}    → isActive()    (or getIsActive() as fallback)
+${model.openInNewTab}→ isOpenInNewTab() (boolean: "is" prefix)
+${model.empty}       → isEmpty()     (special: "empty" → "isEmpty")
+${model.items}       → getItems()    (returns List/Collection/array)
+${model.items.size}  → getItems().size()
+
+<span class="cm">// If HTL cannot find getXxx() or isXxx(), expression returns null
+// — no error, no warning, just empty output</span></div></div>
+</div>
+
+<!-- NESTED MODELS -->
+<div class="pg" id="p-nested-models">
+<span class="badge">Part 6 — HTL integration</span>
+<h1>Nested models — reading multifield data</h1>
+<p class="lede">Multifield items in the JCR are child nodes of a container node. Reading them requires a nested model pattern: a parent model and an item model. The parent iterates children and adapts each to the item model.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">nested models — complete FAQ example</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="cm">// ── FaqItem.java — interface for each multifield item ─────────</span>
+<span class="kw">public interface</span> FaqItem {
+  String getQuestion();
+  String getAnswer();
+  <span class="kw">boolean</span> isValid(); <span class="cm">// true if both question and answer are set</span>
+}
+
+<span class="cm">// ── FaqItemImpl.java — reads one item's child node ─────────────</span>
+<span class="attr">@Model</span>(
+  adaptables            = Resource.<span class="kw">class</span>,  <span class="cm">// items are resources, not requests</span>
+  adapters              = { FaqItem.<span class="kw">class</span> },
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+<span class="kw">public class</span> FaqItemImpl <span class="kw">implements</span> FaqItem {
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String question;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String answer;
+  <span class="kw">private boolean</span> valid;
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    valid = StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer);
+  }
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getQuestion() { <span class="kw">return</span> question; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String  getAnswer()   { <span class="kw">return</span> answer; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span> isValid()     { <span class="kw">return</span> valid; }
+}
+
+<span class="cm">// ── FaqModel.java — parent model reads the container ──────────</span>
+<span class="kw">public interface</span> FaqModel {
+  String getHeading();
+  List&lt;FaqItem&gt; getItems();
+  <span class="kw">boolean</span> isEmpty();
+}
+
+<span class="cm">// ── FaqModelImpl.java ──────────────────────────────────────────</span>
+<span class="attr">@Model</span>(
+  adaptables   = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> },
+  adapters     = { FaqModel.<span class="kw">class</span> },
+  resourceType = <span class="str">"mysite/components/faq"</span>,
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+<span class="kw">public class</span> FaqModelImpl <span class="kw">implements</span> FaqModel {
+  <span class="attr">@ValueMapValue</span>
+  <span class="kw">private</span> String heading;
+
+  <span class="attr">@SlingObject</span>
+  <span class="kw">private</span> Resource currentResource;
+
+  <span class="kw">private</span> List&lt;FaqItem&gt; items = <span class="kw">new</span> ArrayList&lt;&gt;();
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    <span class="cm">// Get the "items" container node (the multifield's storage node)</span>
+    Resource container = currentResource.getChild(<span class="str">"items"</span>);
+    <span class="kw">if</span> (container != <span class="kw">null</span>) {
+      <span class="cm">// Iterate each child: item0, item1, item2 ...</span>
+      <span class="kw">for</span> (Resource child : container.getChildren()) {
+        <span class="cm">// Adapt each child resource to FaqItem using FaqItemImpl</span>
+        FaqItem item = child.adaptTo(FaqItem.<span class="kw">class</span>);
+        <span class="kw">if</span> (item != <span class="kw">null</span> && item.isValid()) {
+          items.add(item);
+        }
+      }
+    }
+  }
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String        getHeading() { <span class="kw">return</span> heading; }
+  <span class="attr">@Override</span> <span class="kw">public</span> List&lt;FaqItem&gt; getItems()   { <span class="kw">return</span> items; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>       isEmpty()    { <span class="kw">return</span> items.isEmpty(); }
+}
+
+<span class="cm">// ── faq.html — rendering both models ─────────────────────────</span>
+<span class="cm">// data-sly-use loads FaqModel; FaqItem instances come from model.items list</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.FaqModel"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;dl</span> <span class="attr">data-sly-test</span>=<span class="str">"${!model.empty}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.items}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;dt&gt;</span>${item.question}<span class="tag">&lt;/dt&gt;</span>
+    <span class="tag">&lt;dd&gt;</span>${item.answer}<span class="tag">&lt;/dd&gt;</span>
+  <span class="tag">&lt;/sly&gt;</span>
+<span class="tag">&lt;/dl&gt;</span></div></div>
+</div>
+
+<!-- OSGi SERVICE IMPL -->
+<div class="pg" id="p-osgi-service-impl">
+<span class="badge">Part 7 — advanced patterns</span>
+<h1>OSGi Service — complete example</h1>
+<p class="lede">An OSGi Service is shared business logic packaged as an interface + implementation with <code>@Component</code>. Multiple Sling Models can inject the same service. This is how you share logic without duplicating code.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">EmailService.java + EmailServiceImpl.java</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="cm">// ── EmailService.java — the interface ─────────────────────────</span>
+<span class="kw">package</span> com.mysite.core.services;
+
+<span class="kw">public interface</span> EmailService {
+  <span class="kw">boolean</span> sendEmail(String to, String subject, String body);
+  <span class="kw">boolean</span> isConfigured();
+}
+
+<span class="cm">// ── EmailServiceImpl.java — the implementation ─────────────────</span>
+<span class="kw">package</span> com.mysite.core.services.impl;
+
+<span class="kw">import</span> org.osgi.service.component.annotations.*;
+<span class="kw">import</span> org.osgi.service.metatype.annotations.*;
+
+<span class="attr">@Component</span>(service = EmailService.<span class="kw">class</span>)
+<span class="cm">// @Component registers this class as an OSGi service.
+// service = EmailService.class means it is registered under that interface.
+// Other bundles (Sling Models) can look it up by EmailService.class.</span>
+
+<span class="attr">@Designate</span>(ocd = EmailServiceImpl.Config.<span class="kw">class</span>)
+<span class="cm">// @Designate links this service to a configuration interface.
+// The config fields appear in the OSGi console (/system/console/configMgr).</span>
+
+<span class="kw">public class</span> EmailServiceImpl <span class="kw">implements</span> EmailService {
+
+  <span class="cm">// ── Configuration interface ────────────────────────────────</span>
+  <span class="attr">@ObjectClassDefinition</span>(name = <span class="str">"My Site Email Service"</span>)
+  <span class="kw">public</span> @interface Config {
+    <span class="attr">@AttributeDefinition</span>(name = <span class="str">"SMTP Host"</span>)
+    String smtp_host() <span class="kw">default</span> <span class="str">"localhost"</span>;
+
+    <span class="attr">@AttributeDefinition</span>(name = <span class="str">"SMTP Port"</span>)
+    <span class="kw">int</span> smtp_port() <span class="kw">default</span> <span class="kw">587</span>;
+
+    <span class="attr">@AttributeDefinition</span>(name = <span class="str">"From Address"</span>)
+    String from_address() <span class="kw">default</span> <span class="str">"no-reply@mysite.com"</span>;
+  }
+
+  <span class="kw">private</span> String smtpHost;
+  <span class="kw">private int</span>    smtpPort;
+  <span class="kw">private</span> String fromAddress;
+
+  <span class="cm">// @Activate runs when this OSGi service is activated (AEM start or config change)</span>
+  <span class="attr">@Activate</span>
+  <span class="kw">protected void</span> activate(Config config) {
+    <span class="kw">this</span>.smtpHost    = config.smtp_host();
+    <span class="kw">this</span>.smtpPort    = config.smtp_port();
+    <span class="kw">this</span>.fromAddress = config.from_address();
+  }
+
+  <span class="attr">@Override</span>
+  <span class="kw">public boolean</span> sendEmail(String to, String subject, String body) {
+    <span class="cm">// Real SMTP sending logic here</span>
+    <span class="kw">return true</span>;
+  }
+
+  <span class="attr">@Override</span>
+  <span class="kw">public boolean</span> isConfigured() {
+    <span class="kw">return</span> StringUtils.isNotBlank(smtpHost) && StringUtils.isNotBlank(fromAddress);
+  }
+}
+
+<span class="cm">// ── Using the service in a Sling Model ────────────────────────</span>
+<span class="attr">@OSGiService</span>
+<span class="kw">private</span> EmailService emailService;
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="kw">if</span> (emailService != <span class="kw">null</span> && emailService.isConfigured()) {
+    <span class="cm">// service is available and configured</span>
+  }
+}</div></div>
+</div>
+
+<!-- ADAPTO -->
+<div class="pg" id="p-adaptto">
+<span class="badge">Part 7 — advanced patterns</span>
+<h1>adaptTo() — using Sling Models from Java code</h1>
+<p class="lede"><code>adaptTo()</code> is the Sling API method that creates a Sling Model from a Resource. Any Java code that has a Resource can get a model — not just HTL templates.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">adaptTo() — all usage patterns</span></div>
+<div class="code-body"><span class="cm">// ── From a Resource ────────────────────────────────────────────</span>
+Resource cardResource = resourceResolver.getResource(<span class="str">"/content/mysite/en/home/jcr:content/root/card"</span>);
+CardModel card = cardResource.adaptTo(CardModel.<span class="kw">class</span>);
+<span class="cm">// card is now a populated CardModelImpl
+// Works because CardModelImpl has adapters = { CardModel.class }</span>
+
+<span class="cm">// ── From a Request (in a Sling Servlet) ────────────────────────</span>
+<span class="kw">protected void</span> doGet(SlingHttpServletRequest request, ...) {
+  CardModel card = request.adaptTo(CardModel.<span class="kw">class</span>);
+  <span class="cm">// current resource is the resource the servlet is called on</span>
+}
+
+<span class="cm">// ── From another Sling Model ───────────────────────────────────</span>
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> Resource currentResource;
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="cm">// Get a child resource and adapt it to a model</span>
+  Resource promoResource = currentResource.getChild(<span class="str">"promo"</span>);
+  <span class="kw">if</span> (promoResource != <span class="kw">null</span>) {
+    PromoModel promo = promoResource.adaptTo(PromoModel.<span class="kw">class</span>);
+  }
+
+  <span class="cm">// Get a page's model</span>
+  Resource relatedPageContent = resourceResolver
+    .getResource(<span class="str">"/content/mysite/en/related/jcr:content"</span>);
+  <span class="kw">if</span> (relatedPageContent != <span class="kw">null</span>) {
+    RelatedPageModel related = relatedPageContent.adaptTo(RelatedPageModel.<span class="kw">class</span>);
+  }
+}
+
+<span class="cm">// ── Null safety — always check return value ────────────────────</span>
+CardModel card = resource.adaptTo(CardModel.<span class="kw">class</span>);
+<span class="kw">if</span> (card != <span class="kw">null</span>) {
+  String title = card.getTitle();
+  <span class="cm">// process card</span>
+}
+<span class="cm">// adaptTo returns null if:
+// - No @Model class is registered with adapters = { CardModel.class }
+// - The model's Sling-Model-Packages is not declared in MANIFEST.MF
+// - A @Required field could not be injected</span></div></div>
+</div>
+
+<!-- EXTERNALIZER -->
+<div class="pg" id="p-externalizer">
+<span class="badge">Part 7 — advanced patterns</span>
+<h1>Externalizer and URL mapping in Sling Models</h1>
+<p class="lede">AEM stores page paths as internal JCR paths like <code>/content/mysite/en/home</code>. For email links, sitemap XML, and JSON APIs you need full absolute URLs. The Externalizer service converts internal paths to full URLs.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">URL handling patterns in Sling Models</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="attr">@OSGiService</span>
+<span class="kw">private</span> Externalizer externalizer;
+
+<span class="attr">@SlingObject</span>
+<span class="kw">private</span> ResourceResolver resourceResolver;
+
+<span class="attr">@ValueMapValue</span>
+<span class="kw">private</span> String ctaLink;
+
+<span class="kw">private</span> String processedLink;
+<span class="kw">private</span> String absoluteLink;
+<span class="kw">private</span> String mappedLink;
+
+<span class="attr">@PostConstruct</span>
+<span class="kw">protected void</span> init() {
+  <span class="kw">if</span> (StringUtils.isBlank(ctaLink)) <span class="kw">return</span>;
+
+  <span class="cm">// Pattern 1: Append .html to internal content paths</span>
+  <span class="kw">if</span> (ctaLink.startsWith(<span class="str">"/content/"</span>) && !ctaLink.contains(<span class="str">"."</span>)) {
+    processedLink = ctaLink + <span class="str">".html"</span>;
+  } <span class="kw">else</span> {
+    processedLink = ctaLink;
+  }
+
+  <span class="cm">// Pattern 2: ResourceResolver.map() — applies URL shortening rules</span>
+  <span class="cm">// /content/mysite/en/home.html → /en/home (if Sling URL mapping configured)</span>
+  mappedLink = resourceResolver.map(processedLink);
+
+  <span class="cm">// Pattern 3: Externalizer — full absolute URL</span>
+  <span class="cm">// /content/mysite/en/home.html → https://www.mysite.com/en/home.html</span>
+  <span class="kw">if</span> (externalizer != <span class="kw">null</span>) {
+    absoluteLink = externalizer.externalLink(
+      resourceResolver, <span class="str">"publish"</span>, processedLink
+    );
+    <span class="cm">// "publish" refers to the Externalizer domain configured in
+    // OSGi console → com.day.cq.commons.impl.ExternalizerImpl</span>
+  }
+}
+
+<span class="cm">// Externalizer domain names are configured in:
+// /system/console/configMgr → Day CQ Link Externalizer
+// Common domain names: "local", "author", "publish"
+// Each maps to a base URL: publish → https://www.mysite.com</span></div></div>
+</div>
+
+<!-- FULL EXAMPLE -->
+<div class="pg" id="p-full-example">
+<span class="badge">Part 7 — advanced patterns</span>
+<h1>Full production example — Product Card model</h1>
+<p class="lede">A realistic, complete Sling Model for a product card component. Uses every major pattern: ValueMapValue, ChildResource, OSGiService, ScriptVariable, PostConstruct, interface+impl, and nested model.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">ProductCardModelImpl.java — production-quality</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="attr">@Model</span>(
+  adaptables   = { Resource.<span class="kw">class</span>, SlingHttpServletRequest.<span class="kw">class</span> },
+  adapters     = { ProductCardModel.<span class="kw">class</span> },
+  resourceType = <span class="str">"mysite/components/product-card"</span>,
+  defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+)
+<span class="kw">public class</span> ProductCardModelImpl <span class="kw">implements</span> ProductCardModel {
+
+  <span class="cm">// ── JCR dialog fields ─────────────────────────────────────────</span>
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String  productName;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String  productCode;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private double</span>  basePrice;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private boolean</span> isFeatured;
+  <span class="attr">@ValueMapValue</span> <span class="kw">private</span> String  badgeLabel;
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"fileReference"</span>) <span class="kw">private</span> String imageRef;
+  <span class="attr">@ValueMapValue</span>(name = <span class="str">"cq:tags"</span>)       <span class="kw">private</span> String[] tagPaths;
+
+  <span class="cm">// ── AEM runtime objects ────────────────────────────────────────</span>
+  <span class="attr">@SlingObject</span>   <span class="kw">private</span> Resource     currentResource;
+  <span class="attr">@ScriptVariable</span> <span class="kw">private</span> Page         currentPage;
+  <span class="attr">@ScriptVariable</span> <span class="kw">private</span> Style        currentStyle;
+
+  <span class="cm">// ── OSGi services ─────────────────────────────────────────────</span>
+  <span class="attr">@OSGiService</span>           <span class="kw">private</span> Externalizer   externalizer;
+  <span class="attr">@OSGiService</span>
+  <span class="attr">@Optional</span>              <span class="kw">private</span> PricingService  pricingService;
+
+  <span class="cm">// ── Computed fields ────────────────────────────────────────────</span>
+  <span class="kw">private</span> String         displayPrice;
+  <span class="kw">private</span> String         productUrl;
+  <span class="kw">private</span> List&lt;String&gt;   features = Collections.emptyList();
+  <span class="kw">private</span> List&lt;String&gt;   tags     = Collections.emptyList();
+  <span class="kw">private</span> String         maxFeatures;
+  <span class="kw">private boolean</span>        showBadge;
+
+  <span class="attr">@PostConstruct</span>
+  <span class="kw">protected void</span> init() {
+    <span class="cm">// Read max features from template policy</span>
+    maxFeatures = currentStyle != <span class="kw">null</span>
+      ? String.valueOf(currentStyle.get(<span class="str">"maxFeatures"</span>, <span class="kw">3</span>))
+      : <span class="str">"3"</span>;
+
+    <span class="cm">// Price: use live pricing service if available, else fall back to JCR value</span>
+    <span class="kw">if</span> (pricingService != <span class="kw">null</span> && StringUtils.isNotBlank(productCode)) {
+      double livePrice = pricingService.getPrice(productCode);
+      displayPrice = livePrice > <span class="kw">0</span>
+        ? <span class="str">"₹"</span> + String.format(<span class="str">"%.0f"</span>, livePrice)
+        : <span class="str">"₹"</span> + String.format(<span class="str">"%.0f"</span>, basePrice);
+    } <span class="kw">else</span> {
+      displayPrice = basePrice > <span class="kw">0</span>
+        ? <span class="str">"₹"</span> + String.format(<span class="str">"%.0f"</span>, basePrice)
+        : <span class="str">""</span>;
+    }
+
+    <span class="cm">// Absolute product URL for sharing / SEO</span>
+    String pagePath = currentPage != <span class="kw">null</span> ? currentPage.getPath() + <span class="str">".html"</span> : <span class="str">""</span>;
+    productUrl = externalizer != <span class="kw">null</span> && StringUtils.isNotBlank(pagePath)
+      ? externalizer.externalLink(currentResource.getResourceResolver(), <span class="str">"publish"</span>, pagePath)
+      : pagePath;
+
+    <span class="cm">// Read features from multifield child nodes</span>
+    Resource featuresNode = currentResource.getChild(<span class="str">"features"</span>);
+    <span class="kw">if</span> (featuresNode != <span class="kw">null</span>) {
+      List&lt;String&gt; featureList = <span class="kw">new</span> ArrayList&lt;&gt;();
+      <span class="kw">for</span> (Resource child : featuresNode.getChildren()) {
+        String text = child.getValueMap().get(<span class="str">"text"</span>, String.<span class="kw">class</span>);
+        <span class="kw">if</span> (StringUtils.isNotBlank(text)) featureList.add(text);
+      }
+      features = Collections.unmodifiableList(featureList);
+    }
+
+    <span class="cm">// Badge visibility</span>
+    showBadge = StringUtils.isNotBlank(badgeLabel) || isFeatured;
+
+    <span class="cm">// Tags</span>
+    <span class="kw">if</span> (tagPaths != <span class="kw">null</span>) tags = Arrays.asList(tagPaths);
+  }
+
+  <span class="attr">@Override</span> <span class="kw">public</span> String       getProductName()  { <span class="kw">return</span> productName; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String       getDisplayPrice() { <span class="kw">return</span> displayPrice; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String       getProductUrl()   { <span class="kw">return</span> productUrl; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String       getImageRef()     { <span class="kw">return</span> imageRef; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>      isFeatured()      { <span class="kw">return</span> isFeatured; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>      isShowBadge()     { <span class="kw">return</span> showBadge; }
+  <span class="attr">@Override</span> <span class="kw">public</span> String       getBadgeLabel()   { <span class="kw">return</span> badgeLabel; }
+  <span class="attr">@Override</span> <span class="kw">public</span> List&lt;String&gt; getFeatures()     { <span class="kw">return</span> features; }
+  <span class="attr">@Override</span> <span class="kw">public</span> List&lt;String&gt; getTags()         { <span class="kw">return</span> tags; }
+  <span class="attr">@Override</span> <span class="kw">public boolean</span>      isEmpty()         { <span class="kw">return</span> StringUtils.isBlank(productName); }
+}</div></div>
+</div>
+
+<!-- UNIT TESTING -->
+<div class="pg" id="p-unit-testing">
+<span class="badge">Part 8 — testing &amp; errors</span>
+<h1>Unit testing with AEM Mocks</h1>
+<p class="lede">The biggest advantage of Sling Models over JSP is testability. Use <code>io.wcm.testing.aem-mock</code> to test your model without a running AEM instance. Tests run in milliseconds.</p>
+<div class="code-block"><div class="code-top"><span class="code-fname">CardModelImplTest.java — complete unit test</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="kw">package</span> com.mysite.core.models.impl;
+
+<span class="kw">import</span> com.mysite.core.models.CardModel;
+<span class="kw">import</span> io.wcm.testing.mock.aem.junit5.*;
+<span class="kw">import</span> org.apache.sling.testing.mock.sling.ResourceResolverType;
+<span class="kw">import</span> org.junit.jupiter.api.*;
+<span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="attr">@ExtendWith</span>(AemContextExtension.<span class="kw">class</span>)
+<span class="kw">class</span> CardModelImplTest {
+
+  <span class="cm">// AemContext provides a fake AEM environment for testing</span>
+  <span class="kw">private final</span> AemContext ctx = <span class="kw">new</span> AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
+
+  <span class="attr">@BeforeEach</span>
+  <span class="kw">void</span> setUp() {
+    <span class="cm">// Load test content from a JSON file (or set properties directly)</span>
+    ctx.create().resource(<span class="str">"/content/test/card"</span>,
+      <span class="str">"sling:resourceType"</span>, <span class="str">"mysite/components/card"</span>,
+      <span class="str">"title"</span>,              <span class="str">"Test Card Title"</span>,
+      <span class="str">"description"</span>,        <span class="str">"A test description"</span>,
+      <span class="str">"ctaLink"</span>,            <span class="str">"/content/mysite/en/home"</span>,
+      <span class="str">"ctaText"</span>,            <span class="str">"Learn More"</span>,
+      <span class="str">"openInNewTab"</span>,       <span class="kw">true</span>
+    );
+
+    <span class="cm">// Set the current resource to the node we created</span>
+    ctx.currentResource(<span class="str">"/content/test/card"</span>);
+
+    <span class="cm">// Register the impl class for Sling Model scanning</span>
+    ctx.addModelsForClasses(CardModelImpl.<span class="kw">class</span>);
+  }
+
+  <span class="attr">@Test</span>
+  <span class="kw">void</span> testTitleIsReturned() {
+    CardModel model = ctx.request().adaptTo(CardModel.<span class="kw">class</span>);
+    assertNotNull(model, <span class="str">"Model should not be null"</span>);
+    assertEquals(<span class="str">"Test Card Title"</span>, model.getTitle());
+  }
+
+  <span class="attr">@Test</span>
+  <span class="kw">void</span> testHasLinkWhenCtaLinkSet() {
+    CardModel model = ctx.request().adaptTo(CardModel.<span class="kw">class</span>);
+    assertNotNull(model);
+    assertTrue(model.isHasLink(), <span class="str">"Should have link when ctaLink is set"</span>);
+  }
+
+  <span class="attr">@Test</span>
+  <span class="kw">void</span> testHasLinkFalseWhenNoCtaLink() {
+    <span class="cm">// Create a resource WITHOUT ctaLink</span>
+    ctx.create().resource(<span class="str">"/content/test/card-no-link"</span>,
+      <span class="str">"sling:resourceType"</span>, <span class="str">"mysite/components/card"</span>,
+      <span class="str">"title"</span>, <span class="str">"No Link Card"</span>
+    );
+    ctx.currentResource(<span class="str">"/content/test/card-no-link"</span>);
+
+    CardModel model = ctx.request().adaptTo(CardModel.<span class="kw">class</span>);
+    assertNotNull(model);
+    assertFalse(model.isHasLink(), <span class="str">"Should not have link when ctaLink is empty"</span>);
+  }
+
+  <span class="attr">@Test</span>
+  <span class="kw">void</span> testEmptyWhenNoTitleOrDescription() {
+    ctx.create().resource(<span class="str">"/content/test/empty-card"</span>,
+      <span class="str">"sling:resourceType"</span>, <span class="str">"mysite/components/card"</span>
+    );
+    ctx.currentResource(<span class="str">"/content/test/empty-card"</span>);
+
+    CardModel model = ctx.request().adaptTo(CardModel.<span class="kw">class</span>);
+    assertNotNull(model);
+    assertTrue(model.isEmpty());
+  }
+
+  <span class="attr">@Test</span>
+  <span class="kw">void</span> testDefaultCtaText() {
+    <span class="cm">// When ctaText is not set, should default to "Read More"</span>
+    ctx.create().resource(<span class="str">"/content/test/card-default"</span>,
+      <span class="str">"sling:resourceType"</span>, <span class="str">"mysite/components/card"</span>,
+      <span class="str">"title"</span>, <span class="str">"Title"</span>
+      <span class="cm">// no ctaText set</span>
+    );
+    ctx.currentResource(<span class="str">"/content/test/card-default"</span>);
+
+    CardModel model = ctx.request().adaptTo(CardModel.<span class="kw">class</span>);
+    assertNotNull(model);
+    assertEquals(<span class="str">"Read More"</span>, model.getCtaText());
+  }
+}</div></div>
+</div>
+
+<!-- COMMON ERRORS -->
+<div class="pg" id="p-common-errors">
+<span class="badge">Part 8 — testing &amp; errors</span>
+<h1>Common errors — every one with an exact fix</h1>
+<p class="lede">These are the errors every AEM developer hits with Sling Models. Every one has a specific cause and a specific fix.</p>
+<div class="sec">
+<div class="sec-title">Error 1 — data-sly-use returns null (model is null)</div>
+<p><code>${model.title}</code> renders nothing. Adding <code>${model.class.name}</code> to the template also renders nothing.</p>
+<div class="steps">
+<div class="step"><div class="snum">1</div><div><div class="stt">Check Sling-Model-Packages in bnd config</div><div class="stb">In <code>core/pom.xml</code>, find the bnd plugin. Verify <code>Sling-Model-Packages: com.mysite.core.models</code> is present. This is the cause in 60% of cases.</div></div></div>
+<div class="step"><div class="snum">2</div><div><div class="stt">Verify the bundle is Active</div><div class="stb">Go to <code>/system/console/bundles</code>. Find your bundle (e.g. <code>mysite.core</code>). Status must be "Active". If "Installed" — the bundle failed to start. Fix the missing imports first.</div></div></div>
+<div class="step"><div class="snum">3</div><div><div class="stt">Check resourceType in @Model</div><div class="stb"><code>@Model(resourceType = "mysite/components/card")</code> — must exactly match <code>sling:resourceType</code> on the content node. Verify in CRXDE: navigate to the component node, check Properties → sling:resourceType. No <code>/apps</code> prefix. Case-sensitive.</div></div></div>
+<div class="step"><div class="snum">4</div><div><div class="stt">Check adapters</div><div class="stb"><code>@Model(adapters = { CardModel.class })</code> must include the interface used in <code>data-sly-use</code>. If you changed the interface name, update this parameter.</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Error 2 — @ValueMapValue field is always null</div>
+<p>Model is not null but <code>${model.title}</code> is always empty even after saving in the dialog.</p>
+<div class="steps">
+<div class="step"><div class="snum">1</div><div><div class="stt">Check CRXDE first</div><div class="stb">Navigate to the component's content node. Click Properties. Is the <code>title</code> property there with a value? If not, the dialog did not save it. Check the dialog XML — the field's <code>name</code> attribute.</div></div></div>
+<div class="step"><div class="snum">2</div><div><div class="stt">Check field name matches JCR property name</div><div class="stb">Dialog field <code>name="./title"</code> saves as JCR property <code>title</code>. Java field <code>@ValueMapValue private String title;</code> reads property <code>title</code>. They must match exactly. Case-sensitive.</div></div></div>
+<div class="step"><div class="snum">3</div><div><div class="stt">Check for special property names</div><div class="stb">If JCR property is <code>jcr:title</code> (has colon), use <code>@ValueMapValue(name="jcr:title")</code> — you cannot name a Java field <code>jcr:title</code>.</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Error 3 — @ScriptVariable fields are null</div>
+<p><code>currentPage</code> or <code>currentStyle</code> is always null causing a NullPointerException in <code>@PostConstruct</code>.</p>
+<p>Cause: <code>@ScriptVariable</code> only works when the model is adapted from a <code>SlingHttpServletRequest</code>. If <code>adaptables</code> only contains <code>Resource.class</code>, script variables cannot be injected.</p>
+<p>Fix: Add <code>SlingHttpServletRequest.class</code> to <code>adaptables</code>. Also guard with null checks in <code>@PostConstruct</code>: <code>if (currentStyle != null) { ... }</code></p>
+</div>
+<div class="sec">
+<div class="sec-title">Error 4 — NullPointerException in @PostConstruct</div>
+<p>Model throws NPE during rendering. Stack trace points to your <code>init()</code> method.</p>
+<p>Cause: You are calling a method on an injected field that is null because the editor has not filled in that dialog field yet, or the JCR property does not exist.</p>
+<p>Fix: Always check for null before using injected fields. With <code>DefaultInjectionStrategy.OPTIONAL</code>, any field can be null if the JCR property is not set. Use <code>StringUtils.isNotBlank(title)</code> before using title, <code>if (currentPage != null)</code> before calling page methods, etc.</p>
+</div>
+<div class="sec">
+<div class="sec-title">Error 5 — wrong getter name means null in HTL</div>
+<p><code>${model.ctaLink}</code> renders nothing but <code>getCtaLink()</code> clearly returns a value in the debugger.</p>
+<p>Check the getter name convention. <code>${model.ctaLink}</code> calls <code>getCtaLink()</code>. If your method is named <code>getCTALink()</code> (uppercase CTA) — that's a mismatch. HTL capitalises the first letter of the property name and prepends <code>get</code>. The second letter stays lowercase if it was lowercase in the expression. <code>ctaLink</code> → <code>getCtaLink()</code>. Use standard Java camelCase.</p>
+</div>
+<div style="margin-top:16px">
+  <button onclick="sendPrompt('Continue the AEM course — what is the next session after Sling Models? Can you explain the next topic in the same complete detail with all code examples?')">Continue the course ↗</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+function copyCode(btn){
+  var code=btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    var orig=btn.textContent;btn.textContent='copied!';
+    setTimeout(()=>btn.textContent=orig,1500);
+  });
+}
+</script>

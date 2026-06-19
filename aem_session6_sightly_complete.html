@@ -1,0 +1,1430 @@
+
+<h2 class="sr-only">AEM Session 6 complete deep-dive — HTL Sightly basic and advanced, expression language, all block statements, contexts, JavaScript Use API, Use API patterns — explained from scratch with real examples and full annotated code</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:700px}
+.nav{width:224px;min-width:224px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;flex-shrink:0}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-hd small{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);display:block;margin-bottom:3px}
+.nav-hd strong{font-size:13.5px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 4px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary)}
+.ni{display:flex;align-items:flex-start;gap:8px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);line-height:1.35;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:26px 30px}
+.body::-webkit-scrollbar{width:4px}.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+h1{font-size:21px;font-weight:500;margin-bottom:6px;line-height:1.25}
+.lede{font-size:14px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec{margin-bottom:28px}
+.sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+p code,li code,.stb code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:2px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;margin-bottom:10px}
+.card-hd{font-size:13.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-hd i{font-size:16px;color:var(--color-text-info)}
+.card p{font-size:13px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.card code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.rl{border-left:3px solid var(--color-border-success);padding:12px 16px;background:var(--color-background-success);color:var(--color-text-success);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.rl .rll{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;opacity:.8}
+.warn{border-left:3px solid var(--color-border-warning);padding:12px 16px;background:var(--color-background-warning);color:var(--color-text-warning);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.info{border-left:3px solid var(--color-border-info);padding:12px 16px;background:var(--color-background-info);color:var(--color-text-info);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.stb{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.stt{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.row-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}
+.row{display:grid;grid-template-columns:170px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:9px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;align-items:flex-start;word-break:break-all}
+.rv{padding:9px 12px;color:var(--color-text-primary);line-height:1.6}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+ul{padding-left:20px;margin:8px 0 14px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:3px}
+li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.code-block{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;margin:12px 0 16px}
+.code-top{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-fname{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.code-copy{font-size:11px;color:var(--color-text-info);cursor:pointer;background:none;border:0.5px solid var(--color-border-info);padding:2px 8px;border-radius:4px}
+.code-copy:hover{background:var(--color-background-info)}
+.code-body{padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--color-text-primary)}
+.kw{color:#7c5cbf}.str{color:#1d9e75}.cm{color:var(--color-text-tertiary)}.tag{color:#185fa5}.attr{color:#b45309}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:12px 0 16px}
+.ch{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.ch:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.cb{padding:12px 14px;font-size:12.5px;color:var(--color-text-secondary);line-height:1.7;border-right:0.5px solid var(--color-border-tertiary)}
+.cb:last-child{border-right:none}
+.cb code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+</style>
+
+<div class="app">
+<div class="nav">
+  <div class="nav-hd"><small>Session 6 — deep dive</small><strong>HTL / Sightly</strong></div>
+
+  <div class="grp">Part 1 — What &amp; why</div>
+  <div class="ni on" onclick="go('why-htl')" id="n-why-htl"><i class="ti ti-question-mark" aria-hidden="true"></i>Why HTL — the problem JSP had</div>
+  <div class="ni" onclick="go('htl-basics')" id="n-htl-basics"><i class="ti ti-abc" aria-hidden="true"></i>HTL basics — how it works</div>
+  <div class="ni" onclick="go('sly-tag')" id="n-sly-tag"><i class="ti ti-tag" aria-hidden="true"></i>The &lt;sly&gt; tag</div>
+
+  <div class="grp">Part 2 — Expression language</div>
+  <div class="ni" onclick="go('expr-syntax')" id="n-expr-syntax"><i class="ti ti-braces" aria-hidden="true"></i>Expression syntax — ${ }</div>
+  <div class="ni" onclick="go('expr-operators')" id="n-expr-operators"><i class="ti ti-math" aria-hidden="true"></i>Operators in expressions</div>
+  <div class="ni" onclick="go('expr-globals')" id="n-expr-globals"><i class="ti ti-world" aria-hidden="true"></i>Global objects — properties, currentPage etc</div>
+  <div class="ni" onclick="go('contexts')" id="n-contexts"><i class="ti ti-shield" aria-hidden="true"></i>Contexts — XSS safety</div>
+  <div class="ni" onclick="go('display-context')" id="n-display-context"><i class="ti ti-eye" aria-hidden="true"></i>Display context decisions</div>
+
+  <div class="grp">Part 3 — Basic block statements</div>
+  <div class="ni" onclick="go('data-sly-use')" id="n-data-sly-use"><i class="ti ti-plug" aria-hidden="true"></i>data-sly-use — load objects</div>
+  <div class="ni" onclick="go('data-sly-text')" id="n-data-sly-text"><i class="ti ti-cursor-text" aria-hidden="true"></i>data-sly-text — set content</div>
+  <div class="ni" onclick="go('data-sly-attribute')" id="n-data-sly-attribute"><i class="ti ti-code" aria-hidden="true"></i>data-sly-attribute — set attrs</div>
+  <div class="ni" onclick="go('data-sly-test')" id="n-data-sly-test"><i class="ti ti-toggle-left" aria-hidden="true"></i>data-sly-test — conditionals</div>
+  <div class="ni" onclick="go('data-sly-list')" id="n-data-sly-list"><i class="ti ti-list" aria-hidden="true"></i>data-sly-list — loops</div>
+  <div class="ni" onclick="go('data-sly-repeat')" id="n-data-sly-repeat"><i class="ti ti-copy" aria-hidden="true"></i>data-sly-repeat — repeat element</div>
+  <div class="ni" onclick="go('data-sly-set')" id="n-data-sly-set"><i class="ti ti-variable" aria-hidden="true"></i>data-sly-set — local variables</div>
+
+  <div class="grp">Part 4 — Advanced block statements</div>
+  <div class="ni" onclick="go('data-sly-include')" id="n-data-sly-include"><i class="ti ti-file-import" aria-hidden="true"></i>data-sly-include — partials</div>
+  <div class="ni" onclick="go('data-sly-resource')" id="n-data-sly-resource"><i class="ti ti-topology-star" aria-hidden="true"></i>data-sly-resource — sub-resources</div>
+  <div class="ni" onclick="go('data-sly-template')" id="n-data-sly-template"><i class="ti ti-template" aria-hidden="true"></i>data-sly-template — reusable blocks</div>
+  <div class="ni" onclick="go('data-sly-call')" id="n-data-sly-call"><i class="ti ti-phone-call" aria-hidden="true"></i>data-sly-call — invoke template</div>
+  <div class="ni" onclick="go('data-sly-element')" id="n-data-sly-element"><i class="ti ti-html" aria-hidden="true"></i>data-sly-element — dynamic tag</div>
+  <div class="ni" onclick="go('data-sly-unwrap')" id="n-data-sly-unwrap"><i class="ti ti-box-multiple" aria-hidden="true"></i>data-sly-unwrap — remove wrapper</div>
+
+  <div class="grp">Part 5 — Use API</div>
+  <div class="ni" onclick="go('use-api-what')" id="n-use-api-what"><i class="ti ti-api" aria-hidden="true"></i>Use API — what it is</div>
+  <div class="ni" onclick="go('java-use-api')" id="n-java-use-api"><i class="ti ti-coffee" aria-hidden="true"></i>Java Use API — Sling Models</div>
+  <div class="ni" onclick="go('js-use-api')" id="n-js-use-api"><i class="ti ti-brand-javascript" aria-hidden="true"></i>JavaScript Use API</div>
+  <div class="ni" onclick="go('use-api-patterns')" id="n-use-api-patterns"><i class="ti ti-layout-list" aria-hidden="true"></i>Use API patterns — best practices</div>
+
+  <div class="grp">Part 6 — Real examples</div>
+  <div class="ni" onclick="go('example-card')" id="n-example-card"><i class="ti ti-id" aria-hidden="true"></i>Full card component</div>
+  <div class="ni" onclick="go('example-nav')" id="n-example-nav"><i class="ti ti-menu-2" aria-hidden="true"></i>Navigation with loop</div>
+  <div class="ni" onclick="go('example-conditional')" id="n-example-conditional"><i class="ti ti-git-branch" aria-hidden="true"></i>Complex conditionals</div>
+  <div class="ni" onclick="go('example-partials')" id="n-example-partials"><i class="ti ti-files" aria-hidden="true"></i>Partials and templates</div>
+  <div class="ni" onclick="go('debugging')" id="n-debugging"><i class="ti ti-bug" aria-hidden="true"></i>Debugging HTL</div>
+</div>
+
+<div class="body">
+
+<!-- WHY HTL -->
+<div class="pg on" id="p-why-htl">
+<span class="badge">Part 1 — what &amp; why</span>
+<h1>Why HTL — the problem JSP had</h1>
+<p class="lede">HTL (HTML Template Language) replaced JSP in AEM 6.1. Before understanding HTL, you need to understand why JSP was a problem — because every design decision in HTL was made to solve a specific JSP problem.</p>
+<div class="sec">
+<div class="sec-title">What JSP looked like (and why it was bad)</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">old card.jsp — the JSP way</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Problem 1: Java code mixed inside HTML --&gt;</span>
+<span class="tag">&lt;%</span>
+  String title = properties.get("title", "");
+  String link  = properties.get("ctaLink", "");
+  boolean show = StringUtils.isNotBlank(title);
+<span class="tag">%&gt;</span>
+
+<span class="cm">&lt;!-- Problem 2: No auto-escaping — developer must remember to escape --&gt;</span>
+<span class="tag">&lt;h2&gt;</span>&lt;%= xssAPI.encodeForHTML(title) %&gt;<span class="tag">&lt;/h2&gt;</span>
+
+<span class="cm">&lt;!-- Problem 3: Easy to forget escaping — instant XSS vulnerability --&gt;</span>
+<span class="tag">&lt;a</span> href="<span class="tag">&lt;%=</span> link <span class="tag">%&gt;</span>"<span class="tag">&gt;</span>Click<span class="tag">&lt;/a&gt;</span>  <span class="cm">← missing encode = XSS hole</span></div>
+</div>
+<p>JSP mixed Java scriptlets directly inside HTML. This caused three big problems: the templates were hard to read (HTML and Java interleaved), business logic crept into templates making code hard to maintain, and developers frequently forgot to escape output creating XSS security vulnerabilities.</p>
+</div>
+<div class="sec">
+<div class="sec-title">What HTL does differently — solving all three problems</div>
+<div class="compare">
+<div class="ch">JSP problem</div><div class="ch">HTL solution</div>
+<div class="cb">Java code mixed inside HTML. Hard to read and maintain.</div>
+<div class="cb">No Java allowed in templates at all. Logic goes in Sling Models. Templates are pure HTML with data-sly-* attributes.</div>
+<div class="cb">Developers must manually remember to call <code>xssAPI.encodeForHTML()</code> on every output.</div>
+<div class="cb">Auto-escaping is the default. <code>${model.title}</code> is automatically HTML-escaped. You cannot accidentally create an XSS vulnerability.</div>
+<div class="cb">JSP syntax is not valid HTML. HTML editors, linters, and design tools cannot process JSP files.</div>
+<div class="cb">HTL is valid HTML. <code>data-sly-*</code> attributes are valid HTML5 custom data attributes. Any HTML tool can process an HTL file.</div>
+</div>
+</div>
+<div class="rl">
+<div class="rll">Why this matters</div>
+A bank's AEM site had 200 JSP templates. A security audit found 14 XSS vulnerabilities — all caused by missing <code>encodeForHTML()</code> calls. After migrating to HTL, those vulnerabilities became structurally impossible — HTL escapes everything by default. The developers could not create those vulnerabilities even if they tried. This is the single most important security improvement HTL brought to AEM.
+</div>
+</div>
+
+<!-- HTL BASICS -->
+<div class="pg" id="p-htl-basics">
+<span class="badge">Part 1 — what &amp; why</span>
+<h1>HTL basics — how it works</h1>
+<p class="lede">HTL is just HTML with two additions: expressions (<code>${...}</code>) and block statements (<code>data-sly-*</code> attributes). That is the entire language. Everything else is the HTML you already know.</p>
+<div class="sec">
+<div class="sec-title">The two constructs of HTL</div>
+<div class="row-list">
+<div class="row"><div class="rk">Expressions<br>${ ... }</div><div class="rv">Output a value from the model or JCR. Written inside attribute values or between HTML tags. Example: <code>${model.title}</code> outputs the value returned by <code>getTitle()</code>. Auto-escaped for security.</div></div>
+<div class="row"><div class="rk">Block statements<br>data-sly-*</div><div class="rv">HTML attributes that add logic to an element — conditionals, loops, variable assignments, includes. They are processed by AEM's template engine and removed from the final HTML output. Example: <code>data-sly-test="${model.title}"</code> hides the element if title is null/empty.</div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">How AEM processes an HTL file</div>
+<div class="steps">
+<div class="step"><div class="snum">1</div><div><div class="stt">A page is requested</div><div class="stb">Browser requests <code>/content/mysite/en/home.html</code>. Sling resolves the component via <code>sling:resourceType</code>.</div></div></div>
+<div class="step"><div class="snum">2</div><div><div class="stt">AEM finds and compiles the HTL file</div><div class="stb">AEM reads <code>card.html</code>, compiles it into a Java class on first request, and caches the compiled version.</div></div></div>
+<div class="step"><div class="snum">3</div><div><div class="stt">data-sly-use loads the model</div><div class="stb"><code>data-sly-use.model="com.mysite.core.models.CardModel"</code> — AEM instantiates <code>CardModelImpl</code>, runs <code>@PostConstruct</code>, and binds it to the variable <code>model</code>.</div></div></div>
+<div class="step"><div class="snum">4</div><div><div class="stt">Expressions are evaluated</div><div class="stb"><code>${model.title}</code> calls <code>model.getTitle()</code> and escapes the return value as HTML text. The expression is replaced with the escaped string in the output.</div></div></div>
+<div class="step"><div class="snum">5</div><div><div class="stt">Block statements are processed</div><div class="stb"><code>data-sly-test</code> conditionals are evaluated. <code>data-sly-list</code> loops are expanded. <code>data-sly-include</code> files are inlined. All <code>data-sly-*</code> attributes are removed from the final HTML.</div></div></div>
+<div class="step"><div class="snum">6</div><div><div class="stt">Clean HTML is returned</div><div class="stb">The browser receives pure HTML with no trace of HTL syntax. No <code>data-sly-*</code> attributes visible in browser DevTools.</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">File naming rule — most commonly broken rule</div>
+<p>The HTL filename MUST match the component folder name. If your component folder is <code>/apps/mysite/components/card/</code>, the HTL file must be named <code>card.html</code>. Not <code>template.html</code>. Not <code>component.html</code>. Exactly <code>card.html</code>. When Sling resolves a resource with <code>sling:resourceType="mysite/components/card"</code>, it looks for a script named after the last segment of the path: <code>card</code>. With extension <code>.html</code>, it becomes <code>card.html</code>.</p>
+</div>
+</div>
+
+<!-- SLY TAG -->
+<div class="pg" id="p-sly-tag">
+<span class="badge">Part 1 — what &amp; why</span>
+<h1>The &lt;sly&gt; tag — the invisible wrapper</h1>
+<p class="lede">The <code>&lt;sly&gt;</code> tag is a special HTL-only element that is always removed from the final HTML output. It exists only to carry <code>data-sly-*</code> attributes when you do not want an actual HTML element.</p>
+<div class="sec">
+<div class="sec-title">The problem &lt;sly&gt; solves</div>
+<p>Every <code>data-sly-*</code> attribute must be placed on an HTML element. But sometimes you need logic that should not produce any HTML element at all. For example, you want to include a file without wrapping it in a <code>&lt;div&gt;</code>:</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">problem — unwanted wrapper div</span></div>
+<div class="code-body"><span class="cm">&lt;!-- This produces an unwanted &lt;div&gt; in the HTML output --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-include</span>=<span class="str">"footer.html"</span><span class="tag">&gt;&lt;/div&gt;</span>
+<span class="cm">&lt;!-- Renders: &lt;div&gt;...footer content...&lt;/div&gt; --&gt;</span>
+
+<span class="cm">&lt;!-- CORRECT: use &lt;sly&gt; — produces no wrapper element --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"footer.html"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders: ...footer content... (no wrapper) --&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">When to use &lt;sly&gt;</div>
+<ul>
+<li>With <code>data-sly-include</code> to include a file without a wrapper element</li>
+<li>With <code>data-sly-resource</code> to render a sub-resource without a wrapper</li>
+<li>With <code>data-sly-call</code> to call a template without a wrapper</li>
+<li>With <code>data-sly-use</code> when you only need to load an object but not output anything</li>
+<li>With <code>data-sly-set</code> to define a variable without outputting anything</li>
+<li>With <code>data-sly-list</code> inside a <code>&lt;ul&gt;</code> when the list element itself comes from the include</li>
+</ul>
+</div>
+</div>
+
+<!-- EXPRESSION SYNTAX -->
+<div class="pg" id="p-expr-syntax">
+<span class="badge">Part 2 — expression language</span>
+<h1>Expression syntax — everything about ${ }</h1>
+<p class="lede">HTL expressions are written as <code>${...}</code>. They can appear in attribute values or in element content. Every expression is automatically escaped based on context.</p>
+<div class="sec">
+<div class="sec-title">Basic expression forms</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">expression syntax forms</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Simple property access --&gt;</span>
+${model.title}
+${properties.jcrTitle}
+${currentPage.name}
+
+<span class="cm">&lt;!-- Dot notation for nested access --&gt;</span>
+${model.author.name}
+${currentPage.properties.navTitle}
+
+<span class="cm">&lt;!-- Bracket notation for dynamic property names --&gt;</span>
+${model['dynamic-key']}
+${properties['jcr:title']}  <span class="cm">← use brackets for property names with colons or hyphens</span>
+
+<span class="cm">&lt;!-- String concatenation --&gt;</span>
+${'Hello, ' + model.name + '!'}
+
+<span class="cm">&lt;!-- Ternary operator --&gt;</span>
+${model.isActive ? 'active' : 'inactive'}
+
+<span class="cm">&lt;!-- Null coalescing / default value --&gt;</span>
+${model.title || 'Default Title'}
+
+<span class="cm">&lt;!-- Boolean NOT --&gt;</span>
+${!model.isEmpty}
+
+<span class="cm">&lt;!-- Comparison --&gt;</span>
+${model.count == 0}
+${model.count != 0}
+${model.count > 3}
+
+<span class="cm">&lt;!-- Options (@ syntax) for context and formatting --&gt;</span>
+${'some/path' @ context='uri'}
+${model.price @ format='currency', locale='en_IN'}
+${model.date @ format='dd MMM yyyy'}</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Expression options — the @ syntax</div>
+<p>The <code>@</code> symbol inside an expression introduces options. Options modify how the expression value is processed or formatted.</p>
+<div class="row-list">
+<div class="row"><div class="rk">context</div><div class="rv">Override the auto-detected escape context. <code>${link @ context='uri'}</code>. Required for all href and src values.</div></div>
+<div class="row"><div class="rk">default</div><div class="rv">Fallback value if the expression evaluates to null or empty. <code>${model.title @ default='Untitled'}</code></div></div>
+<div class="row"><div class="rk">join</div><div class="rv">Join array elements with a separator. <code>${model.tags @ join=', '}</code> → <code>"technology, news, aem"</code></div></div>
+<div class="row"><div class="rk">i18n</div><div class="rv">Translate a string through AEM's i18n translation system. <code>${'Add to Cart' @ i18n}</code></div></div>
+<div class="row"><div class="rk">locale</div><div class="rv">Override locale for formatting. <code>${model.price @ format='currency', locale='en_IN'}</code></div></div>
+<div class="row"><div class="rk">timezone</div><div class="rv">Override timezone for date formatting. <code>${model.date @ format='HH:mm', timezone='Asia/Kolkata'}</code></div></div>
+</div>
+</div>
+</div>
+
+<!-- OPERATORS -->
+<div class="pg" id="p-expr-operators">
+<span class="badge">Part 2 — expression language</span>
+<h1>Operators in HTL expressions</h1>
+<p class="lede">HTL supports a subset of JavaScript/Java operators inside expressions. Knowing which operators work and how they behave prevents common bugs.</p>
+<div class="sec">
+<div class="sec-title">All supported operators</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">operators — all types with examples</span></div>
+<div class="code-body"><span class="cm">// ── LOGICAL operators ────────────────────────────────────────────</span>
+${a && b}         <span class="cm">← AND: true if both truthy</span>
+${a || b}         <span class="cm">← OR: first truthy value, or last value</span>
+${!a}             <span class="cm">← NOT: inverts truthiness</span>
+
+<span class="cm">// ── COMPARISON operators ─────────────────────────────────────────</span>
+${a == b}         <span class="cm">← equal (type coerced)</span>
+${a != b}         <span class="cm">← not equal</span>
+${a &lt; b}          <span class="cm">← less than  (use &amp;lt; in attributes)</span>
+${a > b}          <span class="cm">← greater than</span>
+${a &lt;= b}         <span class="cm">← less than or equal</span>
+${a >= b}         <span class="cm">← greater than or equal</span>
+
+<span class="cm">// ── TERNARY operator ─────────────────────────────────────────────</span>
+${condition ? 'yes' : 'no'}
+${model.count > 0 ? model.count : 'none'}
+
+<span class="cm">// ── STRING concatenation ─────────────────────────────────────────</span>
+${'Hello ' + model.name}
+${'card card--' + model.theme}
+
+<span class="cm">// ── ARITHMETIC ───────────────────────────────────────────────────</span>
+${model.price * 1.18}   <span class="cm">← multiply (rarely used in templates)</span>
+${model.count + 1}      <span class="cm">← add</span>
+
+<span class="cm">// ── FALSY values in HTL (data-sly-test hides element for these) ──</span>
+<span class="cm">// null, undefined, false, 0, "", [], {}</span>
+<span class="cm">// Empty string "" is falsy — useful: data-sly-test="${model.title}"</span>
+<span class="cm">// hides element when title is null OR empty string</span>
+
+<span class="cm">// ── TRUTHY values ────────────────────────────────────────────────</span>
+<span class="cm">// Any non-empty string, any non-zero number, true,</span>
+<span class="cm">// non-empty array, non-empty object</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">The OR operator as a default value</div>
+<p>The <code>||</code> operator returns the first truthy value, not just <code>true</code>. This makes it a natural default value operator in HTL:</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">using || for defaults</span></div>
+<div class="code-body"><span class="cm">&lt;!-- If model.title is null or empty, use "Untitled" --&gt;</span>
+<span class="tag">&lt;h2&gt;</span>${model.title || 'Untitled'}<span class="tag">&lt;/h2&gt;</span>
+
+<span class="cm">&lt;!-- If ctaText is not set, use "Learn More" --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.link @ context='uri'}"</span><span class="tag">&gt;</span>
+  ${model.ctaText || 'Learn More'}
+<span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Chained defaults --&gt;</span>
+<span class="tag">&lt;title&gt;</span>${currentPage.navigationTitle || currentPage.title || 'My Site'}<span class="tag">&lt;/title&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- GLOBALS -->
+<div class="pg" id="p-expr-globals">
+<span class="badge">Part 2 — expression language</span>
+<h1>Global objects — what is available in every HTL file</h1>
+<p class="lede">HTL automatically provides a set of global objects in every template file without any <code>data-sly-use</code>. These give you access to the current page, JCR properties, request, and authoring context.</p>
+<div class="row-list">
+<div class="row"><div class="rk">properties</div><div class="rv">The JCR properties of the current resource (the component's content node). <code>${properties.title}</code> reads the <code>title</code> property directly — without a Sling Model. Use for simple components that do not need computed logic.</div></div>
+<div class="row"><div class="rk">pageProperties</div><div class="rv">The JCR properties of the current page's <code>jcr:content</code> node. <code>${pageProperties['jcr:title']}</code>. Useful for page components that need to read page-level metadata.</div></div>
+<div class="row"><div class="rk">inheritedPageProperties</div><div class="rv">Like <code>pageProperties</code> but also searches parent pages if the property is not found on the current page. Used for inherited configurations like analytics IDs.</div></div>
+<div class="row"><div class="rk">currentPage</div><div class="rv">The AEM <code>com.day.cq.wcm.api.Page</code> object for the current page. Gives access to <code>currentPage.name</code>, <code>currentPage.title</code>, <code>currentPage.path</code>, <code>currentPage.depth</code>, <code>currentPage.parent</code>, <code>currentPage.listChildren()</code>.</div></div>
+<div class="row"><div class="rk">currentNode</div><div class="rv">The current JCR node as a <code>javax.jcr.Node</code> object. Less commonly used than <code>currentResource</code>.</div></div>
+<div class="row"><div class="rk">currentResource</div><div class="rv">The Sling <code>Resource</code> object for the current component node. Use to get resource path (<code>currentResource.path</code>), resource type (<code>currentResource.resourceType</code>), and child resources.</div></div>
+<div class="row"><div class="rk">request</div><div class="rv">The <code>SlingHttpServletRequest</code>. Access URL parameters (<code>request.getParameter('q')</code>), selectors, suffix, and request attributes.</div></div>
+<div class="row"><div class="rk">response</div><div class="rv">The <code>SlingHttpServletResponse</code>. Rarely used directly in HTL templates.</div></div>
+<div class="row"><div class="rk">wcmmode</div><div class="rv">The current WCM mode. Boolean flags: <code>wcmmode.edit</code> (author edit mode), <code>wcmmode.preview</code> (preview mode), <code>wcmmode.disabled</code> (publish/live mode). Use to show authoring helpers only in edit mode.</div></div>
+<div class="row"><div class="rk">resolver</div><div class="rv">The Sling <code>ResourceResolver</code>. Use to map paths: <code>${resolver.map('/content/mysite/en/home')}</code> returns the shortened URL.</div></div>
+</div>
+<div class="sec">
+<div class="sec-title">Using globals in practice</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">global objects in use</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Page title from currentPage (no model needed) --&gt;</span>
+<span class="tag">&lt;title&gt;</span>${currentPage.title} | My Site<span class="tag">&lt;/title&gt;</span>
+
+<span class="cm">&lt;!-- Show helper text only in author edit mode --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"author-hint"</span>
+   <span class="attr">data-sly-test</span>=<span class="str">"${wcmmode.edit && !model.title}"</span><span class="tag">&gt;</span>
+  Please configure this component.
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- Read a JCR property directly without Sling Model --&gt;</span>
+<span class="tag">&lt;h1&gt;</span>${properties['jcr:title']}<span class="tag">&lt;/h1&gt;</span>
+
+<span class="cm">&lt;!-- Current resource path (useful for debug or AJAX calls) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-path</span>=<span class="str">"${currentResource.path}"</span><span class="tag">&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- CONTEXTS -->
+<div class="pg" id="p-contexts">
+<span class="badge">Part 2 — expression language</span>
+<h1>Contexts — automatic XSS protection</h1>
+<p class="lede">Every HTL expression is automatically escaped based on the context where it appears. Context means: where in the HTML is this value being placed? Different locations in HTML require different escaping to be safe.</p>
+<div class="sec">
+<div class="sec-title">All contexts — what they do</div>
+<div class="row-list">
+<div class="row"><div class="rk">text (auto)</div><div class="rv">HTML content between tags. Auto-detected. Encodes <code>&lt;</code> → <code>&amp;lt;</code>, <code>&gt;</code> → <code>&amp;gt;</code>, <code>&amp;</code> → <code>&amp;amp;</code>. Most common. Used automatically when expression is between tags.</div></div>
+<div class="row"><div class="rk">html</div><div class="rv">Allows HTML markup to pass through unescaped. Use ONLY for content from AEM's RTE (Rich Text Editor). Never for user-submitted data. <code>${model.bodyText @ context='html'}</code></div></div>
+<div class="row"><div class="rk">attribute (auto)</div><div class="rv">HTML attribute value. Auto-detected when expression is inside an attribute. Encodes quotes and angle brackets.</div></div>
+<div class="row"><div class="rk">uri</div><div class="rv">URLs used in <code>href</code>, <code>src</code>, <code>action</code>, <code>data-*</code>. URL-encodes, AND blocks <code>javascript:</code> protocol. Required: <code>${model.link @ context='uri'}</code></div></div>
+<div class="row"><div class="rk">styleToken</div><div class="rv">CSS class names. Allows only valid CSS identifier characters (letters, digits, hyphens, underscores). Blocks CSS injection. <code>${model.theme @ context='styleToken'}</code></div></div>
+<div class="row"><div class="rk">scriptToken</div><div class="rv">JavaScript identifiers. Allows only valid JS identifier characters. Use in inline scripts.</div></div>
+<div class="row"><div class="rk">scriptString</div><div class="rv">String value inside a JavaScript string literal. Escapes quotes and backslashes for safe inclusion in JS.</div></div>
+<div class="row"><div class="rk">number</div><div class="rv">Numeric values in attributes. Allows only digits and decimal point. <code>${model.width @ context='number'}</code></div></div>
+<div class="row"><div class="rk">attributeName</div><div class="rv">When setting a dynamic attribute name. Validates against a whitelist of allowed attribute name characters.</div></div>
+<div class="row"><div class="rk">elementName</div><div class="rv">Used with <code>data-sly-element</code>. Validates the tag name against allowed HTML element names.</div></div>
+<div class="row"><div class="rk">unsafe</div><div class="rv">No escaping at all. Use ONLY for completely static developer-controlled strings. NEVER for anything editors or users can input.</div></div>
+</div>
+</div>
+</div>
+
+<!-- DISPLAY CONTEXT DECISIONS -->
+<div class="pg" id="p-display-context">
+<span class="badge">Part 2 — expression language</span>
+<h1>Display context decisions — which context to use where</h1>
+<p class="lede">HTL auto-detects context in most cases, but some require explicit specification. Here are the decision rules for every common situation.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">context decisions — complete reference</span></div>
+<div class="code-body"><span class="cm">&lt;!-- ✓ BETWEEN TAGS: auto-detected as text context --&gt;</span>
+<span class="tag">&lt;h2&gt;</span>${model.title}<span class="tag">&lt;/h2&gt;</span>
+<span class="tag">&lt;p&gt;</span>${model.description}<span class="tag">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- ✓ HREF / SRC / ACTION: MUST use uri context --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.link @ context='uri'}"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"${model.imageUrl @ context='uri'}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="str">"${model.endpoint @ context='uri'}"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- ✓ CSS CLASSES: use styleToken for dynamic class names --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card card--${model.theme @ context='styleToken'}"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- ✓ RICH TEXT from RTE: use html context --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"rte"</span><span class="tag">&gt;</span>${model.bodyText @ context='html'}<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- ✓ REGULAR HTML ATTRIBUTES: auto-detected --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">alt</span>=<span class="str">"${model.altText}"</span><span class="tag">/&gt;</span>      <span class="cm">← text context auto</span>
+<span class="tag">&lt;input</span> <span class="attr">placeholder</span>=<span class="str">"${model.hint}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- ✓ DATA ATTRIBUTES with URLs --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-endpoint</span>=<span class="str">"${model.apiUrl @ context='uri'}"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- ✗ WRONG — no context on href: javascript: URLs can pass through --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.link}"</span><span class="tag">&gt;</span>  <span class="cm">← missing @ context='uri'</span>
+
+<span class="cm">&lt;!-- ✗ WRONG — html context on user-submitted content --&gt;</span>
+<span class="tag">&lt;div&gt;</span>${userInput @ context='html'}<span class="tag">&lt;/div&gt;</span>  <span class="cm">← XSS risk</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-USE -->
+<div class="pg" id="p-data-sly-use">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-use — loading objects into the template</h1>
+<p class="lede"><code>data-sly-use</code> is the most important HTL block statement. It loads an external object — a Sling Model, a Java class, or a JavaScript object — and binds it to a variable name you can use in the template.</p>
+<div class="sec">
+<div class="sec-title">Syntax — the variable name comes from the attribute</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-use syntax</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern: data-sly-use.VARIABLENAME="CLASSNAME"
+     VARIABLENAME = how you reference the object in this template
+     CLASSNAME = fully-qualified Java class or JavaScript file path --&gt;</span>
+
+<span class="cm">&lt;!-- Load a Sling Model --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.CardModel"</span><span class="tag">&gt;</span>
+  ${model.title}        <span class="cm">&lt;!-- "model" is the variable name --&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Load multiple objects --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.card</span>=<span class="str">"com.mysite.core.models.CardModel"</span>
+     <span class="attr">data-sly-use.page</span>=<span class="str">"com.mysite.core.models.PageHelper"</span><span class="tag">&gt;</span>
+  ${card.title}
+  ${page.breadcrumb}
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- On a &lt;sly&gt; tag (no wrapper in output) --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.nav</span>=<span class="str">"com.mysite.core.models.NavigationModel"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;nav&gt;</span>${nav.title}<span class="tag">&lt;/nav&gt;</span>
+<span class="cm">&lt;!-- Note: nav is available even after the &lt;sly&gt; element --&gt;</span>
+
+<span class="cm">&lt;!-- Pass options to the Use object (advanced) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.list</span>=<span class="str">"com.mysite.core.models.ListModel"</span>
+     <span class="attr">data-sly-use.list.limit</span>=<span class="str">"5"</span>
+     <span class="attr">data-sly-use.list.path</span>=<span class="str">"/content/mysite"</span><span class="tag">&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">How HTL finds the class</div>
+<p>When you write <code>data-sly-use.model="com.mysite.core.models.CardModel"</code>, HTL first checks if this is a fully-qualified Java class name. If so, it uses <code>SlingHttpServletRequest.adaptTo()</code> or <code>Resource.adaptTo()</code> to get an instance. If the string ends in <code>.js</code>, it loads it as a JavaScript Use object. If it is a relative path, it resolves it relative to the current HTL file.</p>
+</div>
+</div>
+
+<!-- DATA-SLY-TEXT -->
+<div class="pg" id="p-data-sly-text">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-text — setting element content</h1>
+<p class="lede"><code>data-sly-text</code> sets the text content of an HTML element, replacing all its child nodes with the evaluated value. Unlike inline expressions, it makes placeholder text possible in the source HTML.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-text — all usage patterns</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Replace element content --&gt;</span>
+<span class="tag">&lt;h2</span> <span class="attr">data-sly-text</span>=<span class="str">"${model.title}"</span><span class="tag">&gt;</span>
+  Placeholder headline (replaced at runtime)
+<span class="tag">&lt;/h2&gt;</span>
+<span class="cm">&lt;!-- Renders: &lt;h2&gt;Actual Title from JCR&lt;/h2&gt; --&gt;</span>
+<span class="cm">&lt;!-- The placeholder text is NEVER shown — data-sly-text overwrites it --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Expression directly (no data-sly-text needed) --&gt;</span>
+<span class="tag">&lt;h2&gt;</span>${model.title}<span class="tag">&lt;/h2&gt;</span>
+<span class="cm">&lt;!-- Both are equivalent for simple cases --&gt;</span>
+
+<span class="cm">&lt;!-- When to prefer data-sly-text:
+     When your source HTML should have meaningful placeholder text
+     for design purposes, static mockups, or frontend development --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">data-sly-text</span>=<span class="str">"${model.ctaLabel}"</span><span class="tag">&gt;</span>Add to Cart<span class="tag">&lt;/button&gt;</span>
+<span class="cm">&lt;!-- "Add to Cart" is the placeholder used in static mockups.
+     At runtime it is replaced with whatever the model returns. --&gt;</span>
+
+<span class="cm">&lt;!-- data-sly-text with html context for rich text --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"rte"</span>
+     <span class="attr">data-sly-text</span>=<span class="str">"${model.bodyHtml @ context='html'}"</span><span class="tag">&gt;</span>
+  &lt;p&gt;Body content goes here&lt;/p&gt;
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-ATTRIBUTE -->
+<div class="pg" id="p-data-sly-attribute">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-attribute — setting attributes dynamically</h1>
+<p class="lede"><code>data-sly-attribute</code> sets or removes HTML attributes at runtime. Use it when you need to conditionally set an attribute or set multiple attributes from model values.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-attribute — all patterns</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Set a single attribute --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">data-sly-attribute.href</span>=<span class="str">"${model.link @ context='uri'}"</span><span class="tag">&gt;</span>
+  Click here
+<span class="tag">&lt;/a&gt;</span>
+<span class="cm">&lt;!-- Equivalent to href="${model.link @ context='uri'}" --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Conditionally set an attribute --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.link @ context='uri'}"</span>
+   <span class="attr">data-sly-attribute.target</span>=<span class="str">"${model.newTab ? '_blank' : ''}"</span>
+   <span class="attr">data-sly-attribute.rel</span>=<span class="str">"${model.newTab ? 'noopener noreferrer' : ''}"</span><span class="tag">&gt;</span>
+<span class="cm">&lt;!-- When value is empty string, AEM removes the attribute entirely --&gt;</span>
+<span class="cm">&lt;!-- So rel="" becomes no rel attribute in the output HTML --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Set a map of attributes from model --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-attribute</span>=<span class="str">"${model.attributeMap}"</span><span class="tag">&gt;</span>
+<span class="cm">&lt;!-- model.getAttributeMap() returns a Map&lt;String,String&gt;
+     All map entries become HTML attributes on this element --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 4: Remove an attribute --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">disabled</span>=<span class="str">"disabled"</span>
+        <span class="attr">data-sly-attribute.disabled</span>=<span class="str">"${model.isEnabled ? '' : 'disabled'}"</span><span class="tag">&gt;</span>
+<span class="cm">&lt;!-- disabled="" removes the attribute (button is enabled)
+     disabled="disabled" adds the attribute (button is disabled) --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 5: aria attributes --&gt;</span>
+<span class="tag">&lt;button</span>
+  <span class="attr">data-sly-attribute.aria-expanded</span>=<span class="str">"${model.isExpanded}"</span>
+  <span class="attr">data-sly-attribute.aria-controls</span>=<span class="str">"${model.controlsId}"</span><span class="tag">&gt;</span>
+  Toggle
+<span class="tag">&lt;/button&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-TEST -->
+<div class="pg" id="p-data-sly-test">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-test — conditional rendering</h1>
+<p class="lede"><code>data-sly-test</code> is HTL's conditional. If the expression is falsy (null, false, empty string, 0, empty array), the entire element and all its children are NOT rendered — they are completely absent from the HTML output, not just hidden with CSS.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-test — all patterns</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Show element only if value exists --&gt;</span>
+<span class="tag">&lt;h3</span> <span class="attr">data-sly-test</span>=<span class="str">"${model.title}"</span><span class="tag">&gt;</span>
+  ${model.title}
+<span class="tag">&lt;/h3&gt;</span>
+<span class="cm">&lt;!-- If model.title is null or "" — the &lt;h3&gt; is NOT in the HTML output at all --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Negation — show when empty/null --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"empty-state"</span>
+   <span class="attr">data-sly-test</span>=<span class="str">"${!model.title}"</span><span class="tag">&gt;</span>
+  No title configured
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Store result in a variable for reuse --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-test.hasContent</span>=<span class="str">"${model.title || model.description}"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Now use hasContent elsewhere in the template --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span> <span class="attr">data-sly-test</span>=<span class="str">"${hasContent}"</span><span class="tag">&gt;</span>...</span><span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;p</span>   <span class="attr">class</span>=<span class="str">"empty"</span> <span class="attr">data-sly-test</span>=<span class="str">"${!hasContent}"</span><span class="tag">&gt;</span>Empty<span class="tag">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 4: Complex conditions --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-test</span>=<span class="str">"${model.isActive && model.hasPermission}"</span><span class="tag">&gt;</span>
+  Visible only when both conditions are true
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 5: Author-mode helper (show only in edit mode) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"author-hint"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${wcmmode.edit && !model.title}"</span><span class="tag">&gt;</span>
+  Please add a title.
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 6: Comparing values --&gt;</span>
+<span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"badge"</span>
+      <span class="attr">data-sly-test</span>=<span class="str">"${model.count > 0}"</span><span class="tag">&gt;</span>
+  ${model.count}
+<span class="tag">&lt;/span&gt;</span></div>
+</div>
+<div class="info">There is no "else" in HTL. To show alternative content, use two <code>data-sly-test</code> attributes — one for the positive case and one with <code>!</code> (NOT) for the negative case. Or store the result with <code>data-sly-test.variable</code> and reuse it.</div>
+</div>
+
+<!-- DATA-SLY-LIST -->
+<div class="pg" id="p-data-sly-list">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-list — looping over collections</h1>
+<p class="lede"><code>data-sly-list</code> repeats the element it is on for each item in a collection. The collection can be a Java <code>List</code>, an array, a <code>Collection</code>, or anything <code>Iterable</code>.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-list — all patterns</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Basic list --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.navItems}"</span><span class="tag">&gt;</span>
+    <span class="cm">&lt;!-- "item" is the loop variable — access item's properties --&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${item.url @ context='uri'}"</span><span class="tag">&gt;</span>${item.label}<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: The itemList object for loop metadata --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.items}"</span><span class="tag">&gt;</span>
+    <span class="cm">&lt;!-- itemList is auto-created: {item}List gives loop metadata --&gt;</span>
+    <span class="cm">&lt;!-- itemList.index   = 0-based position (0, 1, 2...) --&gt;</span>
+    <span class="cm">&lt;!-- itemList.count   = 1-based position (1, 2, 3...) --&gt;</span>
+    <span class="cm">&lt;!-- itemList.first   = true on first item --&gt;</span>
+    <span class="cm">&lt;!-- itemList.last    = true on last item --&gt;</span>
+    <span class="cm">&lt;!-- itemList.odd     = true on odd items (1st, 3rd...) --&gt;</span>
+    <span class="cm">&lt;!-- itemList.even    = true on even items (2nd, 4th...) --&gt;</span>
+    <span class="cm">&lt;!-- itemList.middle  = true on items that are not first or last --&gt;</span>
+
+    <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="str">"item
+         ${itemList.first ? 'item--first' : ''}
+         ${itemList.last  ? 'item--last'  : ''}
+         ${itemList.odd   ? 'item--odd'   : 'item--even'}"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"item__number"</span><span class="tag">&gt;</span>${itemList.count}<span class="tag">&lt;/span&gt;</span>
+      ${item.title}
+    <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Custom loop variable name --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-list.product</span>=<span class="str">"${model.products}"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- Loop var is "product", metadata is "productList" --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"product ${productList.first ? 'product--featured' : ''}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>${product.name}<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>${product.price}<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 4: Empty collection check before the loop --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-test.hasItems</span>=<span class="str">"${model.items}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;ul</span> <span class="attr">data-sly-test</span>=<span class="str">"${hasItems}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.items}"</span><span class="tag">&gt;</span>${item.title}<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">data-sly-test</span>=<span class="str">"${!hasItems}"</span><span class="tag">&gt;</span>No items found.<span class="tag">&lt;/p&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-REPEAT -->
+<div class="pg" id="p-data-sly-repeat">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-repeat — repeating the element itself</h1>
+<p class="lede"><code>data-sly-repeat</code> is like <code>data-sly-list</code> but with one key difference: it repeats the element it is placed on, not just its content. Use it when the element IS the repeated item, not a container for it.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-list vs data-sly-repeat — the key difference</span></div>
+<div class="code-body"><span class="cm">&lt;!-- data-sly-LIST: repeats CHILDREN of the element --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.items}"</span><span class="tag">&gt;</span>${item.title}<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+<span class="cm">&lt;!-- Output:
+&lt;ul&gt;
+  &lt;li&gt;Item 1&lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+  &lt;li&gt;Item 3&lt;/li&gt;
+&lt;/ul&gt; --&gt;</span>
+
+<span class="cm">&lt;!-- data-sly-REPEAT: repeats the ELEMENT ITSELF --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span> <span class="attr">data-sly-repeat.card</span>=<span class="str">"${model.cards}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>${card.title}<span class="tag">&lt;/h3&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+<span class="cm">&lt;!-- Output:
+&lt;div class="card"&gt;&lt;h3&gt;Card 1&lt;/h3&gt;&lt;/div&gt;
+&lt;div class="card"&gt;&lt;h3&gt;Card 2&lt;/h3&gt;&lt;/div&gt;
+&lt;div class="card"&gt;&lt;h3&gt;Card 3&lt;/h3&gt;&lt;/div&gt;
+(no wrapper — just three separate divs) --&gt;</span>
+
+<span class="cm">&lt;!-- data-sly-repeat also has the cardList metadata object --&gt;</span>
+<span class="tag">&lt;tr</span> <span class="attr">data-sly-repeat.row</span>=<span class="str">"${model.rows}"</span>
+     <span class="attr">class</span>=<span class="str">"${rowList.odd ? 'row--odd' : 'row--even'}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;td&gt;</span>${rowList.count}<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;td&gt;</span>${row.name}<span class="tag">&lt;/td&gt;</span>
+<span class="tag">&lt;/tr&gt;</span></div>
+</div>
+<div class="info">Use <code>data-sly-list</code> when the repeated items go inside a container element (like <code>&lt;ul&gt;</code> or <code>&lt;select&gt;</code>). Use <code>data-sly-repeat</code> when the element itself is the thing being repeated (like a grid of <code>&lt;div&gt;</code> cards or table rows).</div>
+</div>
+
+<!-- DATA-SLY-SET -->
+<div class="pg" id="p-data-sly-set">
+<span class="badge">Part 3 — basic block statements</span>
+<h1>data-sly-set — defining local variables</h1>
+<p class="lede"><code>data-sly-set</code> creates a template-local variable from an expression. Use it to avoid computing the same expression multiple times, to create readable aliases for long expressions, or to pre-compute a value used in several places.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-set — patterns and use cases</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Create a variable from an expression --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.greeting</span>=<span class="str">"${'Hello, ' + model.name + '!'}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;h2&gt;</span>${greeting}<span class="tag">&lt;/h2&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">aria-label</span>=<span class="str">"${greeting}"</span><span class="tag">&gt;</span>...</span><span class="tag">&lt;/p&gt;</span>
+<span class="cm">&lt;!-- greeting is computed once, used twice --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Readable alias for a long expression --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.isPromo</span>=<span class="str">"${model.badge == 'promo' && model.isActive}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card ${isPromo ? 'card--promo' : ''}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"badge"</span> <span class="attr">data-sly-test</span>=<span class="str">"${isPromo}"</span><span class="tag">&gt;</span>Promo<span class="tag">&lt;/span&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Avoid long repeated property chains --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.author</span>=<span class="str">"${model.article.metadata.author}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;span&gt;</span>By ${author.name}<span class="tag">&lt;/span&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"${author.photo @ context='uri'}"</span> <span class="attr">alt</span>=<span class="str">"${author.name}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 4: Boolean flag for readability --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.showCta</span>=<span class="str">"${model.ctaLink && model.ctaText}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__footer ${showCta ? 'has-cta' : ''}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${model.ctaLink @ context='uri'}"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${showCta}"</span><span class="tag">&gt;</span>
+    ${model.ctaText}
+  <span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-INCLUDE -->
+<div class="pg" id="p-data-sly-include">
+<span class="badge">Part 4 — advanced block statements</span>
+<h1>data-sly-include — including other HTL files</h1>
+<p class="lede"><code>data-sly-include</code> inlines the content of another HTL file at the current position. The included file has access to the same global objects and the same <code>data-sly-use</code> variables from the including file.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-include — patterns</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Include a sibling file (relative path) --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"card-header.html"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Looks for card-header.html in the SAME component folder --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Include from a subfolder --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"partials/footer.html"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Include with a wrapper element --&gt;</span>
+<span class="tag">&lt;footer</span> <span class="attr">class</span>=<span class="str">"page-footer"</span>
+        <span class="attr">data-sly-include</span>=<span class="str">"footer.html"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders: &lt;footer class="page-footer"&gt;...footer content...&lt;/footer&gt; --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 4: Conditional include --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"${model.showPromo ? 'promo-banner.html' : 'default-banner.html'}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- What the included file can access:
+     - All global objects: properties, currentPage, wcmmode, etc.
+     - All data-sly-use variables defined BEFORE the include tag
+     - Its own data-sly-use objects defined within itself --&gt;</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">data-sly-include vs data-sly-resource</div>
+<div class="compare">
+<div class="ch">data-sly-include</div><div class="ch">data-sly-resource</div>
+<div class="cb">Includes another HTL file's source as a partial/fragment. Same resource context. Used for breaking up a large template into smaller maintainable files.</div>
+<div class="cb">Renders a JCR resource (a different node) using its own <code>sling:resourceType</code> rendering script. Creates a completely new resource context. Used for sub-components.</div>
+</div>
+</div>
+</div>
+
+<!-- DATA-SLY-RESOURCE -->
+<div class="pg" id="p-data-sly-resource">
+<span class="badge">Part 4 — advanced block statements</span>
+<h1>data-sly-resource — rendering sub-resources</h1>
+<p class="lede"><code>data-sly-resource</code> renders a JCR resource using that resource's own <code>sling:resourceType</code> rendering script. It is how you embed one component inside another component's template.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-resource — all patterns</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Render a child resource by its name --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-resource</span>=<span class="str">"image"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders the "image" child node of the current resource.
+     AEM finds /content/mysite/.../mycomponent/image,
+     reads its sling:resourceType, and renders it. --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Override the resource type --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-resource</span>=<span class="str">"${'image' @ resourceType='mysite/components/image'}"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders the "image" child node using the specified
+     resourceType, ignoring any resourceType stored on the node. --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Add selectors --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-resource</span>=<span class="str">"${'image' @ selectors='thumbnail'}"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders image with the ".thumbnail" selector —
+     calls image.thumbnail.html in the image component --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 4: Render with wrapper element --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__image"</span>
+     <span class="attr">data-sly-resource</span>=<span class="str">"image"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders: &lt;div class="card__image"&gt;...image output...&lt;/div&gt; --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 5: Use absolute path --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-resource</span>=<span class="str">"${'/content/mysite/shared/header'}"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Renders the shared header from an absolute JCR path --&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-TEMPLATE -->
+<div class="pg" id="p-data-sly-template">
+<span class="badge">Part 4 — advanced block statements</span>
+<h1>data-sly-template — defining reusable template blocks</h1>
+<p class="lede"><code>data-sly-template</code> defines a named block of HTML that can be called multiple times from anywhere in the same file with different parameters. Like a function in programming. The block is not rendered where it is defined — only when called with <code>data-sly-call</code>.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-template — define and call</span></div>
+<div class="code-body"><span class="cm">&lt;!-- DEFINE a template at the top of the file --&gt;</span>
+<span class="cm">&lt;!-- It is NOT rendered here. Template elements with data-sly-template
+     are always removed from the output. --&gt;</span>
+
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.badge</span>=<span class="str">"${@ text, type}"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- Parameters declared with @ in the definition --&gt;</span>
+  <span class="cm">&lt;!-- type and text are available inside the template body --&gt;</span>
+  <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"badge badge--${type @ context='styleToken'}"</span><span class="tag">&gt;</span>
+    ${text}
+  <span class="tag">&lt;/span&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="cm">&lt;!-- CALL the template with specific parameter values --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${badge @ text='New', type='success'}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${badge @ text='Sale', type='warning'}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${badge @ text=model.badgeLabel, type=model.badgeType}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- TEMPLATE WITH NO PARAMETERS --&gt;</span>
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.spinner</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"spinner"</span> <span class="attr">aria-hidden</span>=<span class="str">"true"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"spinner__ring"</span><span class="tag">&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${spinner}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- TEMPLATE INSIDE A LOOP --&gt;</span>
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.cardItem</span>=<span class="str">"${@ item}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>${item.title}<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>${item.description}<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card-grid"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${model.items}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${cardItem @ item=item}"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/sly&gt;</span>
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+<div class="sec">
+<div class="sec-title">Calling templates from another file</div>
+<p>You can define templates in one file and call them from another using <code>data-sly-use</code>:</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">cross-file template calls</span></div>
+<div class="code-body"><span class="cm">&lt;!-- In templates/shared.html — a library of reusable templates --&gt;</span>
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.icon</span>=<span class="str">"${@ name, size}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;svg</span> <span class="attr">class</span>=<span class="str">"icon icon--${name @ context='styleToken'} icon--${size @ context='styleToken'}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;use</span> <span class="attr">href</span>=<span class="str">"#icon-${name @ context='styleToken'}"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/svg&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="cm">&lt;!-- In card.html — import and call the template --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.shared</span>=<span class="str">"templates/shared.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${shared.icon @ name='arrow', size='sm'}"</span><span class="tag">/&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- DATA-SLY-CALL -->
+<div class="pg" id="p-data-sly-call">
+<span class="badge">Part 4 — advanced block statements</span>
+<h1>data-sly-call — invoking templates</h1>
+<p class="lede"><code>data-sly-call</code> calls a template defined with <code>data-sly-template</code>. It passes arguments to the template and renders its output at the call site.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-call — complete reference</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Basic call with literal arguments --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${myTemplate @ param1='value', param2=42}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Call with model values as arguments --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${badge @ text=model.badgeLabel, type=model.badgeType}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Call on an element (element becomes wrapper) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"badge-wrap"</span>
+     <span class="attr">data-sly-call</span>=<span class="str">"${badge @ text='New'}"</span><span class="tag">/&gt;</span>
+<span class="cm">&lt;!-- Output: &lt;div class="badge-wrap"&gt;&lt;span class="badge"&gt;New&lt;/span&gt;&lt;/div&gt; --&gt;</span>
+
+<span class="cm">&lt;!-- Call template from another file (use data-sly-use first) --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.shared</span>=<span class="str">"shared-templates.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${shared.icon @ name='check', size='lg'}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Include clientlib template (AEM's built-in utility) --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.clientlib</span>=<span class="str">"/libs/granite/sightly/templates/clientlib.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${clientlib.css @ categories='mysite.site'}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${clientlib.js  @ categories='mysite.site'}"</span><span class="tag">/&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-ELEMENT -->
+<div class="pg" id="p-data-sly-element">
+<span class="badge">Part 4 — advanced block statements</span>
+<h1>data-sly-element — dynamic HTML tag names</h1>
+<p class="lede"><code>data-sly-element</code> changes the tag name of an element at runtime. The element keeps all its attributes and children, but the tag name changes based on the expression value.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-element — practical uses</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Use case 1: Dynamic heading level --&gt;</span>
+<span class="cm">&lt;!-- A component where the template author can pick H1, H2, H3 etc. --&gt;</span>
+<span class="tag">&lt;h2</span> <span class="attr">data-sly-element</span>=<span class="str">"${model.headingLevel}"</span>
+     <span class="attr">class</span>=<span class="str">"section__title"</span><span class="tag">&gt;</span>
+  ${model.title}
+<span class="tag">&lt;/h2&gt;</span>
+<span class="cm">&lt;!-- If model.headingLevel = "h1" → renders &lt;h1 class="section__title"&gt;
+     If model.headingLevel = "h3" → renders &lt;h3 class="section__title"&gt;
+     If headingLevel is null or invalid → falls back to &lt;h2&gt; (the original) --&gt;</span>
+
+<span class="cm">&lt;!-- Use case 2: Button vs link --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">data-sly-element</span>=<span class="str">"${model.ctaLink ? 'a' : 'button'}"</span>
+        <span class="attr">data-sly-attribute.href</span>=<span class="str">"${model.ctaLink @ context='uri'}"</span>
+        <span class="attr">class</span>=<span class="str">"cta"</span><span class="tag">&gt;</span>
+  ${model.ctaText}
+<span class="tag">&lt;/button&gt;</span>
+<span class="cm">&lt;!-- If ctaLink exists: renders &lt;a href="..." class="cta"&gt;
+     If no ctaLink: renders &lt;button class="cta"&gt; (href attr removed when empty) --&gt;</span>
+
+<span class="cm">&lt;!-- data-sly-element validates against allowed element names --&gt;</span>
+<span class="cm">&lt;!-- Allowed: h1-h6, p, div, span, ul, ol, li, a, button, etc. --&gt;</span>
+<span class="cm">&lt;!-- NOT allowed: script, style, form, input (security) --&gt;</span></div>
+</div>
+</div>
+
+<!-- DATA-SLY-UNWRAP -->
+<div class="pg" id="p-data-sly-unwrap">
+<span class="badge">Part 4 — advanced block statements</span>
+<h1>data-sly-unwrap — removing the wrapper element</h1>
+<p class="lede"><code>data-sly-unwrap</code> removes an element from the HTML output while keeping all its children. The element becomes invisible in the rendered HTML but its contents remain.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">data-sly-unwrap — practical uses</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Pattern 1: Conditional unwrap —
+     keep wrapper in edit mode, remove in publish --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"author-wrapper"</span>
+     <span class="attr">data-sly-unwrap</span>=<span class="str">"${!wcmmode.edit}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;p</span><span class="tag">&gt;</span>Content here<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+<span class="cm">&lt;!-- In edit mode (wcmmode.edit = true):
+     !wcmmode.edit = false → wrapper is NOT unwrapped
+     Output: &lt;div class="author-wrapper"&gt;&lt;p&gt;Content here&lt;/p&gt;&lt;/div&gt;
+
+     In publish mode (wcmmode.edit = false):
+     !wcmmode.edit = true → wrapper IS unwrapped (removed)
+     Output: &lt;p&gt;Content here&lt;/p&gt; --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 2: Always unwrap (value = true) —
+     used to show structure in source while removing wrapper in output --&gt;</span>
+<span class="tag">&lt;span</span> <span class="attr">data-sly-unwrap</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- When data-sly-unwrap has no value, defaults to true --&gt;</span>
+  <span class="tag">&lt;strong&gt;</span>This text<span class="tag">&lt;/strong&gt;</span> is important.
+<span class="tag">&lt;/span&gt;</span>
+<span class="cm">&lt;!-- Output: &lt;strong&gt;This text&lt;/strong&gt; is important. --&gt;</span>
+
+<span class="cm">&lt;!-- Pattern 3: Semantic HTML wrapper for author, clean output in publish --&gt;</span>
+<span class="tag">&lt;article</span> <span class="attr">data-sly-unwrap</span>=<span class="str">"${!wcmmode.edit}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"article-body.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/article&gt;</span></div>
+</div>
+</div>
+
+<!-- USE API WHAT -->
+<div class="pg" id="p-use-api-what">
+<span class="badge">Part 5 — Use API</span>
+<h1>Use API — what it is and why it exists</h1>
+<p class="lede">The Use API is the mechanism HTL uses to load logic objects into templates. It is the bridge between the template (HTML) and the business logic (Java or JavaScript). Without it, templates would be limited to only the global objects HTL provides.</p>
+<div class="sec">
+<div class="sec-title">Why the Use API was invented</div>
+<p>HTL deliberately has no scripting capabilities — no <code>if</code> statements based on complex business logic, no method calls, no variable assignments inside the template. This is by design: templates should only render data, not compute it.</p>
+<p>But complex components need computed data — formatted prices, filtered lists, resolved URLs, permission checks. The Use API provides a clean way to get that computed data into the template without breaking the separation of concerns.</p>
+</div>
+<div class="sec">
+<div class="sec-title">The two Use API options</div>
+<div class="row-list">
+<div class="row"><div class="rk">Java Use API</div><div class="rv">A Java class (Sling Model) loaded via <code>data-sly-use</code>. The class can do anything Java can do — query JCR, call APIs, format data, check permissions. Most powerful and recommended for production use.</div></div>
+<div class="row"><div class="rk">JavaScript Use API</div><div class="rv">A JavaScript file loaded via <code>data-sly-use</code>. Runs server-side in AEM using the Rhino JavaScript engine (AEM 6.5) or Nashorn. Simpler than Java for light logic but less powerful. Good for prototyping or very simple computed values.</div></div>
+</div>
+</div>
+</div>
+
+<!-- JAVA USE API -->
+<div class="pg" id="p-java-use-api">
+<span class="badge">Part 5 — Use API</span>
+<h1>Java Use API — Sling Models as Use objects</h1>
+<p class="lede">The Java Use API in AEM is implemented through Sling Models. Any class annotated with <code>@Model</code> can be loaded via <code>data-sly-use</code>. HTL calls the public getter methods as expressions in the template.</p>
+<div class="sec">
+<div class="sec-title">How HTL connects to a Sling Model</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">the connection between HTL and Sling Model</span></div>
+<div class="code-body"><span class="cm">&lt;!-- In card.html --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.CardModel"</span><span class="tag">&gt;</span>
+  ${model.title}         <span class="cm">&lt;!-- calls model.getTitle() --&gt;</span>
+  ${model.description}   <span class="cm">&lt;!-- calls model.getDescription() --&gt;</span>
+  ${model.hasLink}       <span class="cm">&lt;!-- calls model.isHasLink() --&gt;</span>
+  ${model.items.size}    <span class="cm">&lt;!-- calls model.getItems() then .size() --&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">// In CardModel.java (interface)</span>
+<span class="kw">public interface</span> CardModel {
+  String getTitle();       <span class="cm">// HTL: ${model.title}</span>
+  String getDescription(); <span class="cm">// HTL: ${model.description}</span>
+  <span class="kw">boolean</span> isHasLink();    <span class="cm">// HTL: ${model.hasLink} — note: "is" not "get"</span>
+  List&lt;Item&gt; getItems();   <span class="cm">// HTL: ${model.items}</span>
+}
+
+<span class="cm">// HTL → Java naming convention:
+// ${model.title}       → getTitle()     (capitalize, prepend get)
+// ${model.firstName}   → getFirstName()
+// ${model.hasLink}     → isHasLink()    (boolean uses "is" prefix)
+// ${model.empty}       → isEmpty()      (boolean, AEM uses "is" prefix)
+// ${model.items.size}  → getItems().size() (chained)</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">What the Sling Model receives at runtime</div>
+<p>When HTL processes <code>data-sly-use.model="com.mysite.core.models.CardModel"</code>, it calls <code>request.adaptTo(CardModel.class)</code> or <code>resource.adaptTo(CardModel.class)</code> depending on the model's <code>adaptables</code> configuration. Sling finds the registered implementation (CardModelImpl) and calls its constructor, injects all <code>@ValueMapValue</code> and other annotated fields, then calls <code>@PostConstruct</code>. The resulting object is bound to <code>model</code>.</p>
+</div>
+</div>
+
+<!-- JAVASCRIPT USE API -->
+<div class="pg" id="p-js-use-api">
+<span class="badge">Part 5 — Use API</span>
+<h1>JavaScript Use API — server-side JS in HTL</h1>
+<p class="lede">The JavaScript Use API lets you write a JavaScript file that runs server-side in AEM and provides computed values to the HTL template. It is simpler to set up than a full Sling Model but less powerful. Good for prototypes, simple logic, or cases where a Sling Model is overkill.</p>
+<div class="sec">
+<div class="sec-title">How to create a JavaScript Use object</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">card.js — JavaScript Use object in same folder as card.html</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="str">"use strict"</span>;
+
+<span class="cm">// All global HTL objects are available in the JS Use object:</span>
+<span class="cm">// - properties (JCR properties of current resource)</span>
+<span class="cm">// - pageProperties (JCR properties of current page)</span>
+<span class="cm">// - currentPage (com.day.cq.wcm.api.Page)</span>
+<span class="cm">// - currentNode (javax.jcr.Node)</span>
+<span class="cm">// - request (SlingHttpServletRequest)</span>
+<span class="cm">// - resource (org.apache.sling.api.resource.Resource)</span>
+<span class="cm">// - resolver (ResourceResolver)</span>
+
+use(<span class="kw">function</span>() {
+  <span class="cm">// "this" gives access to all HTL globals</span>
+  <span class="kw">var</span> props   = <span class="kw">this</span>.properties;
+  <span class="kw">var</span> page    = <span class="kw">this</span>.currentPage;
+  <span class="kw">var</span> request = <span class="kw">this</span>.request;
+
+  <span class="cm">// Read JCR properties</span>
+  <span class="kw">var</span> title   = props.get(<span class="str">"title"</span>,   <span class="str">""</span>);
+  <span class="kw">var</span> price   = props.get(<span class="str">"price"</span>,   <span class="kw">0</span>);
+  <span class="kw">var</span> isActive = props.get(<span class="str">"active"</span>, <span class="kw">false</span>);
+
+  <span class="cm">// Compute derived values</span>
+  <span class="kw">var</span> formattedPrice = price > <span class="kw">0</span>
+    ? <span class="str">"₹"</span> + price.toFixed(<span class="kw">2</span>)
+    : <span class="str">"Free"</span>;
+
+  <span class="kw">var</span> greeting = title
+    ? <span class="str">"Hello, "</span> + title + <span class="str">"!"</span>
+    : <span class="str">"Welcome!"</span>;
+
+  <span class="cm">// Access page information</span>
+  <span class="kw">var</span> pagePath = page ? page.getPath() : <span class="str">""</span>;
+
+  <span class="cm">// Return object — properties become available as ${model.xxx}</span>
+  <span class="kw">return</span> {
+    title:          title,
+    formattedPrice: formattedPrice,
+    greeting:       greeting,
+    isActive:       isActive,
+    pagePath:       pagePath
+  };
+});</div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Using the JavaScript Use object in HTL</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">card.html — loading the JS Use object</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Load card.js from the same folder (no path = same folder) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.model</span>=<span class="str">"card.js"</span> <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>${model.greeting}<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"price"</span><span class="tag">&gt;</span>${model.formattedPrice}<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"status"</span>
+        <span class="attr">data-sly-test</span>=<span class="str">"${model.isActive}"</span><span class="tag">&gt;</span>Active<span class="tag">&lt;/span&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Load a JS file from a different path --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.nav</span>=<span class="str">"helpers/navigation.js"</span><span class="tag">&gt;</span>
+  ${nav.currentSection}
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+<div class="warn">The JavaScript Use API is limited. It cannot use npm modules. It runs in Java's Rhino/Nashorn JS engine which is not a browser environment. For complex logic (JCR queries, OSGi service calls, permissions), use a Sling Model instead.</div>
+</div>
+
+<!-- USE API PATTERNS -->
+<div class="pg" id="p-use-api-patterns">
+<span class="badge">Part 5 — Use API</span>
+<h1>Use API patterns — when to use what</h1>
+<p class="lede">Choosing between the Java Use API (Sling Model), JavaScript Use API, and global objects is a common decision. Here are the guidelines.</p>
+<div class="row-list">
+<div class="row"><div class="rk">Use global properties directly</div><div class="rv">For the simplest components that just read 1–3 JCR properties with no transformation. <code>${properties.title}</code> directly. No Sling Model needed.</div></div>
+<div class="row"><div class="rk">Use JavaScript Use API</div><div class="rv">For simple components with light computed logic — string formatting, simple conditions, basic calculations. When you want to prototype quickly without writing Java.</div></div>
+<div class="row"><div class="rk">Use Java Sling Model</div><div class="rv">For all production components. Supports unit testing, OSGi service injection, complex JCR queries, multifield reading, permission checks, and any logic requiring Java APIs. The default choice for all serious development.</div></div>
+</div>
+<div class="sec">
+<div class="sec-title">Multiple Use objects in one template</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">loading multiple Use objects</span></div>
+<div class="code-body"><span class="cm">&lt;!-- You can load multiple Use objects on any element --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">data-sly-use.card</span>=<span class="str">"com.mysite.core.models.CardModel"</span>
+     <span class="attr">data-sly-use.nav</span>=<span class="str">"com.mysite.core.models.NavigationModel"</span>
+     <span class="attr">data-sly-use.utils</span>=<span class="str">"utils.js"</span><span class="tag">&gt;</span>
+  ${card.title}
+  ${nav.currentSection}
+  ${utils.formattedDate}
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Or load them on &lt;sly&gt; tags before use --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.card</span>=<span class="str">"com.mysite.core.models.CardModel"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.nav</span>=<span class="str">"com.mysite.core.models.NavigationModel"</span><span class="tag">/&gt;</span>
+
+<span class="tag">&lt;h1&gt;</span>${card.title}<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;nav</span><span class="tag">&gt;</span>${nav.currentSection}<span class="tag">&lt;/nav&gt;</span></div>
+</div>
+</div>
+</div>
+
+<!-- EXAMPLE CARD -->
+<div class="pg" id="p-example-card">
+<span class="badge">Part 6 — real examples</span>
+<h1>Full card component — production-ready HTL</h1>
+<p class="lede">A complete, real-world card component template using every concept from this session. This is what you actually write in production AEM development.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">card.html — complete production example</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="cm">&lt;!-- Load Sling Model --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.CardModel"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Pre-compute a readability flag --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.hasContent</span>=<span class="str">"${model.title || model.description}"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- Only render if there is any content --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card card--${model.theme @ context='styleToken'}"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${hasContent || wcmmode.edit}"</span><span class="tag">&gt;</span>
+
+  <span class="cm">&lt;!-- Image section — only when image exists --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__image"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.imageUrl}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;img</span>
+      <span class="attr">src</span>=<span class="str">"${model.imageUrl @ context='uri'}"</span>
+      <span class="attr">alt</span>=<span class="str">"${model.imageAlt || model.title}"</span>
+      <span class="attr">loading</span>=<span class="str">"lazy"</span>
+      <span class="attr">width</span>=<span class="str">"${model.imageWidth  @ context='number'}"</span>
+      <span class="attr">height</span>=<span class="str">"${model.imageHeight @ context='number'}"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- Content body --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__body"</span><span class="tag">&gt;</span>
+
+    <span class="cm">&lt;!-- Badge — dynamic heading level from design dialog --&gt;</span>
+    <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"card__eyebrow"</span>
+          <span class="attr">data-sly-test</span>=<span class="str">"${model.eyebrow}"</span><span class="tag">&gt;</span>
+      ${model.eyebrow}
+    <span class="tag">&lt;/span&gt;</span>
+
+    <span class="cm">&lt;!-- Title with dynamic heading level --&gt;</span>
+    <span class="tag">&lt;h3</span> <span class="attr">data-sly-element</span>=<span class="str">"${model.headingLevel}"</span>
+         <span class="attr">class</span>=<span class="str">"card__title"</span>
+         <span class="attr">data-sly-test</span>=<span class="str">"${model.title}"</span><span class="tag">&gt;</span>
+      ${model.title}
+    <span class="tag">&lt;/h3&gt;</span>
+
+    <span class="cm">&lt;!-- Description (rich text) --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__description"</span>
+         <span class="attr">data-sly-test</span>=<span class="str">"${model.description}"</span>
+         <span class="attr">data-sly-text</span>=<span class="str">"${model.description @ context='html'}"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+
+    <span class="cm">&lt;!-- Tag list --&gt;</span>
+    <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="str">"card__tags"</span>
+        <span class="attr">data-sly-test</span>=<span class="str">"${model.tags}"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="str">"card__tag"</span>
+          <span class="attr">data-sly-list.tag</span>=<span class="str">"${model.tags}"</span><span class="tag">&gt;</span>
+        ${tag}
+      <span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+
+    <span class="cm">&lt;!-- CTA --&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">class</span>=<span class="str">"card__cta btn"</span>
+       <span class="attr">href</span>=<span class="str">"${model.ctaLink @ context='uri'}"</span>
+       <span class="attr">data-sly-attribute.target</span>=<span class="str">"${model.newTab ? '_blank' : ''}"</span>
+       <span class="attr">data-sly-attribute.rel</span>=<span class="str">"${model.newTab ? 'noopener' : ''}"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${model.hasLink}"</span><span class="tag">&gt;</span>
+      ${model.ctaText || 'Learn More'}
+    <span class="tag">&lt;/a&gt;</span>
+
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- Author-only empty state hint --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card__empty-hint"</span>
+       <span class="attr">data-sly-test</span>=<span class="str">"${wcmmode.edit && !hasContent}"</span><span class="tag">&gt;</span>
+    Please configure this card.
+  <span class="tag">&lt;/div&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span></div>
+</div>
+</div>
+
+<!-- EXAMPLE NAV -->
+<div class="pg" id="p-example-nav">
+<span class="badge">Part 6 — real examples</span>
+<h1>Navigation component — loops with metadata</h1>
+<p class="lede">A navigation component demonstrates <code>data-sly-list</code> with itemList metadata (first, last, active) and nested loops for sub-navigation.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">navigation.html — production navigation example</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="tag">&lt;sly</span> <span class="attr">data-sly-use.nav</span>=<span class="str">"com.mysite.core.models.NavigationModel"</span><span class="tag">/&gt;</span>
+
+<span class="tag">&lt;nav</span> <span class="attr">class</span>=<span class="str">"site-nav"</span>
+     <span class="attr">aria-label</span>=<span class="str">"${nav.ariaLabel}"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${nav.items}"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="str">"site-nav__list"</span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;li</span> <span class="attr">data-sly-list.item</span>=<span class="str">"${nav.items}"</span>
+        <span class="attr">class</span>=<span class="str">"site-nav__item
+               ${item.active   ? 'is-active'  : ''}
+               ${item.children ? 'has-submenu' : ''}
+               ${itemList.first ? 'is-first'  : ''}
+               ${itemList.last  ? 'is-last'   : ''}"</span><span class="tag">&gt;</span>
+
+      <span class="tag">&lt;a</span> <span class="attr">class</span>=<span class="str">"site-nav__link ${item.active ? 'is-active' : ''}"</span>
+         <span class="attr">href</span>=<span class="str">"${item.url @ context='uri'}"</span>
+         <span class="attr">data-sly-attribute.aria-current</span>=<span class="str">"${item.active ? 'page' : ''}"</span><span class="tag">&gt;</span>
+        ${item.title}
+      <span class="tag">&lt;/a&gt;</span>
+
+      <span class="cm">&lt;!-- Sub-navigation (nested loop) --&gt;</span>
+      <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="str">"site-nav__submenu"</span>
+          <span class="attr">data-sly-test</span>=<span class="str">"${item.children}"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">data-sly-list.child</span>=<span class="str">"${item.children}"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"${child.url @ context='uri'}"</span>
+             <span class="attr">class</span>=<span class="str">"${child.active ? 'is-active' : ''}"</span><span class="tag">&gt;</span>
+            ${child.title}
+          <span class="tag">&lt;/a&gt;</span>
+        <span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;/ul&gt;</span>
+
+    <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+
+<span class="tag">&lt;/nav&gt;</span></div>
+</div>
+</div>
+
+<!-- EXAMPLE CONDITIONAL -->
+<div class="pg" id="p-example-conditional">
+<span class="badge">Part 6 — real examples</span>
+<h1>Complex conditionals — all the patterns</h1>
+<p class="lede">Real components often need complex conditional logic. Here are all the conditional patterns you need, using only HTL's features.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">conditional patterns — all cases</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="tag">&lt;sly</span> <span class="attr">data-sly-use.model</span>=<span class="str">"com.mysite.core.models.ProductModel"</span><span class="tag">/&gt;</span>
+
+<span class="cm">&lt;!-- if / else —— use variable --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.inStock</span>=<span class="str">"${model.stockCount > 0}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"badge badge--success"</span> <span class="attr">data-sly-test</span>=<span class="str">"${inStock}"</span><span class="tag">&gt;</span>In Stock<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"badge badge--error"</span>   <span class="attr">data-sly-test</span>=<span class="str">"${!inStock}"</span><span class="tag">&gt;</span>Out of Stock<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- switch-like pattern using multiple conditions --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-set.tier</span>=<span class="str">"${model.memberTier}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"badge badge--gold"</span>     <span class="attr">data-sly-test</span>=<span class="str">"${tier == 'gold'}"</span><span class="tag">&gt;</span>Gold<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"badge badge--silver"</span>   <span class="attr">data-sly-test</span>=<span class="str">"${tier == 'silver'}"</span><span class="tag">&gt;</span>Silver<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"badge badge--default"</span>  <span class="attr">data-sly-test</span>=<span class="str">"${tier != 'gold' && tier != 'silver'}"</span><span class="tag">&gt;</span>Member<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Complex multi-condition --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"promo-banner"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${model.showPromo && (model.promoTitle || model.promoImage)}"</span><span class="tag">&gt;</span>
+  ...promo content...
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- author-mode vs publish-mode conditional --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"component-wrapper"</span>
+     <span class="attr">data-sly-unwrap</span>=<span class="str">"${!wcmmode.edit}"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- wrapper present in edit mode for AEM overlay
+       wrapper removed in publish for clean HTML --&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"body.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Ternary for class names --&gt;</span>
+<span class="tag">&lt;section</span> <span class="attr">class</span>=<span class="str">"section
+            ${model.fullWidth ? 'section--full' : 'section--contained'}
+            ${model.darkBg   ? 'section--dark' : 'section--light'}
+            ${model.noPadding ? 'section--flush' : ''}"</span><span class="tag">&gt;</span></div>
+</div>
+</div>
+
+<!-- EXAMPLE PARTIALS -->
+<div class="pg" id="p-example-partials">
+<span class="badge">Part 6 — real examples</span>
+<h1>Partials and templates — organising complex components</h1>
+<p class="lede">Large page components (headers, footers, article pages) benefit from being split into partial files. Reusable UI patterns (badges, icons, buttons) benefit from <code>data-sly-template</code>. Here is how to organise both.</p>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">page component organisation with partials</span><button class="code-copy" onclick="copyCode(this)">copy</button></div>
+<div class="code-body"><span class="cm">&lt;!-- Component folder structure for a page component: --&gt;</span>
+<span class="cm">&lt;!-- components/page/base/
+         base.html       ← root: loads model, includes partials
+         head.html       ← &lt;head&gt; section
+         header.html     ← site header
+         footer.html     ← site footer
+         breadcrumb.html ← breadcrumb component
+         bodyEnd.html    ← scripts before &lt;/body&gt;
+         partials/
+           meta-tags.html   ← Open Graph and Twitter card tags
+           structured-data.html ← JSON-LD schema --&gt;</span>
+
+<span class="cm">&lt;!-- base.html --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.page</span>=<span class="str">"com.mysite.core.models.PageModel"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"${page.language}"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head</span> <span class="attr">data-sly-include</span>=<span class="str">"head.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;body</span> <span class="attr">class</span>=<span class="str">"${page.bodyClass @ context='styleToken'}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"header.html"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;main</span> <span class="attr">id</span>=<span class="str">"main-content"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;sly</span> <span class="attr">data-sly-resource</span>=<span class="str">"jcr:content/root"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"footer.html"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;sly</span> <span class="attr">data-sly-include</span>=<span class="str">"bodyEnd.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span>
+
+<span class="cm">&lt;!-- A template library file: shared-templates.html --&gt;</span>
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.icon</span>=<span class="str">"${@ name, size='md'}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;svg</span> <span class="attr">class</span>=<span class="str">"icon icon--${name @ context='styleToken'} icon--${size @ context='styleToken'}"</span>
+       <span class="attr">aria-hidden</span>=<span class="str">"true"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;use</span> <span class="attr">href</span>=<span class="str">"#icon-${name @ context='scriptToken'}"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/svg&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="tag">&lt;template</span> <span class="attr">data-sly-template.spinner</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"spinner"</span> <span class="attr">role</span>=<span class="str">"status"</span> <span class="attr">aria-label</span>=<span class="str">"Loading"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"spinner__ring"</span><span class="tag">&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="cm">&lt;!-- Using the shared templates: --&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-use.t</span>=<span class="str">"shared-templates.html"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${t.icon @ name='search', size='lg'}"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;sly</span> <span class="attr">data-sly-call</span>=<span class="str">"${t.spinner}"</span><span class="tag">/&gt;</span></div>
+</div>
+</div>
+
+<!-- DEBUGGING -->
+<div class="pg" id="p-debugging">
+<span class="badge">Part 6 — real examples</span>
+<h1>Debugging HTL — what to do when things go wrong</h1>
+<p class="lede">HTL fails silently in many cases — expressions return null without errors, templates render blank output, models return nothing. Here is how to diagnose and fix every common HTL problem.</p>
+<div class="sec">
+<div class="sec-title">Problem 1 — ${model.title} renders nothing</div>
+<div class="steps">
+<div class="step"><div class="snum">1</div><div><div class="stt">Check that the value is in the JCR</div><div class="stb">CRXDE → navigate to the component's content node → Properties tab → is <code>title</code> property there with a value? If not, the dialog did not save it.</div></div></div>
+<div class="step"><div class="snum">2</div><div><div class="stt">Check the Sling Model loaded</div><div class="stb">Add <code>${model}</code> or <code>${model.class.name}</code> to the template temporarily. If it outputs nothing, the model is null. Check: is the bundle Active? Does <code>Sling-Model-Packages</code> include your model package?</div></div></div>
+<div class="step"><div class="snum">3</div><div><div class="stt">Check the @Model resourceType</div><div class="stb">In your Java class, <code>@Model(resourceType="mysite/components/card")</code>. Does this exactly match your component folder path relative to <code>/apps</code>? It is case-sensitive.</div></div></div>
+<div class="step"><div class="snum">4</div><div><div class="stt">Check the getter name</div><div class="stb">If you write <code>${model.title}</code>, Java must have a method named exactly <code>getTitle()</code>. If the getter is <code>getCardTitle()</code>, use <code>${model.cardTitle}</code>.</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Problem 2 — data-sly-test always hides the element</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">debugging conditionals</span></div>
+<div class="code-body"><span class="cm">&lt;!-- Temporarily output the value to see what it is --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">style</span>=<span class="str">"color:red;font-size:12px"</span><span class="tag">&gt;</span>
+  DEBUG: model.title = [${model.title}]
+  | model.hasLink = [${model.hasLink}]
+  | model.items.size = [${model.items.size}]
+<span class="tag">&lt;/p&gt;</span>
+<span class="cm">&lt;!-- Output [null] means the getter returned null
+     Output [] means an empty string
+     Both are falsy in data-sly-test --&gt;</span></div>
+</div>
+</div>
+<div class="sec">
+<div class="sec-title">Problem 3 — wrong HTML in output (XSS issues)</div>
+<p>If link URLs are garbled (e.g. <code>href="&amp;#x2F;content&amp;#x2F;"</code>) you forgot <code>@ context='uri'</code>. If rich text is showing as literal HTML entities (<code>&amp;lt;p&amp;gt;</code>) you need <code>@ context='html'</code>. If CSS classes have characters stripped, use <code>@ context='styleToken'</code>.</p>
+</div>
+<div class="sec">
+<div class="sec-title">The debugging template — add temporarily</div>
+<div class="code-block">
+<div class="code-top"><span class="code-fname">debug output — paste anywhere in your HTL temporarily</span></div>
+<div class="code-body"><span class="tag">&lt;div</span> <span class="attr">style</span>=<span class="str">"background:yellow;padding:10px;font-family:monospace;font-size:12px"</span>
+     <span class="attr">data-sly-test</span>=<span class="str">"${wcmmode.edit}"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;strong&gt;</span>DEBUG (author only):<span class="tag">&lt;/strong&gt;&lt;br&gt;</span>
+  model loaded: ${model != null}<span class="tag">&lt;br&gt;</span>
+  model.title: [${model.title}]<span class="tag">&lt;br&gt;</span>
+  model.items count: ${model.items.size}<span class="tag">&lt;br&gt;</span>
+  resource path: ${currentResource.path}<span class="tag">&lt;br&gt;</span>
+  resource type: ${currentResource.resourceType}<span class="tag">&lt;br&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- data-sly-test="${wcmmode.edit}" ensures this is ONLY
+     visible in author mode, never on the live website --&gt;</span></div>
+</div>
+</div>
+<div style="margin-top:16px">
+  <button onclick="sendPrompt('Now explain Session 7 — Sling Models in complete detail — every annotation including @Model, @ValueMapValue, @ChildResource, @OSGiService, @ScriptVariable, @SlingObject, @Default, @PostConstruct, adaptables (Resource vs SlingHttpServletRequest), the interface and impl pattern, Maven POM changes, and Sling Model integration with HTL — all explained from scratch with real examples and full annotated code')">Explain Session 7 (Sling Models) in the same detail ↗</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+function copyCode(btn){
+  var code=btn.closest('.code-block').querySelector('.code-body').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var orig=btn.textContent;btn.textContent='copied!';
+    setTimeout(function(){btn.textContent=orig},1500);
+  });
+}
+</script>

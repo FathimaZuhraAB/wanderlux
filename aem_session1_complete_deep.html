@@ -1,0 +1,1006 @@
+
+<h2 class="sr-only">AEM Session 1 complete deep-dive guide — every topic explained from scratch with real-world examples, beginner language, and what to do at each step</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:700px}
+.nav{width:220px;min-width:220px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;flex-shrink:0}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav-hd small{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);display:block;margin-bottom:3px}
+.nav-hd strong{font-size:13.5px;font-weight:500;color:var(--color-text-primary)}
+.grp{padding:12px 16px 4px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary)}
+.ni{display:flex;align-items:flex-start;gap:8px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;font-size:12.5px;color:var(--color-text-secondary);line-height:1.35;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0;margin-top:1px}
+.body{flex:1;overflow-y:auto;padding:26px 30px}
+.body::-webkit-scrollbar{width:4px}.body::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+h1{font-size:21px;font-weight:500;margin-bottom:6px;line-height:1.25}
+.lede{font-size:14px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:22px;padding-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+
+.sec{margin-bottom:28px}
+.sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-tertiary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+
+p{font-size:13.5px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:12px}
+p:last-child{margin-bottom:0}
+p code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-tertiary);padding:2px 6px;border-radius:4px;color:var(--color-text-info);border:0.5px solid var(--color-border-tertiary)}
+
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px;margin-bottom:10px}
+.card-hd{font-size:13.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-hd i{font-size:16px;color:var(--color-text-info)}
+.card p{font-size:13px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.card code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+
+.rl{border-left:3px solid var(--color-border-success);padding:12px 16px;background:var(--color-background-success);color:var(--color-text-success);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.rl .rl-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px;opacity:.8}
+.warn{border-left:3px solid var(--color-border-warning);padding:12px 16px;background:var(--color-background-warning);color:var(--color-text-warning);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+.info{border-left:3px solid var(--color-border-info);padding:12px 16px;background:var(--color-background-info);color:var(--color-text-info);font-size:13px;line-height:1.75;margin:14px 0;border-radius:0}
+
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{font-size:13px;color:var(--color-text-secondary);line-height:1.75}
+.step-body code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.step-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 14px;font-size:12.5px;color:var(--color-text-primary);text-align:center;line-height:1.4}
+.fb small{display:block;font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.fb.bl{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.fb.bl small{color:var(--color-text-info);opacity:.7}
+.fb.gr{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.fb.gr small{color:var(--color-text-success);opacity:.7}
+.fb.am{background:var(--color-background-warning);border-color:var(--color-border-warning);color:var(--color-text-warning)}
+.fa{color:var(--color-text-tertiary);font-size:18px;flex-shrink:0}
+
+.url-box{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);margin:10px 0;display:flex;align-items:center;gap:8px}
+.url-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-tertiary);flex-shrink:0}
+
+.row-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}
+.row{display:grid;grid-template-columns:140px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:9px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;align-items:flex-start}
+.rv{padding:9px 12px;color:var(--color-text-primary);line-height:1.6}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 4px;border-radius:3px;color:var(--color-text-info)}
+
+ul{padding-left:20px;margin:8px 0 14px}
+li{font-size:13px;color:var(--color-text-secondary);line-height:1.8;margin-bottom:2px}
+li code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:12px 0 16px}
+.compare-hd{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.compare-hd:first-child{border-right:0.5px solid var(--color-border-tertiary)}
+.compare-body{padding:12px 14px;font-size:12.5px;color:var(--color-text-secondary);line-height:1.7;border-right:0.5px solid var(--color-border-tertiary)}
+.compare-body:last-child{border-right:none}
+
+.node-tree{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:2;margin:12px 0 16px;color:var(--color-text-secondary)}
+.node-tree .hl{color:var(--color-text-info);font-weight:500}
+.node-tree .prop{color:var(--color-text-success)}
+.node-tree .comment{color:var(--color-text-tertiary)}
+</style>
+
+<div class="app">
+<div class="nav">
+  <div class="nav-hd"><small>Session 1 — deep dive</small><strong>AEM fundamentals</strong></div>
+
+  <div class="grp">Part 1 — What &amp; why</div>
+  <div class="ni on" onclick="go('problem')" id="n-problem"><i class="ti ti-alert-circle" aria-hidden="true"></i>The problem before CMS</div>
+  <div class="ni" onclick="go('cms-what')" id="n-cms-what"><i class="ti ti-world" aria-hidden="true"></i>What is a CMS</div>
+  <div class="ni" onclick="go('wcm-what')" id="n-wcm-what"><i class="ti ti-building" aria-hidden="true"></i>What is WCM</div>
+  <div class="ni" onclick="go('aem-what')" id="n-aem-what"><i class="ti ti-brand-adobe" aria-hidden="true"></i>What is AEM exactly</div>
+  <div class="ni" onclick="go('aem-stack')" id="n-aem-stack"><i class="ti ti-stack" aria-hidden="true"></i>What AEM is built on</div>
+
+  <div class="grp">Part 2 — Architecture</div>
+  <div class="ni" onclick="go('3layer')" id="n-3layer"><i class="ti ti-layers" aria-hidden="true"></i>The 3-layer setup</div>
+  <div class="ni" onclick="go('author')" id="n-author"><i class="ti ti-pencil" aria-hidden="true"></i>Author layer — deep dive</div>
+  <div class="ni" onclick="go('publish')" id="n-publish"><i class="ti ti-eye" aria-hidden="true"></i>Publish layer — deep dive</div>
+  <div class="ni" onclick="go('dispatcher')" id="n-dispatcher"><i class="ti ti-shield" aria-hidden="true"></i>Dispatcher — deep dive</div>
+  <div class="ni" onclick="go('replication')" id="n-replication"><i class="ti ti-arrow-right" aria-hidden="true"></i>Replication — how content moves</div>
+
+  <div class="grp">Part 3 — JCR</div>
+  <div class="ni" onclick="go('jcr-what')" id="n-jcr-what"><i class="ti ti-database" aria-hidden="true"></i>What is the JCR</div>
+  <div class="ni" onclick="go('jcr-nodes')" id="n-jcr-nodes"><i class="ti ti-sitemap" aria-hidden="true"></i>Nodes &amp; properties</div>
+  <div class="ni" onclick="go('jcr-paths')" id="n-jcr-paths"><i class="ti ti-folder-open" aria-hidden="true"></i>Key JCR paths</div>
+
+  <div class="grp">Part 4 — WYSIWYG</div>
+  <div class="ni" onclick="go('wysiwyg')" id="n-wysiwyg"><i class="ti ti-layout" aria-hidden="true"></i>WYSIWYG explained</div>
+  <div class="ni" onclick="go('edit-modes')" id="n-edit-modes"><i class="ti ti-toggle-left" aria-hidden="true"></i>Edit / Layout / Preview modes</div>
+
+  <div class="grp">Part 5 — Interfaces</div>
+  <div class="ni" onclick="go('sites-console')" id="n-sites-console"><i class="ti ti-layout-sidebar" aria-hidden="true"></i>Sites console</div>
+  <div class="ni" onclick="go('page-editor')" id="n-page-editor"><i class="ti ti-browser" aria-hidden="true"></i>Page editor</div>
+  <div class="ni" onclick="go('crxde')" id="n-crxde"><i class="ti ti-code" aria-hidden="true"></i>CRXDE Lite</div>
+  <div class="ni" onclick="go('osgi')" id="n-osgi"><i class="ti ti-settings" aria-hidden="true"></i>OSGi console</div>
+  <div class="ni" onclick="go('packmgr')" id="n-packmgr"><i class="ti ti-package" aria-hidden="true"></i>Package manager</div>
+  <div class="ni" onclick="go('tools')" id="n-tools"><i class="ti ti-tool" aria-hidden="true"></i>Tools menu</div>
+
+  <div class="grp">Part 6 — Setup</div>
+  <div class="ni" onclick="go('local-setup')" id="n-local-setup"><i class="ti ti-device-laptop" aria-hidden="true"></i>Local AEM setup</div>
+  <div class="ni" onclick="go('wknd')" id="n-wknd"><i class="ti ti-mountain" aria-hidden="true"></i>WKND demo project</div>
+  <div class="ni" onclick="go('authoring-process')" id="n-authoring-process"><i class="ti ti-list-check" aria-hidden="true"></i>Content authoring process</div>
+</div>
+
+<div class="body">
+
+<div class="pg on" id="p-problem">
+<span class="badge"><i class="ti ti-alert-circle" aria-hidden="true" style="font-size:12px"></i>Part 1 — The problem</span>
+<h1>The problem that existed before CMS</h1>
+<p class="lede">To understand why AEM exists, you first need to understand the painful reality of managing a website without a CMS. Every concept in AEM makes perfect sense once you understand what problem it is solving.</p>
+
+<div class="sec">
+<div class="sec-title">Imagine this scenario</div>
+<p>It is 2005. You work at a bank. The bank's website has 300 pages — home loans, savings accounts, credit cards, branch locators, FAQs, about us pages. Every page is a static HTML file stored on a server.</p>
+<p>Today the Reserve Bank changed the interest rate. The bank needs to update the interest rate on 47 different pages of the website. What happens?</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">A developer receives a ticket</div><div class="step-body">The marketing manager emails a developer: "Please update the home loan rate from 8.5% to 9.2% on all pages."</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Developer finds all the files</div><div class="step-body">The developer SSHs into the server, runs a grep command to find all HTML files mentioning "8.5%", gets a list of 47 files.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Developer edits HTML files</div><div class="step-body">Opens each file in a text editor, finds the rate, changes it, saves. Repeats 47 times. One mistake means a wrong number live on the website.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Developer deploys the files</div><div class="step-body">Uploads the changed files to the production server via FTP or a deployment script. This takes more time.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">Hours or days have passed</div><div class="step-body">The whole process took 3–4 hours. During that time, the website showed incorrect information to customers. The developer wasted their entire morning on content changes instead of building features.</div></div></div>
+</div>
+<p>This happened every single time any content changed. New product? Developer. Typo fix? Developer. Update a photo? Developer. The developer was a bottleneck for everything.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The second big problem — inconsistency</div>
+<p>When 47 different developers or even the same developer edits HTML files manually over years, the website becomes inconsistent. The footer looks different on old pages vs new pages. Font sizes vary. Some pages have outdated branding. There is no single source of truth for how things should look.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The third problem — no workflow</div>
+<p>A junior marketer writes a new product description. It needs a legal review, a brand review, then a manager approval before going live. With static HTML, there is no process for this. The file either goes live or it doesn't. There is no "draft" state, no "waiting for approval" state, no notification system, no audit trail of who changed what when.</p>
+</div>
+
+<div class="rl">
+  <div class="rl-label">This is why CMS was invented</div>
+  All three of these problems — developer bottleneck, inconsistency, no workflow — are exactly what a Content Management System solves. AEM solves all three at enterprise scale, for companies with thousands of pages across hundreds of countries.
+</div>
+</div>
+
+<div class="pg" id="p-cms-what">
+<span class="badge"><i class="ti ti-world" aria-hidden="true" style="font-size:12px"></i>Part 1 — CMS</span>
+<h1>What is a CMS — explained from scratch</h1>
+<p class="lede">A Content Management System is software that separates content from code. Editors manage content through a user interface. Developers manage code and templates. Neither needs the other for day-to-day work.</p>
+
+<div class="sec">
+<div class="sec-title">The fundamental idea</div>
+<p>In a static website, content and code are mixed together. The HTML file contains both the page structure (HTML tags, CSS classes) AND the actual content (words, images). Changing the content means touching the code.</p>
+<p>A CMS splits these into two separate things. The content lives in a database or repository. The templates (the HTML structure, the design) live separately as code. When a user requests a page, the CMS takes the template and fills it with the content from the database and renders the final HTML.</p>
+<div class="flow">
+  <div class="fb bl">Content in database<br><small>"Summer Sale 2024"</small></div>
+  <span class="fa">+</span>
+  <div class="fb">Template (HTML + CSS)<br><small>&lt;h1&gt;{{title}}&lt;/h1&gt;</small></div>
+  <span class="fa">=</span>
+  <div class="fb gr">Final HTML page<br><small>&lt;h1&gt;Summer Sale 2024&lt;/h1&gt;</small></div>
+</div>
+<p>Now a marketing manager can log into the CMS, find the page, click on the title, type new text, and click Save. The template does not change. The code does not change. Only the content in the database changes. No developer needed.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The three layers of a CMS</div>
+<div class="grid3">
+  <div class="card"><div class="card-hd"><i class="ti ti-database" aria-hidden="true"></i>Content repository</div><p>Where all content is stored. In traditional CMS it is a relational database (MySQL). In AEM it is the JCR — a tree-structured content repository where everything is a node with properties.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-pencil" aria-hidden="true"></i>Authoring interface</div><p>The user interface where editors work. Can be form-based (fill in fields), WYSIWYG (click directly on the page), or both. AEM uses both simultaneously.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-browser" aria-hidden="true"></i>Delivery engine</div><p>Takes content from the repository, applies it to a template, and renders HTML for the visitor's browser. In AEM, this is Apache Sling doing the rendering.</p></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Examples of CMS platforms</div>
+<div class="row-list">
+  <div class="row"><div class="rk">WordPress</div><div class="rv">The world's most used CMS. Powers 43% of all websites. Good for blogs, small business sites, simple content. Not built for enterprise scale.</div></div>
+  <div class="row"><div class="rk">Drupal</div><div class="rv">Open-source CMS. More flexible than WordPress. Used by governments and universities. Requires technical setup and management.</div></div>
+  <div class="row"><div class="rk">Contentful</div><div class="rv">Headless CMS. Content is stored as JSON and delivered via API. No built-in frontend. Your React or Vue app consumes the content.</div></div>
+  <div class="row"><div class="rk">Adobe AEM</div><div class="rv">Enterprise-grade WCM. Built for large companies with thousands of pages, multiple brands, multiple countries, complex workflows. This is what you are learning.</div></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — Zomato</div>
+  Zomato's marketing team publishes new restaurant partner pages, festive offer banners, and blog articles every single day. Their marketing manager logs into their CMS, creates a new page, fills in the restaurant name, photos, menu highlights, and clicks Publish. The page is live in minutes. Zero developers involved. This is CMS working exactly as intended.
+</div>
+</div>
+
+<div class="pg" id="p-wcm-what">
+<span class="badge"><i class="ti ti-building" aria-hidden="true" style="font-size:12px"></i>Part 1 — WCM</span>
+<h1>What is WCM — and how it differs from a basic CMS</h1>
+<p class="lede">WCM stands for Web Content Management. It is a CMS that has been built specifically for large, complex enterprise websites. Not just one website — hundreds of websites, in dozens of languages, across multiple brands, all from one platform.</p>
+
+<div class="sec">
+<div class="sec-title">Where basic CMS stops and WCM begins</div>
+<div class="compare">
+  <div class="compare-hd">Basic CMS (e.g. WordPress)</div>
+  <div class="compare-hd">WCM (e.g. AEM)</div>
+  <div class="compare-body">One website. Maybe a few languages if you install a plugin. No concept of "sites" or "brands" — just one installation per site.</div>
+  <div class="compare-body">Hundreds of websites from one installation. Marriott manages 30 sub-brands (Sheraton, Westin, Courtyard) all from one AEM instance.</div>
+  <div class="compare-body">No built-in workflow. Content goes live when you click publish, no approval process.</div>
+  <div class="compare-body">Full workflow engine. Content goes through Draft → Review → Legal Approval → Brand Approval → Scheduled Publish — with email notifications at each step.</div>
+  <div class="compare-body">Basic media library. Upload images, use them. No metadata, no auto-resizing, no rights management.</div>
+  <div class="compare-body">Full DAM (Digital Asset Management). Auto-generates 15 image renditions, manages copyright expiry, watermarking, smart tagging with AI.</div>
+  <div class="compare-body">One language. Multilingual is possible with plugins but messy and unreliable at scale.</div>
+  <div class="compare-body">Built-in multilingual with translation workflows. Content is structured so translators can work in isolation without touching the original.</div>
+  <div class="compare-body">No personalization. Everyone sees the same page.</div>
+  <div class="compare-body">Adobe Target integration. A returning customer in Mumbai sees different content than a first-time visitor in Delhi.</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Why enterprises need WCM specifically</div>
+<p>Consider Unilever. They have 400+ brands (Dove, Lipton, Knorr, Surf). Each brand has a website. Each website runs in 50+ countries. Each country has different products, different pricing, different regulatory requirements, different languages. That is 20,000+ pages being updated daily by hundreds of editors across the globe.</p>
+<p>A basic CMS cannot handle this. It would require 20,000 separate WordPress installations, each managed separately, each with different plugins and updates, each potentially going out of sync. This is a nightmare.</p>
+<p>A WCM like AEM handles all 20,000 pages from one platform with shared templates, shared brand guidelines enforced by policies, shared assets in one DAM, and one unified authoring interface for all editors globally.</p>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — HDFC Bank</div>
+  HDFC Bank has a website with over 2,000 pages in English and Hindi, covering personal banking, business banking, NRI banking, investments, insurance, and credit cards. Their compliance team must review every piece of content before it goes live. Their legal team must approve any mention of interest rates. Their brand team ensures consistent visual language. All of this is managed through AEM's workflow engine. A content editor cannot accidentally publish an unapproved interest rate — the workflow literally prevents it.
+</div>
+</div>
+
+<div class="pg" id="p-aem-what">
+<span class="badge"><i class="ti ti-brand-adobe" aria-hidden="true" style="font-size:12px"></i>Part 1 — AEM</span>
+<h1>What is AEM — Adobe Experience Manager</h1>
+<p class="lede">AEM is Adobe's enterprise WCM platform. The word "Experience" in the name is important — AEM is not just about managing text on pages. It manages the entire digital experience a customer has with a brand, across every channel they interact with.</p>
+
+<div class="sec">
+<div class="sec-title">AEM is actually four products in one</div>
+<div class="grid2">
+  <div class="card"><div class="card-hd"><i class="ti ti-layout" aria-hidden="true"></i>AEM Sites</div><p>The web content management part. Create pages, manage templates, drag-drop components, run A/B tests. This is the main thing you are learning.</p><p>Used by: marketing teams to build and manage web pages</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-photo" aria-hidden="true"></i>AEM Assets (DAM)</div><p>Digital Asset Management. Store and manage all images, videos, PDFs, documents. Auto-generates image sizes, manages metadata, integrates with Adobe Creative Cloud for designer workflows.</p><p>Used by: creative teams, content editors for media management</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-forms" aria-hidden="true"></i>AEM Forms</div><p>Build interactive digital forms with dynamic rules, data pre-fill, e-signatures, and integration with back-end systems. Government and banking use cases heavily.</p><p>Used by: banks, governments for digital paperwork</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-api" aria-hidden="true"></i>AEM Headless</div><p>Content Fragments and GraphQL API allow AEM to act as a headless CMS. Content stored in AEM is delivered as JSON to React apps, mobile apps, smart TVs, or any channel via API.</p><p>Used by: developers building omnichannel experiences</p></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">AEM versions you will encounter</div>
+<div class="row-list">
+  <div class="row"><div class="rk">AEM 6.5</div><div class="rv">The on-premise version. You download a JAR file, run it on your server or laptop. Most enterprise companies still run this version. This is what local development uses.</div></div>
+  <div class="row"><div class="rk">AEM as Cloud Service</div><div class="rv">Adobe's cloud-native version. Runs on Adobe's infrastructure. Automatically updated. No JAR file to manage. The future direction of AEM.</div></div>
+  <div class="row"><div class="rk">AEM 6.4, 6.3</div><div class="rv">Older versions. You may encounter these at client sites. Core concepts are the same but some features and APIs differ.</div></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — who uses AEM</div>
+  Bank of America uses AEM to manage their website across 50+ business lines. Marriott uses it across 30 hotel brands in 150 countries. Nike uses it to manage their digital experience across web, app, and in-store kiosks. What they have in common: massive scale, multiple brands, strict brand governance, complex approval workflows, and thousands of editors — all requirements that only an enterprise WCM like AEM can handle.
+</div>
+</div>
+
+<div class="pg" id="p-aem-stack">
+<span class="badge"><i class="ti ti-stack" aria-hidden="true" style="font-size:12px"></i>Part 1 — technology</span>
+<h1>What AEM is built on — the technology stack</h1>
+<p class="lede">AEM is not built from scratch. It is assembled from several well-known open-source Apache projects layered on top of each other. Understanding each layer helps you understand why AEM behaves the way it does.</p>
+
+<div class="sec">
+<div class="sec-title">The layers from bottom to top</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Java Virtual Machine (JVM)</div><div class="step-body">Everything runs inside a JVM. AEM is a Java application. When you start AEM by running <code>java -jar aem-author-p4502.jar</code>, you are starting a JVM that then starts all the other layers.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Apache Felix — the OSGi container</div><div class="step-body">OSGi (Open Service Gateway Initiative) is a module system for Java. Think of it like a plugin system. AEM's Java code is split into many small "bundles" (JAR files). Felix manages these bundles — starts them, stops them, resolves their dependencies. You can install a new bundle (your code) without restarting the whole application. This is why deploying your code is fast — you just install a new bundle.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Apache Jackrabbit Oak — the JCR</div><div class="step-body">The content repository. Stores all data — pages, components, configs, users, assets — as a tree of nodes. Think of it like a file system for AEM. All data is persistent here. Oak uses a segment store (binary files on disk) to store data efficiently.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Apache Sling — the web framework</div><div class="step-body">Sling is the web request handling layer. When a browser requests <code>/content/mysite/home.html</code>, Sling figures out which component should render that URL. It reads the JCR node at that path, finds the <code>sling:resourceType</code> property, and calls the matching rendering script (your HTL file). This "resource resolution" is the core of how AEM works.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">Adobe Granite — the AEM layer</div><div class="step-body">Adobe's layer on top of Sling. Adds all the AEM-specific things: the authoring UI (the page editor, Sites console, DAM), workflows, user management, replication, the Dispatcher integration. This is what you see when you open AEM in a browser.</div></div></div>
+</div>
+</div>
+
+<div class="info">
+  As a developer, you mostly work with Sling (resource resolution, Sling Models, Servlets) and Granite (component dialogs, author UI). You rarely need to interact with Felix or Oak directly, though you use the Felix console to check your bundles.
+</div>
+</div>
+
+<div class="pg" id="p-3layer">
+<span class="badge"><i class="ti ti-layers" aria-hidden="true" style="font-size:12px"></i>Part 2 — Architecture</span>
+<h1>The 3-layer architecture — the most important concept in AEM</h1>
+<p class="lede">Every AEM installation has three separate layers. This is not optional — it is always this way. Understanding these three layers and why they exist is the single most important architectural concept you need to know.</p>
+
+<div class="sec">
+<div class="sec-title">The three layers at a glance</div>
+<div class="flow">
+  <div class="fb bl">Author<br><small>Port 4502</small><small>Internal only</small></div>
+  <span class="fa">→</span>
+  <div class="fa" style="font-size:12px;color:var(--color-text-tertiary)">replicate</div>
+  <span class="fa">→</span>
+  <div class="fb">Publish<br><small>Port 4503</small><small>Activated content</small></div>
+  <span class="fa">→</span>
+  <div class="fa" style="font-size:12px;color:var(--color-text-tertiary)">cache</div>
+  <span class="fa">→</span>
+  <div class="fb am">Dispatcher<br><small>Port 80/443</small><small>Public internet</small></div>
+  <span class="fa">→</span>
+  <div class="fa" style="font-size:12px;color:var(--color-text-tertiary)">serve</div>
+  <span class="fa">→</span>
+  <div class="fb gr">User's browser<br><small>Sees final HTML</small></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Why three layers? Why not just one?</div>
+<p>This question is important. Why not just run one AEM server and let both editors and visitors use it?</p>
+<p>Because a website that gets a million visitors per day cannot also be the place where editors make changes. The load would be enormous. More importantly, editors need to see draft content, unpublished changes, and work-in-progress. Visitors must never see any of that. They should only ever see approved, published content.</p>
+<p>The three-layer architecture solves both problems cleanly. Author handles editing. Publish handles delivery. Dispatcher handles scale and security.</p>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — Flipkart Big Billion Days sale</div>
+  When Flipkart announces their Big Billion Days sale, their content team has been building the campaign pages for weeks on Author — draft banners, product lists, countdown timers. None of this is visible to customers. One minute before the sale goes live, they publish everything from Author to Publish. Instantly, millions of customers can see the sale. The Dispatcher serves cached HTML to most of them without even touching AEM. The Author server is completely unaffected by the traffic surge.
+</div>
+</div>
+
+<div class="pg" id="p-author">
+<span class="badge"><i class="ti ti-pencil" aria-hidden="true" style="font-size:12px"></i>Part 2 — Author layer</span>
+<h1>The Author layer — everything about it</h1>
+<p class="lede">The Author layer is where all content creation happens and where developers deploy their code. You will spend 100% of your development time working with the Author server.</p>
+
+<div class="sec">
+<div class="sec-title">Basic facts</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Default URL</div><div class="rv"><code>http://localhost:4502</code> on your local machine</div></div>
+  <div class="row"><div class="rk">Default login</div><div class="rv"><code>admin / admin</code> — ONLY on local development. Production uses proper credentials.</div></div>
+  <div class="row"><div class="rk">Who accesses it</div><div class="rv">Content editors, developers, template authors, admin staff. Never end-users or the public.</div></div>
+  <div class="row"><div class="rk">Network access</div><div class="rv">Behind a VPN or firewall. Never publicly accessible. If a stranger on the internet could reach your Author, they could delete everything.</div></div>
+  <div class="row"><div class="rk">Runmode</div><div class="rv">Starts with <code>-r author</code> runmode. This activates author-specific OSGi configs and disables some performance optimizations that are only needed on Publish.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">What happens on Author</div>
+<ul>
+  <li>Content editors create pages, edit text, upload images, configure components</li>
+  <li>Template authors create and manage page templates and policies</li>
+  <li>Developers deploy code using Maven (<code>mvn clean install -PautoInstallPackage</code>)</li>
+  <li>Workflow approvals happen here (review, legal check, brand check)</li>
+  <li>Replication agents run here — they push content to Publish</li>
+  <li>User accounts and permissions are managed here</li>
+  <li>The entire AEM admin UI is available here</li>
+</ul>
+</div>
+
+<div class="sec">
+<div class="sec-title">How to start AEM Author locally</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Get the AEM JAR file</div><div class="step-body">You need a file called <code>aem-author-p4502.jar</code> and a <code>license.properties</code> file. Get these from Adobe's download portal or from your company's repository. Put both in the same folder.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Run the JAR</div><div class="step-body">In your terminal, navigate to that folder and run: <code>java -jar aem-author-p4502.jar -gui</code>. The <code>-gui</code> flag shows a small progress window.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Wait for startup</div><div class="step-body">First startup takes 5–10 minutes. AEM is unpacking and initializing the repository. Subsequent starts take 1–2 minutes.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Open in browser</div><div class="step-body">Go to <code>http://localhost:4502</code>. You'll see the AEM login page. Login with <code>admin / admin</code>.</div></div></div>
+</div>
+</div>
+
+<div class="warn">
+  The first time you run AEM, it creates a <code>crx-quickstart/</code> folder next to the JAR file. This folder is the repository — it contains everything. Never delete this folder unless you want to start fresh.
+</div>
+</div>
+
+<div class="pg" id="p-publish">
+<span class="badge"><i class="ti ti-eye" aria-hidden="true" style="font-size:12px"></i>Part 2 — Publish layer</span>
+<h1>The Publish layer — everything about it</h1>
+<p class="lede">The Publish layer is the AEM server that end-users interact with. It only contains content that has been explicitly activated from Author. Nothing draft, nothing in-progress ever appears here.</p>
+
+<div class="sec">
+<div class="sec-title">Basic facts</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Default URL</div><div class="rv"><code>http://localhost:4503</code> locally. In production it sits behind a load balancer and is never directly accessible.</div></div>
+  <div class="row"><div class="rk">Who accesses it</div><div class="rv">Only end-users (via Dispatcher). Developers access it directly only for testing. Never used for content creation.</div></div>
+  <div class="row"><div class="rk">UI available</div><div class="rv">Very limited. No page editor, no Sites console, no DAM UI. Just AEM rendering pages for visitors.</div></div>
+  <div class="row"><div class="rk">Runmode</div><div class="rv">Starts with <code>-r publish</code>. Disables author-only features, enables publish-specific caching and security configs.</div></div>
+  <div class="row"><div class="rk">Multiple instances</div><div class="rv">In production, you run 2–10 Publish instances behind a load balancer. If one crashes, others keep serving. Author only needs one instance (it's not public-facing).</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">How to start AEM Publish locally</div>
+<p>Same as Author but use a different JAR name or a different port parameter. The simplest approach on local: copy the Author JAR to a new folder, rename it to <code>aem-publish-p4503.jar</code>, and start it. AEM reads the port from the filename.</p>
+<div class="url-box"><span class="url-label">start command</span>java -jar aem-publish-p4503.jar -gui</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">What "published" means technically</div>
+<p>When an editor clicks "Publish" on a page in Author, AEM's Replication Agent fires. It serializes the page's JCR nodes (the content tree under <code>/content/mysite/en/home</code>) and sends them over HTTP to the Publish server's replication endpoint. The Publish server receives this and writes the nodes into its own JCR repository.</p>
+<p>From that point on, the Publish server has the content and can render it when visitors request it. The two repositories (Author's JCR and Publish's JCR) are separate — they do not sync automatically. Only explicitly published content moves from Author to Publish.</p>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — understanding the separation</div>
+  An editor at a newspaper works on tomorrow's front page article all day on Author. They can preview it, show it to their editor-in-chief, revise it. The live newspaper website shows today's articles and has no idea the new article exists. At midnight, the editor clicks Publish. The article replicates to Publish and immediately becomes visible to readers. The Author work and the live website were completely isolated until that moment.
+</div>
+</div>
+
+<div class="pg" id="p-dispatcher">
+<span class="badge"><i class="ti ti-shield" aria-hidden="true" style="font-size:12px"></i>Part 2 — Dispatcher</span>
+<h1>The Dispatcher — cache, security, and scale</h1>
+<p class="lede">The Dispatcher is an Apache web server module that sits in front of Publish. It is not AEM software — it is a plugin for Apache httpd or Microsoft IIS. It does three things: caches pages, blocks dangerous URLs, and load-balances across Publish instances.</p>
+
+<div class="sec">
+<div class="sec-title">Job 1 — caching (the most important job)</div>
+<p>When a visitor requests a page, the Dispatcher checks if it has a cached HTML file for that URL on disk. If yes, it serves the cached file directly — AEM is never involved. This is extremely fast and handles massive traffic.</p>
+<p>If no cached file exists (or the cache was cleared), the Dispatcher forwards the request to Publish. Publish generates the HTML by reading from JCR and rendering templates. The Dispatcher then saves this HTML to disk as a cache file and returns it to the visitor.</p>
+<div class="flow">
+  <div class="fb bl">Visitor requests /page.html</div>
+  <span class="fa">→</span>
+  <div class="fb am">Cache file exists?</div>
+  <span class="fa">→</span>
+  <div class="fb gr">YES: serve cache instantly</div>
+</div>
+<div class="flow">
+  <div class="fb bl">Visitor requests /page.html</div>
+  <span class="fa">→</span>
+  <div class="fb am">Cache file exists?</div>
+  <span class="fa">→</span>
+  <div class="fb">NO: forward to Publish</div>
+  <span class="fa">→</span>
+  <div class="fb">Publish renders HTML</div>
+  <span class="fa">→</span>
+  <div class="fb gr">Save to cache, return to visitor</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Job 2 — cache invalidation (flushing)</div>
+<p>When a page is published on Author, AEM also sends a "flush" request to the Dispatcher. This tells the Dispatcher to delete the cached HTML file for that page. The next visitor will get a fresh version from Publish.</p>
+<p>This is called cache invalidation. Without it, visitors would always see the old cached version even after content is updated.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Job 3 — security filtering</div>
+<p>The Dispatcher has a filter configuration that blocks requests to sensitive AEM URLs. These should never be accessible on the public internet:</p>
+<ul>
+  <li><code>/crx/de</code> — CRXDE Lite. An attacker with access could read/write everything in JCR.</li>
+  <li><code>/system/console</code> — OSGi console. An attacker could stop your bundles or change configs.</li>
+  <li><code>/bin/wcmcommand</code> — Internal AEM commands</li>
+  <li><code>/libs/granite/security/...</code> — Security-related endpoints</li>
+</ul>
+<p>The Dispatcher blocks all of these with a URL filter — even if somehow the Publish server was directly reachable, these paths would still be blocked.</p>
+</div>
+
+<div class="warn">
+  In local development you typically do not set up the Dispatcher. You work directly with Author on 4502. The Dispatcher is set up in staging and production environments by the infrastructure team.
+</div>
+</div>
+
+<div class="pg" id="p-replication">
+<span class="badge"><i class="ti ti-arrow-right" aria-hidden="true" style="font-size:12px"></i>Part 2 — Replication</span>
+<h1>Replication — how content moves from Author to Publish</h1>
+<p class="lede">Replication is the technical process of copying content from the Author JCR repository to the Publish JCR repository. It is triggered when an editor publishes a page. Understanding this process tells you exactly what happens when you click "Publish".</p>
+
+<div class="sec">
+<div class="sec-title">Step by step — what happens when you click Publish</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Editor clicks "Publish" on a page</div><div class="step-body">In the Sites console or the page editor toolbar, the editor activates a page. AEM starts the replication process.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">AEM finds the Replication Agent</div><div class="step-body">A Replication Agent is configured at <code>/etc/replication/agents.author/publish</code>. It knows the Publish server's URL and credentials. AEM uses this agent to send content.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">AEM serializes the JCR nodes</div><div class="step-body">The page and all its component content nodes under <code>/content/mysite/en/home</code> are serialized into a package (a zip file of JCR data).</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Package is sent to Publish via HTTP</div><div class="step-body">The Replication Agent sends this package to the Publish server's replication endpoint at <code>http://publish:4503/bin/receive</code>.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">Publish installs the package</div><div class="step-body">The Publish server receives the package and writes the JCR nodes into its own repository. The content is now on Publish.</div></div></div>
+  <div class="step"><div class="snum">6</div><div><div class="step-title">Dispatcher cache is flushed</div><div class="step-body">AEM also sends a flush request to the Dispatcher, telling it to delete the cached HTML for this page. The next visitor will get a fresh page.</div></div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Where to check replication status</div>
+<p>Go to <code>http://localhost:4502/etc/replication/agents.author.html</code>. You can see all replication agents and test them. If the "Publish" agent shows an error, content is not reaching the Publish server.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Unpublishing a page</div>
+<p>Unpublishing (deactivating) a page reverses replication — it removes the page's nodes from the Publish JCR and sends a flush request to the Dispatcher to delete the cached file. The page immediately disappears from the live website.</p>
+</div>
+</div>
+
+<div class="pg" id="p-jcr-what">
+<span class="badge"><i class="ti ti-database" aria-hidden="true" style="font-size:12px"></i>Part 3 — JCR</span>
+<h1>What is the JCR — Java Content Repository</h1>
+<p class="lede">The JCR is where AEM stores literally everything. Not just page content — your code (components, templates), your configuration, your users, your workflows, your assets — all of it lives in the JCR as a tree of nodes. If you understand the JCR, you understand AEM.</p>
+
+<div class="sec">
+<div class="sec-title">The simplest explanation possible</div>
+<p>Think of the JCR like a file system, but instead of files and folders you have nodes. Each node can have:</p>
+<ul>
+  <li>A name (like a folder name)</li>
+  <li>A type (<code>jcr:primaryType</code> — what kind of node it is)</li>
+  <li>Properties — key/value pairs storing data (like <code>title = "Home Page"</code>)</li>
+  <li>Child nodes (just like subfolders)</li>
+</ul>
+<p>Every URL in AEM maps directly to a JCR path. The page at <code>http://localhost:4502/content/mysite/en/home.html</code> corresponds to the JCR node at <code>/content/mysite/en/home</code>. That's it. AEM's entire URL routing is just JCR paths.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">What a page looks like in the JCR</div>
+<div class="node-tree">
+<span class="hl">/content/mysite/en/home</span>           <span class="comment">← cq:Page node (the page itself)</span>
+  └── <span class="hl">jcr:content</span>                    <span class="comment">← cq:PageContent node (the page's data)</span>
+        <span class="prop">jcr:title</span> = "Home"              <span class="comment">← the page title property</span>
+        <span class="prop">sling:resourceType</span> = "mysite/components/page/base"
+        <span class="prop">cq:template</span> = "/conf/mysite/settings/wcm/templates/home-page"
+        └── <span class="hl">root</span>                       <span class="comment">← layout container node</span>
+              <span class="prop">sling:resourceType</span> = "wcm/foundation/components/responsivegrid"
+              └── <span class="hl">banner</span>               <span class="comment">← your banner component</span>
+                    <span class="prop">sling:resourceType</span> = "mysite/components/banner"
+                    <span class="prop">title</span> = "Welcome to My Site"
+                    <span class="prop">imageRef</span> = "/content/dam/mysite/hero.jpg"
+                    └── <span class="hl">card_1</span>           <span class="comment">← a card component inside banner</span>
+                          <span class="prop">sling:resourceType</span> = "mysite/components/card"
+                          <span class="prop">title</span> = "Summer Sale"
+</div>
+<p>This tree is exactly what you see when you open CRXDE and navigate to <code>/content/mysite/en/home</code>. The property values here are exactly what editors typed into component dialogs. The <code>sling:resourceType</code> properties tell AEM which component (which HTL file) to use for rendering each node.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Why the JCR matters to you as a developer</div>
+<p>When you write a Sling Model, it reads from the JCR. When an editor fills in a dialog, the values save to the JCR. When you create a component, you are creating JCR nodes. When you write an HTL template, it renders content from the JCR. Everything goes through the JCR.</p>
+<p>The most important debugging skill in AEM is opening CRXDE, finding the relevant JCR node, and reading its properties. 90% of problems become obvious once you can see what is actually stored in the JCR.</p>
+</div>
+</div>
+
+<div class="pg" id="p-jcr-nodes">
+<span class="badge"><i class="ti ti-sitemap" aria-hidden="true" style="font-size:12px"></i>Part 3 — nodes</span>
+<h1>JCR nodes, node types, and properties</h1>
+<p class="lede">Every piece of data in AEM is a node. Each node has a type that defines what it is. Each node has properties that store its data. Here are the node types you will see every day.</p>
+
+<div class="sec">
+<div class="sec-title">The most important node types</div>
+<div class="row-list">
+  <div class="row"><div class="rk">cq:Page</div><div class="rv">A web page. Found at paths like <code>/content/mysite/en/home</code>. Every page you create in the Sites console becomes a node with this type. It always has a child node called <code>jcr:content</code> that holds the actual page data.</div></div>
+  <div class="row"><div class="rk">cq:PageContent</div><div class="rv">The content node of a page. Always named <code>jcr:content</code> and always a child of a <code>cq:Page</code> node. Has properties like <code>jcr:title</code>, <code>sling:resourceType</code>, <code>cq:template</code>.</div></div>
+  <div class="row"><div class="rk">cq:Component</div><div class="rv">A component definition. Found at paths like <code>/apps/mysite/components/card</code>. When you create a component, you set this as the <code>jcr:primaryType</code> in your <code>.content.xml</code> file.</div></div>
+  <div class="row"><div class="rk">nt:unstructured</div><div class="rv">A generic, schema-less data node. Used for component content (the data an editor saves), dialog definitions, and many other things. Very flexible — can have any properties.</div></div>
+  <div class="row"><div class="rk">dam:Asset</div><div class="rv">A digital asset in the DAM. Found at paths like <code>/content/dam/mysite/images/hero.jpg</code>. Has child nodes for metadata and renditions.</div></div>
+  <div class="row"><div class="rk">cq:ClientLibraryFolder</div><div class="rv">A ClientLib node. Found at paths like <code>/apps/mysite/clientlibs/site</code>. Has <code>categories</code> and <code>dependencies</code> properties. Tells AEM how to bundle and serve CSS/JS.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The most important properties</div>
+<div class="row-list">
+  <div class="row"><div class="rk">sling:resourceType</div><div class="rv">The single most important property in AEM. On any content node, it tells AEM which component renders this node. Value is a path relative to <code>/apps</code>, e.g. <code>mysite/components/card</code>. Sling looks for the rendering script at <code>/apps/mysite/components/card/card.html</code>.</div></div>
+  <div class="row"><div class="rk">jcr:primaryType</div><div class="rv">The node type. Defines what kind of node this is. Every node must have this.</div></div>
+  <div class="row"><div class="rk">jcr:title</div><div class="rv">The human-readable name. On pages: the page title. On components: the name shown in the component browser. On templates: the name shown in the template picker.</div></div>
+  <div class="row"><div class="rk">sling:resourceSuperType</div><div class="rv">On a component node: the parent component to inherit from. AEM walks up this chain when looking for rendering scripts or dialog fields that are not found locally.</div></div>
+  <div class="row"><div class="rk">cq:template</div><div class="rv">On a page's jcr:content node: the path to the editable template used to create this page.</div></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rl-label">How this connects to your code</div>
+  When you write a Sling Model with <code>@ValueMapValue private String title;</code>, it reads the <code>title</code> property from the JCR node. When you write <code>${model.title}</code> in HTL, it calls <code>getTitle()</code> which returns that JCR value. When the page renders, the browser receives HTML with the editor's text in it. The whole system is just: editors write data to JCR nodes, your code reads it back and formats it as HTML.
+</div>
+</div>
+
+<div class="pg" id="p-jcr-paths">
+<span class="badge"><i class="ti ti-folder-open" aria-hidden="true" style="font-size:12px"></i>Part 3 — paths</span>
+<h1>Key JCR paths — the map of where everything lives</h1>
+<p class="lede">The JCR tree has a consistent structure. Once you know this map, you always know where to look for anything in AEM.</p>
+
+<div class="sec">
+<div class="sec-title">The top-level paths and what they contain</div>
+<div class="row-list">
+  <div class="row"><div class="rk">/apps/</div><div class="rv">Your application code. Components, templates (static), ClientLibs, OSGi configs, i18n translation files. This is YOUR code. In CRXDE this is where you navigate to find component files.</div></div>
+  <div class="row"><div class="rk">/apps/mysite/components/</div><div class="rv">All your component folders. Each subfolder here is one component. Navigate here in CRXDE to see and edit component HTL files and dialogs.</div></div>
+  <div class="row"><div class="rk">/apps/mysite/clientlibs/</div><div class="rv">ClientLib nodes containing CSS and JS. Each subfolder is one library with a unique category ID.</div></div>
+  <div class="row"><div class="rk">/content/</div><div class="rv">All page content. What editors create. The site hierarchy here mirrors your site's URL structure.</div></div>
+  <div class="row"><div class="rk">/content/mysite/en/home</div><div class="rv">A specific page. Navigate here in CRXDE to see what values editors have set on components. The Properties tab shows all JCR properties of the selected node.</div></div>
+  <div class="row"><div class="rk">/content/dam/</div><div class="rv">Digital Asset Manager. All uploaded images, videos, PDFs, Content Fragment instances. Each asset is a dam:Asset node.</div></div>
+  <div class="row"><div class="rk">/conf/</div><div class="rv">Configuration data. Editable templates, Content Fragment models, site-specific OSGi configs, policies. Created through the AEM UI, not code.</div></div>
+  <div class="row"><div class="rk">/conf/mysite/settings/wcm/templates/</div><div class="rv">All editable page templates for your site. Created in Tools → Sites → Templates.</div></div>
+  <div class="row"><div class="rk">/libs/</div><div class="rv">AEM's built-in code. Core Components, default UI, default scripts. <strong>Never edit anything here.</strong> AEM overwrites /libs on every Service Pack update. Customize by copying to /apps.</div></div>
+  <div class="row"><div class="rk">/etc/replication/</div><div class="rv">Replication agents. The configuration that tells Author how to push content to Publish.</div></div>
+  <div class="row"><div class="rk">/var/</div><div class="rv">Runtime data. Workflow instances, audit logs, replication queues. You rarely need to look here.</div></div>
+  <div class="row"><div class="rk">/home/users/</div><div class="rv">AEM user accounts and groups. Manage these through Tools → Security.</div></div>
+</div>
+</div>
+
+<div class="info">
+  The single most useful debugging habit: when something renders wrong, navigate to the component's content node in CRXDE (<code>/content/mysite/.../jcr:content/root/yourcomponent</code>), click the Properties tab, and check: is <code>sling:resourceType</code> pointing to the right component? Are the dialog values saved correctly? This answers 80% of rendering questions immediately.
+</div>
+</div>
+
+<div class="pg" id="p-wysiwyg">
+<span class="badge"><i class="ti ti-layout" aria-hidden="true" style="font-size:12px"></i>Part 4 — WYSIWYG</span>
+<h1>WYSIWYG — What You See Is What You Get</h1>
+<p class="lede">WYSIWYG means the editing interface looks exactly like the final published page. You do not edit in a separate form and then switch to preview. You edit directly on the rendered page and see exactly what visitors will see.</p>
+
+<div class="sec">
+<div class="sec-title">What this means in AEM specifically</div>
+<p>When you open the page editor in AEM, AEM renders the actual page — with all the real CSS, real images, real fonts, and real layout. It then overlays this with a thin authoring layer that adds blue selection handles and edit toolbars on each component. The page underneath is the real published appearance.</p>
+<p>When you click on a text component and double-click to edit it, a Rich Text Editor appears directly on the page at the exact position of the text. You type your changes. The text on the page updates as you type. When you click away, the RTE disappears and you see the final appearance.</p>
+<p>This is fundamentally different from older CMS approaches where you edited content in a separate form, then clicked "Preview" to see what it would look like — a slow and confusing workflow.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Two types of editing in AEM</div>
+<div class="compare">
+  <div class="compare-hd">Inline editing (in-place)</div>
+  <div class="compare-hd">Dialog editing (configure)</div>
+  <div class="compare-body">
+    <p>Double-click directly on a text component. A Rich Text Editor toolbar appears at the top of the component. You type the new text directly on the page.</p>
+    <p>Used for: Text components, Title components — anything where the output is primarily text you can see on the page.</p>
+  </div>
+  <div class="compare-body">
+    <p>Click the component once (blue toolbar appears), then click the wrench icon. A dialog popup appears with form fields. Fill in the fields and click the checkmark to save.</p>
+    <p>Used for: Complex components with multiple settings — image paths, links, dropdowns, checkboxes. Things that are not just editable text.</p>
+  </div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — editing a banner</div>
+  A marketing manager at Myntra needs to update the homepage hero banner for their End of Reason Sale. She opens the homepage in the AEM page editor. She sees the actual hero banner with the current campaign image and text. She clicks on the banner component — a blue toolbar appears. She clicks the wrench icon (configure). A dialog opens with fields: Headline Text, Sub-headline, Background Image, Button Text, Button Link. She updates each field, clicks the checkmark. The banner on the page behind the dialog immediately updates with her new text. She clicks the eye icon (Preview mode) to see exactly what customers will see — the banner with the new sale text. She clicks Publish. Done.
+</div>
+</div>
+
+<div class="pg" id="p-edit-modes">
+<span class="badge"><i class="ti ti-toggle-left" aria-hidden="true" style="font-size:12px"></i>Part 4 — modes</span>
+<h1>Edit mode, Layout mode, and Preview mode</h1>
+<p class="lede">The AEM page editor has three different modes. Each mode gives editors a different view and different capabilities. You switch between them using buttons in the top toolbar of the page editor.</p>
+
+<div class="sec">
+<div class="sec-title">Edit mode — the default working mode</div>
+<p>When you first open a page in the editor, it is in Edit mode. This is the mode where:</p>
+<ul>
+  <li>Clicking a component selects it and shows the blue toolbar with Edit, Configure, Delete, Copy buttons</li>
+  <li>Dragging from the left component browser panel drops a new component onto the page</li>
+  <li>Double-clicking a text component activates the Rich Text Editor inline</li>
+  <li>You can reorder components by dragging them to new positions</li>
+</ul>
+<p>In Edit mode you can see a faint blue outline around each component even when it is not selected. This helps you understand the page structure — where one component ends and another begins.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Layout mode — the responsive grid editor</div>
+<p>Layout mode lets you resize components using the 12-column responsive grid. Switch to it using the toolbar. In Layout mode:</p>
+<ul>
+  <li>Each component shows resize handles on its right edge</li>
+  <li>Drag the handle to make the component span more or fewer columns (1–12)</li>
+  <li>A breakpoint selector in the toolbar lets you switch between Desktop, Tablet, and Mobile views</li>
+  <li>You can set different column spans for each breakpoint — a component might be 8 columns on desktop but 12 columns (full width) on mobile</li>
+</ul>
+<p>This is how editors create two-column, three-column, and other layouts without any CSS knowledge.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Preview mode — see it as a visitor would</div>
+<p>Preview mode hides all authoring overlays and toolbars. The page looks and behaves exactly as it will on the live website. Use it to:</p>
+<ul>
+  <li>Check that the layout looks correct before publishing</li>
+  <li>Test hover states, animations, and interactive elements</li>
+  <li>Verify that links go to the right destinations</li>
+  <li>Check how the page looks on mobile (use browser DevTools device simulation while in Preview mode)</li>
+</ul>
+<div class="info">Preview mode uses the Author server's renderer — it does not go through the Dispatcher or Publish. Very rarely there are rendering differences between Author preview and the live site, usually related to Dispatcher caching configurations.</div>
+</div>
+</div>
+
+<div class="pg" id="p-sites-console">
+<span class="badge"><i class="ti ti-layout-sidebar" aria-hidden="true" style="font-size:12px"></i>Part 5 — Sites console</span>
+<h1>The Sites console — everything about it</h1>
+<p class="lede">The Sites console is the main management screen for all your pages. Think of it as Windows Explorer or macOS Finder, but for your AEM pages instead of files.</p>
+
+<div class="sec">
+<div class="sec-title">How to open it</div>
+<div class="url-box"><span class="url-label">URL</span>http://localhost:4502/sites.html/content</div>
+<p>After logging in to AEM, you can also navigate here: click the grid icon (top left) → click "Sites".</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The two views — Card view vs List view</div>
+<div class="compare">
+  <div class="compare-hd">Card view (default)</div>
+  <div class="compare-hd">List view</div>
+  <div class="compare-body">Shows each page as a card with a thumbnail, title, and publication status. Good for browsing. Click a card to go into that folder. Hover a card to see action buttons.</div>
+  <div class="compare-body">Shows pages as rows in a table with columns for title, modified date, published status, and more. Better for managing large numbers of pages. Toggle with the list icon in the toolbar.</div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Every action you can perform here</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Create a page</div><div class="rv">Navigate to the parent folder → click "Create" (top right) → select "Page" → pick a template → fill in title and name → Create. The page appears in the console.</div></div>
+  <div class="row"><div class="rk">Open page editor</div><div class="rv">Click the page thumbnail (card view) or the page title (list view) → click "Edit" in the action bar that appears. Opens the WYSIWYG page editor.</div></div>
+  <div class="row"><div class="rk">Publish a page</div><div class="rv">Select the page (checkbox) → in the action bar click "Manage Publication" → select "Publish" → choose "Now" (immediate) or schedule a future date → Next → Publish.</div></div>
+  <div class="row"><div class="rk">Page properties</div><div class="rv">Select a page → click the Properties icon (i) in the action bar. Opens a dialog with tabs for Basic (title, tags), Images (thumbnail), Advanced (vanity URL, on/off time), Permissions, Cloud Services.</div></div>
+  <div class="row"><div class="rk">Move / rename</div><div class="rv">Select a page → click "Move" in the action bar. A wizard opens to set the new path and new name. AEM automatically creates redirects from the old URL.</div></div>
+  <div class="row"><div class="rk">Delete a page</div><div class="rv">Select a page → click "Delete". AEM warns you if the page has child pages. Deleted pages go to a trash that can be restored within a time window.</div></div>
+  <div class="row"><div class="rk">See versions</div><div class="rv">Select a page → click the Timeline icon (clock) in the left rail. Shows every saved version, every publication, every workflow event. Click any version to see the page content at that point in time.</div></div>
+  <div class="row"><div class="rk">Copy / paste</div><div class="rv">Select a page → click Copy. Navigate to the destination folder → click Paste. AEM creates a full copy including all child pages.</div></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rl-label">Real example — what a content editor does every morning</div>
+  An editor at an airline arrives at work and opens the Sites console. She sees 5 pages that need to be published today (green "Approved" workflow status). She selects all 5, clicks Manage Publication → Publish → Now. Done — 5 pages live in 30 seconds. She then creates a new page for next week's sale using the "Campaign Page" template, builds the page in the editor, and leaves it in "Draft" status for the brand team to review before it goes live.
+</div>
+</div>
+
+<div class="pg" id="p-page-editor">
+<span class="badge"><i class="ti ti-browser" aria-hidden="true" style="font-size:12px"></i>Part 5 — Page editor</span>
+<h1>The page editor — everything about it</h1>
+<p class="lede">The page editor is the WYSIWYG editing interface. This is where editors drag components, configure them, and build page layouts. As a developer, you will also use it extensively to test your components.</p>
+
+<div class="sec">
+<div class="sec-title">How to open a page in the editor</div>
+<div class="url-box"><span class="url-label">URL pattern</span>http://localhost:4502/editor.html/content/mysite/en/home.html</div>
+<p>You can also open it from the Sites console: navigate to a page → click Edit. The editor opens the page at the URL pattern above.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">The editor interface — every panel</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Top toolbar</div><div class="rv">Mode selector (Edit/Layout/Preview), page info button, emulator (mobile view), undo/redo, publish/unpublish. This bar is always visible.</div></div>
+  <div class="row"><div class="rk">Left rail (panel)</div><div class="rv">Three tabs: Component browser (drag components onto page), Assets browser (drag images directly onto components), Content tree (shows page structure as a tree). Toggle with the panel icon in the top bar.</div></div>
+  <div class="row"><div class="rk">Component browser</div><div class="rv">Shows all components allowed by the template policy, organized into groups. Your custom components appear under your group name (e.g. "My Site - Content"). Drag from here to the page.</div></div>
+  <div class="row"><div class="rk">Assets browser</div><div class="rv">Browse the DAM. Search for images by keyword. Drag an image from here directly onto an Image component — AEM automatically sets the image path in the component's dialog.</div></div>
+  <div class="row"><div class="rk">Content tree</div><div class="rv">Shows the component structure of the page as a collapsible tree. Very useful for finding deeply nested components or understanding page structure. Clicking a node in the tree selects that component on the page.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The component blue toolbar — every button</div>
+<p>When you click on a component in Edit mode, a blue bar appears above it. The buttons depend on what the component's editConfig allows.</p>
+<div class="row-list">
+  <div class="row"><div class="rk">Pencil / Edit</div><div class="rv">Opens the configure dialog for this component. Most components use this to open their dialog form.</div></div>
+  <div class="row"><div class="rk">Wrench / Configure</div><div class="rv">Same as Edit on most components — opens the dialog. Some components differentiate between "Edit" (inline RTE) and "Configure" (full dialog).</div></div>
+  <div class="row"><div class="rk">Paintbrush / Style</div><div class="rv">Opens the Style System palette. Pick a named style to apply CSS classes to this component. Only visible if styles are configured in the template policy.</div></div>
+  <div class="row"><div class="rk">Copy</div><div class="rv">Copies this component to the clipboard. Then click the insertion point of another container to paste it.</div></div>
+  <div class="row"><div class="rk">Cut</div><div class="rv">Removes the component and puts it in the clipboard for pasting elsewhere.</div></div>
+  <div class="row"><div class="rk">Delete</div><div class="rv">Permanently removes the component from the page. Undo with Ctrl+Z.</div></div>
+  <div class="row"><div class="rk">Insert</div><div class="rv">Opens the component browser inline to insert a new component after this one.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-crxde">
+<span class="badge"><i class="ti ti-code" aria-hidden="true" style="font-size:12px"></i>Part 5 — CRXDE</span>
+<h1>CRXDE Lite — the developer's most important tool</h1>
+<p class="lede">CRXDE Lite is a browser-based IDE for the JCR. It lets you browse the entire content repository, inspect node properties, edit files directly, and run queries. As a developer, you will use this constantly for debugging and testing.</p>
+
+<div class="sec">
+<div class="sec-title">How to open it</div>
+<div class="url-box"><span class="url-label">URL</span>http://localhost:4502/crx/de</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">The CRXDE interface — every panel</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Left panel — tree</div><div class="rv">The full JCR tree. Click the triangle next to any node to expand it and see child nodes. Click a node to select it. The tree always starts at the root <code>/</code>.</div></div>
+  <div class="row"><div class="rk">Center panel — file editor</div><div class="rv">When you click a file node (like <code>card.html</code>), its content appears here in a code editor. You can edit it and press Ctrl+S to save directly to AEM without Maven. Very useful for quick fixes.</div></div>
+  <div class="row"><div class="rk">Bottom right — Properties tab</div><div class="rv">When you click any node, this panel shows all its JCR properties as a table: property name, type, value. This is where you see <code>sling:resourceType</code>, <code>jcr:title</code>, and all dialog-saved values.</div></div>
+  <div class="row"><div class="rk">Bottom right — Node tab</div><div class="rv">Shows the current node path and lets you create child nodes, set node types, and manage node hierarchy.</div></div>
+  <div class="row"><div class="rk">Query panel</div><div class="rv">Run JCR queries (XPath or SQL2) to find nodes matching criteria. E.g., find all components with a specific resourceType across the whole repository.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">What you use CRXDE for as a developer</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Debug rendering problems</div><div class="step-body">Navigate to <code>/content/mysite/en/home/jcr:content/root/mycomponent</code>. Click the Properties tab. Check: does <code>sling:resourceType</code> point to the right component? Are the dialog values saved correctly? Is the component node even there?</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Check deployed components</div><div class="step-body">Navigate to <code>/apps/mysite/components/card</code>. Verify the folder is there. Click <code>card.html</code> to see the HTL code. Click <code>_cq_dialog</code> to see the dialog definition. This confirms your Maven deployment worked.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Quick edit without Maven</div><div class="step-body">Click any <code>.html</code> file in <code>/apps/mysite/components/</code>. Edit the code in the center panel. Press Ctrl+S. The change is live immediately — no Maven build needed. Use this for rapid iteration on HTL changes.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Verify template structure</div><div class="step-body">Navigate to <code>/conf/mysite/settings/wcm/templates/</code>. Click a template node. See its structure node, initial content node, and policies.</div></div></div>
+</div>
+</div>
+
+<div class="warn">
+  Changes made in CRXDE directly to files under <code>/apps/</code> are temporary in the sense that the NEXT Maven deployment will overwrite them with whatever is in your project source. Always copy your CRXDE changes back to your VS Code project files before running Maven.
+</div>
+</div>
+
+<div class="pg" id="p-osgi">
+<span class="badge"><i class="ti ti-settings" aria-hidden="true" style="font-size:12px"></i>Part 5 — OSGi console</span>
+<h1>The OSGi console — the Java runtime manager</h1>
+<p class="lede">The OSGi (Felix) console is a separate web UI from AEM's normal interface. It shows you everything about the Java runtime — which bundles are running, what services are registered, what the current OSGi configurations are. As a developer, you check this every single time you deploy Java code.</p>
+
+<div class="sec">
+<div class="sec-title">The most important sub-pages</div>
+<div class="url-box"><span class="url-label">Bundles</span>http://localhost:4502/system/console/bundles</div>
+<div class="url-box"><span class="url-label">Configs</span>http://localhost:4502/system/console/configMgr</div>
+<div class="url-box"><span class="url-label">Services</span>http://localhost:4502/system/console/services</div>
+<div class="url-box"><span class="url-label">Log support</span>http://localhost:4502/system/console/slinglog</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Bundles page — the most used page</div>
+<p>Every piece of Java code in AEM runs inside an OSGi bundle. AEM's own code is hundreds of bundles. Your project's Java code is one bundle (your <code>core</code> module builds into one JAR = one bundle).</p>
+<p>After every Maven deployment, go here and search for your bundle (e.g. "mysite.core"). You should see:</p>
+<div class="row-list">
+  <div class="row"><div class="rk">Active</div><div class="rv">Your bundle is running correctly. All Java imports resolved. Your Sling Models, Services, and Servlets are available. This is what you want.</div></div>
+  <div class="row"><div class="rk">Installed</div><div class="rv">The bundle JAR is in AEM but could not start. Usually means a Java import could not be resolved — you are importing a class from a package that no other bundle exports. Click your bundle name to see which imports are failing.</div></div>
+  <div class="row"><div class="rk">Resolved</div><div class="rv">The bundle was running but was stopped. Can happen after a dependency bundle was updated. Usually resolves on its own. Try clicking the Start button.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Configuration manager (configMgr)</div>
+<p>Shows all OSGi service configurations. Each service that has a <code>@Designate(ocd=...)</code> annotation appears here with a form for its config values. You can:</p>
+<ul>
+  <li>Edit config values live without any deployment — changes take effect immediately</li>
+  <li>See what the current value of any service config is</li>
+  <li>Create new config instances for factory configurations</li>
+</ul>
+<p>Use this during development to quickly test different config values. Once you find the right values, add them to your <code>.cfg.json</code> files in the project for permanent deployment.</p>
+</div>
+</div>
+
+<div class="pg" id="p-packmgr">
+<span class="badge"><i class="ti ti-package" aria-hidden="true" style="font-size:12px"></i>Part 5 — Package manager</span>
+<h1>Package manager — install and export content</h1>
+<p class="lede">Packages are zip files that contain JCR content. The Package Manager lets you install packages (to add content or code to AEM) and build packages (to export JCR content for moving to another environment).</p>
+
+<div class="sec">
+<div class="sec-title">How to open it</div>
+<div class="url-box"><span class="url-label">URL</span>http://localhost:4502/crx/packmgr</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">What a package contains</div>
+<p>A package is essentially a zip file with a specific folder structure inside. It contains JCR nodes serialized as XML files (using Apache Jackrabbit's vault format). When you install a package, AEM reads these XML files and writes the nodes into the JCR at the correct paths.</p>
+<p>Your Maven build produces packages. When you run <code>mvn clean install -PautoInstallPackage</code>, Maven builds a content package (zip) and calls the Package Manager API to install it into AEM. You can see your installed packages in the Package Manager UI.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Common tasks</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Install a package</div><div class="step-body">Click "Upload Package" → select your zip file → click OK → click "Install" next to the uploaded package → AEM extracts and installs all JCR nodes.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Install WKND</div><div class="step-body">Download <code>aem-guides-wknd.all-x.x.x.zip</code> from <code>github.com/adobe/aem-guides-wknd</code> → upload here → install. WKND will be available at <code>/content/wknd/us/en</code>.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Export content to share</div><div class="step-body">Click "New Group" → "New Package" → set Name and Group → under "Filters" add a path (e.g. <code>/apps/mysite/components/card</code>) → click Build → click Download to get the zip.</div></div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-tools">
+<span class="badge"><i class="ti ti-tool" aria-hidden="true" style="font-size:12px"></i>Part 5 — Tools</span>
+<h1>The Tools menu — what each section does</h1>
+<p class="lede">The Tools menu is the administrative area of AEM. It contains dozens of specialized management interfaces. As a developer you need to know what is in here even if you do not use every section daily.</p>
+
+<div class="sec">
+<div class="sec-title">How to access it</div>
+<p>From the AEM start page (<code>http://localhost:4502/aem/start.html</code>): click the hammer/tools icon in the top navigation. Or navigate directly to specific sections.</p>
+</div>
+
+<div class="sec">
+<div class="sec-title">Tools sections you use as a developer or author</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Tools → Sites → Templates</div><div class="rv">Where template authors create and manage editable templates. Navigate here, select your conf folder, and see all templates. Create new templates from here.</div></div>
+  <div class="row"><div class="rk">Tools → Assets → Content Fragment Models</div><div class="rv">Where you create Content Fragment models — the schema definitions for structured content. Define fields for your CFs here.</div></div>
+  <div class="row"><div class="rk">Tools → Assets → GraphQL</div><div class="rv">Enable and manage GraphQL endpoints for headless content delivery via API.</div></div>
+  <div class="row"><div class="rk">Tools → Security → Users</div><div class="rv">Manage AEM user accounts. Create users, assign them to groups, set permissions on JCR paths.</div></div>
+  <div class="row"><div class="rk">Tools → Security → Groups</div><div class="rv">Manage user groups and their permissions. Content editors are typically in a group with write access to <code>/content/</code> but not <code>/apps/</code>.</div></div>
+  <div class="row"><div class="rk">Tools → General → Tagging</div><div class="rv">Manage the tag namespace — the taxonomy of tags that editors apply to pages and assets for categorization and filtering.</div></div>
+  <div class="row"><div class="rk">Tools → Deployment → Replication</div><div class="rv">Configure and test replication agents. Check that the connection from Author to Publish is working. Test buttons send a test request to Publish.</div></div>
+  <div class="row"><div class="rk">Tools → Cloud Services</div><div class="rv">Configure integrations — Adobe Analytics, Adobe Target, Google Tag Manager, translation services. These are the cloud service configurations referenced in page properties.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-local-setup">
+<span class="badge"><i class="ti ti-device-laptop" aria-hidden="true" style="font-size:12px"></i>Part 6 — Setup</span>
+<h1>Local AEM setup — complete step by step</h1>
+<p class="lede">Setting up AEM on your local machine for the first time. Follow these steps exactly in order. Each step has a specific purpose.</p>
+
+<div class="sec">
+<div class="sec-title">What you need before you start</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Java 11 (JDK)</div><div class="rv">AEM 6.5 requires Java 11. Not Java 8, not Java 17. Download from <code>adoptium.net</code>. After installing, run <code>java -version</code> in your terminal. Should say 11.x.x.</div></div>
+  <div class="row"><div class="rk">Maven 3.6+</div><div class="rv">Build tool. Download from <code>maven.apache.org</code>. After installing, run <code>mvn -version</code>. Should say 3.6.x or higher.</div></div>
+  <div class="row"><div class="rk">AEM JAR + license</div><div class="rv">Two files: <code>aem-author-p4502.jar</code> and <code>license.properties</code>. Get from Adobe's software distribution portal or your company's shared drive.</div></div>
+  <div class="row"><div class="rk">VS Code</div><div class="rv">Code editor. Download from <code>code.visualstudio.com</code>. Install extensions: "HTL" (Adobe), "AEM Sync" (Adobe), "XML Language Support".</div></div>
+  <div class="row"><div class="rk">Git</div><div class="rv">Version control. Download from <code>git-scm.com</code>. Your AEM project will be in a Git repository.</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Setting up AEM</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Create a folder for AEM</div><div class="step-body">Create a folder like <code>~/aem/author/</code>. Put both the JAR file and <code>license.properties</code> inside this folder. Both files must be in the same folder.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Start AEM Author</div><div class="step-body">Open terminal, navigate to the folder: <code>cd ~/aem/author</code>. Run: <code>java -jar aem-author-p4502.jar -gui</code>. A small window appears showing startup progress.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Wait for startup</div><div class="step-body">The first startup extracts AEM and initializes the repository. Takes 5–15 minutes depending on your machine. You'll see "repository started" in the terminal when ready.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Open AEM in browser</div><div class="step-body">Go to <code>http://localhost:4502</code>. You see the AEM login screen. Login with <code>admin</code> / <code>admin</code>.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">Explore the UI</div><div class="step-body">You are now on the AEM start page. Click "Sites" to see the Sites console. There are no sites yet — it is empty until you install WKND or deploy your project.</div></div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">Memory allocation (important)</div>
+<p>AEM needs at least 4GB of RAM. By default Java allocates much less. Start AEM with explicit memory settings:</p>
+<div class="url-box"><span class="url-label">recommended</span>java -Xmx4096m -jar aem-author-p4502.jar -gui</div>
+<p>If AEM crashes with "OutOfMemoryError" or becomes very slow, this is why. Increase to <code>-Xmx6144m</code> if you have 16GB RAM.</p>
+</div>
+</div>
+
+<div class="pg" id="p-wknd">
+<span class="badge"><i class="ti ti-mountain" aria-hidden="true" style="font-size:12px"></i>Part 6 — WKND</span>
+<h1>WKND — the complete reference site</h1>
+<p class="lede">WKND is Adobe's official sample implementation of AEM Sites. It is a fully-built website for a fictional adventure travel brand. It demonstrates every AEM feature correctly implemented. Installing and studying WKND is the best way to learn AEM.</p>
+
+<div class="sec">
+<div class="sec-title">What WKND contains</div>
+<div class="grid2">
+  <div class="card"><div class="card-hd"><i class="ti ti-template" aria-hidden="true"></i>Editable templates</div><p>Complete templates for home page, article pages, adventure pages — with proper Structure, Initial Content, and Policies configured. Study these to see how templates should be built.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-components" aria-hidden="true"></i>Core Components in use</div><p>Every Adobe Core Component (Text, Image, Teaser, Navigation, List, Breadcrumb) used correctly with proper styling, accessibility, and configuration.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-code" aria-hidden="true"></i>Complete Maven project</div><p>The full source code is on GitHub. Every module, every pom.xml, every component, every clientlib — all available to study and copy patterns from.</p></div>
+  <div class="card"><div class="card-hd"><i class="ti ti-api" aria-hidden="true"></i>Content Fragments + GraphQL</div><p>WKND Shared package adds adventure Content Fragments demonstrating CF models, CF instances, and GraphQL endpoint configuration for headless delivery.</p></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">How to install WKND</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Download the package</div><div class="step-body">Go to <code>github.com/adobe/aem-guides-wknd</code> → click "Releases" (right side) → find the latest release → download <code>aem-guides-wknd.all-x.x.x.zip</code>.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Open Package Manager</div><div class="step-body">Go to <code>http://localhost:4502/crx/packmgr</code>.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Upload the package</div><div class="step-body">Click "Upload Package" → select the downloaded zip → click OK. The package appears in the list.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Install the package</div><div class="step-body">Find the package in the list → click "Install" → click "Install" in the confirmation dialog. Installation takes 2–5 minutes.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">Open WKND</div><div class="step-body">Go to <code>http://localhost:4502/content/wknd/us/en.html</code>. You should see the WKND website.</div></div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">How to study WKND as a learning resource</div>
+<div class="row-list">
+  <div class="row"><div class="rk">Browse in Sites console</div><div class="rv">Go to Sites console → navigate into <code>/content/wknd/</code>. Open pages and edit them to see how components are configured and laid out.</div></div>
+  <div class="row"><div class="rk">Check components in CRXDE</div><div class="rv">Navigate to <code>/apps/wknd/components/</code> in CRXDE. Open any component folder. Read the .content.xml, the HTL file, the dialog. This is production-quality code to learn from.</div></div>
+  <div class="row"><div class="rk">Check templates in CRXDE</div><div class="rv">Navigate to <code>/conf/wknd/settings/wcm/templates/</code> to see how editable templates are structured in the JCR.</div></div>
+  <div class="row"><div class="rk">Read the source code</div><div class="rv">The full Maven project is at <code>github.com/adobe/aem-guides-wknd</code>. Clone it, open in VS Code, and compare what you see in AEM with what is in the source files.</div></div>
+</div>
+</div>
+</div>
+
+<div class="pg" id="p-authoring-process">
+<span class="badge"><i class="ti ti-list-check" aria-hidden="true" style="font-size:12px"></i>Part 6 — Authoring process</span>
+<h1>The content authoring process — end to end</h1>
+<p class="lede">Understanding the complete authoring workflow — from a marketing request to a live page — shows how all the pieces you have learned connect together in the real world.</p>
+
+<div class="sec">
+<div class="sec-title">A full example — creating a product launch page</div>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div><div class="step-title">Marketing requests a new page</div><div class="step-body">The product team sends a brief: "We need a landing page for our new credit card launching next Monday. It needs a hero banner, three feature cards, an FAQ section, and an 'Apply Now' form." This is a content request — no developer needed.</div></div></div>
+  <div class="step"><div class="snum">2</div><div><div class="step-title">Content editor opens Sites console</div><div class="step-body">Navigates to <code>http://localhost:4502/sites.html/content/mybank/personal/cards/</code>. This is where new credit card pages go.</div></div></div>
+  <div class="step"><div class="snum">3</div><div><div class="step-title">Creates the page</div><div class="step-body">Clicks Create → Page → selects "Campaign Landing Page" template → sets title "New Platinum Card" and name "new-platinum-card" → clicks Create → clicks Open to go to the editor.</div></div></div>
+  <div class="step"><div class="snum">4</div><div><div class="step-title">Builds the page in the editor</div><div class="step-body">Opens the component browser (left panel). Drags a "Hero Banner" component into the main Layout Container. Clicks Configure → fills in headline "Introducing the Platinum Card", uploads the hero image, sets the button text "Apply Now" and link to the form. Saves.</div></div></div>
+  <div class="step"><div class="snum">5</div><div><div class="step-title">Adds more components</div><div class="step-body">Drags three "Feature Card" components below the banner. Configures each one with a benefit icon, title, and description. Drags an FAQ component and adds questions and answers. Switches to Layout mode and makes the feature cards appear side by side (4 columns each on desktop, 12 columns on mobile).</div></div></div>
+  <div class="step"><div class="snum">6</div><div><div class="step-title">Previews and submits for review</div><div class="step-body">Switches to Preview mode to check the page looks correct. Then uses the workflow feature to submit the page for Legal Review and Brand Approval.</div></div></div>
+  <div class="step"><div class="snum">7</div><div><div class="step-title">Approval workflow</div><div class="step-body">The legal team receives a notification. They open the page, read all the copy. The interest rate claims are correct so they approve. The brand team checks the images and color usage. They approve. The manager gets a final notification.</div></div></div>
+  <div class="step"><div class="snum">8</div><div><div class="step-title">Scheduled publish</div><div class="step-body">The editor schedules the page to publish at midnight Sunday. AEM's scheduler fires at midnight, replicates the page to Publish, and the Dispatcher serves it immediately.</div></div></div>
+  <div class="step"><div class="snum">9</div><div><div class="step-title">The page is live</div><div class="step-body">Customers visiting <code>www.mybank.com/personal/cards/new-platinum-card</code> see the new page. The URL, layout, content, and design are all exactly as the editor built them — without a single developer involved.</div></div></div>
+</div>
+</div>
+
+<div class="rl">
+  <div class="rl-label">This is the value of AEM</div>
+  From content brief to live page — the entire process above happened with zero developer involvement. The developer's job was done earlier: building the "Hero Banner" component, the "Feature Card" component, and the "Campaign Landing Page" template. Once built, these become a toolkit that non-technical teams can use to build any number of pages, any time, instantly.
+</div>
+
+<div class="sec">
+<div class="sec-title">Session 1 summary — what you now know</div>
+<div class="row-list">
+  <div class="row"><div class="rk">The problem</div><div class="rv">Static HTML websites required developers for every content change — slow, expensive, and error-prone</div></div>
+  <div class="row"><div class="rk">CMS</div><div class="rv">Separates content from code. Editors manage content through a UI. No developer needed for day-to-day changes.</div></div>
+  <div class="row"><div class="rk">WCM</div><div class="rv">Enterprise CMS for multi-site, multi-language, multi-brand, with workflows and approvals at scale.</div></div>
+  <div class="row"><div class="rk">AEM</div><div class="rv">Adobe's WCM platform. Built on Java, OSGi, Sling, Oak, and Granite. Used by large enterprises globally.</div></div>
+  <div class="row"><div class="rk">3 layers</div><div class="rv">Author (editing, port 4502) → Publish (delivery, port 4503) → Dispatcher (cache, port 80). Always separate.</div></div>
+  <div class="row"><div class="rk">JCR</div><div class="rv">Everything in AEM is a node in a tree. Content, code, config — all stored as JCR nodes with typed properties.</div></div>
+  <div class="row"><div class="rk">WYSIWYG</div><div class="rv">Edit directly on the rendered page. Three modes: Edit (configure components), Layout (resize grid), Preview (visitor view).</div></div>
+  <div class="row"><div class="rk">Interfaces</div><div class="rv">Sites console (pages), Page editor (WYSIWYG), CRXDE (JCR browser), OSGi console (Java runtime), Package Manager (install/export), Tools (admin).</div></div>
+</div>
+</div>
+<div style="margin-top:16px">
+  <button onclick="sendPrompt('Now explain Session 2 — Maven, POM.xml, project setup, and deploying to AEM — in the same detailed beginner style, explaining everything from scratch with real examples')">Explain Session 2 in the same detail ↗</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.body').scrollTop=0;
+}
+</script>

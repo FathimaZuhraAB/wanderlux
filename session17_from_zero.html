@@ -1,0 +1,734 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.wrap{padding:8px 0 60px}
+
+/* TABS */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:24px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.on{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.page{display:none}.page.on{display:block}
+
+/* CARDS */
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:20px;margin-bottom:16px}
+.card-purple{background:#EEEDFE;border-color:#C4C0F5}
+.card-green{background:#E1F5EE;border-color:#A3DCC9}
+.card-yellow{background:#FFF8E7;border-color:#F5D78C}
+.card-red{background:#FEECEC;border-color:#F5AAAA}
+.card-blue{background:#E8F4FD;border-color:#A8D4F0}
+
+.big-title{font-size:22px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px}
+.subtitle{font-size:14px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:16px}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.card-purple .section-label{color:#3C3489}
+.card-green .section-label{color:#085041}
+.card-yellow .section-label{color:#7A5800}
+.card-red .section-label{color:#7A1E1E}
+.card-blue .section-label{color:#0F5E8A}
+
+.body{font-size:14px;line-height:1.9;color:var(--color-text-primary)}
+.body b{font-weight:600}
+
+/* ANALOGY BOXES */
+.analogy{display:flex;gap:12px;align-items:flex-start;background:var(--color-background-secondary);border-radius:12px;padding:14px;margin:12px 0}
+.analogy-icon{font-size:28px;flex-shrink:0}
+.analogy-text{font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.analogy-text b{color:var(--color-text-primary);font-weight:600}
+
+/* STEP BOX */
+.steps{display:flex;flex-direction:column;gap:0;margin:12px 0}
+.step{display:flex;gap:12px;padding-bottom:20px;position:relative}
+.step:last-child{padding-bottom:0}
+.step-num{width:32px;height:32px;border-radius:50%;background:#7F77DD;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--color-border-secondary)}
+.step:last-child::before{display:none}
+.step-body{flex:1;padding-top:4px}
+.step-title{font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:4px}
+.step-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+
+/* CODE BLOCKS */
+.code-wrap{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--color-border-tertiary)}
+.code-label{background:var(--color-background-secondary);padding:8px 14px;font-size:11px;font-weight:600;color:var(--color-text-secondary);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-border-tertiary)}
+.code-body{background:#1a1b2e;padding:16px;overflow-x:auto}
+.code-line{display:flex;gap:12px;min-height:22px;align-items:flex-start;margin-bottom:2px}
+.code-line:hover{background:rgba(255,255,255,.03);border-radius:4px}
+.ln{font-family:var(--font-mono);font-size:12px;color:#45475a;min-width:20px;text-align:right;flex-shrink:0;margin-top:2px;user-select:none}
+.cd{font-family:var(--font-mono);font-size:12px;color:#cdd6f4;flex:1;white-space:pre;line-height:1.8}
+.cd .kw{color:#cba6f7}
+.cd .str{color:#a6e3a1}
+.cd .cm{color:#585b70;font-style:italic}
+.cd .an{color:#fab387}
+.cd .cl{color:#89dceb}
+
+/* EXPLAIN ROWS */
+.explain{margin-top:0}
+.ex-row{display:flex;gap:0;border-top:1px solid var(--color-border-tertiary)}
+.ex-tag{background:#EEEDFE;color:#3C3489;font-family:var(--font-mono);font-size:11px;font-weight:700;padding:10px 12px;min-width:52px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--color-border-tertiary);flex-shrink:0}
+.ex-text{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.ex-text b{color:var(--color-text-primary);font-weight:600}
+.ex-text code{background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.cmp{border-radius:12px;padding:14px;border:1px solid}
+.cmp-bad{background:#FEECEC;border-color:#F5AAAA}
+.cmp-good{background:#E1F5EE;border-color:#A3DCC9}
+.cmp-title{font-size:12px;font-weight:700;margin-bottom:8px}
+.cmp-bad .cmp-title{color:#7A1E1E}
+.cmp-good .cmp-title{color:#085041}
+.cmp p{font-size:12px;line-height:1.7;color:var(--color-text-secondary)}
+
+/* QUIZ */
+.quiz-q{font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:12px}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-btn{text-align:left;padding:12px 16px;border-radius:10px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.quiz-btn:hover{border-color:#7F77DD;color:#3C3489}
+.quiz-btn.correct{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.quiz-btn.wrong{background:#FEECEC;border-color:#E24B4A;color:#7A1E1E}
+.quiz-result{margin-top:12px;padding:12px 16px;border-radius:10px;font-size:13px;display:none;line-height:1.7}
+.quiz-result.show{display:block}
+.quiz-result.ok{background:#E1F5EE;color:#085041}
+.quiz-result.nope{background:#FEECEC;color:#7A1E1E}
+
+.next-btn{margin-top:20px;padding:10px 24px;border-radius:24px;background:#7F77DD;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.next-btn:hover{background:#6660CC}
+
+.emoji-big{font-size:40px;margin-bottom:8px;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="tabs">
+  <div class="tab on" onclick="go(0)">🏠 Start Here</div>
+  <div class="tab" onclick="go(1)">🔑 Service Users</div>
+  <div class="tab" onclick="go(2)">📔 Logging</div>
+  <div class="tab" onclick="go(3)">🌍 Runmodes</div>
+  <div class="tab" onclick="go(4)">🖥️ Felix Console</div>
+  <div class="tab" onclick="go(5)">✅ Quick Quiz</div>
+</div>
+
+<!-- PAGE 0: START HERE -->
+<div id="p0" class="page on">
+  <div class="card card-purple">
+    <span class="emoji-big">🤔</span>
+    <div class="big-title">Before anything — what is AEM?</div>
+    <div class="body">
+      AEM (Adobe Experience Manager) is like a very powerful website-building and content-management system — like WordPress, but for huge companies like banks, airlines, and retail chains.<br><br>
+      Inside AEM, everything — pages, images, settings — is stored in a big database called the <b>JCR (Java Content Repository)</b>. Think of it like a giant folder system on a computer, but stored in a database.<br><br>
+      Your job as an AEM developer is to write <b>Java code</b> that talks to this database — reading pages, writing data, processing things in the background.
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <div class="section-label">🎯 The scenario we will use throughout this session</div>
+    <div class="body">
+      You work for a <b>hospital</b>. The hospital uses AEM to manage its content. You are asked to build a <b>background program</b> that runs every night at midnight. This program:<br><br>
+      1. Reads all patient appointment pages from the database<br>
+      2. Counts how many appointments are scheduled for tomorrow<br>
+      3. Writes a summary report so doctors can see it in the morning<br><br>
+      This background program is called a <b>"scheduled job"</b> or <b>OSGi service</b>.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">❓ Three problems you immediately face</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Who does this background program log in as?</div>
+          <div class="step-desc">It needs to access the database to read appointment pages. It needs a user account. But whose? You can't use the admin account — that's too dangerous. → This is solved by <b>Service Users</b></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">The program runs at midnight. You're asleep. How do you know if it worked?</div>
+          <div class="step-desc">You need the program to write a diary of everything it did — "I read 200 appointments... I wrote the report... ERROR: disk is full." In the morning you read this diary. → This is solved by <b>Logging</b></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">You have 3 computers — your laptop, a test server, and the live hospital server. Each uses a different database address. How does the same code know which database to connect to?</div>
+          <div class="step-desc">You can't hardcode the database address into your code — it changes per computer. → This is solved by <b>Runmodes</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="go(1)">Next: Service Users →</button>
+</div>
+
+<!-- PAGE 1: SERVICE USERS -->
+<div id="p1" class="page">
+  <div class="card card-purple">
+    <span class="emoji-big">🔑</span>
+    <div class="big-title">Service Users</div>
+    <div class="body">A service user is a <b>fake account</b> that only your background program uses. It has no password, cannot log into AEM's website, and can only access the specific folders you allow.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">🏥 Real life analogy</div>
+    <div class="analogy">
+      <div class="analogy-icon">🏥</div>
+      <div class="analogy-text">
+        In a real hospital, a cleaning robot works at night. It has an <b>access card</b> that only opens: the patient wards (to clean) and the supply closet (to get cleaning supplies).<br><br>
+        It <b>cannot open</b> the pharmacy, the operating theatre, the CEO's office, or the server room.<br><br>
+        If the robot malfunctions and starts going to the wrong places — it physically cannot get in. The damage is contained.<br><br>
+        <b>A service user is that access card.</b> Your background program can only go where you explicitly allow it.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-red">
+    <div class="section-label">❌ Why not just use the admin account?</div>
+    <div class="compare">
+      <div class="cmp cmp-bad">
+        <div class="cmp-title">❌ Using admin (WRONG)</div>
+        <p>Admin can read, write, DELETE everything in the entire system. One bug in your code and it could delete all 10,000 patient pages. Like giving the cleaning robot the master key to every door in the hospital — including the medicine cabinet and the patient records room.</p>
+      </div>
+      <div class="cmp cmp-good">
+        <div class="cmp-title">✅ Using service user (RIGHT)</div>
+        <p>Can only access exactly what you allow. A bug can only affect those specific folders. In AEM Cloud Service (the modern version), admin access in code is completely blocked. You MUST use service users.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">🔢 4 steps to create and use a service user</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Create the user account</div>
+          <div class="step-desc">Just like creating a user on any system. Give it a name. This name will identify it everywhere. Name it clearly — what does it do? For our hospital program: <b>appointment-report-service</b></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Give it permissions (what doors can it open?)</div>
+          <div class="step-desc">Tell AEM: this user can READ from <b>/content/hospital/appointments</b> and can READ+WRITE to <b>/var/hospital/reports</b>. Nothing else.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Create a "nickname" mapping</div>
+          <div class="step-desc">Your Java code doesn't use the user's name directly. It uses a nickname like <b>"report-subservice"</b>. A config file maps this nickname to the real user. This way if you rename the user, you only change one config file — not all your code.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Use the nickname in your Java code</div>
+          <div class="step-desc">Your Java code says "give me a connection using nickname report-subservice". AEM looks up the nickname, finds the real user, opens a database connection as that user.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <div class="section-label">📝 Step 2: The permissions file — read every line</div>
+    <div class="body" style="margin-bottom:12px">This file tells AEM what the service user can access. You write it once and deploy it with your code.</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 File name: org.apache.sling.jcr.repoinit.RepositoryInitializer-hospital.xml</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln">1</span><span class="cd"><span class="cm">&lt;!-- This is an XML file. XML uses tags like &lt;this&gt; --&gt;</span></span></div>
+        <div class="code-line"><span class="ln">2</span><span class="cd">&lt;jcr:root jcr:primaryType=<span class="str">"sling:OsgiConfig"</span></span></div>
+        <div class="code-line"><span class="ln">3</span><span class="cd">    scripts=<span class="str">"[</span></span></div>
+        <div class="code-line"><span class="ln">4</span><span class="cd"><span class="str">      create service user appointment-report-service,</span></span></div>
+        <div class="code-line"><span class="ln">5</span><span class="cd"><span class="str">      set ACL for appointment-report-service</span></span></div>
+        <div class="code-line"><span class="ln">6</span><span class="cd"><span class="str">        allow jcr:read on /content/hospital/appointments</span></span></div>
+        <div class="code-line"><span class="ln">7</span><span class="cd"><span class="str">        allow jcr:read\,jcr:write on /var/hospital/reports</span></span></div>
+        <div class="code-line"><span class="ln">8</span><span class="cd"><span class="str">      end</span></span></div>
+        <div class="code-line"><span class="ln">9</span><span class="cd"><span class="str">    ]"</span>/&gt;</span></div>
+      </div>
+      <div class="explain">
+        <div class="ex-row"><div class="ex-tag">L2</div><div class="ex-text"><b>jcr:primaryType="sling:OsgiConfig"</b> — This is the magic label that tells AEM: "this is a settings file". Without this exact label, AEM ignores the entire file. Think of it like writing "OFFICIAL DOCUMENT" at the top of a form — without it, nobody processes it.</div></div>
+        <div class="ex-row"><div class="ex-tag">L3</div><div class="ex-text"><b>scripts="[...]"</b> — scripts is the name of the setting. Everything inside the square brackets [ ] is a list of instructions AEM runs at startup. Like a checklist AEM goes through every time it starts.</div></div>
+        <div class="ex-row"><div class="ex-tag">L4</div><div class="ex-text"><b>create service user appointment-report-service</b> — "Make a service user account called appointment-report-service." If this user already exists (e.g. AEM was restarted), this line is safely skipped. AEM doesn't create duplicates. The comma at the end means "next instruction follows".</div></div>
+        <div class="ex-row"><div class="ex-tag">L5</div><div class="ex-text"><b>set ACL for appointment-report-service</b> — ACL = Access Control List = the list of permissions. This line says "I'm about to define what this user can do. Everything until the word 'end' is their permission list."</div></div>
+        <div class="ex-row"><div class="ex-tag">L6</div><div class="ex-text"><b>allow jcr:read on /content/hospital/appointments</b> — Three parts: <b>allow</b> = give this permission (not take away). <b>jcr:read</b> = permission to read content, like opening a file to view it but not edit it. <b>on /content/hospital/appointments</b> = ONLY on this path. Trying to read /content/hospital/doctors would return empty — access denied.</div></div>
+        <div class="ex-row"><div class="ex-tag">L7</div><div class="ex-text"><b>allow jcr:read,jcr:write on /var/hospital/reports</b> — On the reports folder, allow both reading AND writing. jcr:write = creating, editing, deleting content. The backslash \ before the comma is just XML formatting — it means "literal comma". The program needs write access here because it creates the report file.</div></div>
+        <div class="ex-row"><div class="ex-tag">L8</div><div class="ex-text"><b>end</b> — Closes the "set ACL" block. REQUIRED. If you forget this word, AEM's parser crashes and the service user gets NO permissions at all. Your code will fail silently — getting empty results instead of data.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <div class="section-label">📝 Step 3: The nickname mapping file</div>
+    <div class="body" style="margin-bottom:12px">This file connects a short nickname (used in Java) to the real service user account.</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 File name: com.adobe.granite.auth.impl.ServiceUserMapperImpl.amended-hospital.xml</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln">1</span><span class="cd">&lt;jcr:root jcr:primaryType=<span class="str">"sling:OsgiConfig"</span></span></div>
+        <div class="code-line"><span class="ln">2</span><span class="cd">    servicemapping=<span class="str">"[</span></span></div>
+        <div class="code-line"><span class="ln">3</span><span class="cd"><span class="str">      com.hospital.myapp:report-subservice=appointment-report-service</span></span></div>
+        <div class="code-line"><span class="ln">4</span><span class="cd"><span class="str">    ]"</span>/&gt;</span></div>
+      </div>
+      <div class="explain">
+        <div class="ex-row"><div class="ex-tag">L3</div><div class="ex-text">This one line has 3 parts separated by : and =<br><br>
+        <b>com.hospital.myapp</b> — Your project/bundle name. Think of it as "which application owns this mapping". This prevents conflicts if two different apps both happen to use the nickname "report-subservice".<br><br>
+        <b>:report-subservice</b> — The nickname. You make this up. Your Java code will use exactly this string. Think of it like a codename — "Operation Report-Subservice" → actually means "use the appointment-report-service account".<br><br>
+        <b>=appointment-report-service</b> — The actual service user account name from Step 1. Must be spelled exactly the same. One typo here = the program crashes with "login failed" at midnight.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <div class="section-label">📝 Step 4: The Java code — with every line explained simply</div>
+    <div class="body" style="margin-bottom:12px">This is your actual background program. Read it like reading English — I'll explain every single line.</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 AppointmentReportJob.java</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln">1</span><span class="cd"><span class="kw">import</span> org.apache.sling.api.resource.ResourceResolver;</span></div>
+        <div class="code-line"><span class="ln">2</span><span class="cd"><span class="kw">import</span> org.apache.sling.api.resource.ResourceResolverFactory;</span></div>
+        <div class="code-line"><span class="ln">3</span><span class="cd"><span class="kw">import</span> org.apache.sling.api.resource.LoginException;</span></div>
+        <div class="code-line"><span class="ln">4</span><span class="cd"><span class="kw">import</span> org.osgi.service.component.annotations.Component;</span></div>
+        <div class="code-line"><span class="ln">5</span><span class="cd"><span class="kw">import</span> org.osgi.service.component.annotations.Reference;</span></div>
+        <div class="code-line"><span class="ln">6</span><span class="cd"><span class="kw">import</span> org.slf4j.Logger;</span></div>
+        <div class="code-line"><span class="ln">7</span><span class="cd"><span class="kw">import</span> org.slf4j.LoggerFactory;</span></div>
+        <div class="code-line"><span class="ln">8</span><span class="cd"><span class="kw">import</span> java.util.Collections;</span></div>
+        <div class="code-line"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">10</span><span class="cd"><span class="an">@Component</span>(service = Runnable.<span class="kw">class</span>,</span></div>
+        <div class="code-line"><span class="ln">11</span><span class="cd">    property = {<span class="str">"scheduler.expression=0 0 0 * * ?"</span>})</span></div>
+        <div class="code-line"><span class="ln">12</span><span class="cd"><span class="kw">public class</span> <span class="cl">AppointmentReportJob</span> <span class="kw">implements</span> <span class="cl">Runnable</span> {</span></div>
+        <div class="code-line"><span class="ln">13</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">14</span><span class="cd">    <span class="kw">private static final</span> <span class="cl">Logger</span> log =</span></div>
+        <div class="code-line"><span class="ln">15</span><span class="cd">        <span class="cl">LoggerFactory</span>.getLogger(<span class="cl">AppointmentReportJob</span>.<span class="kw">class</span>);</span></div>
+        <div class="code-line"><span class="ln">16</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">17</span><span class="cd">    <span class="an">@Reference</span></span></div>
+        <div class="code-line"><span class="ln">18</span><span class="cd">    <span class="kw">private</span> <span class="cl">ResourceResolverFactory</span> resolverFactory;</span></div>
+        <div class="code-line"><span class="ln">19</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">20</span><span class="cd">    <span class="kw">public void</span> run() {</span></div>
+        <div class="code-line"><span class="ln">21</span><span class="cd">        log.info(<span class="str">"Appointment report job started"</span>);</span></div>
+        <div class="code-line"><span class="ln">22</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">23</span><span class="cd">        <span class="kw">try</span> (<span class="cl">ResourceResolver</span> resolver =</span></div>
+        <div class="code-line"><span class="ln">24</span><span class="cd">            resolverFactory.getServiceResourceResolver(</span></div>
+        <div class="code-line"><span class="ln">25</span><span class="cd">                Collections.singletonMap(</span></div>
+        <div class="code-line"><span class="ln">26</span><span class="cd">                    <span class="cl">ResourceResolverFactory</span>.SUBSERVICE,</span></div>
+        <div class="code-line"><span class="ln">27</span><span class="cd">                    <span class="str">"report-subservice"</span>))) {</span></div>
+        <div class="code-line"><span class="ln">28</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">29</span><span class="cd">            <span class="cl">Resource</span> appts = resolver.getResource(</span></div>
+        <div class="code-line"><span class="ln">30</span><span class="cd">                <span class="str">"/content/hospital/appointments"</span>);</span></div>
+        <div class="code-line"><span class="ln">31</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">32</span><span class="cd">            <span class="kw">if</span> (appts == <span class="kw">null</span>) {</span></div>
+        <div class="code-line"><span class="ln">33</span><span class="cd">                log.error(<span class="str">"Cannot read appointments - check permissions"</span>);</span></div>
+        <div class="code-line"><span class="ln">34</span><span class="cd">                <span class="kw">return</span>;</span></div>
+        <div class="code-line"><span class="ln">35</span><span class="cd">            }</span></div>
+        <div class="code-line"><span class="ln">36</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">37</span><span class="cd">            log.info(<span class="str">"Report written successfully"</span>);</span></div>
+        <div class="code-line"><span class="ln">38</span><span class="cd">            resolver.commit();</span></div>
+        <div class="code-line"><span class="ln">39</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">40</span><span class="cd">        } <span class="kw">catch</span> (<span class="cl">LoginException</span> e) {</span></div>
+        <div class="code-line"><span class="ln">41</span><span class="cd">            log.error(<span class="str">"Login failed - check service user mapping"</span>, e);</span></div>
+        <div class="code-line"><span class="ln">42</span><span class="cd">        }</span></div>
+        <div class="code-line"><span class="ln">43</span><span class="cd">    }</span></div>
+        <div class="code-line"><span class="ln">44</span><span class="cd">}</span></div>
+      </div>
+      <div class="explain">
+        <div class="ex-row"><div class="ex-tag">L1-8</div><div class="ex-text"><b>import statements</b> — Like telling your program "I need these tools". Think of imports like choosing which tools to bring before starting a job. <code>ResourceResolver</code> = the database connection tool. <code>Logger</code> = the diary-writing tool. <code>Collections</code> = a helper for creating lists/maps. You must declare which tools you need before using them.</div></div>
+        <div class="ex-row"><div class="ex-tag">L10</div><div class="ex-text"><b>@Component(service = Runnable.class)</b> — @Component means "register this class with AEM's system (OSGi)". Without @Component, AEM doesn't even know this class exists. <b>service = Runnable.class</b> means "tell AEM this is a Runnable — something that can be run/executed". AEM's scheduler looks for all Runnables and schedules them.</div></div>
+        <div class="ex-row"><div class="ex-tag">L11</div><div class="ex-text"><b>scheduler.expression=0 0 0 * * ?</b> — This is a cron expression. It's a time schedule written in a specific format. Read it as 6 numbers/symbols: <b>0</b>=second 0, <b>0</b>=minute 0, <b>0</b>=hour 0, <b>*</b>=every day, <b>*</b>=every month, <b>?</b>=any day of week. Translation: run at 00:00:00 (midnight) every single day.</div></div>
+        <div class="ex-row"><div class="ex-tag">L14-15</div><div class="ex-text"><b>Logger log = LoggerFactory.getLogger(...)</b> — This creates your "diary writer". Every class needs exactly one of these. <b>private</b> = only this class uses it. <b>static</b> = shared across all uses of this class (more efficient). <b>final</b> = never changes. <b>LoggerFactory.getLogger(AppointmentReportJob.class)</b> = create a diary writer that labels every entry with this class's name, so you know where each diary entry came from.</div></div>
+        <div class="ex-row"><div class="ex-tag">L17-18</div><div class="ex-text"><b>@Reference ResourceResolverFactory resolverFactory</b> — @Reference means "AEM, please find this service and give it to me automatically." You don't create resolverFactory yourself — AEM injects it. Think of it like an employee saying "I need a laptop" — IT department (AEM/OSGi) brings one to you. <b>ResourceResolverFactory</b> is the factory that creates database connections (ResourceResolvers).</div></div>
+        <div class="ex-row"><div class="ex-tag">L23-27</div><div class="ex-text"><b>try (ResourceResolver resolver = ...getServiceResourceResolver(...))</b> — Two concepts here:<br><br><b>try(...)</b> = try-with-resources. The ResourceResolver is a database connection. When you're done, you MUST close it. This special syntax auto-closes it when the block ends — even if something crashes. If you forget to close it, AEM leaks connections until it runs out of memory and crashes.<br><br><b>Collections.singletonMap(SUBSERVICE, "report-subservice")</b> = Create a tiny dictionary with one entry: {key: "sling.service.subservice", value: "report-subservice"}. This is how you tell AEM which nickname/subservice to look up. AEM finds "report-subservice" → looks in the mapping file → finds it maps to "appointment-report-service" → opens a connection as that user.</div></div>
+        <div class="ex-row"><div class="ex-tag">L29-30</div><div class="ex-text"><b>resolver.getResource("/content/hospital/appointments")</b> — "Open the appointments folder in the database." The resolver runs AS the service user, so it can only open what that user is allowed to see. If the service user doesn't have read permission here, this returns null (empty) — not an error, just nothing.</div></div>
+        <div class="ex-row"><div class="ex-tag">L32-35</div><div class="ex-text"><b>if (appts == null) { log.error(...); return; }</b> — Always check if what you got is null (empty). If the path doesn't exist OR the user doesn't have permission, you get null. Logging the error tells you exactly what went wrong. <b>return</b> = stop here, don't continue with null data (which would crash on the next line).</div></div>
+        <div class="ex-row"><div class="ex-tag">L38</div><div class="ex-text"><b>resolver.commit()</b> — Think of this like pressing Save in a document editor. All your writes to the database are held in memory until you call commit(). Without commit(), when the connection closes, all your writes disappear as if they never happened.</div></div>
+        <div class="ex-row"><div class="ex-tag">L40-41</div><div class="ex-text"><b>catch (LoginException e)</b> — If the service user login fails (typo in mapping file, user doesn't exist, wrong bundle name), this block runs instead of the normal code. <b>log.error("...", e)</b> — the <b>e</b> at the end is CRITICAL. It tells the logger to also write the full error details and the line number where it crashed. Without it, you'd only see "Login failed" with no info about what actually went wrong.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="go(2)">Next: Logging →</button>
+</div>
+
+<!-- PAGE 2: LOGGING -->
+<div id="p2" class="page">
+  <div class="card card-blue">
+    <span class="emoji-big">📔</span>
+    <div class="big-title">Logging — Your Code's Diary</div>
+    <div class="body">Your program runs at midnight while you sleep. Logging is how your program writes a detailed diary of everything it does, so you can read it next morning and know exactly what happened.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">✈️ Real life analogy</div>
+    <div class="analogy">
+      <div class="analogy-icon">✈️</div>
+      <div class="analogy-text">
+        Every airplane has a <b>black box</b>. It records everything: altitude, speed, every button pressed, every warning triggered, every engine reading — with timestamps.<br><br>
+        If a flight has a problem, investigators pull out the black box and read the entire flight history. They can reconstruct exactly what happened, second by second.<br><br>
+        <b>Your log file is the black box for your background job.</b> Every night it records what happened. When something goes wrong, you read the log and reconstruct the problem.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <div class="section-label">5 levels of log messages — from quiet to loud</div>
+    <div class="body">Think of it like writing notes in a diary with different importance levels:</div>
+    <div style="margin-top:12px">
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px;background:#1a1b2e">
+        <span style="font-size:18px">🔬</span>
+        <div><span style="color:#89dceb;font-weight:600;font-size:13px">TRACE</span> <span style="color:#6c7086;font-size:12px">— Every tiny micro-detail. "Processing item 1... Processing item 2..." Almost never used. Way too noisy.</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px;background:#1a1b2e">
+        <span style="font-size:18px">🔍</span>
+        <div><span style="color:#cba6f7;font-weight:600;font-size:13px">DEBUG</span> <span style="color:#6c7086;font-size:12px">— Developer details. "The appointment count is 47. Cache was empty so fetched fresh." Use while writing code. Turn OFF in production.</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px;background:#1a1b2e">
+        <span style="font-size:18px">📋</span>
+        <div><span style="color:#a6e3a1;font-weight:600;font-size:13px">INFO</span> <span style="color:#6c7086;font-size:12px">— Important milestones. "Report job started." "Report completed. 200 appointments processed." Always on — even in production.</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px;background:#1a1b2e">
+        <span style="font-size:18px">⚠️</span>
+        <div><span style="color:#f9e2af;font-weight:600;font-size:13px">WARN</span> <span style="color:#6c7086;font-size:12px">— Something unusual, but the program kept running. "Doctor Smith has no email — skipped notification." Always on in production.</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;margin-bottom:8px;background:#1a1b2e">
+        <span style="font-size:18px">🚨</span>
+        <div><span style="color:#f38ba8;font-weight:600;font-size:13px">ERROR</span> <span style="color:#6c7086;font-size:12px">— Something broke and needs fixing now. "Could not write report: disk is full." Always on. Always investigate immediately.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <div class="section-label">📝 How to write logs — line by line</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 Inside any Java class</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln">1</span><span class="cd"><span class="cm">// Step 1: Set up the logger — do this ONCE per class, outside all methods</span></span></div>
+        <div class="code-line"><span class="ln">2</span><span class="cd"><span class="kw">private static final</span> <span class="cl">Logger</span> log =</span></div>
+        <div class="code-line"><span class="ln">3</span><span class="cd">    <span class="cl">LoggerFactory</span>.getLogger(<span class="cl">AppointmentReportJob</span>.<span class="kw">class</span>);</span></div>
+        <div class="code-line"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">5</span><span class="cd"><span class="cm">// Step 2: Use it inside your methods</span></span></div>
+        <div class="code-line"><span class="ln">6</span><span class="cd">log.info(<span class="str">"Report job started"</span>);</span></div>
+        <div class="code-line"><span class="ln">7</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">8</span><span class="cd"><span class="cm">// To include a variable value, use {} as a placeholder</span></span></div>
+        <div class="code-line"><span class="ln">9</span><span class="cd">log.info(<span class="str">"Processed {} appointments today"</span>, count);</span></div>
+        <div class="code-line"><span class="ln">10</span><span class="cd"><span class="cm">// {} gets replaced by the variable 'count' — output: "Processed 47 appointments today"</span></span></div>
+        <div class="code-line"><span class="ln">11</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">12</span><span class="cd"><span class="cm">// Multiple variables: use multiple {} placeholders</span></span></div>
+        <div class="code-line"><span class="ln">13</span><span class="cd">log.info(<span class="str">"Done. Processed={}, Skipped={}"</span>, processed, skipped);</span></div>
+        <div class="code-line"><span class="ln">14</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">15</span><span class="cd"><span class="cm">// For errors: ALWAYS pass the exception as last argument</span></span></div>
+        <div class="code-line"><span class="ln">16</span><span class="cd">log.error(<span class="str">"Failed to write report"</span>, e);</span></div>
+        <div class="code-line"><span class="ln">17</span><span class="cd"><span class="cm">// The 'e' automatically adds the full crash details to the log</span></span></div>
+      </div>
+      <div class="explain">
+        <div class="ex-row"><div class="ex-tag">L2-3</div><div class="ex-text"><b>private static final Logger log = LoggerFactory.getLogger(AppointmentReportJob.class)</b><br><br>
+        <b>private</b> = only this class uses this diary writer<br>
+        <b>static</b> = create it once and share it — don't create a new one for every method call<br>
+        <b>final</b> = once created, never replaced<br>
+        <b>Logger</b> = the type (think of it as "type: diary")<br>
+        <b>log</b> = the variable name (you'll write log.info(), log.error() etc.)<br>
+        <b>LoggerFactory.getLogger(AppointmentReportJob.class)</b> = create a diary writer that stamps every entry with this class's name. In the actual log file, each entry will show "AppointmentReportJob" so you know which class wrote it.</div></div>
+        <div class="ex-row"><div class="ex-tag">L9</div><div class="ex-text"><b>log.info("Processed {} appointments today", count)</b><br><br>
+        <b>Why use {} instead of just writing the number directly?</b><br><br>
+        If you write <code>log.info("Processed " + count + " appointments")</code>, Java builds that string every time this line runs — even on days when info logging is turned off. That wastes memory and CPU.<br><br>
+        The {} approach is lazy — Java only builds the string when the message will actually be written. In production with INFO turned off, zero string building happens.</div></div>
+        <div class="ex-row"><div class="ex-tag">L16</div><div class="ex-text"><b>log.error("Failed to write report", e)</b><br><br>
+        The <b>e</b> is the exception (error) object. When you pass it as the last argument to log.error(), the logger automatically appends the full crash report — including which exact line of code failed, and every method that was called leading up to the crash. This is called a <b>stack trace</b>.<br><br>
+        Without <b>e</b>: you see "Failed to write report". You have no idea where it crashed.<br>
+        With <b>e</b>: you see "Failed to write report" + 20 lines showing exactly where and why it crashed.</div></div>
+      </div>
+    </div>
+
+    <div class="body" style="margin-top:16px;padding:12px;background:#FEECEC;border-radius:10px;font-size:13px;color:#7A1E1E">
+      <b>❌ Never do these:</b><br>
+      <code>System.out.println("debug: " + value)</code> — this doesn't go to log files. Completely useless in AEM.<br>
+      <code>log.error(e.getMessage())</code> — you lose the stack trace. Use <code>log.error("msg", e)</code> instead.<br>
+      <code>log.debug("value = " + value)</code> — use <code>log.debug("value = {}", value)</code> instead.
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="go(3)">Next: Runmodes →</button>
+</div>
+
+<!-- PAGE 3: RUNMODES -->
+<div id="p3" class="page">
+  <div class="card card-green">
+    <span class="emoji-big">🌍</span>
+    <div class="big-title">Runmodes — Right Settings for Each Environment</div>
+    <div class="body">Your code is the same on every computer. But the settings (database address, log level, API keys) are different per environment. Runmodes make AEM automatically load the right settings based on where it's running.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">🏥 Hospital analogy</div>
+    <div class="analogy">
+      <div class="analogy-icon">👨‍⚕️</div>
+      <div class="analogy-text">
+        A medical student (your code) rotates through three hospitals:<br><br>
+        🏠 <b>Training hospital (dev)</b> — uses mannequins, practice equipment, fake medicine. Mistakes don't hurt anyone.<br><br>
+        🏥 <b>Teaching hospital (stage/QA)</b> — real patients, but supervised. Extra logging, no live billing.<br><br>
+        🏨 <b>Real hospital (prod)</b> — fully live, real patients, real money, no extra logging.<br><br>
+        The <b>same doctor</b> (same code). Different <b>protocols and equipment</b> (different config). The hospital they're in is their <b>runmode</b>.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <div class="section-label">📁 How folder names control which settings load</div>
+    <div class="body" style="margin-bottom:12px">You create multiple folders. AEM reads only the folders that match the active runmodes:</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 Folder structure in your project</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln"> </span><span class="cd">apps/hospital-app/osgiconfig/</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">├── <span class="an">config/</span>                 ← loaded on ALL computers always</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│   └── EmailService.xml    ← same email settings everywhere</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">├── <span class="cl">config.author/</span>          ← loaded ONLY on author servers</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│   └── WorkflowConfig.xml</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">├── <span class="str">config.author.dev/</span>      ← loaded ONLY on author + dev computer</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│   └── DatabaseConfig.xml  ← points to: localhost/hospitaldb_dev</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">├── <span class="kw">config.author.stage/</span>    ← loaded ONLY on author + stage server</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│   └── DatabaseConfig.xml  ← points to: stage-server/hospitaldb_stage</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">│</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">└── <span class="cm">config.author.prod/</span>     ← loaded ONLY on author + prod server</span></div>
+        <div class="code-line"><span class="ln"> </span><span class="cd">    └── DatabaseConfig.xml  ← points to: prod-server/hospitaldb_live</span></div>
+      </div>
+    </div>
+    <div class="body" style="margin-top:12px">You deploy the <b>same package</b> to all three environments. AEM looks at its active runmodes and loads only the matching folders. The DatabaseConfig.xml in config.author.dev loads on your laptop. The one in config.author.prod loads on the live server. <b>Your Java code doesn't know or care</b> — it just reads the database URL from the config and gets the right one for its environment.</div>
+  </div>
+
+  <div class="card card-yellow">
+    <div class="section-label">🚀 How to tell AEM which runmode it's on</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 When starting AEM — command line</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln">1</span><span class="cd"><span class="cm"># -r means "runmodes". Comma separates multiple runmodes.</span></span></div>
+        <div class="code-line"><span class="ln">2</span><span class="cd"><span class="cm"># On your developer laptop:</span></span></div>
+        <div class="code-line"><span class="ln">3</span><span class="cd">java -jar aem-quickstart.jar -r author,dev</span></div>
+        <div class="code-line"><span class="ln">4</span><span class="cd"><span class="cm"># AEM loads: config/ + config.author/ + config.author.dev/</span></span></div>
+        <div class="code-line"><span class="ln">5</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">6</span><span class="cd"><span class="cm"># On the staging test server:</span></span></div>
+        <div class="code-line"><span class="ln">7</span><span class="cd">java -jar aem-quickstart.jar -r author,stage</span></div>
+        <div class="code-line"><span class="ln">8</span><span class="cd"><span class="cm"># AEM loads: config/ + config.author/ + config.author.stage/</span></span></div>
+        <div class="code-line"><span class="ln">9</span><span class="cd"></span></div>
+        <div class="code-line"><span class="ln">10</span><span class="cd"><span class="cm"># On the live production server:</span></span></div>
+        <div class="code-line"><span class="ln">11</span><span class="cd">java -jar aem-quickstart.jar -r author,prod</span></div>
+        <div class="code-line"><span class="ln">12</span><span class="cd"><span class="cm"># AEM loads: config/ + config.author/ + config.author.prod/</span></span></div>
+      </div>
+      <div class="explain">
+        <div class="ex-row"><div class="ex-tag">L3</div><div class="ex-text"><b>java -jar aem-quickstart.jar</b> — this starts AEM. Like double-clicking an application, but from the command line. <b>-r author,dev</b> — the -r flag passes the runmodes. "author" tells AEM it's an author instance (where editors create content). "dev" tells it this is a development environment. Both are active simultaneously, so folders like config.author.dev/ match and get loaded.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-purple">
+    <div class="section-label">📝 A real settings file — line by line</div>
+    <div class="body" style="margin-bottom:12px">Each DatabaseConfig.xml is identical in structure but has different values per environment:</div>
+    <div class="code-wrap">
+      <div class="code-label">📁 config.author.dev/com.hospital.app.DatabaseConfig.xml</div>
+      <div class="code-body">
+        <div class="code-line"><span class="ln">1</span><span class="cd">&lt;jcr:root jcr:primaryType=<span class="str">"sling:OsgiConfig"</span></span></div>
+        <div class="code-line"><span class="ln">2</span><span class="cd">    db.url=<span class="str">"jdbc:mysql://localhost:3306/hospital_dev"</span></span></div>
+        <div class="code-line"><span class="ln">3</span><span class="cd">    db.max.connections=<span class="str">"{Long}5"</span></span></div>
+        <div class="code-line"><span class="ln">4</span><span class="cd">    db.debug.mode=<span class="str">"{Boolean}true"</span>/&gt;</span></div>
+      </div>
+      <div class="explain">
+        <div class="ex-row"><div class="ex-tag">L1</div><div class="ex-text"><b>jcr:primaryType="sling:OsgiConfig"</b> — the magic label again. Without this, AEM ignores the file. The filename <b>com.hospital.app.DatabaseConfig.xml</b> tells AEM which Java service this settings file belongs to. AEM matches the filename to the Java class and feeds these settings into it.</div></div>
+        <div class="ex-row"><div class="ex-tag">L2</div><div class="ex-text"><b>db.url="jdbc:mysql://localhost:3306/hospital_dev"</b> — a custom setting called "db.url". In the dev version, this points to your laptop's local database. In the prod version (same property name, different file), this points to the live hospital server. Your Java code reads "db.url" — it doesn't know which environment it's on. AEM already loaded the right value.</div></div>
+        <div class="ex-row"><div class="ex-tag">L3</div><div class="ex-text"><b>{Long}5</b> — The number 5, but with a type label. In XML, everything is text by default. If your Java code expects a number (int/long) and XML gives it the text "5", it could misinterpret it. The {Long} prefix tells AEM: "convert this text into an actual number before giving it to the Java class." Other types: {Boolean}true, {Double}3.14</div></div>
+        <div class="ex-row"><div class="ex-tag">L4</div><div class="ex-text"><b>{Boolean}true</b> — In dev, debug mode is on (extra logging). In the prod version of this file, this would be {Boolean}false — no debug mode on the live server. Same setting name, different values, loaded automatically based on runmode.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="go(4)">Next: Felix Console →</button>
+</div>
+
+<!-- PAGE 4: FELIX CONSOLE -->
+<div id="p4" class="page">
+  <div class="card card-red">
+    <span class="emoji-big">🖥️</span>
+    <div class="big-title">Felix Console — AEM's Control Room</div>
+    <div class="body">The Felix Console is a webpage inside AEM at <b>/system/console</b>. It shows you the live internal state of everything running inside AEM. When something breaks, this is where you go to diagnose it.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">🚗 Real life analogy</div>
+    <div class="analogy">
+      <div class="analogy-icon">🔧</div>
+      <div class="analogy-text">
+        When your car has a problem, a mechanic plugs an <b>OBD diagnostic device</b> into it. The screen immediately shows: "Engine sensor 4 is faulty. Coolant temperature too high. Fuel injector 2 misfiring."<br><br>
+        Without the OBD device, the mechanic has to guess — maybe check the engine manually, test parts one by one. Could take hours.<br><br>
+        <b>Felix Console is your OBD device for AEM.</b> Instead of guessing why your code isn't working, Felix Console immediately shows you the problem.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <div class="section-label">6 pages you must know inside Felix Console</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">/system/console/bundles — "Did my code deploy?"</div>
+          <div class="step-desc">Shows all code bundles (JAR files) installed in AEM. Your code is one bundle. If it shows <b style="color:#1D9E75">Active (green)</b> = your code is loaded and running. If it shows <b style="color:#E24B4A">Installed (red)</b> = your code failed to start. Click on it to see WHY — it'll show which missing dependency caused the failure. Like checking if a new app installed successfully on your phone.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">/system/console/components — "Is my @Component working?"</div>
+          <div class="step-desc">Shows every @Component class. Each has a status: <b>Active</b> (working) or <b>Unsatisfied</b> (broken). Unsatisfied means one of your @Reference fields couldn't be filled — AEM couldn't find the service you asked for. Click on your component to see exactly which @Reference is missing. This is the most-used debugging page in AEM development.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">/system/console/configMgr — "Did my settings load?"</div>
+          <div class="step-desc">Shows all OSGi configuration values currently active. Search for your service name and click it — you'll see all the property values loaded from your XML files. If your runmode config isn't applying, you'll see default values here instead of your XML values. You can also edit values temporarily here without redeploying.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">/system/console/slinglog — "Change log levels live"</div>
+          <div class="step-desc">Shows all loggers. You can add a new logger for your package at DEBUG level, watch your log file fill up with detailed messages, understand the problem, then remove the debug logger. No code changes, no redeployment. Like turning on extra security cameras in just one room when you suspect something is happening there.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">/system/console/requests — "Which code handled my request?"</div>
+          <div class="step-desc">Shows the last 100 HTTP requests to AEM. For each request, shows which Java class or script handled it and how long it took. Useful when a page shows blank or wrong content — you can see exactly which code was chosen to render it.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">/system/console/jmx — "Is AEM healthy?"</div>
+          <div class="step-desc">Live metrics — how many items are in queues, how much cache is used, how many workflows are running, are there any blocked threads. Use this when AEM feels slow or something seems stuck in the background.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <div class="section-label">🐛 Real debugging story — 2 hours → 2 minutes</div>
+    <div class="body">
+      A developer built a new scheduled job. It wasn't running. He spent 2 hours:<br>
+      — Re-reading his code ❌ (code was fine)<br>
+      — Checking cron expression ❌ (was correct)<br>
+      — Restarting AEM ❌ (didn't help)<br><br>
+      A senior developer came over and opened <b>/system/console/components</b>.<br>
+      Searched "AppointmentReportJob" → Status: <b style="color:#E24B4A">Unsatisfied</b><br>
+      Clicked on it → <b style="color:#E24B4A">✗ ResourceResolverFactory not satisfied</b><br>
+      Searched "ResourceResolverFactory" → Status: <b style="color:#E24B4A">Installed (not Active)</b><br>
+      Clicked on it → Missing import: <b>org.apache.sling.api.resource</b><br><br>
+      Added one line to pom.xml (the Maven dependency). Deployed. Fixed in <b>4 minutes</b>.<br><br>
+      The Felix Console showed in 30 seconds what 2 hours of code-reading never revealed.
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="go(5)">Next: Quick Quiz →</button>
+</div>
+
+<!-- PAGE 5: QUIZ -->
+<div id="p5" class="page">
+  <div class="card card-purple">
+    <span class="emoji-big">✅</span>
+    <div class="big-title">Quick Check — Test Your Understanding</div>
+    <div class="body">Simple questions. Tap the answer you think is right.</div>
+  </div>
+
+  <div class="card" id="q1">
+    <div class="quiz-q">1. Why should you NEVER use the admin account in your background Java code?</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="ans(1,'a')">A. Admin is too slow for background jobs</button>
+      <button class="quiz-btn" onclick="ans(1,'b')">B. Admin has access to everything — a bug could delete the entire system</button>
+      <button class="quiz-btn" onclick="ans(1,'c')">C. AEM doesn't allow admin to run scheduled jobs</button>
+    </div>
+    <div class="quiz-result" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="quiz-q">2. What does <code>try (ResourceResolver resolver = ...)</code> automatically do when the code block ends?</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="ans(2,'a')">A. Saves all changes to disk</button>
+      <button class="quiz-btn" onclick="ans(2,'b')">B. Closes the database connection so it doesn't leak</button>
+      <button class="quiz-btn" onclick="ans(2,'c')">C. Logs a message to the log file</button>
+    </div>
+    <div class="quiz-result" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="quiz-q">3. What is the CORRECT way to include a variable in a log message?</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="ans(3,'a')">A. <code>log.info("Count = " + count)</code></button>
+      <button class="quiz-btn" onclick="ans(3,'b')">B. <code>System.out.println("Count = " + count)</code></button>
+      <button class="quiz-btn" onclick="ans(3,'c')">C. <code>log.info("Count = {}", count)</code></button>
+    </div>
+    <div class="quiz-result" id="qr3"></div>
+  </div>
+
+  <div class="card" id="q4">
+    <div class="quiz-q">4. You have a config file in <code>config.author.prod/</code>. When does AEM load it?</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="ans(4,'a')">A. On all AEM instances always</button>
+      <button class="quiz-btn" onclick="ans(4,'b')">B. Only when AEM is started with both "author" AND "prod" runmodes active</button>
+      <button class="quiz-btn" onclick="ans(4,'c')">C. Only when you manually deploy it</button>
+    </div>
+    <div class="quiz-result" id="qr4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="quiz-q">5. Your @Component shows "Unsatisfied" in Felix Console. What should you do?</div>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="ans(5,'a')">A. Restart AEM</button>
+      <button class="quiz-btn" onclick="ans(5,'b')">B. Click the component to see which @Reference service is missing, then fix that</button>
+      <button class="quiz-btn" onclick="ans(5,'c')">C. Delete the component and rewrite it</button>
+    </div>
+    <div class="quiz-result" id="qr5"></div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+const answers = {
+  1: {correct:'b', explanation:"✅ Correct! Admin can access and delete everything. A bug in admin code could destroy the whole system. Service users limit damage to only the paths they're allowed to access."},
+  2: {correct:'b', explanation:"✅ Correct! try-with-resources automatically closes the ResourceResolver (database connection) when the block ends. Unclosed resolvers leak memory and eventually crash AEM."},
+  3: {correct:'c', explanation:"✅ Correct! The {} placeholder is lazy — it only builds the string if logging is actually enabled. Concatenation (+) always builds the string, wasting CPU and memory even when the message won't be written."},
+  4: {correct:'b', explanation:"✅ Correct! Folder config.author.prod/ requires BOTH 'author' AND 'prod' runmodes to be active. AEM is started with -r author,prod on the production server to make this happen."},
+  5: {correct:'b', explanation:"✅ Correct! Unsatisfied means a @Reference dependency couldn't be injected. Clicking the component shows exactly which service is missing — then you fix that missing service or add the right Maven dependency."}
+};
+
+function ans(q, choice) {
+  const a = answers[q];
+  const btns = document.querySelectorAll(`#q${q} .quiz-btn`);
+  const letters = ['a','b','c','d'];
+  btns.forEach((btn,i) => {
+    btn.disabled = true;
+    if(letters[i] === a.correct) btn.classList.add('correct');
+    else if(letters[i] === choice && choice !== a.correct) btn.classList.add('wrong');
+  });
+  const res = document.getElementById(`qr${q}`);
+  if(choice === a.correct){
+    res.className='quiz-result show ok';
+    res.innerHTML = a.explanation;
+  } else {
+    res.className='quiz-result show nope';
+    res.innerHTML = `❌ Not quite. ${a.explanation}`;
+  }
+}
+
+function go(i){
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+}
+</script>
+</body>
+</html>

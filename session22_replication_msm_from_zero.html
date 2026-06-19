@@ -1,0 +1,878 @@
+
+<h2 class="sr-only">Session 22 Replication and Multi-Site Management complete beginner guide</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent;color:var(--color-text-primary)}
+.w{padding:8px 0 60px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:24px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.on{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:16px;padding:20px;margin-bottom:16px}
+.cp{background:#EEEDFE;border-color:#C4C0F5}
+.cg{background:#E1F5EE;border-color:#A3DCC9}
+.cy{background:#FFF8E7;border-color:#F5D78C}
+.cr{background:#FEECEC;border-color:#F5AAAA}
+.cb{background:#E8F4FD;border-color:#A8D4F0}
+.big{font-size:22px;font-weight:500;margin-bottom:8px}
+.lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cp .lbl{color:#3C3489}.cg .lbl{color:#085041}.cy .lbl{color:#7A5800}.cr .lbl{color:#7A1E1E}.cb .lbl{color:#0F5E8A}
+.body{font-size:14px;line-height:1.9}
+.anl{display:flex;gap:12px;align-items:flex-start;background:var(--color-background-secondary);border-radius:12px;padding:14px;margin:12px 0}
+.ai{font-size:28px;flex-shrink:0}
+.at{font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.at b{color:var(--color-text-primary);font-weight:500}
+.steps{display:flex;flex-direction:column;gap:0;margin:10px 0}
+.step{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.step:last-child{padding-bottom:0}
+.sn{width:30px;height:30px;border-radius:50%;background:#7F77DD;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.step::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--color-border-secondary)}
+.step:last-child::before{display:none}
+.sb{flex:1;padding-top:3px}
+.st{font-size:14px;font-weight:500;margin-bottom:3px}
+.sd{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.cw{margin:12px 0;border-radius:12px;overflow:hidden;border:1px solid var(--color-border-tertiary)}
+.clf{background:var(--color-background-secondary);padding:7px 14px;font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--color-border-tertiary)}
+.ca{background:#1a1b2e;padding:14px;overflow-x:auto}
+.cline{display:flex;gap:10px;min-height:20px;margin-bottom:1px}
+.cline:hover{background:rgba(255,255,255,.03);border-radius:4px}
+.ln{font-family:var(--font-mono);font-size:12px;color:#45475a;min-width:22px;text-align:right;flex-shrink:0;user-select:none;line-height:1.8}
+.cd{font-family:var(--font-mono);font-size:12px;color:#cdd6f4;flex:1;white-space:pre;line-height:1.8}
+.kw{color:#cba6f7}.str{color:#a6e3a1}.cm{color:#585b70;font-style:italic}.an{color:#fab387}.cl2{color:#89dceb}.num{color:#f9e2af}
+.ep{border-top:1px solid var(--color-border-tertiary)}
+.er{display:flex;border-bottom:1px solid var(--color-border-tertiary)}
+.er:last-child{border-bottom:none}
+.et{background:#EEEDFE;color:#3C3489;font-family:var(--font-mono);font-size:11px;font-weight:500;padding:10px;min-width:50px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--color-border-tertiary);flex-shrink:0}
+.ed{padding:10px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.ed b{color:var(--color-text-primary);font-weight:500}
+.ed code{background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;font-family:var(--font-mono);font-size:11px}
+.nxt{margin-top:20px;padding:10px 24px;border-radius:24px;background:#7F77DD;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer}
+.nxt:hover{background:#6660CC}
+.emo{font-size:36px;display:block;margin-bottom:8px}
+.hl{border-left:3px solid #7F77DD;background:var(--color-background-secondary);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13px;line-height:1.8;color:var(--color-text-secondary)}
+.hl b{color:var(--color-text-primary);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.cmp{border-radius:12px;padding:14px;border:1px solid}
+.cbad{background:#FEECEC;border-color:#F5AAAA}.cgood{background:#E1F5EE;border-color:#A3DCC9}
+.cbad .clb{color:#7A1E1E;font-size:12px;font-weight:500;margin-bottom:6px}
+.cgood .clb{color:#085041;font-size:12px;font-weight:500;margin-bottom:6px}
+.cmp p{font-size:12px;line-height:1.7;color:var(--color-text-secondary)}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:12px 0}
+.fbox{background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:10px;padding:10px 14px;font-size:12px;text-align:center;flex-shrink:0}
+.fbox b{display:block;font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.fbox span{color:var(--color-text-secondary)}
+.farr{font-size:18px;color:var(--color-text-tertiary);padding:0 4px;flex-shrink:0}
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qb{text-align:left;padding:11px 16px;border-radius:10px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.qb:hover{border-color:#7F77DD;color:#3C3489}
+.qb.ok{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.qb.no{background:#FEECEC;border-color:#E24B4A;color:#7A1E1E}
+.qres{margin-top:10px;padding:12px;border-radius:10px;font-size:13px;display:none;line-height:1.7}
+.qres.show{display:block}
+.qres.ok{background:#E1F5EE;color:#085041}.qres.no{background:#FEECEC;color:#7A1E1E}
+.arch-box{border:1px solid var(--color-border-secondary);border-radius:12px;padding:14px;text-align:center;flex:1}
+.arch-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.arch-title{font-size:15px;font-weight:500;margin-bottom:4px}
+.arch-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.arch-row{display:flex;gap:10px;margin:12px 0;align-items:stretch}
+.term-row{display:flex;gap:0;padding:10px 0;border-bottom:1px solid var(--color-border-tertiary);align-items:flex-start}
+.term-row:last-child{border-bottom:none}
+.term-key{min-width:130px;font-size:12px;font-weight:500;color:#3C3489;flex-shrink:0;background:#EEEDFE;padding:4px 10px;border-radius:8px;margin-right:12px;text-align:center;align-self:flex-start;margin-top:2px}
+.term-val{font-size:13px;color:var(--color-text-secondary);line-height:1.8;flex:1}
+.term-val b{color:var(--color-text-primary);font-weight:500}
+.tree{background:#1a1b2e;border-radius:12px;padding:14px;font-family:var(--font-mono);font-size:12px;line-height:2.1;margin:10px 0;overflow-x:auto}
+.tw{color:#cdd6f4}.tp{color:#cba6f7}.tg{color:#a6e3a1}.ta{color:#f9e2af}.tgr{color:#585b70}
+.bp-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-tertiary);align-items:flex-start}
+.bp-row:last-child{border-bottom:none}
+.bp-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.bp-body{flex:1}
+.bp-title{font-size:14px;font-weight:500;margin-bottom:4px}
+.bp-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+</style>
+
+<div class="w">
+<div class="tabs">
+  <div class="tab on" onclick="go(0)">🏠 Start Here</div>
+  <div class="tab" onclick="go(1)">📡 Replication</div>
+  <div class="tab" onclick="go(2)">⚙️ Replication Agents</div>
+  <div class="tab" onclick="go(3)">🔄 Reverse & Flush</div>
+  <div class="tab" onclick="go(4)">🌍 MSM Intro</div>
+  <div class="tab" onclick="go(5)">📋 Live Copy & Blueprint</div>
+  <div class="tab" onclick="go(6)">🔃 Rollout Config</div>
+  <div class="tab" onclick="go(7)">✅ Quick Quiz</div>
+</div>
+
+<!-- PAGE 0: START HERE -->
+<div id="p0" class="pg on">
+  <div class="card cp">
+    <span class="emo">🤔</span>
+    <div class="big">What does Session 22 solve?</div>
+    <div class="body">Session 22 covers two big topics that answer two different questions every large AEM project faces:<br><br>
+    <b>Question 1:</b> I wrote and approved content on the author server. How does it get to the live website that real visitors see?<br>→ Answer: <b>Replication</b><br><br>
+    <b>Question 2:</b> My company has 50 country websites. How do I manage them all without copying every change 50 times?<br>→ Answer: <b>Multi-Site Management (MSM)</b></div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Two scenarios we use throughout this session</div>
+    <div class="body">
+    <b>Scenario A — Global Bank (Replication):</b> The bank's marketing team writes a new homepage banner on the author server. They click "Publish". How does that banner appear on the live website that millions of customers visit?<br><br>
+    <b>Scenario B — Global Retail Brand (MSM):</b> A clothing brand has websites for 40 countries: india.brand.com, us.brand.com, de.brand.com etc. The global team redesigns the navigation menu. How do they push that change to all 40 sites at once without touching each one manually?
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">What Session 22 covers</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Replication — author to publish</div>
+          <div class="sd">AEM has two kinds of servers: author (where editors work) and publish (what visitors see). Replication is the mechanism that moves content from author to publish when you click "Publish".</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Replication agents — the delivery trucks</div>
+          <div class="sd">A replication agent is a configuration that says: "send content to THIS server using THESE credentials via THIS protocol." Different agent types for different purposes.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Reverse replication & Flush agent</div>
+          <div class="sd">Reverse replication brings user-submitted content FROM publish back TO author. The Flush agent clears the CDN cache when content is updated so visitors see fresh content.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">MSM — managing 40 country sites from one master</div>
+          <div class="sd">Live Copy, Blueprint, Language Copy, Rollout Configuration — all explained from scratch with real examples.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="nxt" onclick="go(1)">Next: Replication →</button>
+</div>
+
+<!-- PAGE 1: REPLICATION -->
+<div id="p1" class="pg">
+  <div class="card cp">
+    <span class="emo">📡</span>
+    <div class="big">Replication — moving content from author to publish</div>
+    <div class="body">AEM always has at least two separate servers: the <b>Author</b> instance and the <b>Publish</b> instance. They are completely separate — different servers, different databases, different URLs. Replication is the bridge between them.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">📰</div>
+      <div class="at">
+        <b>Think of a newspaper.</b><br><br>
+        The <b>editorial office</b> is where journalists write, editors review, and the layout team formats the pages. It is not open to the public — only staff work there.<br><br>
+        The <b>printing press and distribution</b> is separate. Once the paper is approved, it gets sent to the printing press which makes thousands of copies for readers.<br><br>
+        <b>Author = editorial office.</b> Editors create and approve content here. Nobody else can see it.<br>
+        <b>Publish = printing press + distribution.</b> Readers visit here. Only approved content reaches here.<br>
+        <b>Replication = the process of sending the approved content from editorial to the press.</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Author vs Publish — what is different between them</div>
+    <div class="arch-row">
+      <div class="arch-box">
+        <div class="arch-label" style="color:#3C3489">Author Instance</div>
+        <div class="arch-title">:4502</div>
+        <div class="arch-desc">Where editors log in and create content. Has the full AEM authoring UI — page editor, DAM, Sites console, Workflow inbox. Only staff access. Usually one author server (or a small cluster). Content is NOT visible to the public.</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 8px;font-size:24px;color:var(--color-text-tertiary)">→</div>
+      <div class="arch-box" style="border-color:#1D9E75">
+        <div class="arch-label" style="color:#085041">Publish Instance</div>
+        <div class="arch-title">:4503</div>
+        <div class="arch-desc">The live website visitors access. No authoring UI — only serves content. Can have many publish servers behind a load balancer for performance. All public traffic goes here. Only replicated content appears here.</div>
+      </div>
+    </div>
+    <div class="hl" style="margin-top:12px"><b>Critical point:</b> When an editor writes a new page on Author, it does NOT automatically appear on Publish. The editor must explicitly click "Activate/Publish" to replicate it. Until then, the page exists only on Author — invisible to the public.</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">What happens step by step when you click "Publish Page"</div>
+    <div class="flow">
+      <div class="fbox" style="background:#EEEDFE;border-color:#C4C0F5"><b style="color:#3C3489">Editor clicks</b><span>"Publish"</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>Author serialises</b><span>page as a package</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>Replication Agent</b><span>sends it via HTTP</span></div>
+      <div class="farr">→</div>
+      <div class="fbox"><b>Publish receives</b><span>installs the package</span></div>
+      <div class="farr">→</div>
+      <div class="fbox" style="background:#E1F5EE;border-color:#A3DCC9"><b style="color:#085041">Page is live</b><span>visitors can see it</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">The Author serialises the page's JCR nodes into a content package (like a zip file of JCR data). The Replication Agent sends this package via HTTP POST to the Publish instance's <code>/bin/receive</code> endpoint. Publish installs the package — creating or updating the corresponding JCR nodes. The page is now live.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Triggering replication from Java code</div>
+    <div class="body" style="margin-bottom:10px">Real use case: your scheduled job finds all pages with <code>scheduledPublishDate</code> = today and activates them automatically at 8 AM without any human clicking Publish.</div>
+    <div class="cw">
+      <div class="clf">Programmatic replication — every line explained</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">import</span> com.day.cq.replication.Replicator;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import</span> com.day.cq.replication.ReplicationActionType;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"><span class="kw">import</span> com.day.cq.replication.ReplicationException;</span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="an">@Reference</span></span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"><span class="kw">private</span> <span class="cl2">Replicator</span> replicator;</span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"><span class="kw">public void</span> publishPage(<span class="cl2">String</span> pagePath,</span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">                         <span class="cl2">ResourceResolver</span> resolver) {</span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="kw">try</span> {</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        <span class="cl2">Session</span> session = resolver.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">        <span class="cm">// ACTIVATE = publish the page to all publish instances</span></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">        replicator.replicate(session,</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">            <span class="cl2">ReplicationActionType</span>.ACTIVATE,</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">            pagePath);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd">        log.info(<span class="str">"Page published: {}"</span>, pagePath);</span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    } <span class="kw">catch</span> (<span class="cl2">ReplicationException</span> e) {</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd">        log.error(<span class="str">"Failed to publish: {}"</span>, pagePath, e);</span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">}</span></div>
+        <div class="cline"><span class="ln">24</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">25</span><span class="cd"><span class="kw">public void</span> unpublishPage(<span class="cl2">String</span> pagePath,</span></div>
+        <div class="cline"><span class="ln">26</span><span class="cd">                           <span class="cl2">ResourceResolver</span> resolver) {</span></div>
+        <div class="cline"><span class="ln">27</span><span class="cd">    <span class="kw">try</span> {</span></div>
+        <div class="cline"><span class="ln">28</span><span class="cd">        replicator.replicate(</span></div>
+        <div class="cline"><span class="ln">29</span><span class="cd">            resolver.adaptTo(<span class="cl2">Session</span>.<span class="kw">class</span>),</span></div>
+        <div class="cline"><span class="ln">30</span><span class="cd">            <span class="cl2">ReplicationActionType</span>.DEACTIVATE,</span></div>
+        <div class="cline"><span class="ln">31</span><span class="cd">            pagePath);</span></div>
+        <div class="cline"><span class="ln">32</span><span class="cd">    } <span class="kw">catch</span> (<span class="cl2">ReplicationException</span> e) {</span></div>
+        <div class="cline"><span class="ln">33</span><span class="cd">        log.error(<span class="str">"Failed to unpublish: {}"</span>, pagePath, e);</span></div>
+        <div class="cline"><span class="ln">34</span><span class="cd">    }</span></div>
+        <div class="cline"><span class="ln">35</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L5-6</div><div class="ed"><b>@Reference Replicator replicator</b> — OSGi injects AEM's built-in Replication service. This is the same service that runs when an editor manually clicks Publish in the AEM UI. By @Referencing it, your background code can do exactly what a human editor does — publish or unpublish pages programmatically.</div></div>
+        <div class="er"><div class="et">L11</div><div class="ed"><b>resolver.adaptTo(Session.class)</b> — the Replicator.replicate() method needs a raw JCR Session (not a ResourceResolver). The session identifies WHO is doing the replication — your service user. That service user needs the <code>crx:replicate</code> privilege in its repoinit permissions, otherwise replication will be denied even if the code looks correct.</div></div>
+        <div class="er"><div class="et">L14-16</div><div class="ed"><b>replicator.replicate(session, ReplicationActionType.ACTIVATE, pagePath)</b> — three parameters:<br><br><b>session</b> — identifies the user performing replication. Must have crx:replicate permission.<br><b>ACTIVATE</b> — the action. ACTIVATE = send to publish (make it live). DEACTIVATE = remove from publish (take it offline). DELETE = delete from publish.<br><b>pagePath</b> — what to replicate. This can be a page path, an asset path, or any JCR node path. AEM replicates the node and all its children.</div></div>
+        <div class="er"><div class="et">L20-22</div><div class="ed"><b>catch ReplicationException</b> — ReplicationException is thrown when replication fails: the publish server is down, network error, the replication agent is disabled, or insufficient permissions. Always catch it and log with the path — so you know exactly which page failed to publish and why.</div></div>
+        <div class="er"><div class="et">L30</div><div class="ed"><b>ReplicationActionType.DEACTIVATE</b> — removes the page from the publish server. Used when content expires or is recalled. After DEACTIVATE, visiting that URL on the publish server returns 404. The page still exists on Author — it's just no longer pushed to Publish.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(2)">Next: Replication Agents →</button>
+</div>
+
+<!-- PAGE 2: REPLICATION AGENTS -->
+<div id="p2" class="pg">
+  <div class="card cp">
+    <span class="emo">⚙️</span>
+    <div class="big">Replication Agents — the delivery trucks</div>
+    <div class="body">A Replication Agent is a configuration on the Author server that defines: WHERE to send content (which publish server), HOW to send it (HTTP, credentials), and WHEN to retry if it fails. Think of it as a delivery truck company configuration — you tell it the destination address and the driver credentials.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">🚚</div>
+      <div class="at">
+        <b>Courier delivery configuration.</b><br><br>
+        You set up a courier account: "Deliver to: 123 Publisher Street. Driver login: replication-user. Transport: HTTPS. If delivery fails: retry 3 times, wait 10 minutes between attempts. Priority: urgent."<br><br>
+        Every time you hand a package (published content) to the system, it uses this configured courier account to deliver it. You don't re-configure the delivery each time — the agent handles it every time automatically.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Where replication agents live</div>
+    <div class="body" style="margin-bottom:10px">Agents are stored in the JCR at <code>/etc/replication/agents.author/</code>. You manage them in the AEM UI at <b>Tools → Replication → Agents on Author</b>. Each agent is a named node with configuration properties.</div>
+    <div class="tree">
+      <div><span class="tp">/etc/replication/agents.author/</span></div>
+      <div><span class="tw">├── </span><span class="tg">publish</span><span class="tgr">              ← default agent to publish server</span></div>
+      <div><span class="tw">├── </span><span class="tg">publish2</span><span class="tgr">             ← second publish server (if you have one)</span></div>
+      <div><span class="tw">├── </span><span class="ta">flush</span><span class="tgr">                ← dispatcher/CDN cache flush agent</span></div>
+      <div><span class="tw">└── </span><span class="tw">static</span><span class="tgr">               ← static export agent (less common)</span></div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The 4 key agent types — what each one does</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Default Agent (publish) — the main delivery</div>
+          <div class="sd">Sends content from Author to Publish. This is the agent that runs when you click "Activate Page". It POSTs to <code>http://publish-server:4503/bin/receive</code>. The most important agent — without it, nothing gets published. You need one of these per publish server. If you have 5 publish servers, you have 5 default agents pointing to each one.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Flush Agent — clearing the CDN/Dispatcher cache</div>
+          <div class="sd">Most AEM setups have a Dispatcher (CDN/cache layer) in front of Publish. When you publish a page, the Dispatcher still serves the OLD cached version to visitors. The Flush Agent tells the Dispatcher: "delete your cached copy of this page" — so the next visitor gets the fresh version. Covered in detail on the next tab.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Reverse Replication Agent — content coming back</div>
+          <div class="sd">Moves content FROM Publish back TO Author. Used when visitors submit forms or user-generated content on the live site. That data is first stored on Publish, then this agent pulls it back to Author for processing. Covered in detail on the next tab.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">Static Agent — exporting as static HTML files</div>
+          <div class="sd">Exports pages as flat .html files to a filesystem instead of to a live server. Used for archiving, regulatory compliance snapshots ("save this page exactly as it was on this date"), or feeding content to legacy systems that can't handle dynamic pages.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">What a replication agent config looks like</div>
+    <div class="body" style="margin-bottom:10px">When you open a replication agent in the AEM UI (Tools → Replication → Agents on Author → publish), you see these settings:</div>
+    <div class="cw">
+      <div class="clf">Key replication agent settings and what they mean</div>
+      <div class="ca">
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Enabled</span>         <span class="tg">= true</span>         <span class="tgr">← turn this off to pause replication without deleting the agent</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Transport URI</span>   <span class="tg">= http://publish-server:4503/bin/receive</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="tgr">                                      ↑ where to send. Change this per environment</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Transport User</span>  <span class="tg">= admin</span>        <span class="tgr">← who logs into the publish server to receive</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Transport Passwd</span><span class="tg">= admin</span>        <span class="tgr">← in production use a dedicated replication user</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Serialization</span>   <span class="tg">= Default</span>      <span class="tgr">← package format (Default = JCR data package)</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Retry Delay</span>     <span class="tg">= 60000</span>        <span class="tgr">← wait 60 seconds before retrying on failure</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Queue</span>           <span class="tg">= ordered</span>      <span class="tgr">← send pages in the order they were published</span></span></div>
+      </div>
+    </div>
+    <div class="hl"><b>Testing an agent:</b> Every agent has a "Test Connection" button. Click it and AEM sends a test ping to the publish server. If it returns "Replication test succeeded", your agent is correctly configured and the publish server is reachable. If it fails, check the Transport URI and credentials first.</div>
+  </div>
+
+  <button class="nxt" onclick="go(3)">Next: Reverse & Flush →</button>
+</div>
+
+<!-- PAGE 3: REVERSE AND FLUSH -->
+<div id="p3" class="pg">
+  <div class="card cp">
+    <span class="emo">🔄</span>
+    <div class="big">Reverse Replication & Flush Agent</div>
+    <div class="body">Two special replication scenarios that solve specific problems: content coming from visitors back to Author (reverse), and clearing the CDN cache after publishing (flush).</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Reverse Replication — content flowing backwards</div>
+    <div class="anl">
+      <div class="ai">📬</div>
+      <div class="at">
+        <b>Normal replication:</b> Author → Publish (one way)<br>
+        <b>Reverse replication:</b> Publish → Author (the other way)<br><br>
+        <b>When do you need this?</b> A visitor fills in a contact form on the live bank website. That form submission (their name, email, message) is saved as a JCR node on the Publish server under <code>/content/usergenerated</code>.<br><br>
+        But editors and CRM systems are on Author. How does that submission get to Author for processing? The Reverse Replication Agent periodically polls the Publish server, collects new nodes under <code>/content/usergenerated</code>, and copies them to Author.
+      </div>
+    </div>
+    <div class="hl"><b>Real-world example:</b> The bank's contact form. A customer fills in "Call me back about a home loan." That gets stored on Publish. The reverse replication agent picks it up within a minute and copies it to Author at <code>/content/usergenerated/contactforms/2024/01/15/submission-001</code>. A CRM workflow on Author then picks it up, creates a lead in Salesforce, and sends a confirmation email.</div>
+  </div>
+
+  <div class="card cr">
+    <div class="lbl">The Flush Agent — why your published page might still show old content</div>
+    <div class="anl">
+      <div class="ai">🗄️</div>
+      <div class="at">
+        <b>The problem:</b> Most production AEM setups have a Dispatcher (Apache web server acting as a CDN/cache) in front of the Publish servers. The first time a visitor requests a page, the Dispatcher fetches it from Publish and caches it as a static HTML file on disk. The next 10,000 visitors get that cached file directly — Publish is never hit.<br><br>
+        <b>The problem:</b> You publish a page update. It's on Publish. But the Dispatcher is still serving the old cached HTML file to all visitors. They see stale content.<br><br>
+        <b>The solution:</b> A Flush Agent. When you publish a page, after the content reaches Publish, the Flush Agent sends a DELETE request to the Dispatcher saying "delete your cached copy of this page." The next visitor gets fresh content from Publish.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">The complete publish + flush flow</div>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <div class="fbox" style="background:#EEEDFE;border-color:#C4C0F5"><b style="color:#3C3489">1. Editor publishes</b><span>/content/bank/home</span></div>
+        <div class="farr">→</div>
+        <div class="fbox"><b>2. Default Agent</b><span>sends to Publish server</span></div>
+        <div class="farr">→</div>
+        <div class="fbox" style="background:#E1F5EE;border-color:#A3DCC9"><b style="color:#085041">3. Page on Publish</b><span>updated ✓</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:40px">
+        <div class="farr" style="transform:rotate(90deg)">→</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <div class="fbox" style="background:#FFF8E7;border-color:#F5D78C"><b style="color:#7A5800">4. Flush Agent</b><span>sends DELETE to Dispatcher</span></div>
+        <div class="farr">→</div>
+        <div class="fbox"><b>5. Dispatcher deletes</b><span>cached HTML file</span></div>
+        <div class="farr">→</div>
+        <div class="fbox" style="background:#E1F5EE;border-color:#A3DCC9"><b style="color:#085041">6. Next visitor</b><span>gets fresh content ✓</span></div>
+      </div>
+    </div>
+    <div class="hl" style="margin-top:12px"><b>If the Flush Agent is missing or misconfigured:</b> Step 4-5 never happen. The Dispatcher keeps serving the old cached HTML. Visitors see stale content for hours until the cache expires naturally. This is one of the most common "why is my published content not showing up?" production problems.</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Flush Agent configuration — what makes it different</div>
+    <div class="cw">
+      <div class="clf">Flush Agent key settings</div>
+      <div class="ca">
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Transport URI</span>   <span class="tg">= http://dispatcher-host/dispatcher/invalidate.cache</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="tgr">                    ↑ NOT the publish server — the Dispatcher's invalidation endpoint</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">Serialization</span>   <span class="tg">= Dispatcher Flush</span>     <span class="tgr">← special type just for cache invalidation</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">HTTP Method</span>     <span class="tg">= GET</span>                   <span class="tgr">← uses GET with special headers</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="tgr">// Special headers added automatically by AEM:</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">CQ-Action</span>       <span class="tg">= Activate</span>              <span class="tgr">← what happened (publish/delete)</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">CQ-Handle</span>       <span class="tg">= /content/bank/homepage</span><span class="tgr">← which page was published</span></span></div>
+        <div class="cline"><span class="ln"> </span><span class="cd"><span class="ta">CQ-Path</span>         <span class="tg">= /content/bank/homepage</span><span class="tgr">← Dispatcher uses this to find and delete cached file</span></span></div>
+      </div>
+    </div>
+    <div class="body" style="margin-top:10px">The Dispatcher reads the <code>CQ-Handle</code> header to know which cached file to delete. It looks for the corresponding <code>.html</code> file in its cache directory and removes it. This is called "cache invalidation."</div>
+  </div>
+
+  <button class="nxt" onclick="go(4)">Next: MSM Intro →</button>
+</div>
+
+<!-- PAGE 4: MSM INTRO -->
+<div id="p4" class="pg">
+  <div class="card cp">
+    <span class="emo">🌍</span>
+    <div class="big">Multi-Site Management (MSM)</div>
+    <div class="body">MSM is AEM's system for managing many websites from a single master source. Changes to the master automatically push to all child sites. Each child site can keep some things unique (local language, local prices) while inheriting everything else.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">🍔</div>
+      <div class="at">
+        <b>A global fast food chain like McDonald's.</b><br><br>
+        Every McDonald's in the world uses the same: golden arches logo, same packaging design, same menu layout, same ordering system, same kitchen equipment configuration, same cleaning protocols.<br><br>
+        But each country has some local items: McAloo Tikki in India, McSpicy Paneer for vegetarians, Maharaja Mac instead of Big Mac. And prices are in local currency.<br><br>
+        <b>The global headquarters (Blueprint) defines everything shared. Each country restaurant (Live Copy) inherits from headquarters but can override local things.</b><br><br>
+        When headquarters changes the logo, ALL 40,000 restaurants get the new logo automatically — via a rollout. But the McAloo Tikki in India stays because it's a local override.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">The MSM vocabulary — 6 terms you must know</div>
+    <div class="term-row">
+      <div class="term-key">Blueprint</div>
+      <div class="term-val"><b>The master/source site.</b> This is where your global team creates and manages content. Think of it as headquarters. For the clothing brand, the English master site at <code>/content/brand/en</code> is the Blueprint. Everything created here can be pushed to all country sites.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Live Copy</div>
+      <div class="term-val"><b>A child site that is connected to the Blueprint.</b> The India site at <code>/content/brand/in/en</code> is a Live Copy of the Blueprint. It receives updates from the Blueprint through rollouts. Some of its content is locked (inherits from Blueprint) and some is local (overridden).</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Rollout</div>
+      <div class="term-val"><b>The action of pushing Blueprint changes to Live Copies.</b> When the global team updates the navigation in the Blueprint, they click "Rollout" — AEM pushes the changes to all Live Copies. Like a software update being pushed to all franchise locations.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Inheritance</div>
+      <div class="term-val"><b>A Live Copy property that is "locked" — it receives Blueprint changes automatically.</b> The navigation component is inherited — when Blueprint navigation changes, all Live Copies get the update on next rollout. An inherited property has a lock icon in the page editor.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Cancelled Inheritance</div>
+      <div class="term-val"><b>A Live Copy property that is "unlocked" — local editors have overridden it.</b> The India site's hero banner is locally edited — it shows the India-specific campaign image. Even when the Blueprint hero changes, India's banner stays as-is because inheritance is cancelled for that property.</div>
+    </div>
+    <div class="term-row">
+      <div class="term-key">Language Copy</div>
+      <div class="term-val"><b>A copy of content translated into another language.</b> Not exactly MSM Live Copy — more of a translation workflow. The English master is translated into Hindi, Tamil, German etc. AEM's Translation Integration Framework connects to translation services (Google Translate, manual translators) and manages the translated copies.</div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">The clothing brand's MSM structure</div>
+    <div class="tree">
+      <div><span class="tp">/content/brand/</span></div>
+      <div><span class="tw">├── </span><span class="ta">en/</span><span class="tgr">                    ← BLUEPRINT (master — global team works here)</span></div>
+      <div><span class="tw">│   ├── homepage</span></div>
+      <div><span class="tw">│   ├── products</span></div>
+      <div><span class="tw">│   └── about-us</span></div>
+      <div><span class="tw">│</span></div>
+      <div><span class="tw">├── </span><span class="tg">in/en/</span><span class="tgr">                 ← LIVE COPY of Blueprint (India site)</span></div>
+      <div><span class="tw">│   ├── homepage</span><span class="tgr">       ← inherits from Blueprint EXCEPT hero banner (local)</span></div>
+      <div><span class="tw">│   ├── products</span><span class="tgr">       ← inherits from Blueprint EXCEPT prices (local INR)</span></div>
+      <div><span class="tw">│   └── about-us</span><span class="tgr">       ← fully inherited — same content as Blueprint</span></div>
+      <div><span class="tw">│</span></div>
+      <div><span class="tw">├── </span><span class="tg">us/en/</span><span class="tgr">                 ← LIVE COPY of Blueprint (USA site)</span></div>
+      <div><span class="tw">│</span></div>
+      <div><span class="tw">└── </span><span class="tg">de/en/</span><span class="tgr">                 ← LIVE COPY of Blueprint (Germany site)</span></div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(5)">Next: Live Copy & Blueprint →</button>
+</div>
+
+<!-- PAGE 5: LIVE COPY AND BLUEPRINT -->
+<div id="p5" class="pg">
+  <div class="card cp">
+    <span class="emo">📋</span>
+    <div class="big">Live Copy and Blueprint — deep dive</div>
+    <div class="body">Now let's go deeper into exactly how a Blueprint and Live Copy are set up, what the relationship looks like in the JCR, and how inheritance works at the property level.</div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">How to create a Blueprint — step by step (UI)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">Create the master site</div>
+          <div class="sd">Build your master site normally at <code>/content/brand/en</code>. This is just a regular AEM site at this point — nothing special yet.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">Create a Blueprint Configuration</div>
+          <div class="sd">Go to <b>Tools → Sites → Blueprints</b>. Click Create. Point it to <code>/content/brand/en</code>. Give it a name: "Brand Master". Now AEM knows this path is a Blueprint — a source that other sites can be Live Copies of.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">Create a Live Copy from the Blueprint</div>
+          <div class="sd">Select the Blueprint site in Sites console → Click "Create" → "Live Copy". Choose the destination path (<code>/content/brand/in</code>). Choose which Rollout Configuration to use. AEM copies the entire Blueprint structure to the new path and creates live relationship metadata.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sb">
+          <div class="st">The Live Copy relationship is stored in the JCR</div>
+          <div class="sd">AEM stores the relationship as JCR properties on the Live Copy's jcr:content node. These properties tell AEM: "this page is connected to this Blueprint path, using this rollout config, with these properties cancelled from inheritance."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">What the Live Copy relationship looks like in JCR</div>
+    <div class="tree">
+      <div><span class="tp">/content/brand/in/en/homepage/jcr:content</span></div>
+      <div><span class="tgr">  ↑ the Live Copy page's content node</span></div>
+      <div></div>
+      <div><span class="ta">  cq:isDeepCopy              = true</span></div>
+      <div><span class="ta">  cq:master                  = "/content/brand/en/homepage"</span></div>
+      <div><span class="tgr">  ↑ which Blueprint page this is connected to</span></div>
+      <div></div>
+      <div><span class="ta">  cq:rolloutConfigs          = ["/libs/msm/wcm/rolloutconfigs/default"]</span></div>
+      <div><span class="tgr">  ↑ which rollout config controls what syncs</span></div>
+      <div></div>
+      <div><span class="ta">  cq:propertyInheritanceCancelled = ["heroImage", "heroBannerText"]</span></div>
+      <div><span class="tgr">  ↑ these two properties are LOCAL — blueprint changes won't override them</span></div>
+      <div></div>
+      <div><span class="tg">  jcr:title                  = "Homepage"</span><span class="tgr">             ← inherited from Blueprint</span></div>
+      <div><span class="tg">  navigationTitle            = "Home"</span><span class="tgr">                  ← inherited from Blueprint</span></div>
+      <div><span class="tw">  heroImage                  = "/content/dam/brand/in/hero.jpg"</span><span class="tgr"> ← LOCAL (cancelled)</span></div>
+      <div><span class="tw">  heroBannerText             = "India's favourite fashion brand"</span><span class="tgr"> ← LOCAL</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">The <code>cq:propertyInheritanceCancelled</code> array is the key. Any property name listed here is treated as local — Blueprint rollouts will not overwrite it. Everything else is inherited and overwritten on each rollout.</div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">What editors see when editing a Live Copy page</div>
+    <div class="anl">
+      <div class="ai">🔒</div>
+      <div class="at">
+        When a local editor in India opens the homepage in the Page Editor:<br><br>
+        <b>Inherited properties</b> (like Navigation Title, Page Title, SEO metadata) have a <b>lock icon 🔒</b> next to them. The field is greyed out — the editor cannot change it. It will be updated by the next Blueprint rollout.<br><br>
+        <b>Cancelled-inheritance properties</b> (like Hero Image, Hero Text) have an <b>unlock icon 🔓</b>. The editor can freely edit these. Blueprint rollouts will not touch them.<br><br>
+        An editor can also manually <b>cancel inheritance</b> on any field by clicking the lock icon and confirming. This immediately makes that field local and editable.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Language Copy — translation workflow</div>
+    <div class="body" style="margin-bottom:10px">A Language Copy is created from the master language version (English) and translated into other languages. The site structure is usually:</div>
+    <div class="tree">
+      <div><span class="tp">/content/brand/</span></div>
+      <div><span class="tw">├── </span><span class="ta">en/</span><span class="tgr">   ← master (English) — all content created here first</span></div>
+      <div><span class="tw">├── </span><span class="tg">hi/</span><span class="tgr">   ← Hindi translation of en/</span></div>
+      <div><span class="tw">├── </span><span class="tg">ta/</span><span class="tgr">   ← Tamil translation of en/</span></div>
+      <div><span class="tw">└── </span><span class="tg">de/</span><span class="tgr">   ← German translation of en/</span></div>
+    </div>
+    <div class="body" style="margin-top:10px">When English content changes, AEM's Translation Integration Framework (TIF) detects the change, creates a Translation Job, sends the new text to a translation service (human translators or machine translation like Google Translate), receives the translated text back, and updates the language copies automatically.</div>
+  </div>
+
+  <button class="nxt" onclick="go(6)">Next: Rollout Config →</button>
+</div>
+
+<!-- PAGE 6: ROLLOUT CONFIG -->
+<div id="p6" class="pg">
+  <div class="card cp">
+    <span class="emo">🔃</span>
+    <div class="big">Rollout Configuration — controlling what syncs</div>
+    <div class="body">A Rollout Configuration is a set of rules that controls: WHEN does a rollout happen (what triggers it) and WHAT gets synced (which properties, which components). You can have different rollout configs for different scenarios.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Real life analogy</div>
+    <div class="anl">
+      <div class="ai">📦</div>
+      <div class="at">
+        <b>Think of a software update policy for a company's computers.</b><br><br>
+        "Critical security patches: install immediately on all computers."<br>
+        "New features: install only on dev team computers first."<br>
+        "Design theme updates: install on all computers but preserve user's custom wallpaper."<br><br>
+        Each rule says: what gets updated, when, and what is preserved locally. That's a Rollout Configuration — it defines the update policy between Blueprint and Live Copies.
+      </div>
+    </div>
+  </div>
+
+  <div class="card cy">
+    <div class="lbl">Rollout trigger types — when does rollout happen?</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sb">
+          <div class="st">On Modification (manual)</div>
+          <div class="sd">Rollout only happens when someone explicitly clicks the "Rollout" button in the Blueprint's page properties or the Sites console. Good for: design changes, navigation updates where you want to control exactly when the push happens.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sb">
+          <div class="st">On Activation (publish)</div>
+          <div class="sd">Rollout automatically triggers when a Blueprint page is published (Activated). Good for: content that should immediately go to all country sites when the master content is approved and published.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sb">
+          <div class="st">On Deactivation / On Deletion</div>
+          <div class="sd">Rollout triggers when a Blueprint page is unpublished or deleted. Ensures that if the global team deletes a product from the master, all country sites also remove it — no orphaned content left on Live Copies.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cg">
+    <div class="lbl">Rollout actions (sync handlers) — what gets synced</div>
+    <div class="body" style="margin-bottom:10px">Within a rollout config, you choose which "sync handlers" (actions) run. Each handler controls a specific type of content synchronisation:</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn" style="background:#085041">A</div>
+        <div class="sb">
+          <div class="st">contentUpdate — syncs content and properties</div>
+          <div class="sd">The main one. Copies all non-cancelled properties from Blueprint pages to Live Copy pages. This is what updates the navigation title, SEO metadata, component configurations etc.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#085041">B</div>
+        <div class="sb">
+          <div class="st">contentCopy — creates missing pages</div>
+          <div class="sd">If the Blueprint has a new page that doesn't exist in the Live Copy yet, this handler creates it. Without this, new Blueprint pages would never appear in Live Copies.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#085041">C</div>
+        <div class="sb">
+          <div class="st">referencesUpdate — fixes internal links</div>
+          <div class="sd">When a Blueprint page has an internal link pointing to another Blueprint page, this handler automatically updates the link in the Live Copy to point to the Live Copy equivalent. Without this, all internal links in Live Copies would point back to the Blueprint.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#085041">D</div>
+        <div class="sb">
+          <div class="st">orderChildren — maintains page order</div>
+          <div class="sd">Ensures the page order in Live Copies matches the Blueprint. If Blueprint reorders its pages (e.g. moves "About Us" before "Products" in the navigation), this handler applies the same order to all Live Copies.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cb">
+    <div class="lbl">Triggering rollout from Java code</div>
+    <div class="cw">
+      <div class="clf">Programmatic rollout — every line explained</div>
+      <div class="ca">
+        <div class="cline"><span class="ln">1</span><span class="cd"><span class="kw">import</span> com.day.cq.wcm.msm.api.RolloutManager;</span></div>
+        <div class="cline"><span class="ln">2</span><span class="cd"><span class="kw">import</span> com.day.cq.wcm.msm.api.RolloutManager.RolloutParams;</span></div>
+        <div class="cline"><span class="ln">3</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">4</span><span class="cd"><span class="an">@Reference</span></span></div>
+        <div class="cline"><span class="ln">5</span><span class="cd"><span class="kw">private</span> <span class="cl2">RolloutManager</span> rolloutManager;</span></div>
+        <div class="cline"><span class="ln">6</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">7</span><span class="cd"><span class="kw">public void</span> rolloutBlueprintPage(<span class="cl2">ResourceResolver</span> resolver) {</span></div>
+        <div class="cline"><span class="ln">8</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">9</span><span class="cd">    <span class="cm">// Get the Blueprint page resource</span></span></div>
+        <div class="cline"><span class="ln">10</span><span class="cd">    <span class="cl2">Resource</span> blueprintPage = resolver.getResource(</span></div>
+        <div class="cline"><span class="ln">11</span><span class="cd">        <span class="str">"/content/brand/en/homepage"</span>);</span></div>
+        <div class="cline"><span class="ln">12</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">13</span><span class="cd">    <span class="cm">// Configure the rollout parameters</span></span></div>
+        <div class="cline"><span class="ln">14</span><span class="cd">    <span class="cl2">RolloutParams</span> params = <span class="kw">new</span> <span class="cl2">RolloutParams</span>();</span></div>
+        <div class="cline"><span class="ln">15</span><span class="cd">    params.setMaster(blueprintPage);</span></div>
+        <div class="cline"><span class="ln">16</span><span class="cd">    params.setDeep(<span class="kw">true</span>);</span></div>
+        <div class="cline"><span class="ln">17</span><span class="cd">    params.setReset(<span class="kw">false</span>);</span></div>
+        <div class="cline"><span class="ln">18</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">19</span><span class="cd">    <span class="cm">// Execute the rollout</span></span></div>
+        <div class="cline"><span class="ln">20</span><span class="cd">    rolloutManager.rollout(params);</span></div>
+        <div class="cline"><span class="ln">21</span><span class="cd"></span></div>
+        <div class="cline"><span class="ln">22</span><span class="cd">    log.info(<span class="str">"Rollout completed for blueprint homepage"</span>);</span></div>
+        <div class="cline"><span class="ln">23</span><span class="cd">}</span></div>
+      </div>
+      <div class="ep">
+        <div class="er"><div class="et">L4-5</div><div class="ed"><b>@Reference RolloutManager rolloutManager</b> — AEM's MSM rollout engine. OSGi injects it automatically. It handles finding all Live Copies of a Blueprint, applying the rollout configuration rules, and syncing each Live Copy one by one.</div></div>
+        <div class="er"><div class="et">L14-17</div><div class="ed"><b>RolloutParams</b> — a configuration object for this specific rollout.<br><br><b>setMaster(blueprintPage)</b> — which Blueprint page to roll out FROM. AEM finds all Live Copies of this specific page and syncs them.<br><br><b>setDeep(true)</b> — rollout this page AND all its children recursively. For a homepage this would include all sub-pages. <code>false</code> = only this one page, not children.<br><br><b>setReset(false)</b> — if false: merge changes (preserve local overrides). If true: full reset — overwrite everything in the Live Copy including locally-edited content. Very destructive — rarely used unless you explicitly want to wipe local customisations.</div></div>
+        <div class="er"><div class="et">L20</div><div class="ed"><b>rolloutManager.rollout(params)</b> — triggers the rollout synchronously. For a deep rollout of a large site with 40 Live Copies and 1,000 pages, this can take several minutes. In production, this is typically done asynchronously via a background job — triggered by a workflow or scheduled task — not in a synchronous request handler where it would timeout.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card cr">
+    <div class="lbl">Common MSM mistakes</div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn" style="background:#A32D2D">!</div>
+        <div class="sb">
+          <div class="st">Accidentally cancelling inheritance on the wrong property</div>
+          <div class="sd">An editor in India accidentally clicks the lock icon on the "SEO Title" field — now all future global SEO updates will not apply to India. This is a silent problem — no error, just the field stops syncing. Always educate editors about what the lock/unlock icons mean.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#A32D2D">!</div>
+        <div class="sb">
+          <div class="st">Running deep rollout on a large site synchronously</div>
+          <div class="sd">Rolling out 40 Live Copies × 500 pages = 20,000 page updates. If done synchronously in a request thread, it times out (30+ minutes). Always trigger large rollouts as a background workflow or scheduled job.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="sn" style="background:#A32D2D">!</div>
+        <div class="sb">
+          <div class="st">Not configuring referencesUpdate in the rollout config</div>
+          <div class="sd">Without referencesUpdate, all internal links in Live Copies point to Blueprint paths. A navigation link on the India site says "go to /content/brand/en/products" instead of "/content/brand/in/en/products" — taking Indian visitors to the English master site.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="nxt" onclick="go(7)">Next: Quick Quiz →</button>
+</div>
+
+<!-- PAGE 7: QUIZ -->
+<div id="p7" class="pg">
+  <div class="card cp">
+    <span class="emo">✅</span>
+    <div class="big">Quick Quiz — check your understanding</div>
+    <div class="body">Eight questions covering both Replication and MSM. Tap what you think is right.</div>
+  </div>
+
+  <div class="card" id="q1">
+    <div class="quiz-q">1. What is the difference between the Author and Publish instances?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(1,'a')">A. Author is faster. Publish is slower.</button>
+      <button class="qb" onclick="ans(1,'b')">B. Author is where editors create content (not public). Publish is the live website visitors access. They are separate servers.</button>
+      <button class="qb" onclick="ans(1,'c')">C. Author is for developers. Publish is for editors.</button>
+    </div>
+    <div class="qres" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2">
+    <div class="quiz-q">2. An editor publishes a page. Visitors still see the old version for an hour. What is the most likely cause?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(2,'a')">A. The Default Replication Agent is misconfigured</button>
+      <button class="qb" onclick="ans(2,'b')">B. The Flush Agent is not configured — the Dispatcher cache was not cleared after publishing</button>
+      <button class="qb" onclick="ans(2,'c')">C. The Publish instance is down</button>
+    </div>
+    <div class="qres" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3">
+    <div class="quiz-q">3. Which ReplicationActionType do you use to REMOVE a page from the live publish server?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(3,'a')">A. ReplicationActionType.DELETE</button>
+      <button class="qb" onclick="ans(3,'b')">B. ReplicationActionType.DEACTIVATE</button>
+      <button class="qb" onclick="ans(3,'c')">C. ReplicationActionType.REMOVE</button>
+    </div>
+    <div class="qres" id="qr3"></div>
+  </div>
+
+  <div class="card" id="q4">
+    <div class="quiz-q">4. What is "Reverse Replication" used for?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(4,'a')">A. Publishing content from Author to Publish in reverse order</button>
+      <button class="qb" onclick="ans(4,'b')">B. Moving user-submitted content (like form submissions) from Publish back to Author for processing</button>
+      <button class="qb" onclick="ans(4,'c')">C. Restoring deleted content from Publish to Author</button>
+    </div>
+    <div class="qres" id="qr4"></div>
+  </div>
+
+  <div class="card" id="q5">
+    <div class="quiz-q">5. In MSM, what is a "Blueprint"?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(5,'a')">A. A report showing which pages have been published</button>
+      <button class="qb" onclick="ans(5,'b')">B. The master/source site that other Live Copy sites are connected to and inherit content from</button>
+      <button class="qb" onclick="ans(5,'c')">C. A template for creating new pages</button>
+    </div>
+    <div class="qres" id="qr5"></div>
+  </div>
+
+  <div class="card" id="q6">
+    <div class="quiz-q">6. A property on a Live Copy page has "cancelled inheritance." What does this mean?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(6,'a')">A. The property is deleted from the Live Copy</button>
+      <button class="qb" onclick="ans(6,'b')">B. The property is locally edited — Blueprint rollouts will NOT overwrite this value. It stays as the local editor set it.</button>
+      <button class="qb" onclick="ans(6,'c')">C. The property cannot be edited by anyone</button>
+    </div>
+    <div class="qres" id="qr6"></div>
+  </div>
+
+  <div class="card" id="q7">
+    <div class="quiz-q">7. What does setDeep(true) do in RolloutParams?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(7,'a')">A. Rolls out only the one Blueprint page specified</button>
+      <button class="qb" onclick="ans(7,'b')">B. Rolls out the Blueprint page AND all its child pages recursively to all Live Copies</button>
+      <button class="qb" onclick="ans(7,'c')">C. Rolls out only to Live Copies that are deep copies</button>
+    </div>
+    <div class="qres" id="qr7"></div>
+  </div>
+
+  <div class="card" id="q8">
+    <div class="quiz-q">8. Which rollout sync handler fixes internal links in Live Copies so they point to Live Copy paths instead of Blueprint paths?</div>
+    <div class="quiz-opts">
+      <button class="qb" onclick="ans(8,'a')">A. contentUpdate</button>
+      <button class="qb" onclick="ans(8,'b')">B. orderChildren</button>
+      <button class="qb" onclick="ans(8,'c')">C. referencesUpdate</button>
+    </div>
+    <div class="qres" id="qr8"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ad={
+  1:{c:'b',e:"✅ Correct! Author and Publish are completely separate servers with separate databases. Editors log into Author to create content. The public visits Publish. Content only reaches Publish when an editor explicitly publishes it through replication."},
+  2:{c:'b',e:"✅ Correct! The Default Replication Agent sent the page to Publish correctly — but the Dispatcher (CDN cache) still has the old cached HTML. The Flush Agent is responsible for telling the Dispatcher to delete its cached copy after every publish. Without it, visitors see stale content until the cache expires naturally."},
+  3:{c:'b',e:"✅ Correct! DEACTIVATE removes a page from the Publish server — visitors get 404 after this. The page still exists on Author. DELETE permanently removes it from both Author and Publish. REMOVE is not a valid ReplicationActionType."},
+  4:{c:'b',e:"✅ Correct! Reverse Replication moves content from Publish back to Author. The most common use case: a visitor submits a form on the live website, that data is stored on Publish under /content/usergenerated, and the Reverse Replication Agent copies it to Author where workflows and CRM integrations can process it."},
+  5:{c:'b',e:"✅ Correct! A Blueprint is the master/source site. It is the McDonald's headquarters — all country sites (Live Copies) are connected to it and inherit its content. When the Blueprint changes and you roll out, all Live Copies receive the update."},
+  6:{c:'b',e:"✅ Correct! Cancelled inheritance means a local editor unlocked that property and edited it locally. The value is now stored on the Live Copy node itself. On every rollout, AEM checks cq:propertyInheritanceCancelled — any property listed there is skipped during sync, preserving the local value."},
+  7:{c:'b',e:"✅ Correct! setDeep(true) means 'rollout this page AND recursively rollout all child pages.' For a homepage with 500 sub-pages, this updates all 500 pages across all Live Copies. setDeep(false) would only update the homepage itself — useful when you only want to push a specific page change, not an entire section."},
+  8:{c:'c',e:"✅ Correct! referencesUpdate is the sync handler that scans all properties in the Live Copy for references (paths) pointing to Blueprint paths and rewrites them to point to the corresponding Live Copy paths. Without it, navigation links and component references would point to the Blueprint site — sending visitors to the master English site instead of their local country site."}
+};
+function ans(q,choice){
+  const a=ad[q];
+  const btns=document.querySelectorAll('#q'+q+' .qb');
+  const letters=['a','b','c'];
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(letters[i]===a.c)b.classList.add('ok');
+    else if(letters[i]===choice&&choice!==a.c)b.classList.add('no');
+  });
+  const r=document.getElementById('qr'+q);
+  r.className='qres show '+(choice===a.c?'ok':'no');
+  r.innerHTML=(choice===a.c?'':' Not quite. ')+a.e;
+}
+function go(i){
+  document.querySelectorAll('.pg').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+}
+</script>

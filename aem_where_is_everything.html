@@ -1,0 +1,652 @@
+
+<h2 class="sr-only">AEM interactive location guide — click any topic in the left panel to see exactly which folder, which file, which properties, and how it connects to the rest of AEM</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{display:flex;height:680px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;font-size:13px}
+.nav{width:200px;min-width:200px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;display:flex;flex-direction:column}
+.nav::-webkit-scrollbar{width:3px}.nav::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.nav-hd{padding:12px 14px 8px;font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.07em;border-bottom:0.5px solid var(--color-border-tertiary)}
+.grp{padding:10px 14px 4px;font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em}
+.ni{display:flex;align-items:center;gap:7px;padding:7px 14px;cursor:pointer;border-left:2px solid transparent;color:var(--color-text-secondary);line-height:1.3;transition:background .1s}
+.ni:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.ni.on{background:var(--color-background-primary);color:var(--color-text-info);border-left-color:var(--color-border-info);font-weight:500}
+.ni i{font-size:14px;flex-shrink:0}
+.detail{flex:1;overflow-y:auto;padding:20px 22px}
+.detail::-webkit-scrollbar{width:4px}.detail::-webkit-scrollbar-thumb{background:var(--color-border-secondary)}
+.pg{display:none}.pg.on{display:block}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 10px;border-radius:20px;background:var(--color-background-info);color:var(--color-text-info);margin-bottom:10px}
+.badge.g{background:var(--color-background-success);color:var(--color-text-success)}
+.badge.w{background:var(--color-background-warning);color:var(--color-text-warning)}
+.ttl{font-size:17px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;line-height:1.3}
+.sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6}
+.lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin:18px 0 7px}
+.lbl:first-of-type{margin-top:0}
+.pbox{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 13px;font-family:var(--font-mono);font-size:11.5px;margin-bottom:12px;display:flex;flex-direction:column;gap:5px}
+.pr{display:flex;gap:8px;align-items:baseline}
+.pk{color:var(--color-text-tertiary);font-size:10px;min-width:54px;flex-shrink:0}
+.pv{color:var(--color-text-info);word-break:break-all;line-height:1.5}
+.pv.gr{color:var(--color-text-success)}
+.rows{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:130px minmax(0,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;font-size:12.5px}
+.rk{background:var(--color-background-secondary);padding:8px 10px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);border-right:0.5px solid var(--color-border-tertiary);word-break:break-all;line-height:1.5}
+.rv{padding:8px 11px;color:var(--color-text-primary);line-height:1.55}
+.rv code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.tip{border-left:2px solid var(--color-border-success);padding:9px 12px;border-radius:0;background:var(--color-background-success);color:var(--color-text-success);font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.warn{border-left:2px solid var(--color-border-warning);padding:9px 12px;border-radius:0;background:var(--color-background-warning);color:var(--color-text-warning);font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.steps{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.st{display:flex;gap:9px;align-items:flex-start}
+.sn{width:20px;height:20px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.st p{font-size:12.5px;color:var(--color-text-secondary);line-height:1.55;margin:0}
+.st p code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:3px;color:var(--color-text-info)}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.fb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 11px;font-size:12px;color:var(--color-text-primary)}
+.fb.bl{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.fa{color:var(--color-text-tertiary);font-size:13px}
+</style>
+
+<div class="wrap">
+<nav class="nav">
+  <div class="nav-hd"><i class="ti ti-map" aria-hidden="true" style="font-size:13px;margin-right:5px"></i>AEM map</div>
+  <div class="grp">Setup</div>
+  <div class="ni on" onclick="go('archetype')" id="n-archetype"><i class="ti ti-terminal" aria-hidden="true"></i>Maven archetype</div>
+  <div class="ni" onclick="go('folders')" id="n-folders"><i class="ti ti-folder" aria-hidden="true"></i>Project folders</div>
+  <div class="ni" onclick="go('deploy')" id="n-deploy"><i class="ti ti-upload" aria-hidden="true"></i>Build &amp; deploy</div>
+  <div class="grp">AEM UI</div>
+  <div class="ni" onclick="go('sites')" id="n-sites"><i class="ti ti-layout" aria-hidden="true"></i>Sites console</div>
+  <div class="ni" onclick="go('crxde')" id="n-crxde"><i class="ti ti-code" aria-hidden="true"></i>CRXDE Lite</div>
+  <div class="ni" onclick="go('osgi-console')" id="n-osgi-console"><i class="ti ti-settings" aria-hidden="true"></i>OSGi console</div>
+  <div class="ni" onclick="go('packmgr')" id="n-packmgr"><i class="ti ti-package" aria-hidden="true"></i>Package manager</div>
+  <div class="grp">Components</div>
+  <div class="ni" onclick="go('comp-folder')" id="n-comp-folder"><i class="ti ti-folder-open" aria-hidden="true"></i>Component folder</div>
+  <div class="ni" onclick="go('content-xml')" id="n-content-xml"><i class="ti ti-file-description" aria-hidden="true"></i>.content.xml</div>
+  <div class="ni" onclick="go('htl')" id="n-htl"><i class="ti ti-file-code" aria-hidden="true"></i>HTL file</div>
+  <div class="ni" onclick="go('dialog')" id="n-dialog"><i class="ti ti-layout-bottombar" aria-hidden="true"></i>_cq_dialog</div>
+  <div class="ni" onclick="go('editconfig')" id="n-editconfig"><i class="ti ti-edit" aria-hidden="true"></i>_cq_editConfig</div>
+  <div class="grp">Sling Models</div>
+  <div class="ni" onclick="go('model-file')" id="n-model-file"><i class="ti ti-file-type-java" aria-hidden="true"></i>Model Java file</div>
+  <div class="ni" onclick="go('model-ann')" id="n-model-ann"><i class="ti ti-tag" aria-hidden="true"></i>Which annotation?</div>
+  <div class="ni" onclick="go('model-pom')" id="n-model-pom"><i class="ti ti-adjustments" aria-hidden="true"></i>POM changes</div>
+  <div class="grp">Templates</div>
+  <div class="ni" onclick="go('editable-tmpl')" id="n-editable-tmpl"><i class="ti ti-template" aria-hidden="true"></i>Editable templates</div>
+  <div class="ni" onclick="go('page-comp')" id="n-page-comp"><i class="ti ti-browser" aria-hidden="true"></i>Page component</div>
+  <div class="ni" onclick="go('policy')" id="n-policy"><i class="ti ti-shield" aria-hidden="true"></i>Policies</div>
+  <div class="grp">ClientLibs</div>
+  <div class="ni" onclick="go('clientlib-node')" id="n-clientlib-node"><i class="ti ti-paint" aria-hidden="true"></i>ClientLib node</div>
+  <div class="ni" onclick="go('clientlib-use')" id="n-clientlib-use"><i class="ti ti-link" aria-hidden="true"></i>Include in HTL</div>
+  <div class="grp">OSGi</div>
+  <div class="ni" onclick="go('osgi-service')" id="n-osgi-service"><i class="ti ti-plug" aria-hidden="true"></i>Service Java file</div>
+  <div class="ni" onclick="go('osgi-config')" id="n-osgi-config"><i class="ti ti-file-settings" aria-hidden="true"></i>Config .cfg.json</div>
+  <div class="ni" onclick="go('runmode')" id="n-runmode"><i class="ti ti-server" aria-hidden="true"></i>Runmode folders</div>
+  <div class="grp">Servlets</div>
+  <div class="ni" onclick="go('servlet-path')" id="n-servlet-path"><i class="ti ti-route" aria-hidden="true"></i>Path servlet</div>
+  <div class="ni" onclick="go('servlet-res')" id="n-servlet-res"><i class="ti ti-components" aria-hidden="true"></i>Resource-type servlet</div>
+  <div class="grp">Fragments</div>
+  <div class="ni" onclick="go('cf-model')" id="n-cf-model"><i class="ti ti-database" aria-hidden="true"></i>CF model</div>
+  <div class="ni" onclick="go('cf-instance')" id="n-cf-instance"><i class="ti ti-file-text" aria-hidden="true"></i>CF instance</div>
+  <div class="ni" onclick="go('xf')" id="n-xf"><i class="ti ti-layers-intersect" aria-hidden="true"></i>Experience fragment</div>
+  <div class="grp">JCR</div>
+  <div class="ni" onclick="go('jcr-paths')" id="n-jcr-paths"><i class="ti ti-sitemap" aria-hidden="true"></i>Key JCR paths</div>
+  <div class="ni" onclick="go('jcr-props')" id="n-jcr-props"><i class="ti ti-list-details" aria-hidden="true"></i>Important properties</div>
+</nav>
+
+<div class="detail">
+
+<div class="pg on" id="p-archetype">
+<span class="badge">Setup</span>
+<div class="ttl">Maven archetype — generate your whole project</div>
+<div class="sub">Run this one command in your terminal. It creates every module, folder, and config file you need.</div>
+<div class="lbl">Where to run it</div>
+<div class="pbox"><div class="pr"><span class="pk">location</span><span class="pv">Your terminal — any folder you want your project created in</span></div><div class="pr"><span class="pk">prereqs</span><span class="pv">Java 11, Maven 3.6+, AEM running on localhost:4502</span></div></div>
+<div class="lbl">The command</div>
+<div class="pbox"><div class="pr"><span class="pk">run</span><span class="pv">mvn -B archetype:generate -D archetypeGroupId=com.adobe.aem -D archetypeArtifactId=aem-project-archetype -D archetypeVersion=48 -D appTitle="My Site" -D appId="mysite" -D groupId="com.mysite" -D aemVersion="6.5.0"</span></div></div>
+<div class="lbl">What each parameter means</div>
+<div class="rows">
+<div class="row"><div class="rk">appTitle</div><div class="rv">Human name shown in AEM — e.g. <code>"Nike India"</code></div></div>
+<div class="row"><div class="rk">appId</div><div class="rv">Short lowercase ID used in folder names — e.g. <code>"nike"</code>. No spaces, no capitals.</div></div>
+<div class="row"><div class="rk">groupId</div><div class="rv">Your Java package base — e.g. <code>"com.nike"</code>. Becomes your package prefix.</div></div>
+<div class="row"><div class="rk">aemVersion</div><div class="rv"><code>"6.5.0"</code> for AEM 6.5, or <code>"cloud"</code> for AEM as Cloud Service</div></div>
+</div>
+<div class="tip">After it finishes, open the folder in VS Code: <code>code ./mysite</code></div>
+</div>
+
+<div class="pg" id="p-folders">
+<span class="badge">Setup</span>
+<div class="ttl">Project folders — one job per module</div>
+<div class="sub">The archetype generates these modules. Every file type has exactly one correct home.</div>
+<div class="lbl">Module → what it contains → where it lands in AEM</div>
+<div class="rows">
+<div class="row"><div class="rk">core/src/main/java/</div><div class="rv">All Java files — Sling Models, OSGi Services, Servlets. Deploys as a .jar OSGi bundle.</div></div>
+<div class="row"><div class="rk">ui.apps/…/apps/mysite/</div><div class="rv">Components (HTL + dialogs), ClientLibs, static templates. Deploys to <code>/apps/mysite/</code> in JCR.</div></div>
+<div class="row"><div class="rk">ui.content/…/content/</div><div class="rv">Sample page content. Deploys to <code>/content/mysite/</code> in JCR.</div></div>
+<div class="row"><div class="rk">ui.content/…/conf/</div><div class="rv">Editable templates, CF models, policies. Deploys to <code>/conf/mysite/</code> in JCR.</div></div>
+<div class="row"><div class="rk">ui.config/…/osgiconfig/</div><div class="rv">OSGi .cfg.json config files per environment. Deploys as OSGi configuration.</div></div>
+<div class="row"><div class="rk">ui.frontend/src/</div><div class="rv">Raw SCSS, TypeScript, webpack. Built by npm; output goes into ui.apps clientlibs.</div></div>
+</div>
+<div class="warn">Never put Java in ui.apps. Never put HTL in core. Each module has one job — mixing them breaks the build.</div>
+</div>
+
+<div class="pg" id="p-deploy">
+<span class="badge">Setup</span>
+<div class="ttl">Build &amp; deploy commands</div>
+<div class="sub">Run from the project root. AEM must be running on 4502 first.</div>
+<div class="rows">
+<div class="row"><div class="rk">Full deploy (all changes)</div><div class="rv"><code>mvn clean install -PautoInstallPackage</code></div></div>
+<div class="row"><div class="rk">Only Java changed</div><div class="rv"><code>mvn clean install -PautoInstallBundle -pl core</code> — faster, rebuilds just the bundle</div></div>
+<div class="row"><div class="rk">Only HTL/dialog changed</div><div class="rv"><code>mvn clean install -PautoInstallPackage -pl ui.apps</code></div></div>
+<div class="row"><div class="rk">Deploy to Publish</div><div class="rv"><code>mvn clean install -PautoInstallPackagePublish</code> — installs to port 4503</div></div>
+<div class="row"><div class="rk">Skip tests</div><div class="rv">Add <code>-DskipTests</code> to any command above — much faster</div></div>
+</div>
+<div class="tip">After deploying, go to <code>/system/console/bundles</code> and search your bundle name — it must say "Active". If it says "Installed", your Java imports are broken.</div>
+</div>
+
+<div class="pg" id="p-sites">
+<span class="badge">AEM UI</span>
+<div class="ttl">Sites console</div>
+<div class="sub">The main screen for browsing and managing pages. This is where editors spend most of their time.</div>
+<div class="lbl">URL</div>
+<div class="pbox"><div class="pr"><span class="pk">open at</span><span class="pv gr">http://localhost:4502/sites.html/content</span></div></div>
+<div class="lbl">What you do here</div>
+<div class="rows">
+<div class="row"><div class="rk">Create a page</div><div class="rv">Navigate to your site folder → Create → Page → pick a template → set title + name</div></div>
+<div class="row"><div class="rk">Open page editor</div><div class="rv">Click the page tile → click Edit (pencil). Opens the WYSIWYG drag-drop editor.</div></div>
+<div class="row"><div class="rk">Publish a page</div><div class="rv">Select page → Manage Publication → Publish → Now. Sends content to Publish layer.</div></div>
+<div class="row"><div class="rk">Page properties</div><div class="rv">Select page → Properties (i icon). Set SEO title, tags, on/off time, thumbnail.</div></div>
+<div class="row"><div class="rk">Restore old version</div><div class="rv">Select page → Timeline (clock icon) → pick a version → Restore.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-crxde">
+<span class="badge">AEM UI</span>
+<div class="ttl">CRXDE Lite — the JCR browser</div>
+<div class="sub">Think of it as VS Code inside AEM. You can see every node, every property, and edit files live without Maven.</div>
+<div class="lbl">URLs</div>
+<div class="pbox"><div class="pr"><span class="pk">main</span><span class="pv gr">http://localhost:4502/crx/de</span></div></div>
+<div class="lbl">What you do here as a developer</div>
+<div class="rows">
+<div class="row"><div class="rk">Check node properties</div><div class="rv">Navigate left tree to any JCR path → click the node → Properties tab on the right shows all properties and values</div></div>
+<div class="row"><div class="rk">Find sling:resourceType</div><div class="rv">Go to any content node (e.g. <code>/content/mysite/en/home/jcr:content/root/card</code>) → Properties tab → find <code>sling:resourceType</code></div></div>
+<div class="row"><div class="rk">Edit an HTL file live</div><div class="rv">Click any .html file in the tree → edit in the center editor → Ctrl+S saves instantly (no Maven needed)</div></div>
+<div class="row"><div class="rk">See what editor saved</div><div class="rv">Go to <code>/content/mysite/en/home/jcr:content</code> → see every dialog value saved as a JCR property</div></div>
+<div class="row"><div class="rk">Check templates</div><div class="rv">Go to <code>/conf/mysite/settings/wcm/templates/</code> → see all editable templates</div></div>
+</div>
+<div class="tip">First debugging step for any rendering problem: go to the component's content node in CRXDE, find <code>sling:resourceType</code>, then go to that path under <code>/apps/</code> and check the HTL file.</div>
+</div>
+
+<div class="pg" id="p-osgi-console">
+<span class="badge">AEM UI</span>
+<div class="ttl">OSGi console — Java runtime &amp; config</div>
+<div class="sub">The Felix web console. Used to debug Java bundles and manage service configuration without redeploying.</div>
+<div class="lbl">URLs</div>
+<div class="pbox">
+<div class="pr"><span class="pk">bundles</span><span class="pv gr">http://localhost:4502/system/console/bundles</span></div>
+<div class="pr"><span class="pk">configs</span><span class="pv gr">http://localhost:4502/system/console/configMgr</span></div>
+<div class="pr"><span class="pk">services</span><span class="pv gr">http://localhost:4502/system/console/services</span></div>
+<div class="pr"><span class="pk">logs</span><span class="pv gr">http://localhost:4502/system/console/slinglog</span></div>
+</div>
+<div class="rows">
+<div class="row"><div class="rk">Check bundle status</div><div class="rv">Search your bundle name — must say <code>Active</code>. <code>Installed</code> means a Java import is missing.</div></div>
+<div class="row"><div class="rk">Test a config change</div><div class="rv">configMgr → search your service PID → edit values → Save. No restart needed, takes effect immediately.</div></div>
+<div class="row"><div class="rk">Verify service registered</div><div class="rv">/services → search by interface name. If it's not there, your @Component annotation or bundle is wrong.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-packmgr">
+<span class="badge">AEM UI</span>
+<div class="ttl">Package manager — move content between environments</div>
+<div class="sub">Packages are zip files of JCR content. You install them to deploy code or copy content across environments.</div>
+<div class="lbl">URL</div>
+<div class="pbox"><div class="pr"><span class="pk">open at</span><span class="pv gr">http://localhost:4502/crx/packmgr</span></div></div>
+<div class="rows">
+<div class="row"><div class="rk">Install a package</div><div class="rv">Upload Package → select .zip file → Install. AEM writes all nodes to JCR.</div></div>
+<div class="row"><div class="rk">Build a package</div><div class="rv">New Group → New Package → set filter paths (e.g. <code>/apps/mysite</code>) → Build → Download .zip</div></div>
+<div class="row"><div class="rk">Install WKND</div><div class="rv">Download <code>aem-guides-wknd.all-x.x.x.zip</code> from Adobe GitHub → upload here → Install</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-comp-folder">
+<span class="badge">Components</span>
+<div class="ttl">Component folder — the complete anatomy</div>
+<div class="sub">Every component is a folder inside <code>/apps/mysite/components/</code>. The folder name is the component name. Here is every file inside it.</div>
+<div class="lbl">Location in your project</div>
+<div class="pbox"><div class="pr"><span class="pk">project</span><span class="pv">ui.apps/src/main/content/jcr_root/apps/mysite/components/card/</span></div><div class="pr"><span class="pk">in AEM</span><span class="pv">/apps/mysite/components/card/</span></div><div class="pr"><span class="pk">in CRXDE</span><span class="pv">navigate left tree to /apps/mysite/components/card</span></div></div>
+<div class="lbl">Every file and what it does</div>
+<div class="rows">
+<div class="row"><div class="rk">.content.xml</div><div class="rv">Defines the component node itself — its title, group, parent. Required for every component.</div></div>
+<div class="row"><div class="rk">card.html</div><div class="rv">The rendering template. Must match the folder name. AEM runs this to produce HTML.</div></div>
+<div class="row"><div class="rk">_cq_dialog/</div><div class="rv">The "Configure" dialog editors see when they click the wrench icon on the component.</div></div>
+<div class="row"><div class="rk">_cq_editConfig/</div><div class="rv">Controls the blue author toolbar — which buttons appear, what refreshes after editing.</div></div>
+<div class="row"><div class="rk">_cq_design_dialog/</div><div class="rv">Template-level policy settings. Template authors use this — not page editors.</div></div>
+<div class="row"><div class="rk">thumbnail.png</div><div class="rv">80×80 icon shown in the component browser panel in the page editor.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-content-xml">
+<span class="badge">Components</span>
+<div class="ttl">.content.xml — component definition file</div>
+<div class="sub">Every component folder must have this. It is the JCR node definition for the component itself — not for its content.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">file</span><span class="pv">ui.apps/…/apps/mysite/components/card/.content.xml</span></div><div class="pr"><span class="pk">in JCR</span><span class="pv">This file IS the node at /apps/mysite/components/card</span></div></div>
+<div class="lbl">Properties you set here</div>
+<div class="rows">
+<div class="row"><div class="rk">jcr:primaryType</div><div class="rv">Always <code>cq:Component</code> — tells JCR this node is a component definition</div></div>
+<div class="row"><div class="rk">jcr:title</div><div class="rv">Name editors see in the component browser — e.g. <code>"Product Card"</code></div></div>
+<div class="row"><div class="rk">componentGroup</div><div class="rv">Which tab in the component browser — e.g. <code>"My Site - Content"</code></div></div>
+<div class="row"><div class="rk">sling:resourceSuperType</div><div class="rv">Parent component to inherit from. Set to <code>"core/wcm/components/teaser/v2/teaser"</code> to extend Core Components.</div></div>
+<div class="row"><div class="rk">jcr:description</div><div class="rv">Tooltip in the component browser describing what the component does.</div></div>
+<div class="row"><div class="rk">cq:isContainer</div><div class="rv"><code>{Boolean}true</code> only if this component holds other components (like a Layout Container).</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-htl">
+<span class="badge">Components</span>
+<div class="ttl">HTL file — the rendering template</div>
+<div class="sub">This produces the HTML. AEM finds and runs it automatically based on the component's <code>sling:resourceType</code>.</div>
+<div class="lbl">Naming rule</div>
+<div class="pbox"><div class="pr"><span class="pk">rule</span><span class="pv">Filename must match the component folder name — component folder is "card" → file must be "card.html"</span></div><div class="pr"><span class="pk">location</span><span class="pv">ui.apps/…/apps/mysite/components/card/card.html</span></div></div>
+<div class="lbl">How AEM finds and runs this file</div>
+<div class="flow">
+<div class="fb bl">URL requested</div><span class="fa">→</span>
+<div class="fb">Sling reads sling:resourceType on content node</div><span class="fa">→</span>
+<div class="fb bl">Looks for /apps/{resourceType}/card.html</div><span class="fa">→</span>
+<div class="fb">Runs it, outputs HTML</div>
+</div>
+<div class="lbl">What goes in this file</div>
+<div class="rows">
+<div class="row"><div class="rk">data-sly-use</div><div class="rv">Load your Sling Model — <code>data-sly-use.model="com.mysite.core.models.CardModel"</code></div></div>
+<div class="row"><div class="rk">${model.title}</div><div class="rv">Output any getter from the model. <code>model.title</code> calls <code>getTitle()</code> in Java. Auto HTML-escaped.</div></div>
+<div class="row"><div class="rk">data-sly-test</div><div class="rv">Conditionally show/hide — <code>data-sly-test="${model.imageUrl}"</code> hides the element if imageUrl is null.</div></div>
+<div class="row"><div class="rk">data-sly-list</div><div class="rv">Loop — <code>data-sly-list.item="${model.items}"</code> repeats the element for each item.</div></div>
+<div class="row"><div class="rk">data-sly-include</div><div class="rv">Include another .html partial — <code>data-sly-include="partials/footer.html"</code></div></div>
+</div>
+</div>
+
+<div class="pg" id="p-dialog">
+<span class="badge">Components</span>
+<div class="ttl">_cq_dialog — the author configuration form</div>
+<div class="sub">Creates the dialog that pops up when an editor clicks the wrench (Configure) on your component. Each field saves a JCR property.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">folder</span><span class="pv">ui.apps/…/apps/mysite/components/card/_cq_dialog/</span></div><div class="pr"><span class="pk">file inside</span><span class="pv">_cq_dialog/.content.xml — this one file defines the whole dialog</span></div></div>
+<div class="lbl">Key properties on the dialog root node</div>
+<div class="rows">
+<div class="row"><div class="rk">sling:resourceType</div><div class="rv">Always <code>cq/gui/components/authoring/dialog</code></div></div>
+<div class="row"><div class="rk">jcr:title</div><div class="rv">The dialog window title — e.g. <code>"Card Settings"</code></div></div>
+</div>
+<div class="lbl">Field node — key properties</div>
+<div class="rows">
+<div class="row"><div class="rk">sling:resourceType</div><div class="rv">Which Granite UI field — e.g. <code>granite/ui/components/coral/foundation/form/textfield</code></div></div>
+<div class="row"><div class="rk">name</div><div class="rv">WHERE the value saves in JCR. MUST start with <code>./</code> — e.g. <code>./title</code> creates a <code>title</code> property on the component's content node.</div></div>
+<div class="row"><div class="rk">fieldLabel</div><div class="rv">Label shown above the field in the dialog — e.g. <code>"Headline Text"</code></div></div>
+<div class="row"><div class="rk">required</div><div class="rv"><code>{Boolean}true</code> — editor cannot save the dialog without filling this field.</div></div>
+<div class="row"><div class="rk">fieldDescription</div><div class="rv">Help text shown below the field explaining what to enter.</div></div>
+</div>
+<div class="lbl">Common field sling:resourceType values</div>
+<div class="rows">
+<div class="row"><div class="rk">textfield</div><div class="rv"><code>granite/ui/components/coral/foundation/form/textfield</code></div></div>
+<div class="row"><div class="rk">textarea</div><div class="rv"><code>granite/ui/components/coral/foundation/form/textarea</code></div></div>
+<div class="row"><div class="rk">pathfield</div><div class="rv"><code>granite/ui/components/coral/foundation/form/pathfield</code> — browse JCR for a page or asset</div></div>
+<div class="row"><div class="rk">select</div><div class="rv"><code>granite/ui/components/coral/foundation/form/select</code> — dropdown with hardcoded options</div></div>
+<div class="row"><div class="rk">checkbox</div><div class="rv"><code>granite/ui/components/coral/foundation/form/checkbox</code></div></div>
+<div class="row"><div class="rk">multifield</div><div class="rv"><code>granite/ui/components/coral/foundation/form/multifield</code> — repeating group of fields</div></div>
+</div>
+<div class="lbl">How to verify it saved</div>
+<div class="steps">
+<div class="st"><div class="sn">1</div><p>Deploy → open the page in author mode → click wrench on your component → fill dialog → save</p></div>
+<div class="st"><div class="sn">2</div><p>Go to CRXDE → navigate to <code>/content/mysite/en/home/jcr:content/root/card</code></p></div>
+<div class="st"><div class="sn">3</div><p>Click the Properties tab → your dialog field values appear as JCR properties here</p></div>
+</div>
+</div>
+
+<div class="pg" id="p-editconfig">
+<span class="badge">Components</span>
+<div class="ttl">_cq_editConfig — author toolbar behavior</div>
+<div class="sub">Controls the blue edit bar in author mode — which buttons show, what placeholder text appears when empty, and what refreshes after editing.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">folder</span><span class="pv">ui.apps/…/apps/mysite/components/card/_cq_editConfig/</span></div><div class="pr"><span class="pk">file</span><span class="pv">_cq_editConfig/.content.xml</span></div></div>
+<div class="rows">
+<div class="row"><div class="rk">cq:actions</div><div class="rv">Buttons on the blue toolbar — e.g. <code>[edit, delete, insert, copymove]</code></div></div>
+<div class="row"><div class="rk">cq:layout</div><div class="rv"><code>editbar</code> (toolbar above) or <code>rollover</code> (overlay on hover). Use <code>editbar</code> for most components.</div></div>
+<div class="row"><div class="rk">cq:emptyText</div><div class="rv">Placeholder shown when component has no content — e.g. <code>"Click to configure this card"</code></div></div>
+<div class="row"><div class="rk">cq:listeners/afteredit</div><div class="rv"><code>REFRESH_PAGE</code> reloads the whole page after editing, or <code>REFRESH_SELF</code> reloads only the component.</div></div>
+<div class="row"><div class="rk">cq:inplaceEditing/active</div><div class="rv"><code>{Boolean}true</code> lets editors click directly on text in the page to edit it without opening a dialog.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-model-file">
+<span class="badge">Sling Models</span>
+<div class="ttl">Sling Model Java file — where to create it</div>
+<div class="sub">Sling Models are Java classes that read JCR properties and prepare data for the HTL template. They live in core — the only Java module.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">interface</span><span class="pv">core/src/main/java/com/mysite/core/models/CardModel.java</span></div><div class="pr"><span class="pk">impl class</span><span class="pv">core/src/main/java/com/mysite/core/models/impl/CardModelImpl.java</span></div><div class="pr"><span class="pk">verify in AEM</span><span class="pv">/system/console/bundles — search bundle name, must say Active</span></div></div>
+<div class="lbl">How HTL connects to your model</div>
+<div class="flow">
+<div class="fb bl">card.html: data-sly-use.model="com.mysite.core.models.CardModel"</div><span class="fa">→</span>
+<div class="fb">AEM instantiates CardModelImpl, injects JCR props</div><span class="fa">→</span>
+<div class="fb bl">${model.title} calls getTitle() in Java</div>
+</div>
+<div class="lbl">File naming convention</div>
+<div class="rows">
+<div class="row"><div class="rk">CardModel.java</div><div class="rv">The interface — defines public getter methods. HTL references this name in data-sly-use.</div></div>
+<div class="row"><div class="rk">CardModelImpl.java</div><div class="rv">The implementation — has all annotations (@Model, @ValueMapValue, @PostConstruct) and actual logic.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-model-ann">
+<span class="badge">Sling Models</span>
+<div class="ttl">Which annotation to use when</div>
+<div class="sub">Each annotation serves exactly one purpose. Use the most specific one for each field.</div>
+<div class="rows">
+<div class="row"><div class="rk">@ValueMapValue</div><div class="rv">Reading a dialog field that an editor filled in. Maps to a JCR property by matching the field name. e.g. <code>@ValueMapValue private String title;</code> reads the <code>title</code> JCR property.</div></div>
+<div class="row"><div class="rk">@ValueMapValue(name=)</div><div class="rv">When the JCR property name differs from your Java field name — e.g. <code>@ValueMapValue(name="jcr:title") private String pageTitle;</code></div></div>
+<div class="row"><div class="rk">@Default</div><div class="rv">Fallback value if the JCR property is null or empty — e.g. <code>@Default(values="Read More") private String ctaText;</code></div></div>
+<div class="row"><div class="rk">@SlingObject</div><div class="rv">Sling framework objects — <code>Resource currentResource</code>, <code>ResourceResolver resourceResolver</code>, <code>SlingHttpServletRequest request</code></div></div>
+<div class="row"><div class="rk">@ScriptVariable</div><div class="rv">AEM page/node context from HTL — <code>Page currentPage</code>, <code>Node currentNode</code>, <code>PageManager pageManager</code></div></div>
+<div class="row"><div class="rk">@OSGiService</div><div class="rv">Inject another OSGi service — e.g. <code>@OSGiService private EmailService emailService;</code></div></div>
+<div class="row"><div class="rk">@ChildResource</div><div class="rv">Inject a child JCR node — e.g. <code>@ChildResource private Resource image;</code> reads the child node named "image"</div></div>
+<div class="row"><div class="rk">@PostConstruct</div><div class="rv">Method that runs AFTER all fields are injected. Put computed logic here — format values, call services, build lists.</div></div>
+</div>
+<div class="tip">Quick rule: dialog fields → @ValueMapValue. AEM objects → @ScriptVariable or @SlingObject. Other services → @OSGiService. Logic after injection → @PostConstruct.</div>
+</div>
+
+<div class="pg" id="p-model-pom">
+<span class="badge">Sling Models</span>
+<div class="ttl">POM changes for Sling Models</div>
+<div class="sub">Two dependencies plus one manifest entry. Without the manifest entry, AEM won't scan your models and data-sly-use will silently return null.</div>
+<div class="lbl">Add to core/pom.xml dependencies</div>
+<div class="rows">
+<div class="row"><div class="rk">Sling Models API</div><div class="rv"><code>org.apache.sling</code> / <code>org.apache.sling.models.api</code> / scope: <code>provided</code></div></div>
+<div class="row"><div class="rk">AEM SDK API</div><div class="rv"><code>com.adobe.aem</code> / <code>aem-sdk-api</code> / scope: <code>provided</code> — gives you Page, Asset, etc.</div></div>
+</div>
+<div class="lbl">Add to bnd-maven-plugin config in core/pom.xml</div>
+<div class="rows">
+<div class="row"><div class="rk">Sling-Model-Packages</div><div class="rv"><code>Sling-Model-Packages: com.mysite.core.models</code> — tells AEM which Java package to scan for models. Without this, nothing works.</div></div>
+</div>
+<div class="warn">If your model compiles fine but ${model.title} returns null, check this manifest entry first. It is the most common Sling Model mistake.</div>
+</div>
+
+<div class="pg" id="p-editable-tmpl">
+<span class="badge">Templates</span>
+<div class="ttl">Editable templates — where they live and how to create them</div>
+<div class="sub">Editable templates live under /conf — not /apps. Template authors create them through the AEM UI. No code deployment needed to make a new template.</div>
+<div class="lbl">Locations</div>
+<div class="pbox"><div class="pr"><span class="pk">UI to open</span><span class="pv gr">Tools → Sites → Templates → select /conf/mysite</span></div><div class="pr"><span class="pk">JCR stored at</span><span class="pv">/conf/mysite/settings/wcm/templates/</span></div><div class="pr"><span class="pk">in project source</span><span class="pv">ui.content/…/jcr_root/conf/mysite/settings/wcm/templates/</span></div></div>
+<div class="lbl">How to create one</div>
+<div class="steps">
+<div class="st"><div class="sn">1</div><p>Tools → Sites → Templates → select your site conf folder → Create</p></div>
+<div class="st"><div class="sn">2</div><p>Pick a template type (e.g. Empty Page) → give it a title like <code>"Article Page"</code></p></div>
+<div class="st"><div class="sn">3</div><p>Open it → drag a Layout Container into the Structure area → click the Policy icon to set allowed components</p></div>
+<div class="st"><div class="sn">4</div><p>Enable the template (toggle top-right) → editors can now pick it when creating pages</p></div>
+</div>
+<div class="lbl">The 3 sub-nodes inside every template</div>
+<div class="rows">
+<div class="row"><div class="rk">structure/</div><div class="rv">Locked layout — editors cannot change these parts. Use for global header and footer.</div></div>
+<div class="row"><div class="rk">initial/</div><div class="rv">Default content on new pages. Editors can modify it per page.</div></div>
+<div class="row"><div class="rk">policies/</div><div class="rv">References to policy nodes that control allowed components and styles.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-page-comp">
+<span class="badge">Templates</span>
+<div class="ttl">Page component — the HTML document wrapper</div>
+<div class="sub">Every page goes through a Page Component. It generates the outer HTML — doctype, head, body, global scripts, header, footer.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">in project</span><span class="pv">ui.apps/…/apps/mysite/components/page/base/</span></div><div class="pr"><span class="pk">in JCR</span><span class="pv">/apps/mysite/components/page/base/</span></div><div class="pr"><span class="pk">referenced from</span><span class="pv">template jcr:content → cq:template property points here</span></div></div>
+<div class="rows">
+<div class="row"><div class="rk">base.html</div><div class="rv">Root HTML document. Contains doctype, html, head, body. Includes partials.</div></div>
+<div class="row"><div class="rk">head.html</div><div class="rv">Everything in &lt;head&gt; — meta tags, clientlib CSS, SEO tags, page title.</div></div>
+<div class="row"><div class="rk">header.html</div><div class="rv">Global site header — nav, logo. Same across all pages.</div></div>
+<div class="row"><div class="rk">footer.html</div><div class="rv">Global footer — links, copyright.</div></div>
+<div class="row"><div class="rk">bodyEnd.html</div><div class="rv">Scripts before &lt;/body&gt; — clientlib JS, analytics.</div></div>
+</div>
+<div class="tip">Most projects set <code>sling:resourceSuperType=core/wcm/components/page/v3/page</code> in the page component's .content.xml to inherit Core Components' page behavior.</div>
+</div>
+
+<div class="pg" id="p-policy">
+<span class="badge">Templates</span>
+<div class="ttl">Policies — controlling what editors can do</div>
+<div class="sub">A policy is a configuration attached to a Layout Container or component that restricts which components can be added and which styles are available.</div>
+<div class="lbl">Where policies are stored</div>
+<div class="pbox"><div class="pr"><span class="pk">JCR path</span><span class="pv">/conf/mysite/settings/wcm/policies/</span></div><div class="pr"><span class="pk">edited through</span><span class="pv">Template Editor → click a component → Policy icon (shield)</span></div></div>
+<div class="rows">
+<div class="row"><div class="rk">Allowed components</div><div class="rv">Check which components editors can drag in. Unchecked = blocked for all editors on all pages using this template.</div></div>
+<div class="row"><div class="rk">Style System styles</div><div class="rv">Define named CSS class groups here. Editors pick them from a palette on each component instance.</div></div>
+<div class="row"><div class="rk">Component-specific</div><div class="rv">Any fields in the component's _cq_design_dialog appear here too — e.g. allowed heading levels for a Text component.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-clientlib-node">
+<span class="badge">ClientLibs</span>
+<div class="ttl">ClientLib node — where CSS &amp; JS live</div>
+<div class="sub">A ClientLib is a special JCR folder that bundles your CSS and JS for AEM to combine, minify, and serve.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">in project</span><span class="pv">ui.apps/…/apps/mysite/clientlibs/site/</span></div><div class="pr"><span class="pk">in JCR</span><span class="pv">/apps/mysite/clientlibs/site/</span></div></div>
+<div class="lbl">Files inside the folder</div>
+<div class="rows">
+<div class="row"><div class="rk">.content.xml</div><div class="rv">Node definition — <code>jcr:primaryType=cq:ClientLibraryFolder</code>, <code>categories=["mysite.site"]</code>, <code>allowProxy={Boolean}true</code></div></div>
+<div class="row"><div class="rk">css.txt</div><div class="rv">List of CSS files in load order. First line must be <code>#base=css</code>. Then one file per line: <code>main.css</code></div></div>
+<div class="row"><div class="rk">js.txt</div><div class="rv">List of JS files in load order. First line must be <code>#base=js</code>. Then: <code>main.js</code></div></div>
+<div class="row"><div class="rk">css/ folder</div><div class="rv">Your actual .css files referenced in css.txt</div></div>
+<div class="row"><div class="rk">js/ folder</div><div class="rv">Your actual .js files referenced in js.txt</div></div>
+</div>
+<div class="lbl">Key .content.xml properties</div>
+<div class="rows">
+<div class="row"><div class="rk">categories</div><div class="rv">The unique ID — e.g. <code>["mysite.site"]</code>. This is what you reference in HTL to include the library.</div></div>
+<div class="row"><div class="rk">dependencies</div><div class="rv">Other libraries to load before this one — e.g. <code>["jquery"]</code></div></div>
+<div class="row"><div class="rk">embed</div><div class="rv">Other libraries to inline into this one — combines into a single file to reduce HTTP requests.</div></div>
+<div class="row"><div class="rk">allowProxy</div><div class="rv"><code>{Boolean}true</code> — required so the library works on the Publish layer via the <code>/etc.clientlibs/</code> proxy path.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-clientlib-use">
+<span class="badge">ClientLibs</span>
+<div class="ttl">Including ClientLibs in your page</div>
+<div class="sub">You include ClientLibs in the page component's head.html (CSS) and bodyEnd.html (JS) — not in individual component HTL files.</div>
+<div class="rows">
+<div class="row"><div class="rk">Load CSS only</div><div class="rv">In head.html: <code>data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"</code> then call <code>${clientlib.css @ categories='mysite.site'}</code></div></div>
+<div class="row"><div class="rk">Load JS only</div><div class="rv">In bodyEnd.html: call <code>${clientlib.js @ categories='mysite.site'}</code></div></div>
+<div class="row"><div class="rk">Load both at once</div><div class="rv">Call <code>${clientlib.all @ categories='mysite.site'}</code></div></div>
+<div class="row"><div class="rk">Debug: see individual files</div><div class="rv">Append <code>?debugClientLibs=true</code> to any page URL — loads each CSS/JS file individually instead of combined</div></div>
+<div class="row"><div class="rk">Inspect what's in a lib</div><div class="rv">Go to <code>/libs/granite/ui/content/dumplibs.html</code> — lists all categories and their file contents</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-osgi-service">
+<span class="badge">OSGi</span>
+<div class="ttl">OSGi Service Java file — where and what</div>
+<div class="sub">Services provide shared functionality (email sending, API calls, caching) to any Java class in AEM. They live in core.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">interface</span><span class="pv">core/src/main/java/com/mysite/core/services/EmailService.java</span></div><div class="pr"><span class="pk">impl</span><span class="pv">core/src/main/java/com/mysite/core/services/impl/EmailServiceImpl.java</span></div><div class="pr"><span class="pk">verify in AEM</span><span class="pv">/system/console/services — search by interface name</span></div></div>
+<div class="lbl">Required annotations on the impl class</div>
+<div class="rows">
+<div class="row"><div class="rk">@Component(service=)</div><div class="rv">Registers this class as an OSGi component — e.g. <code>@Component(service=EmailService.class)</code></div></div>
+<div class="row"><div class="rk">@Designate(ocd=)</div><div class="rv">Links to a config interface so the config form appears in OSGi console — e.g. <code>@Designate(ocd=EmailConfig.class)</code></div></div>
+<div class="row"><div class="rk">@Activate</div><div class="rv">Method called when bundle starts. Reads config values, sets up connections.</div></div>
+<div class="row"><div class="rk">@Modified</div><div class="rv">Called when OSGi config updates without restart. Usually just calls @Activate again.</div></div>
+<div class="row"><div class="rk">@Deactivate</div><div class="rv">Called when bundle stops. Close connections, release resources.</div></div>
+<div class="row"><div class="rk">@Reference</div><div class="rv">Inject another OSGi service — e.g. <code>@Reference private ResourceResolverFactory rrf;</code></div></div>
+</div>
+</div>
+
+<div class="pg" id="p-osgi-config">
+<span class="badge">OSGi</span>
+<div class="ttl">OSGi config .cfg.json — exact location and naming</div>
+<div class="sub">Config files tell your service what values to use — SMTP host, API keys, timeouts. The filename must exactly match your class's fully-qualified name.</div>
+<div class="lbl">Location and naming rule</div>
+<div class="pbox"><div class="pr"><span class="pk">folder</span><span class="pv">ui.config/src/main/content/jcr_root/apps/mysite/osgiconfig/config/</span></div><div class="pr"><span class="pk">filename rule</span><span class="pv">{fully.qualified.ClassName}.cfg.json</span></div><div class="pr"><span class="pk">example</span><span class="pv">com.mysite.core.services.impl.EmailServiceImpl.cfg.json</span></div></div>
+<div class="lbl">File content format</div>
+<div class="rows">
+<div class="row"><div class="rk">String</div><div class="rv"><code>"smtpHost": "smtp.mysite.com"</code></div></div>
+<div class="row"><div class="rk">Integer</div><div class="rv"><code>"smtpPort": 587</code></div></div>
+<div class="row"><div class="rk">Boolean</div><div class="rv"><code>"enableTLS": true</code></div></div>
+<div class="row"><div class="rk">Array</div><div class="rv"><code>"allowedHosts": ["mysite.com", "www.mysite.com"]</code></div></div>
+</div>
+<div class="lbl">How AEM reads this file</div>
+<div class="flow">
+<div class="fb">Maven deploys .cfg.json to JCR</div><span class="fa">→</span>
+<div class="fb bl">AEM reads filename → identifies target service PID</div><span class="fa">→</span>
+<div class="fb">Injects values into @Activate config parameter</div>
+</div>
+</div>
+
+<div class="pg" id="p-runmode">
+<span class="badge">OSGi</span>
+<div class="ttl">Runmode folders — environment-specific config</div>
+<div class="sub">AEM loads configs from different folders based on which environment it's running in. The most specific folder always wins.</div>
+<div class="lbl">Folder names and when they apply</div>
+<div class="rows">
+<div class="row"><div class="rk">config/</div><div class="rv">Baseline — applies to every environment (dev, staging, production)</div></div>
+<div class="row"><div class="rk">config.author/</div><div class="rv">Author instance only — any environment</div></div>
+<div class="row"><div class="rk">config.publish/</div><div class="rv">Publish instance only — any environment</div></div>
+<div class="row"><div class="rk">config.prod/</div><div class="rv">Production environment only — both author and publish</div></div>
+<div class="row"><div class="rk">config.author.prod/</div><div class="rv">Author in production only — most specific, wins over all others</div></div>
+</div>
+<div class="lbl">Resolution order (most specific wins)</div>
+<div class="flow">
+<div class="fb bl">config.author.prod</div><span class="fa">beats</span>
+<div class="fb">config.author</div><span class="fa">beats</span>
+<div class="fb">config.prod</div><span class="fa">beats</span>
+<div class="fb">config</div>
+</div>
+<div class="tip">Put production API keys in config.prod or config.author.prod — never in the base config folder or they'll also be used in dev.</div>
+</div>
+
+<div class="pg" id="p-servlet-path">
+<span class="badge">Servlets</span>
+<div class="ttl">Path servlet — a fixed API URL</div>
+<div class="sub">Use this when JavaScript needs to call a fixed endpoint — like /bin/mysite/search or /bin/mysite/newsletter.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">Java file</span><span class="pv">core/src/main/java/com/mysite/core/servlets/NewsletterServlet.java</span></div><div class="pr"><span class="pk">called at URL</span><span class="pv">http://localhost:4502/bin/mysite/newsletter</span></div><div class="pr"><span class="pk">no JCR node needed</span><span class="pv">Registered purely by the annotation on the class</span></div></div>
+<div class="lbl">Required annotations</div>
+<div class="rows">
+<div class="row"><div class="rk">@Component(service=)</div><div class="rv"><code>@Component(service = {Servlet.class})</code></div></div>
+<div class="row"><div class="rk">@SlingServletPaths</div><div class="rv"><code>@SlingServletPaths("/bin/mysite/newsletter")</code> — the exact URL this servlet responds to</div></div>
+</div>
+<div class="lbl">Which base class to extend</div>
+<div class="rows">
+<div class="row"><div class="rk">GET only (fetching data)</div><div class="rv">Extend <code>SlingSafeMethodsServlet</code> → override <code>doGet()</code></div></div>
+<div class="row"><div class="rk">POST/PUT/DELETE (mutations)</div><div class="rv">Extend <code>SlingAllMethodsServlet</code> → override <code>doPost()</code></div></div>
+</div>
+</div>
+
+<div class="pg" id="p-servlet-res">
+<span class="badge">Servlets</span>
+<div class="ttl">Resource-type servlet — tied to a component</div>
+<div class="sub">Fires when a page containing a specific component is requested with a selector+extension combination. More AEM-idiomatic than path servlets.</div>
+<div class="lbl">Location</div>
+<div class="pbox"><div class="pr"><span class="pk">Java file</span><span class="pv">core/src/main/java/com/mysite/core/servlets/SearchServlet.java</span></div><div class="pr"><span class="pk">triggered by URL</span><span class="pv">/content/mysite/search-page.results.json</span></div><div class="pr"><span class="pk">requires</span><span class="pv">The page's component must have sling:resourceType = "mysite/components/search"</span></div></div>
+<div class="lbl">Required annotations</div>
+<div class="rows">
+<div class="row"><div class="rk">@SlingServletResourceTypes</div><div class="rv">resourceTypes = the component's sling:resourceType value</div></div>
+<div class="row"><div class="rk">selectors</div><div class="rv">e.g. <code>"results"</code> — URL must have <code>.results.</code> to trigger this servlet</div></div>
+<div class="row"><div class="rk">extensions</div><div class="rv">e.g. <code>"json"</code> — URL must end in <code>.json</code></div></div>
+<div class="row"><div class="rk">methods</div><div class="rv"><code>"GET"</code> or <code>"POST"</code></div></div>
+</div>
+</div>
+
+<div class="pg" id="p-cf-model">
+<span class="badge">Fragments</span>
+<div class="ttl">Content Fragment model — where to create it</div>
+<div class="sub">A CF model defines the schema (fields) for a type of structured content. Created in the AEM UI, not in code.</div>
+<div class="lbl">Where to open</div>
+<div class="pbox"><div class="pr"><span class="pk">UI path</span><span class="pv gr">Tools → Assets → Content Fragment Models → /conf/mysite → Create</span></div><div class="pr"><span class="pk">JCR stored at</span><span class="pv">/conf/mysite/settings/dam/cfm/models/</span></div></div>
+<div class="lbl">Field types you can add</div>
+<div class="rows">
+<div class="row"><div class="rk">Single line text</div><div class="rv">Short text — title, headline, name. Can set max length.</div></div>
+<div class="row"><div class="rk">Multi line text</div><div class="rv">Long text. Enable "Allow Rich Text" to let editors apply formatting.</div></div>
+<div class="row"><div class="rk">Number</div><div class="rv">Integer or decimal — price, quantity, rating.</div></div>
+<div class="row"><div class="rk">Date and time</div><div class="rv">Publish date, expiry, event date.</div></div>
+<div class="row"><div class="rk">Enumeration</div><div class="rv">Dropdown with fixed options — category, status, region.</div></div>
+<div class="row"><div class="rk">Content Reference</div><div class="rv">Link to a DAM asset — hero image, PDF, video.</div></div>
+<div class="row"><div class="rk">Fragment Reference</div><div class="rv">Link to another CF instance — related articles, author profile.</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-cf-instance">
+<span class="badge">Fragments</span>
+<div class="ttl">Content Fragment instance — where to create and find it</div>
+<div class="sub">An instance is actual content conforming to a model. Lives in the DAM, not under /content/sites.</div>
+<div class="lbl">Where to create it</div>
+<div class="pbox"><div class="pr"><span class="pk">UI path</span><span class="pv gr">Assets → /content/dam/mysite/ → Create → Content Fragment → pick a model</span></div><div class="pr"><span class="pk">JCR stored at</span><span class="pv">/content/dam/mysite/articles/my-article</span></div><div class="pr"><span class="pk">GraphQL endpoint</span><span class="pv gr">http://localhost:4502/content/_cq_graphql/mysite/endpoint.json</span></div></div>
+<div class="lbl">Using a CF on a page (traditional)</div>
+<div class="steps">
+<div class="st"><div class="sn">1</div><p>Drop the "Content Fragment" component onto a page</p></div>
+<div class="st"><div class="sn">2</div><p>Configure it: set <code>fragmentPath</code> to your CF's path in the DAM</p></div>
+<div class="st"><div class="sn">3</div><p>The component reads and renders the CF's fields</p></div>
+</div>
+<div class="lbl">Using a CF headlessly (React / mobile app)</div>
+<div class="steps">
+<div class="st"><div class="sn">1</div><p>Enable AEM GraphQL: Tools → Assets → GraphQL → Enable endpoint for /conf/mysite</p></div>
+<div class="st"><div class="sn">2</div><p>Your app sends a GraphQL query to the AEM endpoint URL</p></div>
+<div class="st"><div class="sn">3</div><p>AEM returns JSON. Your app renders it however it needs to.</p></div>
+</div>
+</div>
+
+<div class="pg" id="p-xf">
+<span class="badge">Fragments</span>
+<div class="ttl">Experience Fragment — create and use</div>
+<div class="sub">A reusable composed block of components — like a newsletter signup, promo banner, or footer CTA. Edit once, update everywhere it's referenced.</div>
+<div class="lbl">Where to create</div>
+<div class="pbox"><div class="pr"><span class="pk">UI</span><span class="pv gr">http://localhost:4502/aem/experience-fragments.html</span></div><div class="pr"><span class="pk">JCR stored at</span><span class="pv">/content/experience-fragments/mysite/</span></div></div>
+<div class="lbl">Create and use — step by step</div>
+<div class="steps">
+<div class="st"><div class="sn">1</div><p>XF console → Create → Experience Fragment → pick "Web Variation" template → name it</p></div>
+<div class="st"><div class="sn">2</div><p>Edit the XF — drag components in exactly like a page</p></div>
+<div class="st"><div class="sn">3</div><p>Publish the XF</p></div>
+<div class="st"><div class="sn">4</div><p>On any page, drag the "Experience Fragment" component → configure <code>Fragment Path</code> to your XF path</p></div>
+<div class="st"><div class="sn">5</div><p>Edit the XF once → all pages that reference it update on next publish</p></div>
+</div>
+<div class="lbl">XF variations</div>
+<div class="rows">
+<div class="row"><div class="rk">master (web)</div><div class="rv">Default variation. JCR: <code>/content/experience-fragments/mysite/my-xf/master/</code></div></div>
+<div class="row"><div class="rk">email variation</div><div class="rv">Add variation inside the XF. Separate markup optimized for email clients (no JS, inline CSS).</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-jcr-paths">
+<span class="badge">JCR</span>
+<div class="ttl">Key JCR paths — the complete map</div>
+<div class="sub">Everything in AEM is a node in the JCR tree. These are the paths you navigate every day in CRXDE.</div>
+<div class="rows">
+<div class="row"><div class="rk">/apps/mysite/components/</div><div class="rv">Your component folders — each subfolder is one component</div></div>
+<div class="row"><div class="rk">/apps/mysite/clientlibs/</div><div class="rv">Your ClientLib folders — CSS and JS libraries</div></div>
+<div class="row"><div class="rk">/apps/mysite/osgiconfig/</div><div class="rv">OSGi .cfg.json files organized by runmode folder</div></div>
+<div class="row"><div class="rk">/content/mysite/en/</div><div class="rv">Your page content — tree mirrors the site navigation hierarchy</div></div>
+<div class="row"><div class="rk">/content/mysite/en/home/jcr:content</div><div class="rv">The content node of a specific page — contains ALL component data as child nodes</div></div>
+<div class="row"><div class="rk">/content/dam/mysite/</div><div class="rv">Digital Assets — images, videos, PDFs, Content Fragment instances</div></div>
+<div class="row"><div class="rk">/conf/mysite/settings/wcm/templates/</div><div class="rv">Editable page templates</div></div>
+<div class="row"><div class="rk">/conf/mysite/settings/dam/cfm/models/</div><div class="rv">Content Fragment models</div></div>
+<div class="row"><div class="rk">/conf/mysite/settings/wcm/policies/</div><div class="rv">Template policies (allowed components, style system)</div></div>
+<div class="row"><div class="rk">/libs/</div><div class="rv">AEM's own code — Core Components, default scripts. READ ONLY. Never edit. Overlay under /apps instead.</div></div>
+<div class="row"><div class="rk">/etc/replication/agents.author/</div><div class="rv">Replication agents — controls how content is pushed from Author to Publish</div></div>
+</div>
+</div>
+
+<div class="pg" id="p-jcr-props">
+<span class="badge">JCR</span>
+<div class="ttl">Important JCR properties — what to look for where</div>
+<div class="sub">When you're in CRXDE and confused, check these first. They tell you everything about how a node connects to the rest of AEM.</div>
+<div class="rows">
+<div class="row"><div class="rk">sling:resourceType</div><div class="rv">The single most important property in AEM. On any content node — tells AEM which component renders it. Check this first for any rendering problem. Path is relative to /apps.</div></div>
+<div class="row"><div class="rk">jcr:primaryType</div><div class="rv"><code>cq:Page</code> = a page. <code>cq:Component</code> = a component definition. <code>nt:unstructured</code> = generic data node (component content). <code>cq:ClientLibraryFolder</code> = a clientlib.</div></div>
+<div class="row"><div class="rk">jcr:title</div><div class="rv">Human name. On pages = the page title. On components = shown in component browser. On templates = shown in template picker.</div></div>
+<div class="row"><div class="rk">sling:resourceSuperType</div><div class="rv">On a component — the parent it inherits from. AEM walks up this chain when looking for rendering scripts or dialog fields that aren't found locally.</div></div>
+<div class="row"><div class="rk">cq:template</div><div class="rv">On a page's jcr:content — which template was used to create this page. Path to the template node under /conf.</div></div>
+<div class="row"><div class="rk">categories</div><div class="rv">On a ClientLib node — the library's unique ID used in HTL includes.</div></div>
+<div class="row"><div class="rk">allowedPaths</div><div class="rv">On a template — which content paths editors can use this template in. e.g. <code>/content/mysite(/.*)$</code></div></div>
+</div>
+<div class="tip">The fastest way to understand any unknown AEM behavior: go to CRXDE, navigate to the node, click Properties. Everything is visible there — sling:resourceType, component data, configs.</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  var pg=document.getElementById('p-'+id);
+  var ni=document.getElementById('n-'+id);
+  if(pg)pg.classList.add('on');
+  if(ni){ni.classList.add('on');ni.scrollIntoView({block:'nearest'});}
+  document.querySelector('.detail').scrollTop=0;
+}
+</script>
