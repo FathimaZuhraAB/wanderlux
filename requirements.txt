@@ -1,0 +1,12 @@
+# Backend configuration. Copy this file to `.env` and fill in any keys you have.
+DEBUG=true
+CACHE_TTL_SECONDS=600
+ENABLE_FALLBACK_DATA=true
+
+# Optional API keys (improve scraper coverage when present)
+# RAPIDAPI_KEY=
+# AMAZON_PAAPI_ACCESS_KEY=
+# AMAZON_PAAPI_SECRET=
+# AMAZON_PAAPI_PARTNER_TAG=
+# FLIPKART_AFFILIATE_ID=
+# FLIPKART_AFFILIATE_TOKEN=

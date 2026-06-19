@@ -1,0 +1,110 @@
+"""
+Sample/seed data. Used as a fallback so the comparator always returns SOMETHING,
+even when every live source is blocked, rate-limited, or down.
+
+In production, you'd replace this with cached results from your last successful
+scrape stored in Redis/Postgres.
+"""
+from typing import List
+from datetime import datetime, timedelta
+import random
+import hashlib
+
+from app.models import Listing, Category
+
+
+# (title, base_price, category, tags, image_emoji)
+PRODUCT_SEEDS = [
+    ("Sony WH-1000XM5 Wireless Noise Cancelling Headphones", 29990, Category.ELECTRONICS, ["Audio", "Premium"], "🎧"),
+    ("Apple iPhone 15 (128 GB) Black",                       69900, Category.ELECTRONICS, ["Smartphone"],         "📱"),
+    ("Samsung Galaxy S24 5G (256 GB)",                       74999, Category.ELECTRONICS, ["Smartphone"],         "📱"),
+    ("OnePlus Nord CE 4 5G (128 GB)",                        24999, Category.ELECTRONICS, ["Smartphone"],         "📱"),
+    ("Boat Airdopes 141 Bluetooth Earbuds",                   1299, Category.ELECTRONICS, ["Audio"],              "🎧"),
+    ("Mi LED Smart TV 43-inch 4K",                           28999, Category.ELECTRONICS, ["TV"],                 "📺"),
+    ("Samsung 1.5 Ton 5 Star Inverter Split AC",             42990, Category.ELECTRONICS, ["Appliance"],          "❄️"),
+    ("Levi's 511 Slim Fit Jeans Indigo Wash",                 3499, Category.FASHION,     ["Denim", "Mens"],      "👖"),
+    ("Nike Air Zoom Pegasus 40 Running Shoes",                9999, Category.FASHION,     ["Footwear"],           "👟"),
+    ("Adidas Ultraboost Light Running Shoes",                17999, Category.FASHION,     ["Footwear"],           "👟"),
+    ("Crocs Classic Clog Unisex",                             4499, Category.FASHION,     ["Footwear"],           "🩴"),
+    ("H&M Cotton Oversized T-Shirt",                           799, Category.FASHION,     ["Mens", "Casual"],     "👕"),
+    ("The Ordinary Niacinamide 10% Plus Zinc Serum",           750, Category.BEAUTY,      ["Skincare"],           "💧"),
+    ("Lakme 9 to 5 Primer Plus Matte Lipstick Red Coat",       650, Category.BEAUTY,      ["Makeup"],             "💄"),
+    ("Cetaphil Gentle Skin Cleanser 250ml",                    675, Category.BEAUTY,      ["Skincare"],           "🧴"),
+    ("Aashirvaad Shudh Chakki Atta 10 kg",                     525, Category.GROCERY,     ["Pantry"],             "🌾"),
+    ("Amul Gold Full Cream Milk 1 L",                           72, Category.GROCERY,     ["Dairy"],              "🥛"),
+    ("Tata Salt 1 kg Pack",                                     28, Category.GROCERY,     ["Pantry"],             "🧂"),
+    ("Maggi 2-Minute Noodles Pack of 12",                      168, Category.GROCERY,     ["Snacks"],             "🍜"),
+    ("Pampers Premium Care Pants Large 44 Count",              899, Category.KIDS,        ["Diapers"],            "👶"),
+    ("Himalaya Baby Lotion 400 ml",                            285, Category.KIDS,        ["Skincare"],           "🍼"),
+    ("Dolo 650 mg Tablet Strip of 15",                          32, Category.PHARMACY,    ["Medicine"],           "💊"),
+    ("Volini Pain Relief Spray 100g",                          340, Category.PHARMACY,    ["Medicine"],           "💊"),
+]
+
+
+def _site_for_category(cat: Category) -> List[tuple]:
+    """Return (site_id, site_name) candidates that plausibly carry this category."""
+    GENERAL = [
+        ("amazon", "Amazon"), ("flipkart", "Flipkart"), ("meesho", "Meesho"),
+        ("snapdeal", "Snapdeal"), ("shopsy", "Shopsy"), ("tatacliq", "Tata CLiQ"),
+    ]
+    pools = {
+        Category.GENERAL:     GENERAL,
+        Category.ELECTRONICS: GENERAL + [("reliancedigital", "Reliance Digital"), ("croma", "Croma")],
+        Category.FASHION:     GENERAL + [("myntra", "Myntra"), ("ajio", "Ajio"), ("nykaafashion", "Nykaa Fashion")],
+        Category.BEAUTY:      GENERAL + [("nykaa", "Nykaa")],
+        Category.GROCERY:     [("bigbasket", "BigBasket"), ("blinkit", "Blinkit"), ("zepto", "Zepto"),
+                               ("swiggyinstamart", "Instamart"), ("jiomart", "JioMart"), ("amazon", "Amazon")],
+        Category.KIDS:        GENERAL + [("firstcry", "FirstCry")],
+        Category.PHARMACY:    [("tata1mg", "Tata 1mg"), ("pharmeasy", "PharmEasy"), ("amazon", "Amazon")],
+    }
+    return pools.get(cat, GENERAL)
+
+
+def _key(title: str) -> str:
+    return hashlib.md5(title.lower().encode()).hexdigest()[:10]
+
+
+def get_sample_listings(query: str, limit: int = 30) -> List[Listing]:
+    """
+    Return synthetic-but-plausible listings matching `query`.
+    Each call is deterministic for the same query (seeded by the query string)
+    so prices don't jitter between requests.
+    """
+    rng = random.Random(query.lower().strip())
+    q = query.lower().strip()
+
+    matches = [p for p in PRODUCT_SEEDS if q in p[0].lower() or any(q in t.lower() for t in p[3])]
+    if not matches:
+        # broad fallback: pick a few seeds that share any word
+        words = set(q.split())
+        matches = [p for p in PRODUCT_SEEDS if words & set(p[0].lower().split())]
+    if not matches:
+        # last resort: show some popular items so UI isn't empty
+        matches = rng.sample(PRODUCT_SEEDS, min(4, len(PRODUCT_SEEDS)))
+
+    listings: List[Listing] = []
+    for title, base, cat, tags, _emoji in matches:
+        sites = _site_for_category(cat)
+        n = rng.randint(5, min(len(sites), 9))
+        chosen = rng.sample(sites, n)
+        for site_id, site_name in chosen:
+            variance = (rng.random() - 0.5) * 0.28
+            price = max(1, round(base * (1 + variance)))
+            mrp = round(base * (1.05 + rng.random() * 0.25))
+            listings.append(Listing(
+                site_id=site_id,
+                site_name=site_name,
+                title=title,
+                url=f"https://www.{site_id}.com/search?q={query.replace(' ', '+')}",
+                price=price,
+                mrp=max(price, mrp),
+                rating=round(3.5 + rng.random() * 1.4, 1),
+                review_count=rng.randint(120, 18400),
+                in_stock=rng.random() > 0.08,
+                delivery=rng.choice(["Today", "Tomorrow", "2 days", "3-5 days", "10 min", "30 min"]),
+                coupon=rng.choice([None, None, "BANK10", "SAVE5", "WELCOME150"]),
+                category=cat,
+                scraped_at=datetime.utcnow() - timedelta(minutes=rng.randint(0, 30)),
+                confidence=0.2,  # mark as sample data
+            ))
+    return listings[:limit]

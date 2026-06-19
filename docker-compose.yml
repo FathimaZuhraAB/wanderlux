@@ -1,0 +1,90 @@
+"""
+Base class for all scrapers. Subclasses override `search()` to return List[Listing].
+
+Design contract:
+  - Always return a list (possibly empty); never raise on a failed scrape
+  - Respect the per-request timeout
+  - Use the shared httpx client when possible for connection pooling
+  - Mark each Listing with appropriate confidence
+"""
+from __future__ import annotations
+from abc import ABC, abstractmethod
+from typing import List, Optional, ClassVar
+import asyncio
+import logging
+import httpx
+from fake_useragent import UserAgent
+
+from app.models import Listing, Category
+from app.core.config import settings
+
+logger = logging.getLogger(__name__)
+_ua = UserAgent()
+
+
+class BaseScraper(ABC):
+    """Subclasses set these as class vars."""
+    site_id: ClassVar[str]
+    site_name: ClassVar[str]
+    category: ClassVar[Category] = Category.GENERAL
+    enabled: ClassVar[bool] = True
+
+    # If True, this scraper will never run live (e.g. requires API key not set)
+    # and only sample data will be used.
+    sample_only: ClassVar[bool] = False
+
+    def __init__(self, client: Optional[httpx.AsyncClient] = None):
+        self._owns_client = client is None
+        self.client = client or httpx.AsyncClient(
+            timeout=settings.request_timeout,
+            follow_redirects=True,
+            headers=self._default_headers(),
+        )
+
+    @staticmethod
+    def _default_headers() -> dict:
+        return {
+            "User-Agent": _ua.random,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-IN,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br",
+            "DNT": "1",
+            "Upgrade-Insecure-Requests": "1",
+        }
+
+    async def fetch(self, url: str, **kwargs) -> Optional[httpx.Response]:
+        """Wrapped HTTP GET with logging. Returns None on any failure."""
+        try:
+            r = await self.client.get(url, **kwargs)
+            if r.status_code == 200:
+                return r
+            logger.info(f"[{self.site_id}] HTTP {r.status_code} for {url}")
+        except httpx.TimeoutException:
+            logger.info(f"[{self.site_id}] timeout for {url}")
+        except Exception as e:
+            logger.info(f"[{self.site_id}] error: {type(e).__name__}: {e}")
+        return None
+
+    @abstractmethod
+    async def search(self, query: str, limit: int = 10) -> List[Listing]:
+        """Return up to `limit` listings for `query`."""
+        ...
+
+    async def search_safe(self, query: str, limit: int = 10) -> List[Listing]:
+        """Wrapper around `search` that swallows all errors and returns []."""
+        if not self.enabled:
+            return []
+        try:
+            return await asyncio.wait_for(
+                self.search(query, limit),
+                timeout=settings.request_timeout + 3,
+            )
+        except asyncio.TimeoutError:
+            logger.info(f"[{self.site_id}] overall timeout")
+        except Exception as e:
+            logger.info(f"[{self.site_id}] search failed: {type(e).__name__}: {e}")
+        return []
+
+    async def close(self):
+        if self._owns_client:
+            await self.client.aclose()

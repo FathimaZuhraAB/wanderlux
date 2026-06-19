@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santorini, Greece – WanderLux Travels</title>
+  <link rel="stylesheet" href="style.css" />
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  Page: Destination Detail (destination-detail.html)         ║
+    ║  AEM Page Template: Destination Detail Template             ║
+    ║                                                             ║
+    ║  COMPONENTS ON THIS PAGE:                                   ║
+    ║  1. Header Navigation  → AEM: Navigation Component          ║
+    ║  2. Breadcrumb         → AEM: Breadcrumb Component          ║
+    ║  3. Detail Hero Image  → AEM: Image Component (DAM Asset)   ║
+    ║  4. Destination Info   → AEM: Rich Text + Sling Model       ║
+    ║  5. Image Gallery      → AEM: Gallery Component (DAM)       ║
+    ║  6. Booking Card       → AEM: Booking Form Component        ║
+    ║  7. Related Cards      → AEM: Related Destinations (CF)     ║
+    ║  8. Footer             → AEM: Footer Component              ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <style>
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 2rem; }
+    .tab-btn {
+      padding: .75rem 1.5rem; font-size: .9rem; font-weight: 600;
+      color: var(--muted); background: none; border: none;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      cursor: pointer; transition: all .2s;
+    }
+    .tab-btn.active { color: var(--primary); border-color: var(--primary); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .itinerary-day {
+      display: flex; gap: 1.25rem; margin-bottom: 1.5rem; align-items: flex-start;
+    }
+    .day-num {
+      background: var(--primary); color: var(--white);
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .85rem; flex-shrink: 0;
+    }
+    .day-body h4 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: .3rem; }
+    .day-body p  { font-size: .88rem; color: var(--muted); }
+    .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .included-item {
+      display: flex; gap: .75rem; align-items: flex-start;
+      background: var(--light); border-radius: var(--radius); padding: .9rem;
+    }
+    .included-item .icon { font-size: 1.2rem; }
+    .included-item .text h5 { font-size: .88rem; font-weight: 700; color: var(--dark); }
+    .included-item .text p  { font-size: .8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- AEM COMPONENT: Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">✈️</span>
+        <span class="logo-text">Wander<span>Lux</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="destinations.html" class="active">Destinations</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="contact.html" class="btn btn-primary">Book Now</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- AEM COMPONENT: Breadcrumb -->
+  <div class="breadcrumb">
+    <div class="breadcrumb-inner container">
+      <a href="index.html">Home</a>
+      <span class="sep">/</span>
+      <a href="destinations.html">Destinations</a>
+      <span class="sep">/</span>
+      <span>Santorini, Greece</span>
+    </div>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="detail-layout">
+
+          <!-- LEFT COLUMN: Destination Content -->
+          <div>
+            <!-- AEM COMPONENT: Image Component (DAM Asset)
+                 Property: fileReference = /content/dam/wanderlux/destinations/santorini/hero.jpg -->
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80"
+              alt="Santorini, Greece"
+              class="detail-hero-img"
+            />
+
+            <!-- AEM COMPONENT: Destination Info (Sling Model: DestinationDetailModel.java) -->
+            <div class="detail-meta">
+              <div class="detail-meta-item">🌍 Europe</div>
+              <div class="detail-meta-item">⏱️ 7 Days / 6 Nights</div>
+              <div class="detail-meta-item">👥 Max 12 People</div>
+              <div class="detail-meta-item">⭐ 4.9 (348 reviews)</div>
+              <div class="detail-meta-item">✈️ Flights Included</div>
+            </div>
+
+            <h1 class="detail-title">Santorini, Greece</h1>
+            <p class="detail-desc">
+              Perched dramatically on the rim of an ancient volcanic caldera, Santorini is one of the most iconic islands in the world. Famous for its whitewashed Cycladic architecture, sapphire-domed churches, and breathtaking sunsets over the Aegean Sea, this island paradise offers an unparalleled travel experience.
+            </p>
+            <p class="detail-desc">
+              Our carefully curated 7-day package includes guided tours of Oia and Fira, a private sunset sailing cruise, wine tasting at local vineyards, and visits to the ancient ruins of Akrotiri. Whether you're a honeymooner, a solo adventurer, or a family seeking relaxation — Santorini has something magical for everyone.
+            </p>
+
+            <div class="detail-highlights">
+              <h3>Trip Highlights</h3>
+              <ul class="highlight-list">
+                <li>Sunset sailing cruise around the caldera</li>
+                <li>Private guided tour of Oia village</li>
+                <li>Wine tasting at Santo Wines Winery</li>
+                <li>Visit ancient ruins of Akrotiri</li>
+                <li>Relaxation at Perissa Black Sand Beach</li>
+                <li>Traditional Greek cooking class</li>
+                <li>Helicopter scenic flight option</li>
+                <li>Volcano and hot springs boat tour</li>
+              </ul>
+            </div>
+
+            <!-- AEM COMPONENT: Tab Component (with clientlib JS) -->
+            <div class="tab-bar">
+              <button class="tab-btn active" onclick="switchTab(this,'itinerary')">Itinerary</button>
+              <button class="tab-btn" onclick="switchTab(this,'included')">What's Included</button>
+              <button class="tab-btn" onclick="switchTab(this,'gallery')">Gallery</button>
+            </div>
+
+            <!-- Tab: Itinerary -->
+            <div class="tab-content active" id="tab-itinerary">
+              <div class="itinerary-day">
+                <div class="day-num">D1</div>
+                <div class="day-body">
+                  <h4>Arrival in Santorini — Welcome Dinner</h4>
+                  <p>Arrive at Santorini Airport, transfer to your luxury cave hotel in Oia. Evening welcome dinner overlooking the caldera.</p>
+                </div>
+              </div>
+              <div class="itinerary-day">
+                <div class="day-num">D2</div>
+                <div class="day-body">
+                  <h4>Oia Village Tour &amp; Sunset Cruise</h4>
+                  <p>Morning guided walk through the famous blue-domed churches and narrow alleys of Oia. Evening private sunset sailing cruise.</p>
+                </div>
+              </div>
+              <div class="itinerary-day">
+                <div class="day-num">D3</div>
+                <div class="day-body">
+                  <h4>Akrotiri Ruins &amp; Perissa Beach</h4>
+                  <p>Explore the preserved Minoan ruins of Akrotiri in the morning, then unwind at the famous black-sand Perissa Beach.</p>
+                </div>
+              </div>
+              <div class="itinerary-day">
+                <div class="day-num">D4</div>
+                <div class="day-body">
+                  <h4>Wine Tasting &amp; Local Villages</h4>
+                  <p>Morning wine tasting at Santo Wines Winery with caldera views. Afternoon exploring the traditional villages of Pyrgos and Megalochori.</p>
+                </div>
+              </div>
+              <div class="itinerary-day">
+                <div class="day-num">D5</div>
+                <div class="day-body">
+                  <h4>Volcano &amp; Hot Springs Boat Tour</h4>
+                  <p>Full day boat excursion to the active Nea Kameni volcano, swim in therapeutic hot springs, and visit Thirassia island.</p>
+                </div>
+              </div>
+              <div class="itinerary-day">
+                <div class="day-num">D6</div>
+                <div class="day-body">
+                  <h4>Greek Cooking Class &amp; Free Afternoon</h4>
+                  <p>Morning hands-on Greek cooking class with a local chef. Free afternoon for shopping in Fira or optional helicopter tour.</p>
+                </div>
+              </div>
+              <div class="itinerary-day">
+                <div class="day-num">D7</div>
+                <div class="day-body">
+                  <h4>Departure Day</h4>
+                  <p>Leisurely breakfast, last-minute souvenir shopping, and transfer to Santorini Airport. Until next time, Greece!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab: What's Included -->
+            <div class="tab-content" id="tab-included">
+              <div class="included-grid">
+                <div class="included-item"><span class="icon">✈️</span><div class="text"><h5>Return Flights</h5><p>Economy return flights from major UK/India airports</p></div></div>
+                <div class="included-item"><span class="icon">🏨</span><div class="text"><h5>6 Nights Accommodation</h5><p>Luxury cave hotel with caldera views &amp; breakfast</p></div></div>
+                <div class="included-item"><span class="icon">🚌</span><div class="text"><h5>All Transfers</h5><p>Airport, hotel, and all excursion transfers included</p></div></div>
+                <div class="included-item"><span class="icon">🗺️</span><div class="text"><h5>Expert Local Guide</h5><p>English-speaking certified guide throughout</p></div></div>
+                <div class="included-item"><span class="icon">⛵</span><div class="text"><h5>Sunset Sailing Cruise</h5><p>Private 3-hour catamaran cruise with dinner</p></div></div>
+                <div class="included-item"><span class="icon">🍷</span><div class="text"><h5>Wine Tasting Session</h5><p>3-variety tasting at Santo Wines Winery</p></div></div>
+                <div class="included-item"><span class="icon">🍽️</span><div class="text"><h5>Daily Breakfast</h5><p>Buffet breakfast at hotel every morning</p></div></div>
+                <div class="included-item"><span class="icon">🛡️</span><div class="text"><h5>Travel Insurance</h5><p>Comprehensive travel and medical insurance</p></div></div>
+              </div>
+              <div style="margin-top:1.5rem;padding:1rem;background:#fff3cd;border-radius:var(--radius);font-size:.875rem;color:#856404;">
+                ⚠️ <strong>Not Included:</strong> Personal shopping, optional helicopter tour ($299), additional meals not specified above, visa fees.
+              </div>
+            </div>
+
+            <!-- Tab: Gallery
+                 AEM COMPONENT: Image Gallery (DAM Asset Picker)
+                 Path: /content/dam/wanderlux/destinations/santorini/gallery/ -->
+            <div class="tab-content" id="tab-gallery">
+              <div class="gallery-grid">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Santorini Caldera" />
+                <img src="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=400&q=80" alt="Blue Dome Church" />
+                <img src="https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=400&q=80" alt="Sunset Oia" />
+                <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&q=80" alt="Whitewashed Steps" />
+                <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&q=80" alt="Greek Food" />
+                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&q=80" alt="Sailing" />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Booking Card
+               AEM COMPONENT: Booking Form (Sling Servlet: BookingServlet.java)
+               OSGi Config: BookingServiceConfig (email, endpoint URL)
+          -->
+          <aside>
+            <div class="booking-card">
+              <h3>Book This Package</h3>
+              <div class="booking-price">$1,299 <small>/ person</small></div>
+              <div class="form-group">
+                <label for="bd-name">Full Name</label>
+                <input type="text" id="bd-name" placeholder="Your full name" />
+              </div>
+              <div class="form-group">
+                <label for="bd-email">Email Address</label>
+                <input type="email" id="bd-email" placeholder="you@email.com" />
+              </div>
+              <div class="form-group">
+                <label for="bd-depart">Departure Date</label>
+                <input type="date" id="bd-depart" />
+              </div>
+              <div class="form-group">
+                <label for="bd-guests">Number of Guests</label>
+                <select id="bd-guests">
+                  <option>1 Person</option>
+                  <option>2 People</option>
+                  <option>3 People</option>
+                  <option>4+ People</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bd-room">Room Type</label>
+                <select id="bd-room">
+                  <option>Standard Cave Suite</option>
+                  <option>Caldera View Room (+$200)</option>
+                  <option>Private Plunge Pool Villa (+$450)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bd-special">Special Requests</label>
+                <textarea id="bd-special" rows="3" placeholder="Dietary requirements, special occasions..."></textarea>
+              </div>
+              <button type="button" class="btn btn-primary" style="width:100%;margin-top:.5rem;">
+                Request Booking →
+              </button>
+              <p style="font-size:.78rem;color:var(--muted);text-align:center;margin-top:.75rem;">
+                Free cancellation up to 48 hrs before departure. No payment required now.
+              </p>
+            </div>
+
+            <!-- Quick Info Card -->
+            <div class="booking-card" style="margin-top:1.25rem;">
+              <h3>Quick Info</h3>
+              <table style="width:100%;border-collapse:collapse;font-size:.875rem;">
+                <tr><td style="padding:.5rem 0;color:var(--muted);">Duration</td><td style="font-weight:600;">7 Days / 6 Nights</td></tr>
+                <tr style="border-top:1px solid var(--border)"><td style="padding:.5rem 0;color:var(--muted);">Group Size</td><td style="font-weight:600;">Max 12 People</td></tr>
+                <tr style="border-top:1px solid var(--border)"><td style="padding:.5rem 0;color:var(--muted);">Difficulty</td><td style="font-weight:600;">Easy</td></tr>
+                <tr style="border-top:1px solid var(--border)"><td style="padding:.5rem 0;color:var(--muted);">Best Season</td><td style="font-weight:600;">Apr – Oct</td></tr>
+                <tr style="border-top:1px solid var(--border)"><td style="padding:.5rem 0;color:var(--muted);">Language</td><td style="font-weight:600;">English / Greek</td></tr>
+                <tr style="border-top:1px solid var(--border)"><td style="padding:.5rem 0;color:var(--muted);">Category</td><td style="font-weight:600;">Luxury / Romance</td></tr>
+              </table>
+            </div>
+          </aside>
+
+        </div>
+
+        <!-- AEM COMPONENT: Related Destinations
+             Sling Model: RelatedDestinationsModel.java
+             Data: Content Fragments with matching 'region' or 'category' tag -->
+        <div style="margin-top:4rem;">
+          <div class="section-header">
+            <span class="section-tag">You Might Also Like</span>
+            <h2 class="section-title">Related Destinations</h2>
+            <div class="divider"></div>
+          </div>
+          <div class="cards-grid">
+            <div class="card">
+              <div class="card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1491557345352-5929e343eb89?w=600&q=80" alt="Amalfi Coast" />
+                <span class="card-badge">🌊 Coastal</span>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">Amalfi Coast, Italy</h3>
+                <div class="card-meta"><span>🌍 Europe</span><span>⏱️ 7 Days</span><span>⭐ 4.9</span></div>
+                <p class="card-desc">Pastel villages, lemon groves, and spectacular Mediterranean coastline.</p>
+                <div class="card-footer">
+                  <div class="card-price">$1,599 <small>/ person</small></div>
+                  <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=600&q=80" alt="Maldives" />
+                <span class="card-badge">🌊 Beach</span>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">Maldives Island Resort</h3>
+                <div class="card-meta"><span>🌏 Asia</span><span>⏱️ 6 Days</span><span>⭐ 5.0</span></div>
+                <p class="card-desc">Overwater bungalows and crystal lagoons in the Indian Ocean.</p>
+                <div class="card-footer">
+                  <div class="card-price">$2,499 <small>/ person</small></div>
+                  <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Iceland" />
+                <span class="card-badge">🌌 Northern Lights</span>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">Reykjavik, Iceland</h3>
+                <div class="card-meta"><span>🌍 Europe</span><span>⏱️ 6 Days</span><span>⭐ 4.9</span></div>
+                <p class="card-desc">Northern Lights, geysers, waterfalls, and volcanic landscapes await.</p>
+                <div class="card-footer">
+                  <div class="card-price">$1,899 <small>/ person</small></div>
+                  <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- AEM COMPONENT: Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon">✈️</span><span class="logo-text">Wander<span>Lux</span></span></div>
+          <p>Crafting unforgettable travel experiences since 2009.</p>
+          <div class="footer-social"><a href="#">f</a><a href="#">in</a><a href="#">𝕏</a><a href="#">▶</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="destinations.html">Destinations</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Regions</h4>
+          <ul>
+            <li><a href="destinations.html">Europe</a></li>
+            <li><a href="destinations.html">Asia Pacific</a></li>
+            <li><a href="destinations.html">Americas</a></li>
+            <li><a href="destinations.html">Africa</a></li>
+          </ul>
+        </div>
+        <div class="footer-col footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Get exclusive deals and travel inspiration in your inbox.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email address" />
+            <button type="button">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">© 2024 WanderLux Travels. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // AEM NOTE: Tab switching logic would be in
+    // /apps/wanderlux/clientlibs/destination-detail/js/tabs.js
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

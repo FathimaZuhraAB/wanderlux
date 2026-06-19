@@ -1,0 +1,66 @@
+"""
+Flipkart search scraper.
+
+Note: Flipkart's HTML structure changes frequently and they ratelimit aggressively.
+For production, register for the Flipkart Affiliate API.
+"""
+from typing import List
+import logging
+import re
+from bs4 import BeautifulSoup
+
+from app.scrapers.base import BaseScraper
+from app.models import Listing, Category
+
+logger = logging.getLogger(__name__)
+
+
+class FlipkartScraper(BaseScraper):
+    site_id = "flipkart"
+    site_name = "Flipkart"
+    category = Category.GENERAL
+    BASE = "https://www.flipkart.com"
+
+    async def search(self, query: str, limit: int = 10) -> List[Listing]:
+        url = f"{self.BASE}/search"
+        r = await self.fetch(url, params={"q": query})
+        if not r:
+            return []
+
+        soup = BeautifulSoup(r.text, "lxml")
+        # Flipkart uses many layouts. Try several anchors.
+        cards = soup.select("div[data-id]")
+        items: List[Listing] = []
+        for c in cards[:limit * 2]:
+            try:
+                # title may be in <a> with class containing 'wjcEIp' or similar
+                title_el = (c.select_one("a.wjcEIp") or
+                            c.select_one("a.IRpwTa") or
+                            c.select_one("div.KzDlHZ") or
+                            c.select_one("a.s1Q9rs"))
+                price_el = c.select_one("div.Nx9bqj") or c.select_one("div._30jeq3")
+                if not (title_el and price_el):
+                    continue
+                price_text = price_el.get_text()
+                price = float(re.sub(r"[^\d.]", "", price_text.replace(",", "")) or 0)
+                if price <= 0:
+                    continue
+
+                link_el = c.select_one("a[href]")
+                href = link_el.get("href") if link_el else ""
+
+                items.append(Listing(
+                    site_id=self.site_id,
+                    site_name=self.site_name,
+                    title=title_el.get_text(strip=True)[:200],
+                    url=self.BASE + href if href.startswith("/") else (href or self.BASE),
+                    price=price,
+                    delivery="2-3 days",
+                    confidence=1.0,
+                ))
+                if len(items) >= limit:
+                    break
+            except Exception as e:
+                logger.debug(f"[flipkart] skip: {e}")
+                continue
+        return items

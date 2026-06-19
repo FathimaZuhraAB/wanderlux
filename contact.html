@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us – WanderLux Travels</title>
+  <link rel="stylesheet" href="style.css" />
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  Page: Contact Us (contact.html)                            ║
+    ║  AEM Page Template: Contact Page Template                   ║
+    ║                                                             ║
+    ║  COMPONENTS ON THIS PAGE:                                   ║
+    ║  1. Header Navigation  → AEM: Navigation Component          ║
+    ║  2. Breadcrumb         → AEM: Breadcrumb Component          ║
+    ║  3. Page Hero          → AEM: Page Hero Component           ║
+    ║  4. Contact Info Card  → AEM: Contact Info Component        ║
+    ║  5. Contact Form       → AEM: Form Component                ║
+    ║                           (Sling Servlet: ContactServlet)   ║
+    ║                           (OSGi: EmailServiceConfig)        ║
+    ║  6. Map Embed          → AEM: Map Component                 ║
+    ║  7. FAQ Accordion      → AEM: Accordion Component           ║
+    ║  8. Footer             → AEM: Footer Component              ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <style>
+    /* FAQ Accordion — AEM: Accordion Component */
+    .accordion { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .accordion-item { border-bottom: 1.5px solid var(--border); }
+    .accordion-item:last-child { border-bottom: none; }
+    .accordion-btn {
+      width: 100%; background: none; border: none; padding: 1.1rem 1.25rem;
+      text-align: left; font-size: .95rem; font-weight: 600; color: var(--dark);
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      transition: background var(--transition);
+    }
+    .accordion-btn:hover { background: var(--light); }
+    .accordion-btn.active { background: var(--light); color: var(--primary); }
+    .accordion-btn .icon { font-size: 1.1rem; transition: transform .3s; }
+    .accordion-btn.active .icon { transform: rotate(45deg); }
+    .accordion-body {
+      display: none; padding: 0 1.25rem 1.1rem;
+      font-size: .9rem; color: var(--muted); line-height: 1.7;
+    }
+    .accordion-body.open { display: block; }
+
+    /* Map placeholder */
+    .map-placeholder {
+      width: 100%; height: 320px; background: var(--light);
+      border-radius: var(--radius); display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      border: 2px dashed var(--border); color: var(--muted); gap: .5rem;
+      font-size: .9rem;
+    }
+    .map-placeholder .map-icon { font-size: 3rem; }
+
+    /* Success message */
+    .success-msg {
+      display: none; background: #d1fae5; border: 1.5px solid #34d399;
+      border-radius: var(--radius); padding: 1rem 1.25rem;
+      color: #065f46; font-size: .9rem; margin-top: 1rem;
+    }
+    .success-msg.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- AEM COMPONENT: Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">✈️</span>
+        <span class="logo-text">Wander<span>Lux</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="contact.html" class="btn btn-primary">Book Now</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- AEM COMPONENT: Breadcrumb -->
+  <div class="breadcrumb">
+    <div class="breadcrumb-inner container">
+      <a href="index.html">Home</a>
+      <span class="sep">/</span>
+      <span>Contact Us</span>
+    </div>
+  </div>
+
+  <!-- AEM COMPONENT: Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Get in Touch</h1>
+      <p>Our travel experts are ready to help you plan your dream trip. Reach out anytime!</p>
+    </div>
+  </section>
+
+  <main>
+
+    <!-- CONTACT SECTION: Info Card + Form -->
+    <section class="section">
+      <div class="container">
+        <div class="contact-layout">
+
+          <!-- AEM COMPONENT: Contact Info Component
+               Sling Model: ContactInfoModel.java
+               Properties (JCR): phone, email, address, openingHours -->
+          <div class="contact-info-card">
+            <h2>Contact Information</h2>
+            <p>Speak with one of our travel consultants directly — we're available 7 days a week.</p>
+
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div class="contact-item-text">
+                <div class="label">Head Office</div>
+                <div class="value">12 Explorer's Row, Connaught Place<br>New Delhi 110001, India</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div class="contact-item-text">
+                <div class="label">Phone</div>
+                <div class="value">+91 11 4000 1234</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">✉️</div>
+              <div class="contact-item-text">
+                <div class="label">Email</div>
+                <div class="value">hello@wanderlux.travel</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">🕐</div>
+              <div class="contact-item-text">
+                <div class="label">Opening Hours</div>
+                <div class="value">Mon – Fri: 9:00 AM – 7:00 PM<br>Sat – Sun: 10:00 AM – 5:00 PM</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">🚨</div>
+              <div class="contact-item-text">
+                <div class="label">Emergency (24/7)</div>
+                <div class="value">+91 98765 43210</div>
+              </div>
+            </div>
+
+            <div style="margin-top:2rem;">
+              <div style="font-size:.8rem;opacity:.6;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;">Follow Us</div>
+              <div class="footer-social">
+                <a href="#" title="Facebook">f</a>
+                <a href="#" title="LinkedIn">in</a>
+                <a href="#" title="Twitter/X">𝕏</a>
+                <a href="#" title="YouTube">▶</a>
+                <a href="#" title="Instagram">📷</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- AEM COMPONENT: Contact Form
+               Sling Servlet: ContactServlet.java (POST /bin/wanderlux/contact)
+               OSGi Config: EmailServiceConfig.java
+               Properties: recipientEmail, senderLabel, successRedirect -->
+          <div class="contact-form-card">
+            <h2>Send Us a Message</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cf-fname">First Name *</label>
+                <input type="text" id="cf-fname" placeholder="John" required />
+              </div>
+              <div class="form-group">
+                <label for="cf-lname">Last Name *</label>
+                <input type="text" id="cf-lname" placeholder="Smith" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cf-email">Email Address *</label>
+              <input type="email" id="cf-email" placeholder="john@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="cf-phone">Phone Number</label>
+              <input type="tel" id="cf-phone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="form-group">
+              <label for="cf-subject">Enquiry Type *</label>
+              <select id="cf-subject">
+                <option value="">Select a topic...</option>
+                <option>New Booking Enquiry</option>
+                <option>Existing Booking Help</option>
+                <option>Group / Corporate Travel</option>
+                <option>Honeymoon Packages</option>
+                <option>Cancellation / Refund</option>
+                <option>General Question</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cf-destination">Interested Destination</label>
+              <input type="text" id="cf-destination" placeholder="e.g. Santorini, Maldives, Japan..." />
+            </div>
+            <div class="form-group">
+              <label for="cf-msg">Message *</label>
+              <textarea id="cf-msg" rows="5" placeholder="Tell us about your dream trip, dates, group size, or any specific requirements..."></textarea>
+            </div>
+            <div class="form-group" style="display:flex;align-items:center;gap:.75rem;">
+              <input type="checkbox" id="cf-consent" style="width:auto;" />
+              <label for="cf-consent" style="font-size:.82rem;color:var(--muted);margin-bottom:0;">
+                I agree to WanderLux's <a href="#">Privacy Policy</a> and consent to being contacted about my enquiry.
+              </label>
+            </div>
+            <button type="button" class="btn btn-primary" style="width:100%;" onclick="submitForm()">
+              Send Message ✉️
+            </button>
+            <div class="success-msg" id="success-msg">
+              ✅ <strong>Message sent successfully!</strong> One of our travel experts will be in touch within 24 hours.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- AEM COMPONENT: Map Component
+         Note: In AEM, this would be a custom Map component embedding Google Maps API
+         OSGi Config: GoogleMapsConfig (apiKey) -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Find Us</span>
+          <h2 class="section-title">Our Office Location</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="map-placeholder">
+          <div class="map-icon">🗺️</div>
+          <strong>Interactive Map</strong>
+          <p style="max-width:400px;text-align:center;font-size:.85rem;">
+            In AEM, this is a Map Component that embeds Google Maps.<br>
+            Configure via: OSGi → <code>GoogleMapsServiceConfig</code> (API key)
+          </p>
+          <div style="margin-top:.5rem;background:var(--primary);color:#fff;padding:.4rem 1rem;border-radius:20px;font-size:.8rem;">
+            12 Explorer's Row, Connaught Place, New Delhi 110001
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AEM COMPONENT: Accordion (FAQ)
+         Sling Model: AccordionModel.java
+         Data: Child nodes under /content/wanderlux/en/contact/jcr:content/faq -->
+    <section class="section">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <span class="section-tag">FAQ</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <div class="divider"></div>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleFaq(this)">
+              How far in advance should I book my trip?
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-body">
+              We recommend booking at least 3–6 months in advance for popular destinations, especially during peak season (June–August and December–January). However, we can often arrange last-minute trips with as little as 2 weeks' notice, subject to availability.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleFaq(this)">
+              What is your cancellation policy?
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-body">
+              Most of our packages offer free cancellation up to 48 hours before departure. For packages booked more than 90 days in advance, a full refund is available up to 30 days before travel. We strongly recommend travel insurance to cover unforeseen circumstances.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleFaq(this)">
+              Do you offer customised / private tour packages?
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-body">
+              Absolutely! We specialise in bespoke travel experiences. Whether it's a private honeymoon, a corporate retreat, or a family adventure, our consultants will craft a tailor-made itinerary to your exact specifications and budget.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleFaq(this)">
+              Are your trips suitable for solo travellers?
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-body">
+              Yes! We have a dedicated range of small-group tours specifically designed for solo travellers. These are a fantastic way to see the world, meet like-minded people, and enjoy the safety of a guided group, all with no single-supplement charges.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleFaq(this)">
+              What travel insurance do you provide?
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-body">
+              Comprehensive travel and medical insurance is included in all WanderLux packages. Our policy covers medical emergencies up to £5 million, trip cancellation, lost luggage, and 24/7 emergency assistance anywhere in the world.
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleFaq(this)">
+              How do I pay for my booking?
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-body">
+              We accept all major credit and debit cards, bank transfers, and PayPal. A 20% deposit secures your booking, with the remaining balance due 60 days before departure. For bookings made within 60 days of travel, the full amount is required upfront.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AEM COMPONENT: Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon">✈️</span><span class="logo-text">Wander<span>Lux</span></span></div>
+          <p>Crafting unforgettable travel experiences since 2009.</p>
+          <div class="footer-social"><a href="#">f</a><a href="#">in</a><a href="#">𝕏</a><a href="#">▶</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="destinations.html">Destinations</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Cancellation Policy</a></li>
+            <li><a href="#">Travel Insurance</a></li>
+            <li><a href="#">Emergency Contacts</a></li>
+          </ul>
+        </div>
+        <div class="footer-col footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Get exclusive deals and travel inspiration in your inbox.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email address" />
+            <button type="button">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">© 2024 WanderLux Travels. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // AEM NOTE: These scripts live in clientlibs:
+    // /apps/wanderlux/clientlibs/contact/js/contact.js
+
+    function toggleFaq(btn) {
+      const body = btn.nextElementSibling;
+      const isOpen = body.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+      document.querySelectorAll('.accordion-btn').forEach(b => b.classList.remove('active'));
+      // Open clicked one if it was closed
+      if (!isOpen) {
+        body.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function submitForm() {
+      // In AEM, this form would POST to /bin/wanderlux/contact (ContactServlet.java)
+      const name = document.getElementById('cf-fname').value;
+      const email = document.getElementById('cf-email').value;
+      const subject = document.getElementById('cf-subject').value;
+      const msg = document.getElementById('cf-msg').value;
+
+      if (!name || !email || !subject || !msg) {
+        alert('Please fill in all required fields (*)');
+        return;
+      }
+      document.getElementById('success-msg').classList.add('show');
+      document.querySelector('.contact-form-card button').disabled = true;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Destinations – WanderLux Travels</title>
+  <link rel="stylesheet" href="style.css" />
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  Page: Destinations Listing (destinations.html)             ║
+    ║  AEM Page Template: Destination List Template               ║
+    ║                                                             ║
+    ║  COMPONENTS ON THIS PAGE:                                   ║
+    ║  1. Header Navigation  → AEM: Navigation Component          ║
+    ║  2. Breadcrumb         → AEM: Breadcrumb Component          ║
+    ║  3. Page Hero          → AEM: Page Hero Component           ║
+    ║  4. Filter Bar         → AEM: Filter Component (clientlib)  ║
+    ║  5. Destination Cards  → AEM: Destination Card (List)       ║
+    ║  6. Pagination         → AEM: Pagination Component          ║
+    ║  7. Footer             → AEM: Footer Component              ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <style>
+    /* Filter Bar – unique to this page */
+    .filter-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      position: sticky; top: 68px; z-index: 100;
+    }
+    .filter-inner {
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      max-width: 1200px; margin: 0 auto; padding: 0 20px;
+    }
+    .filter-inner label { font-size: .85rem; font-weight: 600; color: var(--dark); white-space: nowrap; }
+    .filter-chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .chip {
+      padding: .35rem 1rem; border-radius: 20px;
+      border: 1.5px solid var(--border); background: var(--white);
+      font-size: .82rem; cursor: pointer; transition: all .2s;
+    }
+    .chip.active, .chip:hover { background: var(--primary); color: var(--white); border-color: var(--primary); }
+    .results-count { margin-left: auto; font-size: .85rem; color: var(--muted); }
+
+    .pagination { display: flex; gap: .5rem; justify-content: center; margin-top: 3rem; }
+    .page-btn {
+      width: 38px; height: 38px; border-radius: var(--radius);
+      border: 1.5px solid var(--border); background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; cursor: pointer; transition: all .2s; color: var(--text);
+    }
+    .page-btn.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
+    .page-btn:hover:not(.active) { background: var(--light); }
+  </style>
+</head>
+<body>
+
+  <!-- AEM COMPONENT: Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">✈️</span>
+        <span class="logo-text">Wander<span>Lux</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="destinations.html" class="active">Destinations</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="contact.html" class="btn btn-primary">Book Now</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- AEM COMPONENT: Breadcrumb -->
+  <div class="breadcrumb">
+    <div class="breadcrumb-inner container">
+      <a href="index.html">Home</a>
+      <span class="sep">/</span>
+      <span>Destinations</span>
+    </div>
+  </div>
+
+  <!-- AEM COMPONENT: Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Explore All Destinations</h1>
+      <p>From tropical islands to mountain treks — find your perfect escape among 200+ curated destinations.</p>
+    </div>
+  </section>
+
+  <!-- AEM COMPONENT: Filter Bar (client-side component with clientlib JS) -->
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <label>Filter by:</label>
+      <div class="filter-chips">
+        <div class="chip active" onclick="filterChip(this)">All</div>
+        <div class="chip" onclick="filterChip(this)">🌍 Europe</div>
+        <div class="chip" onclick="filterChip(this)">🌏 Asia</div>
+        <div class="chip" onclick="filterChip(this)">🌎 Americas</div>
+        <div class="chip" onclick="filterChip(this)">Africa</div>
+        <div class="chip" onclick="filterChip(this)">🏝️ Beach</div>
+        <div class="chip" onclick="filterChip(this)">🏔️ Adventure</div>
+        <div class="chip" onclick="filterChip(this)">🏙️ City Break</div>
+      </div>
+      <span class="results-count">Showing 12 destinations</span>
+    </div>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+
+        <!-- AEM COMPONENT: Destination Card List
+             HTL iterates over Content Fragments from DAM
+             ${destinationList.items} -->
+        <div class="cards-grid">
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Santorini" />
+              <span class="card-badge">🔥 Trending</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Santorini, Greece</h3>
+              <div class="card-meta"><span>🌍 Europe</span><span>⏱️ 7 Days</span><span>⭐ 4.9</span></div>
+              <p class="card-desc">Iconic white-washed villages perched on volcanic cliffs above the Aegean Sea.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,299 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80" alt="Kyoto" />
+              <span class="card-badge">🌸 Seasonal</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Kyoto, Japan</h3>
+              <div class="card-meta"><span>🌏 Asia</span><span>⏱️ 10 Days</span><span>⭐ 4.8</span></div>
+              <p class="card-desc">Ancient temples, bamboo groves, and cherry blossoms in Japan's cultural heartland.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,899 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=600&q=80" alt="Machu Picchu" />
+              <span class="card-badge">🏔️ Adventure</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Machu Picchu, Peru</h3>
+              <div class="card-meta"><span>🌎 Americas</span><span>⏱️ 8 Days</span><span>⭐ 4.9</span></div>
+              <p class="card-desc">Trek the legendary Inca Trail to one of the world's most breathtaking ancient wonders.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,599 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=600&q=80" alt="Maldives" />
+              <span class="card-badge">🌊 Beach</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Maldives Island Resort</h3>
+              <div class="card-meta"><span>🌏 Asia</span><span>⏱️ 6 Days</span><span>⭐ 5.0</span></div>
+              <p class="card-desc">Overwater bungalows, turquoise lagoons, and vibrant coral reefs in the Indian Ocean.</p>
+              <div class="card-footer">
+                <div class="card-price">$2,499 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1509233725247-49e657c54213?w=600&q=80" alt="Kenya Safari" />
+              <span class="card-badge">🦁 Wildlife</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Masai Mara Safari, Kenya</h3>
+              <div class="card-meta"><span>Africa</span><span>⏱️ 9 Days</span><span>⭐ 4.7</span></div>
+              <p class="card-desc">Witness the Great Migration and encounter Africa's Big Five in their natural habitat.</p>
+              <div class="card-footer">
+                <div class="card-price">$3,199 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=80" alt="New York" />
+              <span class="card-badge">🏙️ City Break</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">New York City, USA</h3>
+              <div class="card-meta"><span>🌎 Americas</span><span>⏱️ 5 Days</span><span>⭐ 4.6</span></div>
+              <p class="card-desc">Times Square, Broadway shows, iconic skylines, and world-class dining await you.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,099 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80" alt="Taj Mahal" />
+              <span class="card-badge">🏛️ Heritage</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Golden Triangle, India</h3>
+              <div class="card-meta"><span>🌏 Asia</span><span>⏱️ 8 Days</span><span>⭐ 4.7</span></div>
+              <p class="card-desc">Delhi, Agra, and Jaipur — explore the Taj Mahal, forts, and royal palaces.</p>
+              <div class="card-footer">
+                <div class="card-price">$899 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600&q=80" alt="Sydney" />
+              <span class="card-badge">🦘 Oceania</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Sydney, Australia</h3>
+              <div class="card-meta"><span>🌏 Oceania</span><span>⏱️ 7 Days</span><span>⭐ 4.8</span></div>
+              <p class="card-desc">Opera House, Bondi Beach, and a harbour city that buzzes with life all year round.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,749 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1491557345352-5929e343eb89?w=600&q=80" alt="Amalfi Coast" />
+              <span class="card-badge">🌊 Coastal</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Amalfi Coast, Italy</h3>
+              <div class="card-meta"><span>🌍 Europe</span><span>⏱️ 7 Days</span><span>⭐ 4.9</span></div>
+              <p class="card-desc">Pastel-coloured villages, lemon groves, and sparkling Mediterranean views along clifftop roads.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,599 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" alt="Dubai" />
+              <span class="card-badge">✨ Luxury</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Dubai, UAE</h3>
+              <div class="card-meta"><span>Middle East</span><span>⏱️ 5 Days</span><span>⭐ 4.8</span></div>
+              <p class="card-desc">Futuristic skylines, desert dunes, luxury shopping, and world-record attractions.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,499 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Iceland" />
+              <span class="card-badge">🌌 Northern Lights</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Reykjavik, Iceland</h3>
+              <div class="card-meta"><span>🌍 Europe</span><span>⏱️ 6 Days</span><span>⭐ 4.9</span></div>
+              <p class="card-desc">Chase the Northern Lights, explore geysers, waterfalls, and volcanic landscapes.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,899 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=600&q=80" alt="Rio" />
+              <span class="card-badge">🎉 Festival</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Rio de Janeiro, Brazil</h3>
+              <div class="card-meta"><span>🌎 Americas</span><span>⏱️ 6 Days</span><span>⭐ 4.7</span></div>
+              <p class="card-desc">Christ the Redeemer, Copacabana Beach, samba nights, and vibrant street culture.</p>
+              <div class="card-footer">
+                <div class="card-price">$1,349 <small>/ person</small></div>
+                <a href="destination-detail.html" class="btn btn-primary">Explore</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AEM COMPONENT: Pagination -->
+        <div class="pagination">
+          <div class="page-btn active">1</div>
+          <div class="page-btn">2</div>
+          <div class="page-btn">3</div>
+          <div class="page-btn">→</div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- AEM COMPONENT: Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon">✈️</span><span class="logo-text">Wander<span>Lux</span></span></div>
+          <p>Crafting unforgettable travel experiences since 2009. Your world-class journey starts here.</p>
+          <div class="footer-social"><a href="#">f</a><a href="#">in</a><a href="#">𝕏</a><a href="#">▶</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="destinations.html">Destinations</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Regions</h4>
+          <ul>
+            <li><a href="#">Europe</a></li>
+            <li><a href="#">Asia Pacific</a></li>
+            <li><a href="#">Americas</a></li>
+            <li><a href="#">Africa</a></li>
+            <li><a href="#">Middle East</a></li>
+          </ul>
+        </div>
+        <div class="footer-col footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Get exclusive deals and travel inspiration in your inbox.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email address" />
+            <button type="button">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">© 2024 WanderLux Travels. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // AEM NOTE: In AEM this filter logic would live in a clientlib JS file
+    // under /apps/wanderlux/clientlibs/destinations/js/filter.js
+    function filterChip(el) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us – WanderLux Travels</title>
+  <link rel="stylesheet" href="style.css" />
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  Page: About Us (about.html)                                ║
+    ║  AEM Page Template: About Page Template                     ║
+    ║                                                             ║
+    ║  COMPONENTS ON THIS PAGE:                                   ║
+    ║  1. Header Navigation  → AEM: Navigation Component          ║
+    ║  2. Breadcrumb         → AEM: Breadcrumb Component          ║
+    ║  3. Page Hero          → AEM: Page Hero Component           ║
+    ║  4. Rich Text Block    → AEM: Text Component (Rich Text)    ║
+    ║  5. Stats Banner       → AEM: Stats Banner Component        ║
+    ║  6. Team Cards         → AEM: Team Member Component         ║
+    ║  7. Feature Tiles      → AEM: Feature Tile Component        ║
+    ║  8. Footer             → AEM: Footer Component              ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+</head>
+<body>
+
+  <!-- AEM COMPONENT: Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">✈️</span>
+        <span class="logo-text">Wander<span>Lux</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="about.html" class="active">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="contact.html" class="btn btn-primary">Book Now</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- AEM COMPONENT: Breadcrumb -->
+  <div class="breadcrumb">
+    <div class="breadcrumb-inner container">
+      <a href="index.html">Home</a>
+      <span class="sep">/</span>
+      <span>About Us</span>
+    </div>
+  </div>
+
+  <!-- AEM COMPONENT: Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Our Story</h1>
+      <p>15 years of crafting extraordinary journeys for travellers around the world.</p>
+    </div>
+  </section>
+
+  <main>
+
+    <!-- AEM COMPONENT: Rich Text Block (two-column layout)
+         Sling Model: uses WCM Core Text Component
+         HTL: /apps/core/wcm/components/text/v2/text/text.html -->
+    <section class="section">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;" class="about-grid">
+          <div>
+            <span class="section-tag">Who We Are</span>
+            <h2 class="section-title" style="text-align:left;">Passionate Travellers, Expert Planners</h2>
+            <div class="divider" style="margin:1rem 0;"></div>
+            <p class="about-lead">
+              Founded in 2009 by two backpackers with a dream, WanderLux has grown into one of the world's most trusted travel companies. We believe every trip should be more than just a holiday — it should be a story you'll tell for the rest of your life.
+            </p>
+            <p style="margin-top:1rem;color:var(--muted);font-size:.95rem;line-height:1.8;">
+              From our humble beginnings organising small-group trips across Southeast Asia, we've expanded to cover over 200 destinations across 6 continents. Today, our team of 150 travel experts and local guides helps 50,000 travellers every year discover the world on their terms.
+            </p>
+            <p style="margin-top:1rem;color:var(--muted);font-size:.95rem;line-height:1.8;">
+              We are proud members of ABTA and ATOL, ensuring every trip is fully protected and every traveller is cared for — before, during, and after their journey.
+            </p>
+            <div style="display:flex;gap:1rem;margin-top:1.75rem;">
+              <a href="destinations.html" class="btn btn-primary">Explore Destinations</a>
+              <a href="contact.html" class="btn" style="border:2px solid var(--primary);color:var(--primary);">Get in Touch</a>
+            </div>
+          </div>
+          <div>
+            <img
+              src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=700&q=80"
+              alt="About WanderLux"
+              style="width:100%;height:420px;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow);"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AEM COMPONENT: Stats Banner
+         Sling Model: StatsBannerModel.java
+         Properties: stat values (could be editable in AEM Author) -->
+    <div class="stats-band">
+      <div class="container">
+        <div class="stats-band-inner">
+          <div>
+            <div class="stat-big">200+</div>
+            <div class="stat-label">Destinations Worldwide</div>
+          </div>
+          <div>
+            <div class="stat-big">50K+</div>
+            <div class="stat-label">Happy Travellers</div>
+          </div>
+          <div>
+            <div class="stat-big">15+</div>
+            <div class="stat-label">Years of Experience</div>
+          </div>
+          <div>
+            <div class="stat-big">4.9★</div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AEM COMPONENT: Team Member Card
+         Sling Model: TeamMemberModel.java
+         Data: Content Fragments under /content/dam/wanderlux/team -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">The People Behind WanderLux</span>
+          <h2 class="section-title">Meet Our Team</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">Our diverse, passionate team brings decades of combined travel experience to every trip we plan.</p>
+        </div>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar" style="background:#e8f0fe;font-size:2.5rem;">👨</div>
+            <div class="team-name">Arjun Mehta</div>
+            <div class="team-role">Co-Founder & CEO</div>
+            <p class="team-bio">Former travel writer who has visited 87 countries. Arjun leads our global strategy and partnerships.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#fce8e8;font-size:2.5rem;">👩</div>
+            <div class="team-name">Sofia Kowalski</div>
+            <div class="team-role">Co-Founder & Head of Experiences</div>
+            <p class="team-bio">Expert in luxury travel and cultural immersion. Sofia designs all our signature itineraries.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#e8fce8;font-size:2.5rem;">👨</div>
+            <div class="team-name">David Nakamura</div>
+            <div class="team-role">Head of Asia Pacific</div>
+            <p class="team-bio">Born in Osaka, David has spent 20 years exploring every corner of Asia and Oceania.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#fef3e8;font-size:2.5rem;">👩</div>
+            <div class="team-name">Amina Hassan</div>
+            <div class="team-role">Head of Africa & Middle East</div>
+            <p class="team-bio">Wildlife conservationist turned travel expert. Amina designs all our African safari programmes.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#f0e8fe;font-size:2.5rem;">👨</div>
+            <div class="team-name">Carlos Rivera</div>
+            <div class="team-role">Head of Americas</div>
+            <p class="team-bio">Adventure travel specialist with expertise in South American treks and North American road trips.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#e8fef5;font-size:2.5rem;">👩</div>
+            <div class="team-name">Emma Thompson</div>
+            <div class="team-role">Customer Experience Director</div>
+            <p class="team-bio">Emma leads our 24/7 support team, ensuring every traveller feels looked after at every step.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#e8f0fe;font-size:2.5rem;">👨</div>
+            <div class="team-name">Rajesh Kumar</div>
+            <div class="team-role">Head of Technology</div>
+            <p class="team-bio">Full-stack developer and travel enthusiast building the digital tools that power WanderLux.</p>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:#fef0e8;font-size:2.5rem;">👩</div>
+            <div class="team-name">Yuki Tanaka</div>
+            <div class="team-role">Sustainability Lead</div>
+            <p class="team-bio">Environmental scientist championing our commitment to responsible, carbon-neutral travel.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AEM COMPONENT: Feature Tile (Values Section) -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Our Values</span>
+          <h2 class="section-title">What We Stand For</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="features-grid">
+          <div class="feature-tile">
+            <div class="feature-icon">❤️</div>
+            <h3 class="feature-title">Passion for Travel</h3>
+            <p class="feature-text">Every member of our team is a traveller at heart — we plan trips we'd want to take ourselves.</p>
+          </div>
+          <div class="feature-tile">
+            <div class="feature-icon">🤝</div>
+            <h3 class="feature-title">Integrity &amp; Transparency</h3>
+            <p class="feature-text">No hidden fees, no false promises. What we say is exactly what you get.</p>
+          </div>
+          <div class="feature-tile">
+            <div class="feature-icon">🌱</div>
+            <h3 class="feature-title">Responsible Tourism</h3>
+            <p class="feature-text">We offset 100% of carbon emissions and contribute to local community projects worldwide.</p>
+          </div>
+          <div class="feature-tile">
+            <div class="feature-icon">⭐</div>
+            <h3 class="feature-title">Excellence Always</h3>
+            <p class="feature-text">From your first enquiry to your safe return, we strive to exceed expectations at every touchpoint.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AEM COMPONENT: CTA Banner -->
+    <section style="background:linear-gradient(135deg,#0d6efd,#1a1a2e);padding:80px 0;text-align:center;color:#fff;">
+      <div class="container">
+        <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:.75rem;">Join 50,000+ Happy Travellers</h2>
+        <p style="opacity:.85;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto;">
+          Let WanderLux plan your next unforgettable journey. Get in touch with our travel experts today.
+        </p>
+        <a href="contact.html" class="btn btn-accent" style="margin-right:.75rem;">Start Planning</a>
+        <a href="destinations.html" class="btn btn-outline">Browse Destinations</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AEM COMPONENT: Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon">✈️</span><span class="logo-text">Wander<span>Lux</span></span></div>
+          <p>Crafting unforgettable travel experiences since 2009.</p>
+          <div class="footer-social"><a href="#">f</a><a href="#">in</a><a href="#">𝕏</a><a href="#">▶</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="destinations.html">Destinations</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="about.html">Meet the Team</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Press &amp; Media</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col footer-newsletter">
+          <h4>Newsletter</h4>
+          <p>Get exclusive deals and travel inspiration in your inbox.</p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Your email address" />
+            <button type="button">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">© 2024 WanderLux Travels. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <style>
+    @media(max-width:768px){
+      .about-grid { grid-template-columns: 1fr !important; }
+      .about-grid > div:last-child { display: none; }
+    }
+  </style>
+
+</body>
+</html>
